@@ -259,8 +259,6 @@ spring.jpa.database-platform = org.hibernate.dialect.H2Dialect
 
 
 
-
-
 # SpringData JPA 接口查询
 
 ## 1、SpringData JPA 核心接口
@@ -301,6 +299,8 @@ SpringData 里面有一种很不错的操作，那就是在接口中定义方法
 
 ```
 规则: findBy(关键字) + 属性名称(属性名称的首字母大写) + 查询条件(首字母大写)
+规则: findOneBy(关键字) + 属性名称(属性名称的首字母大写) + 查询条件(首字母大写)
+规则: findFirstBy(关键字) + 属性名称(属性名称的首字母大写) + 查询条件(首字母大写)
 ```
 
 常用规则速查：
@@ -1725,11 +1725,11 @@ spring.jpa.properties.hibernate.enable_lazy_load_no_trans=true
  * JpaSpecificationExecutor接口下一共就5个接口方法
  */
 public interface JpaSpecificationExecutor<T> {
-	T findOne(Specification<T> spec);// 查询单个
-	List<T> findAll(Specification<T> spec);// 查询全部
-	Page<T> findAll(Specification<T> spec, Pageable pageable);// 查询全部【分页】
-	List<T> findAll(Specification<T> spec, Sort sort);// 查询全部【排序】
-	long count(Specification<T> spec);// 统计总数
+	T findOne(Specification<T> spec); // 查询单个
+	List<T> findAll(Specification<T> spec); // 查询全部
+	Page<T> findAll(Specification<T> spec, Pageable pageable); // 查询全部【分页】
+	List<T> findAll(Specification<T> spec, Sort sort); // 查询全部【排序】
+	long count(Specification<T> spec); // 统计总数
 }
 ```
 

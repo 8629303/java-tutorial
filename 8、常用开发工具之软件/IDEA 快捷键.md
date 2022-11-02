@@ -235,5 +235,11 @@
 2. https://blog.csdn.net/qq_35246620/article/details/53648746
 3. https://github.com/judasn/IntelliJ-IDEA-Tutorial
 4. https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/practical-skills/keymap-windows.md
-6. https://www.cntofu.com/book/143/settings-introduce-1.md（老版）
+5. https://www.cntofu.com/book/143/settings-introduce-1.md（老版）
 6. **IntelliJ IDEA DEFAULT KEYMAP**：https://www.jetbrains.com/idea/docs/IntelliJIDEA_ReferenceCard_Mac.pdf
+
+
+
+
+
+# IDEA 插件推荐总结

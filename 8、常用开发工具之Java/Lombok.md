@@ -20,11 +20,26 @@ Lombok是一个优秀的Java代码库，简化了Java的编码，为Java代码�
 pom.xml 添加依赖进行版本管理
 
 ```xml
+<!--锁定 jdk 版本为 1.8-->
 <properties>
-    <!--锁定 jdk 版本为 1.8-->
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
 </properties>
+<!--锁定 jdk 版本为 1.8,选择其一即可-->
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.7.0</version>
+            <configuration>
+                <source>1.8</source>
+                <target>1.8</target>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+<!--注意： 如果 properties 和 build 里面都有配置的话，那么 properties 会覆盖掉 build 里面的配置，即以 properties 里面的配置为准。-->
 
 <dependencies>
     <!--https://mvnrepository.com/artifact/org.projectlombok/lombok/1.18.16-->

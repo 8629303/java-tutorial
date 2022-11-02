@@ -4986,16 +4986,12 @@ PS：在没带参数构造函数生成的Random对象的种子缺省是当前系
 
 
 
+## 3、BigInteger大数字操作类
 
-
-## 3、大数字操作类
+> 随着科技的发展，计算机对运算的要求变得越来越高，传统的float甚至double已经无法满足。为了解决这类问题，出现了BigInteger、BigDecimal两个操作大数字的类。通过本节内容，你将了解到BigInteger、BigDecimal两个类的相关内容，学会其兑现的简单创建与方法调用，并能够自行开发一些方法完成大数字运算时的性能调优。
 
 > 参考：https://blog.csdn.net/xiaoxiaole0313/article/details/107328700/
 >
-
-随着科技的发展，计算机对运算的要求变得越来越高，传统的float甚至double已经无法满足。为了解决这类问题，出现了BigInteger、BigDecimal两个操作大数字的类。通过本节内容，你将了解到BigInteger、BigDecimal两个类的相关内容，学会其兑现的简单创建与方法调用，并能够自行开发一些方法完成大数字运算时的性能调优。
-
-### 1、BigInteger
 
 在进行数学计算的过程里面还有一个大数字的操作类，可以实现海量数字的计算（能提供的也只是基础计算），现在假设一个数字很大，超过了double的范围，那么这个时候并没有任何一种数据类型可以保存下此类的内容，最早的时候只能通过String保存。
 
@@ -5080,9 +5076,11 @@ public class JavaAPIDemo {
 
 
 
-### 2、BigDecimal
+## 4、BigDecimal大小数操作类
 
 > Java 中的 BigDecimal ，80% 的人都用错了：https://mp.weixin.qq.com/s/DDTnC6joLAaGqP0ghpAwrA
+
+### 1、构造与成员方法
 
 BigDecimal操作形式和BigInteger是非常类似的，都有基础的数学支持。常用方法如下：
 
@@ -5121,9 +5119,9 @@ public class JavaAPIDemo {
 除法计算，商：17383、余数：920953
 ```
 
----
 
-> Java中BigDecimal的舍入模式
+
+### 2、BigDecimal舍入模式
 
 这边特别提一下，如果进行除法运算的时候，结果不能整除，有余数，这个时候会报java.lang.ArithmeticException: ，这边我们要避免这个错误产生，在进行除法运算的时候，针对可能出现的小数产生的计算，必须要多传两个参数。（除法计算数据进位问题）
 
@@ -5246,7 +5244,90 @@ public class JavaAPIDemo {
 
 
 
-## 4、数字格式化类
+### 3、BigDecimal去除末尾多余的0
+
+Java有自带的 stripTrailingZeros() 方法用于去除末尾多余的0
+
+```java
+ BigDecimal num = new BigDecimal("100.000");
+ BigDecimal numNoEndZero = num.stripTrailingZeros();  //numNoEndZero  ：1E+2
+ System.out.println(numNoEndZero.toString());
+```
+
+按上面的方法输出结果，会显示科学计数法，所以需要处理一下，解决方法：
+
+```java
+String numNoEndZeroStr = new BigDecimal("100.000").stripTrailingZeros().toPlainString();   
+System.out.println(numNoEndZeroStr); //numNoEndZeroStr  ：100
+```
+
+通过该方法处理BigDecimal类型数据后面的0的方法实现：
+
+```java
+/**
+     * @Title: clearNoUseZeroForBigDecimal
+     * @Description: 去掉BigDecimal尾部多余的0，通过stripTrailingZeros().toPlainString()实现
+     * @param num
+     * @return BigDecimal
+     */
+    public static BigDecimal clearNoUseZeroForBigDecimal(BigDecimal num) {
+        BigDecimal returnNum = null;
+        String numStr = num.stripTrailingZeros().toPlainString();
+        if (numStr.indexOf(".") == -1) {
+            // 如果num 不含有小数点,使用stripTrailingZeros()处理时,变成了科学计数法
+            returnNum = new BigDecimal(numStr);
+        } else {
+            if (num.compareTo(BigDecimal.ZERO) == 0) {
+                returnNum = BigDecimal.ZERO;
+            } else {
+                returnNum = num.stripTrailingZeros();
+            }
+        }
+        return returnNum;
+    }
+```
+
+不通过该方法处理BigDecimal类型数据实现
+
+```java
+/**
+     * @Title: removeAmtLastZero
+     * @Description: 金额处理，去掉BigDecimal尾部多余的0
+     * @param num
+     * @return BigDecimal
+     */
+    public static BigDecimal removeAmtLastZero(BigDecimal num) {
+        String strNum = num.toString();
+        if (strNum.indexOf('.') != -1) {
+            String[] arr = strNum.split("\\.");
+            String strDecimals = arr[1];
+            List<String> list = new ArrayList<String>();
+            boolean isCanAdd = false;
+            for (int i = strDecimals.length() - 1; i > -1; i--) {
+                String ss = String.valueOf(strDecimals.charAt(i));
+                if (!ss.equals("0")) {
+                    isCanAdd = true;// 从最后的字符开始算起，遇到第一个不是0的字符开始都是需要保留的字符
+                }
+                if (!ss.equals("0") || isCanAdd) {
+                    list.add(ss);
+                }
+            }
+            StringBuffer strZero = new StringBuffer();
+            for (int i = list.size() - 1; i > -1; i--) {
+                strZero.append(list.get(i));
+            }
+            strNum = String.format("%s.%s", arr[0], strZero.toString());
+        }
+
+        return new BigDecimal(strNum);
+    }
+```
+
+
+
+
+
+## 5、数字格式化类
 
 > 参考：https://blog.csdn.net/a1064072510/article/details/89887633、https://www.jianshu.com/p/b9dd363e3ff8
 

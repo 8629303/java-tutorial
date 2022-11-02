@@ -1226,7 +1226,7 @@ JDK1.0中就包含java.util.Date类，但是它的大多数方法已经在JDK1.1
 
 ## java.time 先导篇
 
-Java8 新日期时间API特性：
+1、Java8 新日期时间API特性：
 
 - 不变性：新的日期/时间API中，所有的类都是不可变的，这对多线程很有好处。
 - 关注点分离：借鉴了Joda库的一些优点，新的API将人可读的日期时间和机器时间（unix timestamp）明确分离，它为日期（Date）、时间（Time）、日期时间（DateTime）、时间戳（unix timestamp）以及时区定义了不同的类。
@@ -1236,7 +1236,7 @@ Java8 新日期时间API特性：
 
 ---
 
-Java8 新日期时间API包结构：
+2、Java8 新日期时间API包结构：
 
 - java.time：父级基础包，常用的时间相关类都在这里，如LocalDate\LocalDateTime\Instant等
 - java.time.chrono：日历系统包，日历相关的接口（类似Calendar）也包括提供对其他日历系统的API
@@ -1246,22 +1246,22 @@ Java8 新日期时间API包结构：
 
 ---
 
-Java8 新日期时间API类：
+3、Java8 新日期时间API类：
 
-1. 日期和时间、时钟
+- 日期和时间、时钟
    1. Instant：时间戳（相对于1970年1月1日的偏移量）默认是0时区，所以需要+8小时才是北京时间，与Date类不同的是其精确到了纳秒级别
    2. LocalDate：只包含日期，不包含时区，比如：2016-10-20
    3. LocalTime：只包含时间，不包含时区，比如：23:12:10
    4. LocalDateTime：包含日期和时间，内部维护着一对LocalDate与LocalTime实例，同时也不包含时区，比如：2016-10-20 23:14:21
    5. Clock：时钟，获取其他地区时钟。比如获取目前美国纽约的时间。该类用于获取指定时区的当前日期、时间。该类可取代System类的currentTimeMillis()方法，而且提供了更多方法来获取当前日期、时间。该类提供了大量静态方法来获取Clock对象。
-2. 期限/时间段：
+- 期限/时间段：
    1. Duration：用于计算两个“时间”间隔
    2. Period：用于计算两个“日期”间隔
-3. 时区与偏移量：
+- 时区与偏移量：
    1. ZoneId：该类代表一个时区
    2. ZoneOffset：时区偏移量，比如：+8:00
    3. ZonedDateTime：带时区的时间
-4. 附加的类型：
+- 附加的类型：
    1. Year 存储年，如“2020”
    2. YearMonth 存储年和月，如“2020-10”，可用于信用卡上的到期
    3. Month：定义了一月到十二月的枚举值。存储一个月。如“十一月”
@@ -1269,12 +1269,12 @@ Java8 新日期时间API类：
    5. DayOfWeek：存储一周中的一天，如“Tuesday”
    6. OffsetTime：存储与UTC没有日期的时间和偏移量
    7. OffsetDateTime：存储与UTC的日期时间和偏移量
-5. 几个特殊的接口：
+- 几个特殊的接口：
    1. Temporal：日期-时间获取值的字段
    2. TemporalAdjuster：Temporal对象转换，实现自定义
    3. ChronoLocalDate：日历系统接口（下面是它的四个子类）
 
-6. Java中使用的历法是ISO 8601日历系统，它是世界民用历法（也称为公历）平年有365天，闰年是366天。此外Java8还提供了4套其他历法：
+- Java中使用的历法是ISO 8601日历系统，它是世界民用历法（也称为公历）平年有365天，闰年是366天。此外Java8还提供了4套其他历法：
    1. ThaiBuddhistDate：泰国佛教历
    2. MinguoDate：中华民国历
    3. JapaneseDate：日本历
@@ -1825,10 +1825,9 @@ public class JavaDateTest {
 
 
 
-## LocalDateTime API Summary
+## LocalXxx API Summary
 
-> LocalDateTime、LocalDate、LocalTime 的常用方法总结：
->
+1、LocalDateTime、LocalDate、LocalTime 的常用方法总结：
 
 | 方法名                                                       | 描述                                      |
 | ------------------------------------------------------------ | ----------------------------------------- |
@@ -1851,8 +1850,7 @@ public class JavaDateTest {
 | plus(long amountToAdd, TemporalUnit unit)                    | 增加特殊时间                              |
 | minus(long amountToSubtract, TemporalUnit unit)              | 减少特殊时间                              |
 
-> LocalDateTime、LocalDate、LocalTime 的静态方法 of() 参数取值范围：
->
+2、LocalDateTime、LocalDate、LocalTime 的静态方法 of() 参数取值范围：
 
 | 参数       | 说明                              |
 | ---------- | --------------------------------- |
@@ -1862,6 +1860,8 @@ public class JavaDateTest {
 | hour       | 从0到23表示的时                   |
 | minute     | 从0到59表示的分                   |
 | second     | 从0到59表示的秒                   |
+
+
 
 ## 日期时间相关枚举类
 

@@ -11039,6 +11039,17 @@ public void wrapException(String input) throws MyBusinessException {
 
 
 
+## 10、finally 和 return 的执行顺序
+
+参考：https://blog.csdn.net/a1036645146/article/details/123717258
+
+**总结为以下几条：**
+
+- 当 try 代码块和 catch 代码块中有 return 语句时，finally 仍然会被执行。
+- 执行 try 代码块或 catch 代码块中的 return 语句之前，都会先执行 finally 语句。
+- 无论在 finally 代码块中是否修改返回值，返回值都不会改变，仍然是执行 finally 代码块之前的值。
+- finally 代码块中的 return 语句一定会执行。
+
 
 # 内部类
 

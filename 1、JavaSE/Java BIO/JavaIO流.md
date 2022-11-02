@@ -34,7 +34,7 @@ I/O又分为：流I/O（java.io）、块I/O（java.nio）。java.io是大多数�
 
 Java中I/O流共涉及40多个类，这些类看上去很杂乱，但实际上很有规则，而且彼此之间存在非常紧密的联系， Java中IO流的40多个类都是从如下4个抽象类基类中派生出来的：
 
-1. InputStream/OutputStream：前者所有字节输入流的基类Z（字节输入流），后者所有字节输出流的基类（字节输出流）
+1. InputStream/OutputStream：前者所有字节输入流的基类（字节输入流），后者所有字节输出流的基类（字节输出流）
 2. Reader/Writer：前者所有字符输入流的基类（字符输入流），后者所有字符输出流的基类（字符输出流）
 
 
@@ -556,6 +556,60 @@ public class TestFile {
          * src\a.txt
          * src\main
          * src\test
+         */
+    }
+    
+    /**
+     * 创建临时文件 : File createTempFile();
+     * <p>
+     * 构造方法:
+     * 1. public static File createTempFile(String prefix, String suffix)
+     * 2. public static File createTempFile(String prefix, String suffix, File directory)
+     * <p>
+     * 参数：
+     * 该函数是一个重载函数，因此一个函数带有后缀，前缀和File对象，
+     * 而另一个函数仅带有后缀和前缀。前缀不得少于三个字符，但后缀可以为null且如果未指定目录，则为传递一个空值，然后该函数使用默认目录。
+     * <p>
+     * 返回类型：
+     * 该函数返回表示新创建的临时文件的抽象文件名
+     * <p>
+     * 异常：该方法抛出：
+     * - IllegalArgumentException：如果prefix参数包含少于三个字符
+     * - IOException：是否有IO错误(无法创建文件)
+     * - SecurityException：如果该方法不允许创建文件
+     * <p>
+     * <p>
+     * 方法默认的保存路径为：
+     * - Windows: C:\Windows\Temp\ or %UserProfile%\AppData\Local\Temp\
+     * - UNIX: /tmp or /var/tmp
+     * <p>
+     * 参考:
+     * https://vimsky.com/examples/usage/file-createtempfile-method-in-java-with-examples.html
+     */
+    @Test
+    public void test4() throws IOException {
+
+        // 创建给定前缀,未指定后缀的临时文件,当后缀为null时,默认是.tmp
+        File tempFile1 = File.createTempFile("temp_", null);
+        System.out.println("Temp File created: " + tempFile1.getAbsolutePath());
+
+        // 创建指定前缀,指定后缀的临时文件
+        File tempFile2 = File.createTempFile("temp_", ".svp");
+        System.out.println("Temp File created: " + tempFile2.getAbsolutePath());
+
+        // 创建指定前缀,指定后缀,并且还指定临时目录,临时文件
+        File tempFile3 = File.createTempFile("temp_", ".svp", new File("D:\\"));
+        System.out.println("Temp File created: " + tempFile3.getAbsolutePath());
+
+        // 查看临时目录默认路径
+        System.out.println(GetPropertyAction.privilegedGetProperty("java.io.tmpdir"));
+
+        /**
+         * 输出内容:
+         * Temp File created: C:\Users\lsx\AppData\Local\Temp\temp_18201444457414034778.tmp
+         * Temp File created: C:\Users\lsx\AppData\Local\Temp\temp_17442542096350837163.svp
+         * Temp File created: D:\temp_3854320374250718388.svp
+         * C:\Users\lsx\AppData\Local\Temp\
          */
     }
 }
@@ -7934,6 +7988,70 @@ System.out.println( mes );
 2. Commons IO 2.5-IOUtils：https://blog.csdn.net/zhaoyanjun6/article/details/55051917
 3. Java Okio-更加高效易用的IO库：https://blog.csdn.net/zhaoyanjun6/article/details/119997762
 4. FileUtils常用方法 - commons-io常用工具类：https://www.cnblogs.com/deityjian/p/11106981.html
+
+# 【工具流】File与Base64相互转换
+
+## 1、File转Base64
+
+```java
+public static String file2Base64(File file) {
+    if(file==null) {
+        return null;
+    }
+    String base64 = null;
+    FileInputStream fin = null;
+    try {
+        fin = new FileInputStream(file);
+        byte[] buff = new byte[fin.available()];
+        fin.read(buff);
+        base64 = Base64.encode(buff);
+    } catch (FileNotFoundException e) {
+        e.printStackTrace();
+    } catch (IOException e) {
+        e.printStackTrace();
+    } finally {
+        if (fin != null) {
+            try {
+                fin.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    return base64;
+}
+```
+
+## 2、Base64转File
+
+```java
+public static File base64ToFile(String base64) {
+    if(base64==null||"".equals(base64)) {
+        return null;
+    }
+    byte[] buff=Base64.decode(base64);
+    File file=null;
+    FileOutputStream fout=null;
+    try {
+        file = File.createTempFile("tmp", null);
+        fout=new FileOutputStream(file);
+        fout.write(buff);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }finally {
+        if(fout!=null) {
+            try {
+                fout.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    return file;
+}
+```
+
+
 
 
 

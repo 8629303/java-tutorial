@@ -3534,7 +3534,7 @@ public class CreationUserGeneration implements AnnotationValueGeneration<Creatio
 
 - value: id class的类名
 
-假设user_article表中的联合主键是 title 与create_user_id，联合主键类代码如下：
+假设user_article表中的联合主键是 title 与 create_user_id，联合主键类代码如下：
 
 ```java
 @Data
