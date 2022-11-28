@@ -1,3 +1,79 @@
+> SpringSecurity & 源码：
+>
+> https://www.cnblogs.com/FondWang/category/1645775.html（流程+SpringBoot+H2）
+>
+> https://www.cnblogs.com/chiangchou/p/springboot-2.html
+>
+> [http://blog.ffspace.cn/categories/%E5%90%8E%E7%AB%AF/Spring-Security/](http://blog.ffspace.cn/categories/后端/Spring-Security/)
+>
+> 沈安心的客：https://blog.csdn.net/qq_22172133/category_8615344.html
+>
+> Jitwxs：https://blog.csdn.net/yuanlaijike/category_9283872.html
+>
+> http://www.tianshouzhi.com/api/tutorials/spring_security_4/265（田守真）
+>
+> [Delete丶94](https://blog.csdn.net/qq_42459181)
+>
+> https://blog.csdn.net/qq_42459181/category_8864199.html
+>
+> springsecurity核心要义（AuthenticationManager、ProviderManager）：
+>
+> https://blog.csdn.net/swordcenter/article/details/85455060
+>
+> https://www.cnblogs.com/xuwenjin/p/9565356.html
+>
+> SpringSecurity-登录认证原理：
+>
+> https://blog.csdn.net/abcwanglinyong/article/details/80981389
+>
+> https://www.cnblogs.com/zahfyy/p/9720124.html
+>
+> CSDN收藏：
+>
+> https://blog.csdn.net/u012702547/article/details/89629415
+>
+> https://blog.csdn.net/qq_42013035/article/details/106712074
+>
+> https://blog.csdn.net/qq_42013035/article/details/106681626（JJWT）
+>
+> SpringBoot+OAuth认证服务搭建：
+>
+> https://www.cnblogs.com/chiangchou/p/springboot-2.html
+>
+> https://blog.csdn.net/u014077048/article/details/83387695
+>
+> https://blog.csdn.net/WYA1993/article/details/85050120
+>
+> \------------------
+>
+> https://www.cnblogs.com/Irving/p/9343377.html
+>
+> https://www.jianshu.com/p/b273d53f1c27
+>
+> https://blog.csdn.net/w1054993544/article/details/78932614
+>
+> https://www.jianshu.com/p/c274f4acadb5
+>
+> https://www.cnblogs.com/Irving/p/9343377.html
+>
+> springsecurity核心要义（AuthenticationManager、ProviderManager）：
+>
+> https://blog.csdn.net/swordcenter/article/details/85455060
+>
+> https://www.cnblogs.com/xuwenjin/p/9565356.html
+>
+> SpringSecurity-登录认证原理：
+>
+> https://blog.csdn.net/abcwanglinyong/article/details/80981389
+>
+> https://www.cnblogs.com/zahfyy/p/9720124.html
+>
+> https://www.jianshu.com/p/a65f883de0c1
+>
+> https://www.jianshu.com/p/24c6a65c3913
+
+
+
 
 
 ## SpringSecurity 简介

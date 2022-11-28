@@ -3255,6 +3255,19 @@ net.ipv4.ip_forward=1
 
 
 
+# Docker 快速安装各种组件
+
+## 1、MySQL 安装
+
+- 借力 Docker ，三分钟搞定 MySQL 主从复制！https://mp.weixin.qq.com/s/YUsggkcLkjry4pp9JL9CgQ
+- 用 Docker 构建 MySQL 主从环境：https://mp.weixin.qq.com/s/dstbQl2SNuNhFIdb4dyHsQ
+
+
+
+## 2、Redis 安装
+
+还在用单机版？教你用Docker+Redis搭建主从复制多实例：https://mp.weixin.qq.com/s/MsPyR5Nfnp3feVw73b02DA
+
 # 参考资料 & 鸣谢
 
 1. Docker Tag：https://www.cnblogs.com/Mercury-linux/tag/docker/

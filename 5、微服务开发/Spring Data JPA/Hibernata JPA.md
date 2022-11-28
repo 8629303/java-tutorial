@@ -4506,7 +4506,8 @@ import java.util.Optional;
 public class JpaAuditorAware implements AuditorAware<String> {
     @Override
     public Optional<String> getCurrentAuditor() {
-        String userId = null; // SecurityUtils.getCurrentUserId(); 正常项目安装项目逻辑获取用户ID
+        // SecurityUtils.getCurrentUserId(); 正常项目安装项目逻辑获取用户ID
+        String userId = null;
         if (userId != null) {
             return Optional.of(userId);
         } else {
@@ -5013,7 +5014,10 @@ CustConvertVO(id=2, username=sam)
 > 3. SpringBoot中在除Controller层 使用Validation的方式（博客园）：https://www.cnblogs.com/gxc6/p/11407599.html
 > 4. Spring Boot 参数校验（CSDN-废物大师兄）：https://www.cnblogs.com/cjsblog/p/8946768.html
 > 5. 使用Spring Validation优雅地校验参数（博客园）：https://www.cnblogs.com/zhengxl5566/p/13398546.html
-> 5. SpringBoot参数校验-Validator（博客园：你在谁的风景里a)：https://www.cnblogs.com/sanye613/p/15027448.html
+> 6. SpringBoot参数校验-Validator（博客园：你在谁的风景里a)：https://www.cnblogs.com/sanye613/p/15027448.html
+> 7. SpringBoot 优雅的参数效验（微信）：https://mp.weixin.qq.com/s/VOO4QaQF8mWz0l33_G7u-A
+> 8. 自定义校验注解ConstraintValidator：https://mp.weixin.qq.com/s/5NtKsFO179pOflNYT1JPwA
+> 9. SpringBoot开发秘籍 - 集成参数校验及高阶技巧：https://mp.weixin.qq.com/s/tfOlvukARGIDWQDYTmXIgA
 
 # Hibernate JPA 主键策略
 

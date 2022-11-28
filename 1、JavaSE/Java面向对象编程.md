@@ -10762,7 +10762,20 @@ Exception in thread "main" java.lang.AssertionError: x的内容不是100
 
 
 
-## 9、Exception的9个最佳实践
+## 9、finally 和 return 的执行顺序
+
+参考：https://blog.csdn.net/a1036645146/article/details/123717258
+
+**总结为以下几条：**
+
+- 当 try 代码块和 catch 代码块中有 return 语句时，finally 仍然会被执行。
+- 执行 try 代码块或 catch 代码块中的 return 语句之前，都会先执行 finally 语句。
+- 无论在 finally 代码块中是否修改返回值，返回值都不会改变，仍然是执行 finally 代码块之前的值。
+- finally 代码块中的 return 语句一定会执行。
+
+
+
+# 异常的9个最佳实践
 
 在Java中处理异常并不是一个简单的事情。不仅仅初学者很难理解，即使一些有经验的开发者也需要花费很多时间来思考如何处理异常，包括需要处理哪些异常，怎样处理等等。这也是绝大多数开发团队都会制定一些规则来规范对异常的处理的原因。而团队之间的这些规范往往是截然不同的。
 
@@ -10770,7 +10783,7 @@ Exception in thread "main" java.lang.AssertionError: x的内容不是100
 
 
 
-### 1、用finally或try-with-resource释放资源
+## 1、用finally或try-with-resource释放资源
 
 当使用类似InputStream这种需要使用后关闭的资源时，一个常见的错误就是在try块的最后关闭资源
 
@@ -10831,7 +10844,7 @@ public void automaticallyCloseResource() {
 
 
 
-### 2、指定具体的异常
+## 2、指定具体的异常
 
 尽可能的使用最具体的异常来声明方法，这样才能使得代码更容易理解，如NumberFormatException即可以看出是数字格式化错误
 
@@ -10846,7 +10859,7 @@ public void doThis() throws NumberFormatException {
 
 
 
-### 3、对指定的异常进行文档说明
+## 3、对指定的异常进行文档说明
 
 当在方法上声明抛出异常时，也需要进行文档说明。和前面的一点一样，都是为了给调用者提供尽可能多的信息，从而可以更好地避免/处理异常。在Javadoc中加入throws声明，并且描述抛出异常的场景
 
@@ -10864,7 +10877,7 @@ public void doSomething(String input) throws MyBusinessException {
 
 
 
-### 4、抛出异常的时候包含描述信息
+## 4、抛出异常的时候包含描述信息
 
 在抛出异常时，需要尽可能精确地描述问题和相关信息，这样无论是打印到日志中还是监控工具中，都能够更容易被人阅读，从而可以更好地定位具体错误信息、错误的严重程度等。这里并不是说要对错误信息长篇大论，因为本来Exception的类名就能够反映错误的原因，因此只需要用一到两句话描述即可
 
@@ -10887,7 +10900,7 @@ NumberFormatException即告诉了这个异常是格式化错误，异常的额�
 
 
 
-### 5、优先捕获最具体的异常
+## 5、优先捕获最具体的异常
 
 现在很多IDE都能智能提示这个最佳实践，当你试图首先捕获最笼统的异常时，会提示不能达到的代码。当有多个catch块中，按照捕获顺序只有第一个匹配到的catch块才能执行。因此，如果先捕获IllegalArgumentException，那么则无法运行到对NumberFormatException的捕获，因为它是IllegalArgumentException的子类
 
@@ -10907,7 +10920,7 @@ public void catchMostSpecificExceptionFirst() {
 
 
 
-### 6、不要捕获Throwable
+## 6、不要捕获Throwable
 
 > Don’t Catch Throwable
 
@@ -10925,7 +10938,7 @@ public void doNotCatchThrowable() {
 
 
 
-### 7、不要忽略异常
+## 7、不要忽略异常
 
 > Don’t Ignore Exceptions
 
@@ -10955,7 +10968,7 @@ public void logAnException() {
 
 
 
-### 8、不要记录并抛出异常
+## 8、不要记录并抛出异常
 
 > Don’t Log and Throw
 
@@ -10998,7 +11011,7 @@ public void wrapException(String input) throws MyBusinessException {
 
 
 
-### 9、包装异常时不要抛弃原始的异常
+## 9、包装异常时不要抛弃原始的异常
 
 捕获标准异常并包装为自定义异常是一个很常见的做法。这样可以添加更为具体的异常信息并能够做针对的异常处理。
 
@@ -11016,7 +11029,7 @@ public void wrapException(String input) throws MyBusinessException {
 
 
 
-### 10、Exception最佳实践总结
+## 10、Exception最佳实践总结
 
 综上可知，当抛出或者捕获异常时，有很多不一样的东西需要考虑。其中的许多点都是为了提升代码的可阅读性或者api的可用性。异常不仅仅是一个错误控制机制，也是一个沟通媒介，因此与你的协作者讨论这些最佳实践并制定一些规范能够让每个人都理解相关的通用概念并且能够按照同样的方式使用它们
 
@@ -11032,23 +11045,14 @@ public void wrapException(String input) throws MyBusinessException {
 
 
 
-### 11、参考文献 & 鸣谢
+## 11、参考文献 & 鸣谢
 
 1. Java 处理 Exception 的 9 个最佳实践【Java后端】https://mp.weixin.qq.com/s/i7XW7jlo24KAOLaq88trjA
 2. 处理Java异常的10个最佳实践【空气带糖】https://www.bilibili.com/read/cv14432402
 
 
 
-## 10、finally 和 return 的执行顺序
 
-参考：https://blog.csdn.net/a1036645146/article/details/123717258
-
-**总结为以下几条：**
-
-- 当 try 代码块和 catch 代码块中有 return 语句时，finally 仍然会被执行。
-- 执行 try 代码块或 catch 代码块中的 return 语句之前，都会先执行 finally 语句。
-- 无论在 finally 代码块中是否修改返回值，返回值都不会改变，仍然是执行 finally 代码块之前的值。
-- finally 代码块中的 return 语句一定会执行。
 
 
 # 内部类

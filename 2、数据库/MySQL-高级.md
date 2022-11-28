@@ -636,5 +636,6 @@ B:insert into psn values(4,'sisi');--报错，无法插入数据
 # 参考文献 & 鸣谢
 
 1. [MySQL 高级-数据库优化](https://blog.csdn.net/qq_36903261/category_10394968.html)
-1. [MySQL之SQL优化详解](https://www.cnblogs.com/dwlovelife/category/1486258.html)
-2. [MySQL5.7版本数据库多实例安装部署](https://blog.csdn.net/u011208222/article/details/109217474)
+2. [MySQL之SQL优化详解](https://www.cnblogs.com/dwlovelife/category/1486258.html)
+3. [MySQL5.7版本数据库多实例安装部署](https://blog.csdn.net/u011208222/article/details/109217474)
+4. 利用 ShardingSphere-JDBC 实现分库分表实践：https://mp.weixin.qq.com/s/fzFpEjtXelxEq4jiDnul6g

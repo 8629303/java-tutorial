@@ -1661,7 +1661,7 @@ public class JavaDateTest {
 
         /**
          * 常用的两种实例化方式：
-         *   1.通过静态方法, 获取系统的当前时间：LocalTime.now()
+         *   1.通过静态方法, 获取系统的当前时间：LocalDateTime.now()
          *   2.通过静态方法, 获取自定义指定时间：
          *     1.LocalDateTime.of(LocalDate.now(), LocalTime.now())
          *     2.LocalDateTime.of(2020,02,8,21, 30, 59, 11001)
@@ -1832,7 +1832,7 @@ public class JavaDateTest {
 | 方法名                                                       | 描述                                      |
 | ------------------------------------------------------------ | ----------------------------------------- |
 | now、now(ZoneId zone)                                        | 根据当前时间创建对象、指定时区创建对象    |
-| of(int year,int month,int dayOfMonth,int hour,int minute,int second,int nanoOfSecond) | 估计指定日期时间创建对象，没有偏移量      |
+| of(int year,int month,int dayOfMonth,<br />int hour,int minute,int second,int nanoOfSecond) | 估计指定日期时间创建对象，没有偏移量      |
 | toLocalDate()、toLocalTime()                                 | 将LocalDateTime转换为LocalDate或LocalTime |
 | getYear()                                                    | 获得年份                                  |
 | getMonth()、getMonthValue()                                  | 获得月份Month枚举和数字（1-12）           |
@@ -2202,6 +2202,23 @@ public class JavaDateTest {
         // 案例直接参考LocalDateTime
     }
 }
+```
+
+LocalDateTime.now()也是获取默认时区的当前日期和时间，有什么区别呢？LocalDateTime内部不会记录时区信息，只会单纯记录年月日时分秒等信息，而ZonedDateTime除了记录日历信息，还会记录时区，它的其他大部分构建方法都需要显式传递时区，比如：
+
+```java
+// 根据Instant和时区构建ZonedDateTime
+public static ZonedDateTime ofInstant(Instant instant, ZoneId zone);
+
+// 根据LocalDate, LocalTime和ZoneId构造
+public static ZonedDateTime of(LocalDate date, LocalTime time, ZoneId zone);
+```
+
+ZonedDateTime可以直接转换为Instant，比如：
+
+```java
+ZonedDateTime ldt = ZonedDateTime.now();
+Instant now = ldt.toInstant();
 ```
 
 
@@ -2812,7 +2829,8 @@ java.time包下主要包含下面几个主要的类：
      * @param date Date时间类
      * @return LocalDateTime
      */
-    public static LocalDateTime ofDate(Date date){
+    public static LocalDateTime ofDate(Date date) {
+        // return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         return date.toInstant().atOffset(ZoneOffset.of("+8")).toLocalDateTime();
     }
 
@@ -2821,7 +2839,8 @@ java.time包下主要包含下面几个主要的类：
      * @param localDateTime LocalDateTime时间类
      * @return Date时间类
      */
-    public static Date toDate(LocalDateTime localDateTime){
+    public static Date toDate(LocalDateTime localDateTime) {
+        // ZoneId.systemDefault()
         return Date.from(localDateTime.atZone(ZoneOffset.of("+8")).toInstant());
     }
 ```

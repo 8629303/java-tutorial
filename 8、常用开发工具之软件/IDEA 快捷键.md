@@ -4,6 +4,7 @@
 >
 > 个人博客：www.hkgov.cn 个人空间：www.ccav9.cn
 >
+> 推荐 33 个 IDEA 最牛配置，好用到飞起来！https://mp.weixin.qq.com/s/tYFK1u7ONdA22_VbKilnvQ
 
 ## 1、Editing（编辑）
 
