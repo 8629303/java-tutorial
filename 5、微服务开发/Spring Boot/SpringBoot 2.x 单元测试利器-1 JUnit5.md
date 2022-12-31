@@ -162,6 +162,7 @@ public class JUnit5DemonTest {
 | @SpringBootTest       | 用于指定测试类启用Spring Boot Test，默认会提供Mock环境       |
 | @ExtendWith           | 如果只想启用Spring环境进行简单测试，不想启用SpringBoot环境，可以配置扩展为：SpringExtension |
 | @SpringJunitConfig    | 可以只指定需要加载到Spring容器中的类，不需要的类不会加载到spring容器中，此属于Spring的注解 |
+| @ContextConfiguration | 指定需要加载到Spring中的类，与@SpringJunitConfig类似，需要搭配@ExtendWith使用 |
 | @Test                 | 指定方法为测试方法                                           |
 | @TestMethodOrder      | 用于配置测试类中方法的执行顺序策略，配置为OrderAnnotation时，按@Order顺序执行 |
 | @Order                | 用于配置方法的执行顺序，数字越低执行顺序越高                 |
@@ -393,9 +394,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 /**
+ * @SpringJUnitConfig中包含@ExtendWith({SpringExtension.class})
  * 如果@SpringJUnitConfig种单独之注入TestService,执行后会报错,
  * 因为TestService中有方法调用TestRepository,而TestRepository没有被注入
  */
+// @SpringJUnitConfig(locations = "classpath:文件名.xml")
 @Slf4j
 @SpringJUnitConfig(classes = {TestRepository.class, TestService.class})
 class SpringJUnitConfigTest {
@@ -410,6 +413,55 @@ class SpringJUnitConfigTest {
 
 ```
 21:03:51.201 [main] INFO com.example.SpringJUnitConfigTest - test
+```
+
+3、@ContextConfiguration + @ExtendWith(SpringExtension.class) = @SpringJUnitConfig。指定需要加载到Spring容器中的类
+
+```java
+package com.example.jpa;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ConfigurationTest.Config.class)
+public class ConfigurationTest {
+    @Test
+    void explicitContextTest() {
+        AnnotationConfigApplicationContext applicationContext =
+                new AnnotationConfigApplicationContext(Config.class);
+        assertThat(applicationContext.getBean(Skeleton.class)).isNotNull();
+    }
+
+    @Test
+    void contextConfigInjectionTest(@Autowired Skeleton skeleton) {
+        assertThat(skeleton).isNotNull();
+    }
+
+    @Configuration
+    static class Config {
+        @Bean
+        Skeleton skeleton() {
+            return new SkeletonImpl();
+        }
+    }
+
+    interface Skeleton {
+    }
+
+    static class SkeletonImpl implements Skeleton {
+    }
+}
 ```
 
 
@@ -665,7 +717,183 @@ public class OtherTest {
 
 
 
-## 四、项目实战
+## 四、DB 测试
+
+### 1、@DataJpaTest
+
+@DataJpaTest 简介：为了测试 Spring Data JPA 存储库或任何其他与 JPA 相关的组件，Spring Boot 提供了 `@DataJpaTest` 注解。我们可以将它添加到单元测试中，它将设置一个 Spring 应用程序上下文。
+
+```properties
+#################### H2 ####################
+spring.datasource.url = jdbc:h2:mem:test_jpa
+spring.datasource.driver-class-name = org.h2.Driver
+spring.datasource.username = sa
+spring.datasource.password = sa
+
+#################### H2 Web Console ####################
+spring.h2.console.enabled = true
+spring.h2.console.path = /h2
+spring.h2.console.settings.web-allow-others = true
+
+#################### JPA  ####################
+spring.jpa.show-sql = true
+spring.jpa.properties.hibernate.format_sql = true
+spring.jpa.hibernate.ddl-auto = update
+spring.jpa.database-platform = org.hibernate.dialect.H2Dialect
+```
+
+```java
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Table
+@Entity
+public class User {
+    @Id
+    private Integer userId;
+    private String username;
+    private String password;
+}
+```
+
+```java
+public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecificationExecutor<User> {
+}
+```
+
+```java
+import com.example.jpa.entity.User;
+import com.example.jpa.repository.UserRepository;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.transaction.annotation.Transactional;
+import javax.persistence.EntityManager;
+import javax.sql.DataSource;
+
+@TestPropertySource(properties = {
+        "spring.jpa.hibernate.ddl-auto=create",
+        "spring.jpa.properties.hibernate.format_sql=true"
+})
+@DataJpaTest
+class JpaApplicationTests {
+    @Autowired DataSource dataSource;
+    @Autowired JdbcTemplate jdbcTemplate;
+    @Autowired EntityManager entityManager;
+    @Autowired UserRepository userRepository;
+
+    @Test
+    void injectedComponentsAreNotNull() {
+        Assertions.assertNotNull(dataSource);
+        Assertions.assertNotNull(jdbcTemplate);
+        Assertions.assertNotNull(entityManager);
+        Assertions.assertNotNull(userRepository);
+    }
+
+    @Test
+    @Rollback(false)
+    @Transactional
+    void saveTest() {
+        userRepository.saveAndFlush(new User(1, "Sam", "123456"));
+    }
+}
+```
+
+@ExtendWith：本教程中的代码示例使用 @ExtendWith 注解告诉 JUnit 5 启用 Spring 支持。从 Spring Boot 2.1 开始，我们不再需要加载 SpringExtension，因为它作为元注解包含在 Spring Boot 测试注解中，例如 @DataJpaTest、@WebMvcTest 和 @SpringBootTest。本教程中的代码示例使用 @ExtendWith 注解告诉 JUnit 5 启用 Spring 支持。从 Spring Boot 2.1 开始，我们不再需要加载 SpringExtension，因为它作为元注解包含在 Spring Boot 测试注解中，例如 @DataJpaTest、@WebMvcTest 和 @SpringBootTest。
+
+这样创建的应用程序上下文将不包含我们的 Spring Boot 应用程序所需的整个上下文，而只是它的一个“切片”，其中包含初始化任何 JPA 相关组件（如我们的 Spring Data 存储库）所需的组件。
+
+例如，如果需要，我们可以将 DataSource、JdbcTemplate 或 EntityManage 注入我们的测试类。此外，我们可以从我们的应用程序中注入任何 Spring Data 存储库。上述所有组件将自动配置为指向嵌入式内存数据库，而不是我们可能在 application.properties 或 application.yml 文件中配置的“真实”数据库。请注意，默认情况下，包含所有这些组件（包括内存数据库）的应用程序上下文在所有 `@DataJpaTest` 注解的测试类中的所有测试方法之间共享。
+
+这就是为什么在默认情况下**每个测试方法都在自己的事务中运行的原因，该事务在方法执行后回滚**。这样，数据库状态在测试之间保持原始状态，并且测试保持相互独立。
+
+
+
+### 2、@Sql
+
+解决测试时测试数据写入与销毁不方便，使用@Sql自动导入SQL脚本语句，结合@Transactional事务回滚实现测试后数据销毁，便捷测试。
+
+@Sql注解可以执行SQL脚本，也可以执行SQL语句。它既可以加上类上面，也可以加在方法上面。 默认情况下，方法上的@Sql注解会覆盖类上的@Sql注解，但可以通过@SqlMergeMode注解来修改此默认行为。
+
+@Sql有下面的属性：
+
+-  config:配置@SqlConfig，它的作用域是其@Sql注释的本地范围。它用于配置commentPrefix、分隔符等。
+
+-  executionPhase:决定何时执行SQL脚本和语句。默认是BEFORE_TEST_METHOD。
+
+-  statements:配置执行内联SQL语句。
+
+-  scripts:配置SQL脚本执行的路径。
+
+-  value:脚本元素的别名。脚本和值不能一起使用，但可以与statement元素一起使用。
+
+```sql
+INSERT INTO USER (id,  NAME,  email) VALUES (1, 'Zaphod Beeblebrox', 'zaphod@galaxy.net');
+```
+
+```java
+// @ExtendWith(SpringExtension.class)
+@DataJpaTest
+class SqlTest {
+    @Autowired
+    private UserRepository userRepository;
+    @Test
+    @Sql("createUser.sql")
+    void whenInitializedByDbUnit_thenFindsByName() {
+        UserEntity user = userRepository.findByName("Zaphod Beeblebrox");
+        assertThat(user).isNotNull();
+    }
+}
+```
+
+如果我们需要多个脚本，我们可以使用 `@SqlGroup` 来组合它们。
+
+
+
+### 3、@SqlConfig
+
+用于配置如何去解释@Sql注解中指定的Sql脚本。 可以用于类上，也可以用于方法上。 @Sql注解也有一个config属性，作用与@SqlConfig相同，不同的是作用域只在对应的@Sql注解范围。它的优先级也大于类注解的
+
+- blockCommentStartDelimiter：多行注释开始字符，默认是/*。
+
+-  blockCommentEndDelimiter：多行注释结束字符，默认是*/。
+
+-  commentPrefix：单行注释前缀，默认是–。
+
+-  commentPrefixes：指定多个单行注释前缀，默认是["–"]。
+
+-  dataSource：指定脚本执行的数据库的名字，只有在多个数据源时需要指定。
+
+-  encoding：指定sql脚本文件的字符编码。
+
+-  errorMode：配置错误模式，默认是SqlConfig.ErrorMode的DEFAULT。
+
+-  separator：配置脚本语句分隔符，默认是’\n’。
+
+-  transactionManager：指定transactionManager bean，只有有多个transactionManager时需要指定。
+
+-  transactionMode：指定脚本执行的事务模式，默认是SqlConfig.TransactionMode的DEFAULT。
+
+
+
+### 4、@SqlMergeMode
+
+@SqlMergeMode可以加在类上，也可以加在方法上。用于指示方法上的@Sql和类上@Sql注解配置是否合并。方法上的@SqlMergeMode注解优先级更高。默认值是SqlMergeMode.MergeMode的OVERRIDE。
+
+
+
+### 5、参考文献 & 鸣谢
+
+1. 使用 Spring Boot 和 @DataJpaTest 测试 JPA 查询：https://blog.csdn.net/dancuowang/article/details/121034672
+2. 测试之@Sql（自动插入sql脚本，测试后销毁）https://blog.csdn.net/system_cls/article/details/124270066
+
+
+
+## 五、项目实战
 
 上面介绍了Spring Boot Test的基本使用，下面我们结合项目来使用下它。
 

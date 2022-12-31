@@ -12,7 +12,101 @@
 SpringBoot 的启动经过了一系列的处理（装配、加载、监听...），我们先看看整体过程的流程图：
 
 ```
-
+          ┌───────────────────────────────────────┐
+          │           SpringBoot启动过程           │
+          └───────────────────────────────────────┘
+                            ⬇
+          ┌───────────────────────────────────────┐
+          │  1、运行 SpringApplication.run() 方法  │
+          └───────────────────────────────────────┘
+                            ⬇     
+          ┌───────────────────────────────────────┐
+          │          2、判断应用项目的类型          │ »» new SpringApplication() «« 开始
+          └───────────────────────────────────────┘
+                            ⬇
+          ┌───────────────────────────────────────┐
+          │        3、初始化所有根引导启动器        │
+          └───────────────────────────────────────┘
+                            ⬇
+          ┌───────────────────────────────────────┐
+          │         4、初始化所有容器上下文         │
+          └───────────────────────────────────────┘
+                            ⬇
+          ┌───────────────────────────────────────┐
+          │          5、初始化所有的监听器          │
+          └───────────────────────────────────────┘
+                            ⬇
+          ┌───────────────────────────────────────┐
+          │          6、设置程序运行的主类          │ »» new SpringApplication() «« 结束
+          └───────────────────────────────────────┘
+                            ⬇
+          ┌───────────────────────────────────────┐
+          │             7、开启计时器              │ »» springApplication.run() «« 开始
+          └───────────────────────────────────────┘
+                            ⬇
+          ┌───────────────────────────────────────┐
+          │ 8、创建启动上下文对象即bootstrapContext │
+          └───────────────────────────────────────┘
+                            ⬇
+          ┌───────────────────────────────────────┐
+          │        9、开启headless无头模式         │
+          └───────────────────────────────────────┘
+                            ⬇
+          ┌───────────────────────────────────────┐
+          │         10、获取并启动所有监听器        │
+          └───────────────────────────────────────┘
+                            ⬇
+          ┌───────────────────────────────────────┐
+          │         11、设置默认应用程序参数        │
+          └───────────────────────────────────────┘
+                            ⬇
+          ┌───────────────────────────────────────┐
+          │            12、准备环境变量            │
+          └───────────────────────────────────────┘
+                            ⬇
+          ┌───────────────────────────────────────┐
+          │          13、配置忽略Bean信息          │
+          └───────────────────────────────────────┘
+                            ⬇
+          ┌───────────────────────────────────────┐
+          │            14、打印Banner信息          │
+          └───────────────────────────────────────┘
+                            ⬇
+          ┌───────────────────────────────────────┐
+          │       15、创建IOC容器并设置启动器       │
+          └───────────────────────────────────────┘
+                            ⬇
+          ┌───────────────────────────────────────┐
+          │         16、准备IOC容器基本信息         │
+          └───────────────────────────────────────┘
+                            ⬇
+          ┌───────────────────────────────────────┐
+          │             17、刷新上下文             │
+          └───────────────────────────────────────┘
+                            ⬇
+          ┌───────────────────────────────────────┐
+          │          18、刷新上下文后置处理         │
+          └───────────────────────────────────────┘
+                            ⬇
+          ┌───────────────────────────────────────┐
+          │         19、结束计时器并打印日志        │
+          └───────────────────────────────────────┘
+                            ⬇
+          ┌───────────────────────────────────────┐
+          │         20、发布监听应用启动事件        │
+          └───────────────────────────────────────┘
+                            ⬇
+          ┌───────────────────────────────────────┐
+          │        21、执行自定义的run()方法        │
+          └───────────────────────────────────────┘
+                            ⬇
+          ┌───────────────────────────────────────┐
+          │        22、执行监听器的running()       │ »» springApplication.run() «« 结束
+          └───────────────────────────────────────┘
+                            ⬇
+          ┌───────────────────────────────────────┐
+          │           SpringBoot启动完成           │
+          └───────────────────────────────────────┘
 ```
 
 SpringBoot 启动流程分析使用版本SpringBoot VERSION：版本 **2.5.0**。
@@ -2488,7 +2582,7 @@ public class AppConfig {
 
 
 
-## 7、Starter 自定义编写示例-1（ID自动生成）
+## 7、Starter 自定义编写示例1（ID自动生成）
 
 ### 1、创建启动器空项目-spring-boot-starter
 
@@ -2885,13 +2979,13 @@ Unconditional classes:
     org.springframework.boot.autoconfigure.context.ConfigurationPropertiesAutoConfiguration
 ```
 
-- `Positive matches`:（自动配置类启用的：正匹配）
-- `Negative matches`:（没有启动，没有匹配成功的自动配置类：负匹配）
+- Positive matches:（自动配置类启用的：正匹配）
+- Negative matches:（没有启动，没有匹配成功的自动配置类：负匹配）
 - Exclusions、Unconditional classes（排除的、没有限定条件的自动配置类）
 
 
 
-## 8、Starter 自定义编写示例-2（API日志打印）
+## 8、Starter 自定义编写示例2（API日志打印）
 
 本案例我们需要通过自动配置来创建一个拦截器对象，通过此拦截器对象来实现记录日志功能。
 
@@ -3133,7 +3227,7 @@ public class TestController {
 
 
 
-## 9、Starter 自定义编写示例-3（AOP日志打印）
+## 9、Starter 自定义编写示例3（AOP日志打印）
 
 本案例我们需要通过自动配置来创建一个AOP，通过此AOP来实现记录日志功能，对比上面的日志打印区别是可以记录Service方法
 
@@ -3389,4 +3483,531 @@ void testAspectLog() {
 ```
 method:com.swagger3.service.TestService.sleep run :1019 ms
 ```
+
+
+
+## 10、SpringBoot 自定义多数据源 starter 组件
+
+本案例我们使用多数据源封装成一个starter组件，以方便使用多数据源访问数据库的操作。
+
+```bash
+├─dynamic-multi-datasource-spring-boot-starter
+   │  pom.xml
+   └─src
+       ├─main
+          ├─java
+          │  └─org
+          │      └─example
+          │              DS.java
+          │              DynamicDataSourceAspect.java
+          │              DynamicDataSourceContextHolder.java
+          │              DynamicMultiDataSourceAutoConfiguration.java
+          │              DynamicMultiDataSourceProperties.java
+          └─resources
+              └─META-INF
+                      spring.factories
+```
+
+
+
+### 1、创建普通项目，引入相关的依赖
+
+创建一个普通Java项目，引入SpringBoot相关的依赖。pom.xml
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.5.0</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>org.example</groupId>
+    <artifactId>dynamic-multi-datasource-spring-boot-starter</artifactId>
+    <version>1.0.0</version>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <!-- 包含了springboot与spring的相关jar包, 也包括spring-boot-autoconfigure -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <!-- 非必须的, 配置文件点击可以跳转实体, 引入后可以在配置文件中输入我们自定义配置的时候有相应的提示 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- 其他依赖的选择根据项目需要进行添加即可 -->
+        <!-- 导入jdbc相关依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+        <!-- 这里使用到了AOP, 所以增加AOP的依赖, 这里不能optional=true, 因为配置中使用了new -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+</project>
+```
+
+
+
+### 2、创建常量类和注解
+
+```java
+package org.example;
+import java.lang.annotation.*;
+
+/**
+ * 数据源切换扫描注解及常量
+ */
+@Documented
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface DS {
+    String value() default DS.DEFAULT;
+    /**
+     * 如下为常量
+     */
+    String DEFAULT = "default";
+    String DY_MULTI_DS = "dynamicMultiDataSource";
+    String DS_TYPE = "datasourceType";
+    String CONFIG_PREFIX = "spring.datasource.multi";
+}
+```
+
+
+
+### 3、创建多数据源属性类
+
+```java
+package org.example;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * 主要用于存储SpringBoot配置文件中配置的数据源属性
+ */
+@ConfigurationProperties(prefix = DS.CONFIG_PREFIX)
+public class DynamicMultiDataSourceProperties {
+    private Map<String, DataSourceProp> dataSourcePropMap;
+
+    public Map<String, DataSourceProp> getDataSourcePropMap() {
+        return dataSourcePropMap;
+    }
+
+    public void setDataSourcePropMap(Map<String, DataSourceProp> dataSourcePropMap) {
+        this.dataSourcePropMap = dataSourcePropMap;
+    }
+
+    public static class DataSourceProp extends HashMap<String, String> {
+    }
+}
+```
+
+
+
+### 4、创建数据源key的切换工具
+
+```java
+package org.example;
+
+/**
+ * 主要用于设置当前线程下数据源切换时的数据源唯一标识key, 以便获取指定的数据源
+ */
+public class DynamicDataSourceContextHolder {
+
+    /**
+     * 动态数据源名称上下文
+     */
+    private static final ThreadLocal<String> DATA_SOURCE_THEAD_LOCAL =
+            ThreadLocal.withInitial(() -> DS.DEFAULT);
+
+    /**
+     * 返回当前数据源
+     */
+    public static String getDataSource() {
+        return DATA_SOURCE_THEAD_LOCAL.get();
+    }
+
+    /**
+     * 设置当前数据源
+     */
+    public static void setDataSource(String dataSource) {
+        DATA_SOURCE_THEAD_LOCAL.set(dataSource);
+    }
+
+    /**
+     * 重置释放数据源
+     */
+    public static void remove() {
+        DATA_SOURCE_THEAD_LOCAL.remove();
+    }
+}
+```
+
+
+
+### 5、创建多数据源的切面类
+
+切面类主要用于获取被数据与注解指定的方法，拿到其注解中的属性值，再设置到数据源key设置组件中，方便数据源类获取该key，需使用@Order设置切面优先级，或者继承PriorityOrdered重写getOrder()也可以，否则设置无效。
+
+```java
+package org.example;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.Order;
+import java.lang.reflect.Method;
+
+@Order
+@Aspect
+public class DynamicDataSourceAspect {
+    private static final Logger log = LoggerFactory.getLogger(DynamicDataSourceAspect.class);
+
+    @Around("@annotation(org.example.DS)")
+    public Object around(ProceedingJoinPoint point) throws Throwable {
+        try {
+            // 获取被代理的方法对象、数据源注解
+            MethodSignature signature = (MethodSignature) point.getSignature();
+            Method method = signature.getMethod();
+            DS DS = method.getAnnotation(DS.class);
+            log.debug("切换前数据源为: {}" + DS.value());
+            DynamicDataSourceContextHolder.setDataSource(DS.value());
+            return point.proceed();
+        } finally {
+            DynamicDataSourceContextHolder.remove();
+        }
+    }
+}
+```
+
+
+
+### 6、创建数据源配置类及多数据源类
+
+创建多数据源类继承AbstractRoutingDataSource类，重写determineCurrentLookupKey()方法，用于获取当前线程中的指定的数据源key，通过该key拿到对应的数据源对象。此类DynamicMultiDataSource我偷懒了写成静态内部类了。
+
+```java
+package org.example;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
+import org.springframework.util.ReflectionUtils;
+import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+@Configuration
+@EnableConfigurationProperties(DynamicMultiDataSourceProperties.class)
+public class DynamicMultiDataSourceAutoConfiguration {
+    private final DynamicMultiDataSourceProperties dynamicMultiDataSourceProperties;
+
+    public DynamicMultiDataSourceAutoConfiguration(DynamicMultiDataSourceProperties dynamicMultiDataSourceProperties) {
+        this.dynamicMultiDataSourceProperties = dynamicMultiDataSourceProperties;
+    }
+
+    /**
+     * 必须实现该接口。用来获取当前数据源
+     */
+    static class DynamicMultiDataSource extends AbstractRoutingDataSource {
+        @Override
+        protected Object determineCurrentLookupKey() {
+            return DynamicDataSourceContextHolder.getDataSource();
+        }
+    }
+
+    @Primary
+    @Bean(DS.DY_MULTI_DS)
+    public DataSource dynamicMultiDataSource() {
+        DynamicMultiDataSource dynamicMultiDataSource = new DynamicMultiDataSource();
+        Map<String, DynamicMultiDataSourceProperties.DataSourceProp> dataSourcePropMap = dynamicMultiDataSourceProperties.getDataSourcePropMap();
+
+        Map<Object, Object> dataSourceMap = new HashMap<>(dataSourcePropMap.size());
+        dataSourcePropMap.forEach((lookupKey, dsProp) -> dataSourceMap.put(lookupKey, createDs(dsProp)));
+
+        // 添加数据源集合, 然后设置默认数据源
+        dynamicMultiDataSource.setTargetDataSources(dataSourceMap);
+        dynamicMultiDataSource.setDefaultTargetDataSource(dataSourceMap.get(DS.DEFAULT));
+        return dynamicMultiDataSource;
+    }
+
+    @Bean
+    public DataSourceTransactionManager dataSourceTransactionManager(
+            @Qualifier(DS.DY_MULTI_DS) DataSource dataSource) {
+        return new DataSourceTransactionManager(dataSource);
+    }
+
+    @Bean
+    public DynamicDataSourceAspect dynamicDataSourceAspect() {
+        return new DynamicDataSourceAspect();
+    }
+
+    /**
+     * 这里是定义了Map所以才这样处理了, 实际上也可以直接定义一个JavaBean，
+     * 然后设置设定的字段, 如果有需要还能把连接池配置一起带上
+     */
+    private DataSource createDs(DynamicMultiDataSourceProperties.DataSourceProp dataSourceProp) {
+        DataSource dataSource = null;
+        try {
+            Class<?> dsClass = Class.forName(dataSourceProp.get(DS.DS_TYPE));
+            if (DataSource.class.isAssignableFrom(dsClass)) {
+                dataSource = (DataSource) dsClass.getConstructor().newInstance();
+
+                DataSource finalDataSource = dataSource;
+                // 反射获取指定类中的属性
+                ReflectionUtils.doWithFields(dsClass,
+                        field -> {
+                            field.setAccessible(true);
+                            field.set(finalDataSource, dataSourceProp.get(field.getName()));
+                        },
+                        field -> {
+                            if (Objects.equals(dataSourceProp.get(DS.DS_TYPE), field.getName())) {
+                                return false;
+                            }
+                            return Objects.nonNull(dataSourceProp.get(field.getName()));
+                        });
+
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return dataSource;
+    }
+}
+```
+
+
+
+### 7、配置spring.factories文件
+
+在resources目录下创建META-INF目录，在该目录创建spring.factories文件，内容如下：
+
+```properties
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  org.example.DynamicMultiDataSourceAutoConfiguration
+```
+
+设置key为开启自动配置的注解全路径名，后面的value值为配置类全路径名，本starter组件中为数据源配置类，如有多个配置类，则以逗号分隔，以反斜杆表示忽略换行
+
+
+
+### 9、新建SpringBoot项目测试示例
+
+我们封装的一个简单的多数据源starter组件就完成了，只需进行maven打包即可在本地使用。为了方便测试使用H2内存数据库。
+
+1、maven 命令：`mvn clean install`。引入打包后的依赖：
+
+```xml
+<dependency>
+    <groupId>org.example</groupId>
+    <artifactId>dynamic-multi-datasource-spring-boot-starter</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+
+2、修改SpringBoot全局配置文件：default为默认数据源，必须配置， master为可选数据源，名称可自定义。数据源的属性名称为对应的dsType数据源类型的属性字段。
+
+```yaml
+spring:
+  datasource:
+    multi:
+      data-source-prop-map:
+        default:
+          datasourceType: com.zaxxer.hikari.HikariDataSource
+          driverClassName: org.h2.Driver
+          jdbcUrl: jdbc:h2:mem:default
+          username: sa
+          password: sa
+        master:
+          datasourceType: com.zaxxer.hikari.HikariDataSource
+          driverClassName: org.h2.Driver
+          jdbcUrl: jdbc:h2:mem:master
+          username: sa
+          password: sa
+```
+
+3、使用数据源：直接在指定的方法上添加@DataSource注解即可，注解的默认值为default,数据源的切换通过注解的值进行切换。值为application.yml中配置的default，master等。
+
+4、查看完整pom.xml与代码，yml配置文件参考上面即可。
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.5.0</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>com.example</groupId>
+    <artifactId>test-spring-boot</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>test-spring-boot</name>
+    <description>test-spring-boot</description>
+    <properties>
+        <java.version>11</java.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.example</groupId>
+            <artifactId>dynamic-multi-datasource-spring-boot-starter</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+```
+
+```java
+package com.example.testspringboot;
+import org.example.DS;
+import org.example.DynamicDataSourceContextHolder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@SpringBootApplication
+public class TestSpringBootApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(TestSpringBootApplication.class, args);
+    }
+
+    @Autowired
+    DataSource dynamicMultiDataSource;
+    JdbcTemplate jdbcTemplate;
+    @PostConstruct
+    public void initData() {
+        jdbcTemplate = new JdbcTemplate(dynamicMultiDataSource);
+        Arrays.asList("default", "master").forEach(type -> {
+            // 切换数据源
+            DynamicDataSourceContextHolder.setDataSource(type);
+            // 初始化表和数据
+            jdbcTemplate.execute("DROP TABLE IF EXISTS user");
+            jdbcTemplate.execute("CREATE TABLE user ("
+                    + "id BIGINT NOT NULL,"
+                    + "name VARCHAR(50) DEFAULT NULL,"
+                    + "type VARCHAR(50) DEFAULT NULL,"
+                    + "PRIMARY KEY (id))");
+            String sql = "INSERT INTO user (id, name, type) VALUES (?, ?, ?)";
+            jdbcTemplate.update(sql, 1, "Sam", type);
+            jdbcTemplate.update(sql, 2, "Kath", type);
+            jdbcTemplate.update(sql, 3, "Tom", type);
+            jdbcTemplate.update(sql, 4, "Sandy", type);
+            jdbcTemplate.update(sql, 5, "Oliver", type);
+        });
+        // 还原数据源
+        DynamicDataSourceContextHolder.remove();
+    }
+
+    @DS
+    @GetMapping("/default")
+    public List<Map<String, Object>> test1(){
+        return jdbcTemplate.queryForList("select * from user");
+    }
+
+    @DS("master")
+    @GetMapping("/master")
+    public List<Map<String, Object>> test2(){
+        return jdbcTemplate.queryForList("select * from user");
+    }
+}
+```
+
+5、动态切换多数据测试，我这里直接 CURL 请求
+
+```shell
+➜  ~ curl localhost:8080/default
+[{"ID":1,"NAME":"Sam","TYPE":"default"},
+{"ID":2,"NAME":"Kath","TYPE":"default"},
+{"ID":3,"NAME":"Tom","TYPE":"default"},
+{"ID":4,"NAME":"Sandy","TYPE":"default"},
+{"ID":5,"NAME":"Oliver","TYPE":"default"}]
+
+➜  ~ curl localhost:8080/master
+[{"ID":1,"NAME":"Sam","TYPE":"master"},
+{"ID":2,"NAME":"Kath","TYPE":"master"},
+{"ID":3,"NAME":"Tom","TYPE":"master"},
+{"ID":4,"NAME":"Sandy","TYPE":"master"},
+{"ID":5,"NAME":"Oliver","TYPE":"master"}]
+```
+
+
+
+
+
+
 

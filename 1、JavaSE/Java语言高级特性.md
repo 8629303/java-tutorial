@@ -5709,6 +5709,302 @@ System.out.println(numNoEndZeroStr); //numNoEndZeroStr  ：100
 
 
 
+### 4、BigDecimal工具类
+
+```java
+import java.math.BigDecimal;
+
+/**
+ * 用于高精确处理常用的数学运算
+ */
+public class BigDecimalUtils {
+    //默认除法运算精度
+    private static final int DEF_DIV_SCALE = 10;
+
+    /**
+     * 提供精确的加法运算
+     *
+     * @param v1 被加数
+     * @param v2 加数
+     * @return 两个参数的和
+     */
+
+    public static double add(double v1, double v2) {
+        BigDecimal b1 = new BigDecimal(Double.toString(v1));
+        BigDecimal b2 = new BigDecimal(Double.toString(v2));
+        return b1.add(b2).doubleValue();
+    }
+
+    /**
+     * 提供精确的加法运算
+     *
+     * @param v1 被加数
+     * @param v2 加数
+     * @return 两个参数的和
+     */
+    public static BigDecimal add(String v1, String v2) {
+        BigDecimal b1 = new BigDecimal(v1);
+        BigDecimal b2 = new BigDecimal(v2);
+        return b1.add(b2);
+    }
+
+    /**
+     * 提供精确的加法运算
+     *
+     * @param v1    被加数
+     * @param v2    加数
+     * @param scale 保留scale 位小数
+     * @return 两个参数的和
+     */
+    public static String add(String v1, String v2, int scale) {
+        if (scale < 0) {
+            throw new IllegalArgumentException(
+                "The scale must be a positive integer or zero");
+        }
+        BigDecimal b1 = new BigDecimal(v1);
+        BigDecimal b2 = new BigDecimal(v2);
+        return b1.add(b2).setScale(scale, BigDecimal.ROUND_HALF_UP).toString();
+    }
+
+    /**
+     * 提供精确的减法运算
+     *
+     * @param v1 被减数
+     * @param v2 减数
+     * @return 两个参数的差
+     */
+    public static double sub(double v1, double v2) {
+        BigDecimal b1 = new BigDecimal(Double.toString(v1));
+        BigDecimal b2 = new BigDecimal(Double.toString(v2));
+        return b1.subtract(b2).doubleValue();
+    }
+
+    /**
+     * 提供精确的减法运算。
+     *
+     * @param v1 被减数
+     * @param v2 减数
+     * @return 两个参数的差
+     */
+    public static BigDecimal sub(String v1, String v2) {
+        BigDecimal b1 = new BigDecimal(v1);
+        BigDecimal b2 = new BigDecimal(v2);
+        return b1.subtract(b2);
+    }
+
+    /**
+     * 提供精确的减法运算
+     *
+     * @param v1    被减数
+     * @param v2    减数
+     * @param scale 保留scale 位小数
+     * @return 两个参数的差
+     */
+    public static String sub(String v1, String v2, int scale) {
+        if (scale < 0) {
+            throw new IllegalArgumentException(
+                "The scale must be a positive integer or zero");
+        }
+        BigDecimal b1 = new BigDecimal(v1);
+        BigDecimal b2 = new BigDecimal(v2);
+        return b1.subtract(b2).setScale(scale, BigDecimal.ROUND_HALF_UP).toString();
+    }
+
+    /**
+     * 提供精确的乘法运算
+     *
+     * @param v1 被乘数
+     * @param v2 乘数
+     * @return 两个参数的积
+     */
+    public static double mul(double v1, double v2) {
+        BigDecimal b1 = new BigDecimal(Double.toString(v1));
+        BigDecimal b2 = new BigDecimal(Double.toString(v2));
+        return b1.multiply(b2).doubleValue();
+    }
+
+    /**
+     * 提供精确的乘法运算
+     *
+     * @param v1 被乘数
+     * @param v2 乘数
+     * @return 两个参数的积
+     */
+    public static BigDecimal mul(String v1, String v2) {
+        BigDecimal b1 = new BigDecimal(v1);
+        BigDecimal b2 = new BigDecimal(v2);
+        return b1.multiply(b2);
+    }
+
+    /**
+     * 提供精确的乘法运算
+     *
+     * @param v1    被乘数
+     * @param v2    乘数
+     * @param scale 保留scale 位小数
+     * @return 两个参数的积
+     */
+    public static double mul(double v1, double v2, int scale) {
+        BigDecimal b1 = new BigDecimal(Double.toString(v1));
+        BigDecimal b2 = new BigDecimal(Double.toString(v2));
+        return round(b1.multiply(b2).doubleValue(), scale);
+    }
+
+    /**
+     * 提供精确的乘法运算
+     *
+     * @param v1    被乘数
+     * @param v2    乘数
+     * @param scale 保留scale 位小数
+     * @return 两个参数的积
+     */
+    public static String mul(String v1, String v2, int scale) {
+        if (scale < 0) {
+            throw new IllegalArgumentException(
+                "The scale must be a positive integer or zero");
+        }
+        BigDecimal b1 = new BigDecimal(v1);
+        BigDecimal b2 = new BigDecimal(v2);
+        return b1.multiply(b2).setScale(scale, BigDecimal.ROUND_HALF_UP).toString();
+    }
+
+    /**
+     * 提供（相对）精确的除法运算，当发生除不尽的情况时，精确到
+     * 小数点以后10位，以后的数字四舍五入
+     *
+     * @param v1 被除数
+     * @param v2 除数
+     * @return 两个参数的商
+     */
+
+    public static double div(double v1, double v2) {
+        return div(v1, v2, DEF_DIV_SCALE);
+    }
+
+    /**
+     * 提供（相对）精确的除法运算。当发生除不尽的情况时，由scale参数指
+     * 定精度，以后的数字四舍五入
+     *
+     * @param v1    被除数
+     * @param v2    除数
+     * @param scale 表示表示需要精确到小数点以后几位。
+     * @return 两个参数的商
+     */
+    public static double div(double v1, double v2, int scale) {
+        if (scale < 0) {
+            throw new IllegalArgumentException("The scale must be a positive integer or zero");
+        }
+        BigDecimal b1 = new BigDecimal(Double.toString(v1));
+        BigDecimal b2 = new BigDecimal(Double.toString(v2));
+        return b1.divide(b2, scale, BigDecimal.ROUND_HALF_UP).doubleValue();
+    }
+
+    /**
+     * 提供（相对）精确的除法运算。当发生除不尽的情况时，由scale参数指
+     * 定精度，以后的数字四舍五入
+     *
+     * @param v1    被除数
+     * @param v2    除数
+     * @param scale 表示需要精确到小数点以后几位
+     * @return 两个参数的商
+     */
+    public static String div(String v1, String v2, int scale) {
+        if (scale < 0) {
+            throw new IllegalArgumentException("The scale must be a positive integer or zero");
+        }
+        BigDecimal b1 = new BigDecimal(v1);
+        BigDecimal b2 = new BigDecimal(v1);
+        return b1.divide(b2, scale, BigDecimal.ROUND_HALF_UP).toString();
+    }
+
+    /**
+     * 提供精确的小数位四舍五入处理
+     *
+     * @param v     需要四舍五入的数字
+     * @param scale 小数点后保留几位
+     * @return 四舍五入后的结果
+     */
+    public static double round(double v, int scale) {
+        if (scale < 0) {
+            throw new IllegalArgumentException("The scale must be a positive integer or zero");
+        }
+        BigDecimal b = new BigDecimal(Double.toString(v));
+        return b.setScale(scale, BigDecimal.ROUND_HALF_UP).doubleValue();
+    }
+
+    /**
+     * 提供精确的小数位四舍五入处理
+     *
+     * @param v     需要四舍五入的数字
+     * @param scale 小数点后保留几位
+     * @return 四舍五入后的结果
+     */
+    public static String round(String v, int scale) {
+        if (scale < 0) {
+            throw new IllegalArgumentException(
+                "The scale must be a positive integer or zero");
+        }
+        BigDecimal b = new BigDecimal(v);
+        return b.setScale(scale, BigDecimal.ROUND_HALF_UP).toString();
+    }
+
+    /**
+     * 取余数
+     *
+     * @param v1    被除数
+     * @param v2    除数
+     * @param scale 小数点后保留几位
+     * @return 余数
+     */
+    public static String remainder(String v1, String v2, int scale) {
+        if (scale < 0) {
+            throw new IllegalArgumentException(
+                "The scale must be a positive integer or zero");
+        }
+        BigDecimal b1 = new BigDecimal(v1);
+        BigDecimal b2 = new BigDecimal(v2);
+        return b1.remainder(b2).setScale(scale, BigDecimal.ROUND_HALF_UP).toString();
+    }
+
+    /**
+     * 取余数  BigDecimal
+     *
+     * @param v1    被除数
+     * @param v2    除数
+     * @param scale 小数点后保留几位
+     * @return 余数
+     */
+    public static BigDecimal remainder(BigDecimal v1, BigDecimal v2, int scale) {
+        if (scale < 0) {
+            throw new IllegalArgumentException(
+                "The scale must be a positive integer or zero");
+        }
+        return v1.remainder(v2).setScale(scale, BigDecimal.ROUND_HALF_UP);
+    }
+
+    /**
+     * 比较大小
+     *
+     * @param v1 被比较数
+     * @param v2 比较数
+     * @return 如果v1 大于v2 则 返回true 否则false
+     */
+    public static boolean compare(String v1, String v2) {
+        BigDecimal b1 = new BigDecimal(v1);
+        BigDecimal b2 = new BigDecimal(v2);
+        int bj = b1.compareTo(b2);
+        boolean res;
+        if (bj > 0)
+            res = true;
+        else
+            res = false;
+        return res;
+    }
+}
+```
+
+
+
 
 
 ## 6、数字格式化类
@@ -9025,7 +9321,7 @@ public final class Class<T> extends Object implements Serializable, GenericDecla
 
 ## 1、对象.getClass()
 
-【Object类支持】Object类可以根据实例化对象获取Class对象：
+【**Object类支持**】Object类可以根据实例化对象获取Class对象：`public final Class<?> getClass();`
 
 ```java
 public final Class<?> getClass();
@@ -9053,7 +9349,9 @@ com.example.Person
 
 ## 2、类名.class
 
-【JVM直接支持】采用“类.class”的形式实例化。特点：如果想获得Class类对象，就必须导入程序所对应的开发包。操作示例 2：
+【**JVM直接支持**】采用“类.class”的形式实例化：Object.class
+
+操作示例 2：特点或缺点：如果想获得Class类对象，就必须导入程序所对应的开发包。
 
 ```java
 package com.example;
@@ -9074,7 +9372,7 @@ com.example.Person
 
 ## 3、Class.forName("全类名")
 
-【Class类支持】在Class类中提供有一个static方法 加载类：
+【**Class类支持**】在Class类中提供有一个static方法 加载类：
 
 ```java
 public static Class<?> forName(String className) throws ClassNotFoundException;
@@ -9674,22 +9972,22 @@ com.example.IMessageService
 
 | 方法名称                                                     | 描述                                     |
 | ------------------------------------------------------------ | ---------------------------------------- |
-| public Constructor<?>[] getDeclaredConstructors()            | 获取指定类所有构造方法(不包含父类, 下同) |
+| `public Constructor<?>[] getDeclaredConstructors()`          | 获取指定类所有构造方法(不包含父类, 下同) |
 | `public Constructor<T> getDeclaredConstructor(Class<?>... parameterTypes)` | 获取指定类指定构造方法                   |
-| public Constructor<?>[] getConstructors()                    | 获取指定类所有public的构造方法           |
+| `public Constructor<?>[] getConstructors()`                  | 获取指定类所有public的构造方法           |
 | `public Constructor<T> getConstructor(Class<?>... parameterTypes)` | 获取指定类指定public的构造方法           |
 
 Constructor类常用方法
 
 | 方法名称                                                     | 描述                                         |
 | ------------------------------------------------------------ | -------------------------------------------- |
-| public T newInstance(Object ... initargs)                    | 调用构造方法传入指定参数进行对象实例化       |
-| public String getName()                                      | 获取构造方法名称                             |
-| public Type[] getGenericParameterTypes()                     | 获取构造方法的参数类型                       |
-| public Type[] getGenericExceptionTypes()                     | 获取构造方法抛出的异常类型                   |
-| public int getParameterCount()                               | 获取构造方法的参数个数                       |
+| `public T newInstance(Object ... initargs)`                  | 调用构造方法传入指定参数进行对象实例化       |
+| `public String getName()`                                    | 获取构造方法名称                             |
+| `public Type[] getGenericParameterTypes()`                   | 获取构造方法的参数类型                       |
+| `public Type[] getGenericExceptionTypes()`                   | 获取构造方法抛出的异常类型                   |
+| `public int getParameterCount()`                             | 获取构造方法的参数个数                       |
 | `public <T extends Annotation> T getAnnotation(Class<T> annotationClass)` | 获取全部声明的Annotation                     |
-| public void setAccessible(boolean flag)                      | 设置构造方法可见性(AccessibleObject类的方法) |
+| `public void setAccessible(boolean flag)`                    | 设置构造方法可见性(AccessibleObject类的方法) |
 
 操作示例 1：获取全部构造和指定构造
 

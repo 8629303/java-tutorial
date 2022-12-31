@@ -270,3 +270,4 @@ public class PersonServiceImpl implements PersonService {
 1. http://www.cnblogs.com/fenglie/articles/4097759.html
 2. https://www.zhihu.com/question/39074428/answer/88581202
 3. http://blog.csdn.net/andyzhaojianhui/article/details/51984157
+4. Spring 声名式事务@Transactional注解详解：https://blog.csdn.net/fox_bert/article/details/99460057

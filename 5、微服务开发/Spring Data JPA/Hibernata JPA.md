@@ -2746,7 +2746,7 @@ public class One {
      * 使用多表关联后，Join 就相当有了 root 的功能，可以join.get("对象属性名称")
      * 注意！注意！注意：
      *     Root：代表的是Many表，所以通过root.get()只能获取Many表的属性或字段.
-     *     join：代表的是One表，虽然是关联查询，但它只代表关联的One表，只能获取One的属性
+     *     Join：代表的是One表，虽然是关联查询，但它只代表关联的One表，只能获取One的属性
      *     如果root/join获取自己表以外的属性或字段会报如下错：
      *     Unable to locate Attribute  with the the given name [categoryType] on this ManagedType[XXX]
      *     如果有第三张表关联使用join.join()往下传递即可。
@@ -7636,3 +7636,10 @@ public class Permission {
 
 
 
+# 参考文献 & 鸣谢
+
+1. CSDN（C语言中文社区）十分钟入门 JPA：https://blog.csdn.net/csdn_wangchong/article/details/103095115
+2. CSDN（詠聖wK）JPA注解大全详解参考手册：https://blog.csdn.net/yswKnight/article/details/79257372
+3. CSDN（入秋枫叶）JPA注释详解参考手册：https://blog.csdn.net/yiyelanxin/article/details/100107335
+4. JPA注解大全详解参考手册：https://www.e-learn.cn/topic/2044460
+5. Chapter 4 - JPA Queries (JPQL / Criteria) (objectdb.com)：https://www.objectdb.com/java/jpa/query

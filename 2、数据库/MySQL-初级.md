@@ -234,8 +234,8 @@ docker run -itd -p 3306:3306 --name mysql5.7 -e MYSQL_ROOT_PASSWORD=password mys
 
 docker run -itd -p 3306:3306 
  --name mysqltest1 \
- -e MYSQL_USER="sam" \
- -e MYSQL_PASSWORD="123456" \
+ -e MYSQL_USER="dev" \
+ -e MYSQL_PASSWORD="password" \
  -e MYSQL_ROOT_PASSWORD="password" 
  -v /mydata/mysql/log/:/var/log/mysql \
  -v /mydata/mysql/data:/var/lib/mysql \
@@ -274,7 +274,7 @@ docker run -d -p 3306:3306
   -e MYSQL_ROOT_PASSWORD="root"
   -v /data/docker/mysql/data/conf:/etc/my.cnf 
   -v /data/docker/mysql/data/db:/var/lib/mysql 
-  mysql
+  mysql:8
   --default-authentication-plugin=mysql_native_password
 
 ## 参数说明

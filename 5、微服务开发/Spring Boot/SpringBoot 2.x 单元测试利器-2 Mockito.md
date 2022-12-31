@@ -75,6 +75,10 @@ Mockito也有相应的启动器，在@RunWith注解上面使用这个启动器�
 
 在JUnit 5，使用了@ExtendWith注解来代替@RunWith注解，Mockito也支持JUnit 5，提供了MockitoExtension类。
 
+```java
+@ExtendWith(MockitoExtension.class)
+```
+
 除了使用注解以外，也可以使用静态方法initMocks来实现这个功能：
 
 ```java

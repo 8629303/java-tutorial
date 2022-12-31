@@ -281,8 +281,6 @@ public class JavaAPIDemo {
 
 
 
-
-
 ## 3、限制（limit/skip）
 
 | 方法名              | 描述                                                   |
@@ -986,7 +984,7 @@ public class JavaAPIDemo {
 [10, 20, 30]
 ```
 
-2、将结果集收集到Map
+2、将结果集收集到Map（List 转 Map）
 
 ```java
 @Data
@@ -1013,6 +1011,38 @@ public class JavaAPIDemo {
 // 输出内容
 {李四=二班, 张三=一班, 王五=三班}
 ```
+
+3、toMap解决key重复后异常，如果key重复会报异常，这时得指定重复用哪一个，得加上(oldValue, newValue) -> newValue)
+
+```java
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+class Student{
+    private String name;
+    private Integer age;
+    private String className;
+}
+
+public class JavaAPIDemo {
+    public static void main(String[] args) throws Exception {
+        List<Student> students = Arrays.asList(
+                new Student("张三", 10, "一班"),
+                new Student("李四", 12, "二班"),
+                new Student("老刘", 13, "二班"),
+                new Student("王五", 15, "三班"));
+        Map<String, String> map = students.stream().collect(Collectors.toMap(
+                        Student::getClassName,
+                        Student::getName,
+                        (oldValue, newValue) -> newValue));
+        System.out.println(map);
+    }
+}
+// 输出内容
+{一班=张三, 二班=老刘, 三班=王五}
+```
+
+
 
 
 
@@ -1235,7 +1265,7 @@ public class JavaAPIDemo {
 | 方法名                                | 返回类型       | 作用                                                         |
 | ------------------------------------- | -------------- | ------------------------------------------------------------ |
 | reducing(BinaryOperator b)            | 规约产生的类型 | 利用BinaryOperator与流中元素逐个结合，返回Optional类型       |
-| reducing(T iden, BinaryOperator b)    | 规约产生的类型 | 从一个作为累加器的初始值开始，利用BinaryOperator与流中元素逐个结合，从而归约成单个值 |
+| reducing(T iden, BinaryOperator b)    | 规约产生的类型 | 从一个作为累加器的初始值开始，<br />利用BinaryOperator与流中元素逐个结合，从而归约成单个值 |
 | reducing(T, Function, BinaryOperator) | 规约产生的类型 | 同上                                                         |
 
 `Collectors`类提供的`reducing`方法，相比于`stream`本身的`reduce`方法，增加了对自定义归约的支持。`reducing`有多个重载方法
@@ -1603,8 +1633,9 @@ public class JavaAPIDemo {
 
 # 五、参考文献 & 鸣谢
 
-1. Java8 Stream：2万字20个实例，玩转集合的筛选、归约、分组、聚合：https://blog.csdn.net/mu_wind/article/details/109516995
-2. 波波烤鸭，CSDN：https://dpb-bobokaoya-sm.blog.csdn.net/article/details/117591234
-3. 纪莫，博客园：https://www.cnblogs.com/jimoer/p/10995574.html
-4. 【Java8新特性】面试官：谈谈Java8中的Stream API有哪些终止操作？https://blog.csdn.net/l1028386804/article/details/106416723
-5. Java 8 Stream API学习总结：https://blog.csdn.net/qq_28336351/article/details/106153368
+1. Java8 Stream 详细总结目录：https://blog.csdn.net/winterking3/article/details/116310016
+2. Java8 Stream：2万字20个实例，玩转集合的筛选、归约、分组、聚合：https://blog.csdn.net/mu_wind/article/details/109516995
+3. 波波烤鸭，CSDN：https://dpb-bobokaoya-sm.blog.csdn.net/article/details/117591234
+4. 纪莫，博客园：https://www.cnblogs.com/jimoer/p/10995574.html
+5. 【Java8新特性】面试官：谈谈Java8中的Stream API有哪些终止操作？https://blog.csdn.net/l1028386804/article/details/106416723
+6. Java 8 Stream API学习总结：https://blog.csdn.net/qq_28336351/article/details/106153368
