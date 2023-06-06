@@ -319,6 +319,8 @@ insert into tab_with_index  values(1,'4');
 
 # MySQL执行计划
 
+> 1. 最完整的Explain总结，SQL优化不再困难：https://mp.weixin.qq.com/s/OAlIn-klgln6A4tgk-3E9A
+
  在企业的应用场景中，为了知道优化SQL语句的执行，需要查看SQL语句的具体执行过程，以加快SQL语句的执行效率。
 
  可以使用explain+SQL语句来模拟优化器执行SQL查询语句，从而知道mysql是如何处理sql语句的。
@@ -629,6 +631,80 @@ A:select * from psn;--读取到添加的数据
 B:select * from psn;--读取不到添加的数据
 B:insert into psn values(4,'sisi');--报错，无法插入数据
 --此时发现读取不到数据，但是在插入的时候不允许插入，出现了幻读，设置更高级别的隔离级别即可解决
+```
+
+
+
+# 千万级数据表，如何进行快速查询
+
+> MySQL利用存储过程自动生成千万条数据：https://blog.csdn.net/CrayonShinChaner/article/details/121820454
+>
+> 大厂面试官：千万级数据量的表，如何进行快速查询？https://blog.csdn.net/weixin_45784983/article/details/108295166
+
+## 1、创建数据
+
+1、创建数据表
+
+```sql
+DROP TABLE IF EXISTS `user_operation_log`;
+CREATE TABLE `user_operation_log` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `user_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+    `ip` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+    `op_data` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+    `attr1` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+    `attr2` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+    `attr3` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+    `attr4` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+    `attr5` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+    `attr6` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+    `attr7` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+    `attr8` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+    `attr9` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+    `attr10` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+    `attr11` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+    `attr12` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+```
+
+2、创建数据脚本，这里使用mysql的存储过程（本人是一次性插入，使用的是默认的commit，可以自行采用批量插入，效率会快很多，而且每1000条数就commit，数据量太大，也会导致批量插入效率慢）
+
+```sql
+-- 1.先删除已存在的存储过程
+DROP PROCEDURE IF EXISTS batch_insert_data ;
+-- 2.替换结束符
+DELIMITER //
+-- 3.创建存储过程
+CREATE PROCEDURE batch_insert_data (n INT)
+BEGIN
+  DECLARE num INT DEFAULT 1 ;
+  DECLARE userId INT DEFAULT 10000000 ;
+  DECLARE attr varchar(255) DEFAULT "测试很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长的属性" ;
+
+  WHILE
+    num < n DO 
+    INSERT INTO user_operation_log 
+    (
+        user_id,
+        ip,
+        op_data,
+        attr1, attr2, attr3, attr4, attr5, attr6, attr7, attr8, attr9, attr10,  attr11, attr12
+    ) 
+    VALUES
+    (
+          userId + i,
+          "10.0.69.175",
+          "用户登录操作",
+          attr, attr, attr, attr, attr, attr, attr, attr, attr, attr, attr, attr
+    ) ;
+    SET num = num + 1 ;
+  END WHILE ;
+END //
+-- 4.替换结束符
+DELIMITER ;
+-- 5.call 存储过程生成数据(这一步一般比较久)
+CALL batch_insert_data(10000000);
 ```
 
 

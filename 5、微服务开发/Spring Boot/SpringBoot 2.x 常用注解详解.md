@@ -1,6 +1,6 @@
-> 作者：Java后端架构猛猛。地址：  https://blog.csdn.net/m0_67645544/article/details/125209378
->
-> 作者：魅Lemon。地址：https://blog.csdn.net/lemon_TT/article/details/124172927
+> 1. 万字详解！Spring注解开发！https://mp.weixin.qq.com/s/ZjRIWWtUjXVidCFKL78qUA
+>2. 作者：Java后端架构猛猛。地址：  https://blog.csdn.net/m0_67645544/article/details/125209378
+> 3. 作者：魅Lemon。地址：https://blog.csdn.net/lemon_TT/article/details/124172927
 
 ## Spring Web MVC  注解
 

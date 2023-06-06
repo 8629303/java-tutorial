@@ -290,6 +290,16 @@ SpringData JPA接口继承结构：
                JpaRepository                       JpaRepository                JpaSpecificationExecutor
 ```
 
+- Repository（org.springframework.data.repository）：没有暴露任何方法
+- CrudRepository（org.springframework.data.repository）：简单的 Curd 方法
+- PagingAndSortingRepository（org.springframework.data.repository）：带分页和排序的方法
+- QueryByExampleExecutor（org.springframework.data.repository.query)）简单 Example 查询
+- JpaRepository（org.springframework.data.jpa.repository）：JPA 的扩展方法
+- JpaSpecificationExecutor（org.springframework.data.jpa.repository)）：JpaSpecification 扩展查询
+- QueryDslPredicateExecutor（org.springframework.data.querydsl）：QueryDsl 的封装
+- SimpleJpaRepository（org.springframework.data.jpa.repository.support)）：JPA 所有接口的默认实现类
+- QueryDslJpaRepository（org.springframework.data.jpa.repository.support）：QueryDsl 的实现类
+
 
 
 ## 2、SpringData Repository 接口
@@ -300,6 +310,17 @@ Repository 接口自带了如下两种查询方式：
 - 2）提供了@Query注解查询与更新
 
 作用主要是把当前接口加入SpringDataJPA中，使其拥有SpringDataJPA的功能。后面会介绍如上2种查询方式。
+
+> 持久层接口继承 Repository 并不是唯一选择。Repository 接口是 SpringData 的一个核心接口，它不提供任何方法，开发者需要在自己定义的接口中声明需要的方法。
+>
+> 与继承 Repository 等价的一种方式，就是在持久层接口上使用 @RepositoryDefinition 注解，并为其指定 domainClass 和 idClass 属性。如下两种方式是完全等价的：
+>
+> ```java
+> public interface UserRepository extends Repository<User, Long> {}
+> 
+> @RepositoryDefinition(domainClass = User.class, idClass = Long.class)
+> public interface UserRepository {}
+> ```
 
 
 
@@ -671,7 +692,7 @@ public class UserPagingAndSortingTests {
     public void test1(){
         /**
          * Pageable：封装了分页的参数，当前页，每页显示的条数。注意：当前页是从0开始
-         * PageRequest(page,size)：page表示当前页，size表示每页显示多少条
+         * PageRequest(page, size)：page表示当前页，size表示每页显示多少条
          */
         Pageable pageable = PageRequest.of(0, 2);
         Page<User> page = this.userPagingAndSortingRepository.findAll(pageable);
@@ -2237,7 +2258,7 @@ public interface ExampleMatcher {
 
 
 
-### 6、QueryByExampleExecutor 的实现源码
+### 6、QueryByExampleExecutor 实现源码
 
 （1）我们通过开发工具——Hierarchy，来看一下其接口的实现类有哪些：
 
@@ -2290,6 +2311,13 @@ public class SimpleJpaRepository<T, ID> implements JpaRepositoryImplementation<T
 
 - 学习源码的编程思想；
 - 学习源码的实现方式，我自己如何写，这样可以很快的提高我们自己的编程水平。
+
+
+
+### 7、QueryByExampleExecutor 参考文献 & 鸣谢
+
+1. Spring Data JPA 之 QueryByExampleExecutor 的用法和原理分析：https://blog.csdn.net/qq_40161813/article/details/125581497
+2. Spring Data JPA 从入门到精通~QueryByExampleExecutor的使用：https://blog.csdn.net/listeningsea/article/details/122378964
 
 
 
@@ -3333,7 +3361,9 @@ JPA之Criteria查询：第一种：通过JPA的Criteria API实现。第二种：
 3. 博客园，JPA Criteria 查询：类型安全与面向对象：https://www.cnblogs.com/JAYIT/p/6972144.html
 4. CSDN（天涯泪小武）JPA 复杂条件查询Group By等等：https://tianyalei.blog.csdn.net/article/details/90704969
 5. CNDN（流烟默）JpaSpecificationExecutor复杂动态查询实例：https://blog.csdn.net/J080624/article/details/84581231
-6. spring data jpa 动态查询 Specification 自定义工具类：https://blog.csdn.net/qq_32786139/article/details/86473544
+6. SpringDataJPA 动态查询 Specification 自定义工具类：https://blog.csdn.net/qq_32786139/article/details/86473544
+7. SpringDataJPA Specification 子查询实现：https://blog.csdn.net/xuyp95/article/details/91909036
+8. 使用JPA Specification EntityManager 多条件 复杂动态查询 子查询 组合 and or 分组 分页 排序 案例：https://blog.csdn.net/weixin_41347419/article/details/105098113
 
 
 
@@ -8051,7 +8081,7 @@ public class UserInfo implements Serializable {   // 用户信息类(从表)
     /**
      * @ManyToOne:
      *   fetch: 默认就是立即加载, 为了性能一般都使用懒加载
-     * targetEntity, cascade 与 optional 属性一般可以不配置（当前案例开启级联操作）
+     *   注意: targetEntity, cascade 与 optional 属性一般可以不配置（当前案例开启级联操作）
      *   targetEntity: JPA会自动判断,所以可以不配置
      *   cascade: 级联操作, 一般双向一对多时, 多方不开启级联操作
      *   optional: 关联是否可选, 一般选择可选填 默认是可选true, 所以可以不配置
@@ -8649,11 +8679,13 @@ class JpaApplicationTests {
 1、很多情况下，暂时不想每次外键字段都去查询类，我只想要一个字段，并且还想使用上咱们的级联操作，那么我们可以搭配使用：既使用字段，又使用关联引用类。实体类代码如下（本次案例使用 主从实体类都使用级联操作、延迟加载）：
 
 ```java
+// 主类
 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 private List<UserInfo> userInfos = new ArrayList<>();
 ```
 
 ```java
+// 从类
 // 虽然已经定义关联属性引用类, 为了方便这里还特意了一个外键属性字段, 值必须与JoinColumn.name一致
 @Column(name = "user_id")
 private Long userId;
@@ -8662,7 +8694,7 @@ private Long userId;
 private User user;
 ```
 
-> 同时使用外键属性字段 + 外键引用类型字段时，需要在@JoinColumn增加`insertable = false, updatable = false`配置
+> **注意**：同时使用外键属性字段 + 外键引用类型字段时，需要在@JoinColumn增加`insertable = false, updatable = false`
 
 ```java
 @SpringBootTest
@@ -10348,12 +10380,13 @@ class JpaApplicationTests {
 
 ## 6、实体类映射之 参考文献 & 鸣谢
 
-1. 讲明白Spring Data JPA实体关联注解：https://blog.csdn.net/DBC_121/article/details/104997083
+1. 讲明白Spring Data JPA实体关联注解：
+   - https://blog.csdn.net/DBC_121/article/details/104997083
+   - https://dengbocong.blog.csdn.net/article/details/104997083
+
 2. Spring Data JPA（多表设计、一对多、多对多、多表查询）https://mp.weixin.qq.com/s/XezlJDltvugRFpSmcrjedw
 3. Spring Data JPA 之 实体之间关联关系：https://blog.csdn.net/qq_40161813/article/details/125109649
 4. SpringDataJPA实体类关系映射配置：https://blog.csdn.net/qq_42315782/article/details/103280330
-
-
 
 
 
@@ -10517,7 +10550,7 @@ spring.jpa.properties.hibernate.enable_lazy_load_no_trans=true
 总结懒加载会话失效异常解决方案就两点：
 
 1. 关闭懒加载，开启立即加载
-2. 延长session的生命周期
+2. 延长Session的生命周期
 
 
 
@@ -10969,19 +11002,57 @@ java.lang.RuntimeException: com.fasterxml.jackson.databind.exc.InvalidDefinition
 # 参考文献 & 鸣谢
 
 1. 博客园（蚂蚁小哥）Spring Data JPA入门及深入（重点）https://www.cnblogs.com/antLaddie/p/12996320.html
-2. 博客园（路迢迢）Spring Data JPA 基本使用（重点）https://www.cnblogs.com/chenglc/p/11226693.html
-3. CSDN（布道）JPA之Spring Data JPA（重点）https://blog.csdn.net/alex_xfboy/article/details/82907517
+2. CSDN（布道）JPA之Spring Data JPA（重点）https://blog.csdn.net/alex_xfboy/article/details/82907517
 4. SpringDataJpa中的复杂查询和动态查询，多表查询（保姆级教程）https://juejin.cn/post/6844904160807092237
 
 Spring Data JPA 文章汇总：
 
-1. 博客园（如莲家园）Spring Data JPA Tag：https://www.cnblogs.com/rulian/tag/jpa/
-2. 曾小二的秃头之路：https://blog.csdn.net/qq_40161813/category_11746503.html
-3. IT利刃出鞘：https://blog.csdn.net/feiying0canglang/category_11318443.html
-4. 作者: ?abc!：https://blog.csdn.net/yyuggjggg/category_11517945.html
-5. https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzIwMjgxMTY2MQ==&action=getalbum&album_id=2452725517146685442
+1. 曾小二的秃头之路：https://blog.csdn.net/qq_40161813/category_11746503.html
+2. IT利刃出鞘：https://blog.csdn.net/feiying0canglang/category_11318443.html
+3. 架构悟道：https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzIwMjgxMTY2MQ==&action=getalbum&album_id=2452725517146685442
 
 
 
 
+
+1. SpringData JPA整理：https://blog.csdn.net/hongyinanhai00/article/details/115047181
+
+
+
+
+
+1、配置JPA的数据源，需要配置：
+
+- DataSource数据源
+- EntityManager 实体管理器
+- EntityManagerFactoryBean 实体管理器工厂
+- PlatformTransactionManager 事务管理器
+
+2、@PersistenceUnit、@PersistenceContext：https://blog.csdn.net/tfstone/article/details/119330721
+
+```java
+@PersistenceUnit // @PersistenceUnit用来注入EntityManagerFactory
+EntityManagerFactory entityManagerFactory;
+@PersistenceContext // PersistenceContext 用来注入EntityManager
+EntityManager entityManager;
+```
+
+
+
+3、SpringBoot配置实体管理器EntityManager：https://blog.csdn.net/qq_20916555/article/details/80860002
+
+EntityManager是JPA中用于增删改查的接口，它的作用相当于一座桥梁，连接内存中的java对象和数据库的数据存储。使用EntityManager中的相关接口对数据库实体进行操作的时候， EntityManager会跟踪实体对象的状态，并决定在特定时刻将对实体的操作映射到数据库操作上面。
+
+EntityManager的核心概念图：
+
+```
+   Persistence
+     1 ⬇ 创
+     * ⬇ 建         1  *
+EntityManageFactory ➡➡   EntityManag
+     1 ⬆ 配          创建      * ⬇ 管
+     1 ⬆ 置         1  *       1 ⬇ 理
+  PersistenceUnit   ➡➡ PersistenceContext
+                    创建
+```
 

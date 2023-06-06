@@ -1,8 +1,17 @@
 ## 1、项目启动时行初始化方法前言
 
-目前开发的SpringBoot项目在启动的时候需要预加载一些资源。而如何实现启动过程中执行代码，或启动成功后执行，是有很多种方式可以选择，我们可以在**static**代码块中实现，也可以在**构造方法**里实现，也可以使用**@PostConstruct**注解实现。
+目前开发的SpringBoot项目在启动的时候需要预加载一些资源。而如何实现启动过程中执行代码，或启动成功后执行，是有很多种方式可以选择，我们可以在**static代码**块中实现，也可以在**构造方法**里实现，也可以使用**@PostConstruct**注解实现。
 
 当然也可以去实现Spring的**ApplicationRunner**与**CommandLineRunner**接口去实现启动后运行的功能。在这里整理一下，在这些位置执行的区别以及加载顺序。
+
+如下是Spring中常用的初始化方式
+
+1. 实现 CommandLineRunner 接口
+2. 实现 ApplicationRunner 接口
+3. 通过 EventListener 监听启动事件
+4. 通过 @Postconstruct 注解
+5. 实现 InitializingBean 接口
+6. 通过 @Bean 注解
 
 
 

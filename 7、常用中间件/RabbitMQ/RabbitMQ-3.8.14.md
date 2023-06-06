@@ -6845,6 +6845,7 @@ disk_free_limit.absolute = 50mb
 2. RabbitMQ 标签汇总【博客园-beixuan】https://www.cnblogs.com/beixuan/tag/RabbitMQ
 3. RabbitMQ 标签汇总【博客园-hh blog】https://www.cnblogs.com/dtdx/tag/rabbitmq
 4. RabbitMQ 标签汇总【CSDN-gblfy】https://blog.csdn.net/weixin_40816738/category_9677892.html
+5. RabbitMQ超详细学习笔记（章节清晰+通俗易懂）https://bareth.blog.csdn.net/article/details/121687489
 
 ***
 

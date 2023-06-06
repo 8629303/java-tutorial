@@ -1,12 +1,6 @@
-# SpringBoot 如何读取HTTP头信息？
+> 来源：如何在Spring REST Controller中读取HTTP头信息？https://mp.weixin.qq.com/s/XegHYTV40bIimDgIFIIhGg
 
-> 1. 如何在Spring REST Controller中读取HTTP头信息？https://mp.weixin.qq.com/s/XegHYTV40bIimDgIFIIhGg
-> 2. Http Header中到底有些啥？https://mp.weixin.qq.com/s/teQPo7HrqT5Yvnx8ZjzHsA
-> 3. 你还在为 HTTP 的这些概念头疼吗？https://mp.weixin.qq.com/s/EAFIAr4NtmPF7tQ7rUJNvg
-
-
-
-## 1、Header 参数说明
+# 1、Header 参数说明
 
 1、Http协议
 
@@ -77,13 +71,13 @@ HTTP（HyperTextTransferProtocol）  即超文本传输协议，目前网页传�
 
 
 
-## 2、访问HTTP头信息
+# 2、访问HTTP头信息
 
 在这个快速教程中，我们将看看如何在Spring Rest Controller中访问HTTP头信息。
 
 首先，我们将使用@RequestHeader注解来单独或一起读取头信息。之后，我们将深入了解@RequestHeader的属性。
 
-### 2.1、获取单独头
+## 1、获取单独头
 
 如果我们需要访问特定的头，我们可以用注解@RequestHeader + 头的名称配置（可以用字符串或者数字类型接收）
 
@@ -105,14 +99,14 @@ public ResponseEntity<String> doubleNumber(@RequestHeader("my-number") int myNum
 
 
 
-### 2.2、获取所有头
+## 2、获取所有头
 
 如果我们不确定哪些头会出现，或者我们需要的头比我们的方法签名中需要的多，我们可以使用@RequestHeader注解，而不需要一个特定的名称。
 
 - 我们的变量类型有几种选择：Map、MultiValueMap、HttpHeaders 对象。
 - 当我们从Map、MultiValueMap或HttpHeaders对象中通过名称访问一个头时，如果它不存在，我们将得到一个null
 
-1、Map 对象获取：首先，让我们以Map的形式获取请求头。
+【操作示例 1】Map 对象获取：首先，让我们以Map的形式获取请求头。
 
 ```java
 @GetMapping("/listHeaders")
@@ -124,11 +118,10 @@ public ResponseEntity<String> listAllHeaders(@RequestHeader Map<String, String> 
 }
 ```
 
-注意：如果我们使用一个Map，并且其中一个头有多个值，我们将只得到第一个值。这相当于在一个MultiValueMap上使用getFirst方法。
+> 注意：如果我们使用一个Map，并且其中一个头有多个值，我们将只得到第一个值。这相当于在一个MultiValueMap上使用getFirst方法。
+>
 
-
-
-2、MultiValueMap 对象获取：如果我们的headers可能有多个值，我们可以以MultiValueMap的方式获取它们。
+【操作示例 2】MultiValueMap 对象获取：如果我们的headers可能有多个值，我们可以以MultiValueMap的方式获取它们。
 
 ```java
 @GetMapping("/multiValue")
@@ -140,9 +133,7 @@ public ResponseEntity<String> multiValue(@RequestHeader MultiValueMap<String, St
 }
 ```
 
-
-
-3、HttpHeaders 对象获取：我们也可以以HttpHeaders对象的形式获得我们的头信息（HttpHeaders 对象有常见应用头的访问器）
+【操作示例 3】HttpHeaders 对象获取：我们也可以以HttpHeaders对象的形式获得我们的头信息（HttpHeaders 对象有常见应用头的访问器）
 
 ```java
 @GetMapping("/getBaseUrl")
@@ -155,9 +146,7 @@ public ResponseEntity<String> getBaseUrl(@RequestHeader HttpHeaders headers) {
 
 
 
-
-
-## 3、HTTP头注解属性
+# 3、HTTP头注解属性
 
 现在我们已经介绍了使用@RequestHeader注解访问请求头的基础知识，让我们仔细看看它的属性。
 
@@ -207,3 +196,10 @@ public ResponseEntity<String> evaluateDefaultHeaderValue(
 
 
 
+# 4、参考文献 & 鸣谢
+
+SpringBoot 如何读取 HTTP Header？
+
+1. 如何在Spring REST Controller中读取HTTP头信息？https://mp.weixin.qq.com/s/XegHYTV40bIimDgIFIIhGg
+2. Http Header中到底有些啥？https://mp.weixin.qq.com/s/teQPo7HrqT5Yvnx8ZjzHsA
+3. 你还在为 HTTP 的这些概念头疼吗？https://mp.weixin.qq.com/s/EAFIAr4NtmPF7tQ7rUJNvg

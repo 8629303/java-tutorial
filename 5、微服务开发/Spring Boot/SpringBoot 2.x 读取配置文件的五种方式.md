@@ -1,6 +1,8 @@
+> SpringBoot的外部化配置：http://it.hzqiuxm.com/springboot%e6%95%99%e7%a8%8b%e7%b3%bb%e5%88%973/#i
+
 # 一、读取Spring配置文件的几种方式
 
-## 0、配置文件绑定变量前言
+## 1、配置文件绑定变量前言
 
 Spring Boot 中读取配置文件有以下 5 种方法：
 
@@ -21,7 +23,7 @@ profile.desc=Spring Boot Profile Desc.
 
 
 
-## 1、@Value 读取配置文件
+## 2、@Value 读取配置文件
 
 使用 @Value 可以读取单个配置项，如下代码所示：
 
@@ -50,7 +52,7 @@ My Profile Name：Spring Boot Profile
 
 
 
-## 2、@ConfigurationProperties 读取配置文件
+## 3、@ConfigurationProperties 读取配置文件
 
 @ConfigurationProperties 和 @Value 的使用略微不同，@Value 是读取单个配置项的，而 @ConfigurationProperties 是读取一组配置项的，我们可以使用 @ConfigurationProperties 加实体类读取一组配置项，如下代码所示：
 
@@ -95,7 +97,7 @@ Profile Object:Profile(name=Spring Boot Profile, desc=Spring Boot Profile Desc.)
 
 
 
-## 3、@PropertySource 读取配置文件
+## 4、@PropertySource 读取配置文件
 
 使用 @PropertySource 注解可以用来指定读取某个配置文件，比如指定读取 abc.properties 配置文件的配置内容，具体实现代码如下：
 

@@ -1,6 +1,150 @@
+# 一、SpringApplication 自定义启动
+
+> 来源：Springboot教程系列(2) 小谈SpringApplication启动：http://it.hzqiuxm.com/springboot%e6%95%99%e7%a8%8b%e7%b3%bb%e5%88%97%e4%b9%8b-2/
+
+在Springboot装配入门指南中我们简单了解了下组合注解@SpringbootApplication，它的本质是一个配置角色注解模式，同时开启了自动装配等功能。那我们是如何启动一个Springboot项目的呢？
+
+SpringBoot项目中有一个启动类，该启动类会使用@SpringbootApplication进行标注，main方法中会统一使用SpringApplication.run()方法来启动。
+
+我们今天的主角就是SpringApplication，谈谈它的启动和运行过程，其中会涉及到上下文应用加载、应用事件加载、应用监听器，应用推断、引导类推断、应用广播等概念
 
 
-# 一、SpringBoot 启动流程及原理（自动配置）
+
+## 1、第一种：SpringApplicationAPI 方式
+
+1、本类作为run参数
+
+```java
+@SpringBootApplication
+public class NovelApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(NovelApplication.class, args);
+    }
+}
+```
+
+2、其他类作为启动run启动参数
+
+```java
+public class NovelApplication {
+    public static void main(String[] args) {
+        Set<String> sources = new HashSet();
+        sources.add(ApplicationConfiguration.class.getName());
+        SpringApplication springApplication = new SpringApplication();
+        springApplication.setSources(sources);
+        // Banner打印模式设置
+        springApplication.setBannerMode(Banner.Mode.CONSOLE);
+        // web应用类型设置
+        springApplication.setWebApplicationType(WebApplicationType.NONE);
+        // 环境设置
+        springApplication.setAdditionalProfiles("prod");
+        // 图形界面设置
+        springApplication.setHeadless(true);
+        // 启动
+        springApplication.run(args);
+    }
+    @SpringBootApplication
+    public static class ApplicationConfiguration {
+        // 故意不使用NovelApplication类作为run的参数
+    }
+}
+```
+
+
+
+## 2、第二种：SpringApplicationBuilderAPI 方式
+
+SpringApplicationBuilder是SpringApplication和ApplicationContext实例的构建器，具有便利的流利的 API 和上下文层次结构支持。
+
+```java
+@SpringBootApplication
+public class NovelApplication {
+    // NovelApplication 是设置SpringBoot应用的入口。 @SpringBootApplication 注解启用自动配置和组件扫描
+    public static void main(String[] args) {
+        // new SpringApplicationBuilder(NovelApplication.class) == new SpringApplicationBuilder()..sources(NovelApplication.class)
+        ConfigurableApplicationContext applicationContext =
+                new SpringApplicationBuilder(NovelApplication.class)  // main方法主类
+                        .bannerMode(Banner.Mode.CONSOLE)  // Banner打印模式设置
+                        .web(WebApplicationType.SERVLET)  // web应用类型设置
+                        .profiles("prod")  // 环境设置
+                        .headless(true)  // 图形界面设置
+                        .properties("server.port=8848") // 改变端口号
+                        .run(args);  // 启动
+    }
+}
+```
+
+有时我们需要创建多层次的ApplicationContext （例如，父子关系的Spring的ApplicationContext 和 SpringMVC），这时我们可以使用SpringApplicationBuilder将多个方法调用串起来，通过 parent() 和 child() 来创建多层次的ApplicationContext。
+
+1、SpringApplication和ApplicationContext实例的构建器，具有方便的Builder API和上下文层次结构支持。上下文层次结构的简单示例：
+
+```java
+@SpringBootApplication
+public class NovelApplication {
+    public static void main(String[] args) {
+        new SpringApplicationBuilder(NovelApplication.class)
+                .parent(ParentConfig.class)
+                .child(ChildConfig.class)
+                .run(args);
+    }
+}
+```
+
+2、另一个常见用例是设置激活配置文件和默认属性以设置应用程序的环境：
+
+```java
+@SpringBootApplication
+public class NovelApplication {
+    public static void main(String[] args) {
+        new SpringApplicationBuilder(NovelApplication.class)
+                .profiles("test")
+                .properties("password=aka")
+                .run(args);
+    }
+}
+```
+
+3、配置多个配置文件，切换profile环境、以及启动多个Spring容器
+
+```java
+@SpringBootApplication
+public class TestProfiles {
+    public static void main(String[] args) {
+        // 启动第一个Spring容器，默认端口为8080
+        ConfigurableApplicationContext context1 = new SpringApplicationBuilder(TestProfiles.class)
+            .properties("spring.config.location=classpath:/test-profiles.yml")
+            .properties("spring.profiles.active=oracle")
+            .run(args);
+        // 输出变量
+        System.out.println(context1.getEnvironment().getProperty("jdbc.driver"));
+
+        // 启动第二个Spring容器，指定端口为8848
+        ConfigurableApplicationContext context2 = new SpringApplicationBuilder(TestProfiles.class)
+            .properties("spring.config.location=classpath:/test-profiles.yml")
+            .properties("spring.profiles.active=mysql")
+            .properties("server.port=8848")
+            .run(args);
+        // 输出变量
+        System.out.println(context2.getEnvironment().getProperty("jdbc.driver"));
+    }
+}
+```
+
+如果需求很简单，使用SpringApplication类中的静态方法即可。创建ApplicationContext层次结构时有一些限制，例如，Web组件必须包含在子上下文中，并且父上下文和子上下文都使用相同的环境。
+
+
+
+## 3、SpringApplicationBuilder parent 应用场景
+
+SpringApplicationBuilder类是Spring框架的一部分，它可以用来构建和运行Spring应用程序。在这个类中有一个parent属性，它可以用来指定一个"父"应用程序上下文，这个上下文中包含了一些共享的bean定义和资源。
+
+应用场景：
+
+当你想在一个已经存在的Spring应用程序上下文中构建另一个应用程序时，可以使用parent属性。这在微服务架构中很有用，因为你可以在一个"父"应用程序上下文中共享公共的Bean定义和资源，而不用在每个子应用程序中都重复定义。
+
+
+
+# 二、SpringBoot 启动流程及原理（自动配置）
 
 > SpringBoot 启动过程:
 >
@@ -1748,7 +1892,7 @@ public ConfigurableApplicationContext run(String... args) {
 
 
 
-# 二、SpringBoot 启动类上的注解（自动配置）
+# 三、SpringBoot 启动类上的注解（自动配置）
 
 > 作者：Jimoer；来源：https://mp.weixin.qq.com/s/ibJnLu4vplGadWcWBqdPpQ
 
@@ -2137,11 +2281,12 @@ SpringBoot 启动时，是依靠启动类的main方法来进行启动的，而ma
 
 
 
-# 三、Spring-Boot-Starter 自定义及原理
+# 四、Spring-Boot-Starter 的自定义及原理
 
 > 1. 作者：业余草；来源：https://mp.weixin.qq.com/s/fcCz1V2asnLGmdYGo-uILg
 > 2. 作者：Java笔记虾；来源：https://mp.weixin.qq.com/s/42HzC1AFbDb7tOWb_tdezQ
 > 3. 作者：苏三说技术；来源：https://mp.weixin.qq.com/s/_dCZpoFGzkSSLXdz9rzI8g
+> 4. Springboot如何自定义Starter（主要是步骤）https://blog.csdn.net/weixin_47356044/article/details/124937738
 
 ## 1、Starter 场景启动器前言
 
@@ -4004,10 +4149,5 @@ public class TestSpringBootApplication {
 {"ID":4,"NAME":"Sandy","TYPE":"master"},
 {"ID":5,"NAME":"Oliver","TYPE":"master"}]
 ```
-
-
-
-
-
 
 

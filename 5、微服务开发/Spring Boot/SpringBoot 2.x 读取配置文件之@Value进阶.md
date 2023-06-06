@@ -1,6 +1,5 @@
-> 作者：码农小胖哥
+> 作者：码农小胖哥，来源：https://mp.weixin.qq.com/s/MqthQ803CpzLdLmNXrKmEQ
 >
-> 链接：https://mp.weixin.qq.com/s/MqthQ803CpzLdLmNXrKmEQ
 
 ## 一、@Value前言
 

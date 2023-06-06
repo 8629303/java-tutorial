@@ -3156,14 +3156,21 @@ public void testQueryUserById(){
 
 
 
-
-
 # 12、参考资料 & 鸣谢
 
 1. Mr.Yan（tag）：http://www.yanhongzhi.com/cate/Mybatis
-2. Mybatis注解大全：http://www.yanhongzhi.com/post/mybatis-annotation.html
-3. SpringBoot+Mybatis XML配置文件详解：https://blog.csdn.net/stopping5/article/details/108629820
-4. [MyBatis基础用法--插件开发](https://blog.csdn.net/pengjunlee/article/details/78175871)、[MyBatis自定义拦截器插件](https://blog.csdn.net/x763795151/article/details/87886492)
-5. [MyBatis 的执行流程](https://mp.weixin.qq.com/s/UqgXw0qOW1H1-Dqh5NtueA)
-6. [写过Mybatis插件？那说说自定义插件是如何加载的吧？](https://mp.weixin.qq.com/s/smXAnSro5v7gFK9mGQGaWA)
+
+2. SpringBoot+Mybatis XML配置文件详解（有系列）：https://blog.csdn.net/stopping5/article/details/108629820
+
+3. MyBatis基础用法--插件开发：https://blog.csdn.net/pengjunlee/article/details/78175871
+
+4. MyBatis自定义拦截器插件：https://blog.csdn.net/x763795151/article/details/87886492
+
+5. Mybatis学习笔记 - 01~04：https://blog.csdn.net/a1092882580/article/details/104086181
+
+6. MyBatis源码分析-SQL语句执行的完整流程：https://blog.csdn.net/weixin_33729196/article/details/86352032
+
+7. MyBatis 的执行流程：https://mp.weixin.qq.com/s/UqgXw0qOW1H1-Dqh5NtueA
+
+   
 

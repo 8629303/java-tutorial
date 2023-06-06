@@ -1,4 +1,6 @@
 > 作者：SpringForAll；来源：https://mp.weixin.qq.com/s/JzoY4jMyydW_Ae9aIM4ETA
+>
+> Spring事务详解：https://blog.csdn.net/csdn_wyl2016/category_11607107.html
 
 # 一、Spring 事务基本原理
 
@@ -139,7 +141,81 @@ public class PersonServiceImpl implements PersonService {
 }
 ```
 
-# 四、Spring 事务的传播属性
+
+
+# 四、Spring 编程式事务
+
+```java
+/**
+ * 注入
+ */
+@Autowired
+private DataSourceTransactionManager transactionManager;
+
+@Override
+public String interfaceTest(Map<String, Object> map) {
+    DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+    // 设置事务名称
+    def.setName("test-Transactional");
+    // 读写或只读事务、默认：读写
+    def.setReadOnly(true);
+    // 事务超时时间，默认：不超时 单位：秒
+    def.setTimeout(10);
+    /**
+     * 设置事务的隔离级别
+     *
+     * 1、TransactionDefinition.ISOLATION_DEFAULT
+     *    这是一个默认的隔离级别，默认使用数据库的隔离级别。
+     * 2、TransactionDefinition.ISOLATION_READ_UNCOMMITTED
+     *    这是事务最低的隔离界别，他允许别的事务可以看到这个事务未提交的数据。
+     *    这种隔离级别可能会产生脏读，不可重复读和幻像读。
+     * 3、TransactionDefinition.ISOLATION_READ_COMMITTED
+     *    这个级别可以保证在数据提交以后才能被另个一个事务读取。
+     *    这种隔离级别可以避免脏读，但是可能会出现不可重复读和幻读。
+     * 4、TransactionDefinition.ISOLATION_REPEATABLE_READ
+     *    这个级别可以禁止一个事务读取一个没有提交变化的行。
+     *    这种隔离级别可以防止脏读和不可重复读，但是可能会出现幻读。
+     * 5、TransactionDefinition.ISOLATION_SERIALIZABLE
+     *    这种隔离级别可以防止脏读、不可重复读、幻读。
+     *
+     */
+    def.setIsolationLevel(TransactionDefinition.ISOLATION_DEFAULT);
+    /**
+     * 设置事务的传播行为
+     *
+     * 1、TransactionDefinition.PROPAGATION_REQUIRED
+     *    如果当前存在事务，则加入该事务，如果当前没有事务，则创建一个新的事务。默认值
+     * 2、TransactionDefinition.PROPAGATION_REQUIRES_NEW
+     *    创建一个新的事务，如果当前存在事务，则把当前的事务挂起。
+     * 3、TransactionDefinition.PROPAGATION_SUPPORTS
+     *    如果当前存在事务，则加入该事务，如果当前没有事务，则以非事务的方式继续运行。
+     * 4、TransactionDefinition.PROPAGATION_NOT_SUPPORTED
+     *    以非事务方式运行，如果当前存在事务，则把当前事务挂起。
+     * 5、TransactionDefinition.PROPAGATION_NEVER
+     *    以非事务方式运行，如果当前存在事务，则抛出异常。
+     * 6、TransactionDefinition.PROPAGATION_MANDATORY
+     *    如果当前存在事务、则加入该事务，如果当前没有事务，则抛出异常
+     * 7、TransactionDefinition.PROPAGATION_NESTED
+     *    如果当前存在事务，则创建一个事务作为当前事务的嵌套事务来运行。
+     *    如果当前没有事务，则该取值等价于TransactionDefinition.PROPAGATION_REQUIRED。
+     */
+    def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+    TransactionStatus transactionStatus = transactionManager.getTransaction(def);
+    try {
+        //
+        // 提交事务
+        transactionManager.commit(transactionStatus);
+    } catch (Exception e) {
+        // 回滚事务
+        transactionManager.rollback(transactionStatus);
+    }
+    return null;
+}
+```
+
+
+
+# 五、Spring 事务的传播属性
 
 所谓spring事务的传播属性，就是定义在存在多个事务同时存在的时候，spring应该如何处理这些事务的行为。这些属性在TransactionDefinition中定义，具体常量的解释见下表：
 
@@ -153,7 +229,7 @@ public class PersonServiceImpl implements PersonService {
 |     PROPAGATION_NEVER     |       以非事务方式执行，如果当前存在事务，则抛出异常。       |
 |    PROPAGATION_NESTED     | 如果一个活动的事务存在，则运行在一个嵌套的事务中。如果没有活动事务，则按REQUIRED属性执行。它使用了一个单独的事务，这个事务拥有多个可以回滚的保存点。内部事务的回滚不会对外部事务造成影响。它只对DataSourceTransactionManager事务管理器起效。 |
 
-# 五、数据库隔离级别
+# 六、数据库隔离级别
 
 | 隔离级别         | 隔离级别的值 | 导致的问题                                                   |
 | :--------------- | :----------- | :----------------------------------------------------------- |
@@ -172,7 +248,7 @@ public class PersonServiceImpl implements PersonService {
 2. 大多数的数据库默认隔离级别为 Read Commited，比如 SqlServer、Oracle
 3. 少数数据库默认隔离级别为：Repeatable Read 比如：MySQL InnoDB
 
-# 六、Spring 中的隔离级别
+# 七、Spring 中的隔离级别
 
 |            常量            |                             解释                             |
 | :------------------------: | :----------------------------------------------------------: |
@@ -182,7 +258,7 @@ public class PersonServiceImpl implements PersonService {
 | ISOLATION_REPEATABLE_READ  | 这种事务隔离级别可以防止脏读，不可重复读。但是可能出现幻像读。 |
 |   ISOLATION_SERIALIZABLE   | 这是花费最高代价但是最可靠的事务隔离级别。事务被处理为顺序执行。 |
 
-# 七、事务的嵌套
+# 八、事务的嵌套
 
 通过上面的理论知识的铺垫，我们大致知道了数据库事务和Spring事务的一些属性和特点，接下来我们通过分析一些嵌套事务的场景，来深入理解Spring事务传播的机制。
 
@@ -240,7 +316,7 @@ public class PersonServiceImpl implements PersonService {
 
 
 
-# 八、事务的总结
+# 九、事务的总结
 
 对于项目中需要使用到事务的地方，我建议开发者还是使用Spring的TransactionCallback接口来实现事务，不要盲目使用Spring事务注解，如果一定要使用注解，那么一定要对Spring事务的传播机制和隔离级别有个详细的了解，否则很可能发生意想不到的效果。
 
@@ -265,9 +341,10 @@ public class PersonServiceImpl implements PersonService {
 
 
 
-# 九、参考文献 & 鸣谢
+# 十、参考文献 & 鸣谢
 
-1. http://www.cnblogs.com/fenglie/articles/4097759.html
-2. https://www.zhihu.com/question/39074428/answer/88581202
-3. http://blog.csdn.net/andyzhaojianhui/article/details/51984157
-4. Spring 声名式事务@Transactional注解详解：https://blog.csdn.net/fox_bert/article/details/99460057
+1. Spring事务详解：https://blog.csdn.net/csdn_wyl2016/category_11607107.html
+2. http://www.cnblogs.com/fenglie/articles/4097759.html
+3. https://www.zhihu.com/question/39074428/answer/88581202
+4. http://blog.csdn.net/andyzhaojianhui/article/details/51984157
+5. Spring 声名式事务@Transactional注解详解：https://blog.csdn.net/fox_bert/article/details/99460057

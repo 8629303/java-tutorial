@@ -1053,3 +1053,10 @@ public class ControllerTest {
 2. 《SpringBoot单元测试》第二篇框架篇：https://mp.weixin.qq.com/s/g8VpeRn7Qe1G6I7jGF7fFw
 3. 《SpringBoot单元测试》第三篇源码篇：https://mp.weixin.qq.com/s/2uWe7ZLSfQt9FyK9BNsDsA
 
+
+
+1. SpringBoot 单元测试：https://blog.csdn.net/dancuowang/article/details/120969535
+2. SpringBoot 与 @WebMvcTest 测试 Controller：https://blog.csdn.net/dancuowang/article/details/120999938
+3. SpringBoot 与  @DataJpaTest 测试 JPA 查询：https://blog.csdn.net/dancuowang/article/details/121034672
+4. SpringBoot 与  @SpringBootTest 测试：https://blog.csdn.net/dancuowang/article/details/121115049
+

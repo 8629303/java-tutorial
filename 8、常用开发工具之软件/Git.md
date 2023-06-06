@@ -1,13 +1,10 @@
-> Windows系统Git安装教程（详解Git安装过程）：https://www.cnblogs.com/xueweisuoyong/p/11914045.html
->
-> 
+> 1. GIT 精选专栏：作者：琦彦，来源：https://blog.csdn.net/fly910905/category_7424633.html
+> 2. Windows系统Git安装教程（详解Git安装过程）：https://www.cnblogs.com/xueweisuoyong/p/11914045.html
 
-# Git常用命令速查表
+# Git 常用命令速查表
 
-> 参考：
->
 > 1. GIT常用命令速查表：http://www.21yunwei.com/archives/5647
-> 2. GIT常用命令总结：http://www.21yunwei.com/archives/5447
+>2. GIT常用命令总结：http://www.21yunwei.com/archives/5447
 
 ## 1、常用的Git命令
 
@@ -211,3 +208,8 @@
 | git-mergetool–lib     | 包含于其他脚本中，提供合并/差异比较工具的选择和执行 |
 | git-parse-remote      | 包含于其他脚本中，提供操作远程版本库的函数          |
 | git-sh-setup          | 包含于其他脚本中，提供 shell 编程的函数库           |
+
+
+
+
+

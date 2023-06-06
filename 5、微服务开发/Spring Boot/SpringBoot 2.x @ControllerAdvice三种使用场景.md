@@ -1,6 +1,6 @@
-# SpringBoot @ControllerAdvice的三种使用场景
+# 1、@ControllerAdvice 三种使用场景
 
-@ControllerAdvice 有三个方面的功能：
+SpringBoot 中 @ControllerAdvice 有三个方面的功能：
 
 - 全局异常处理
 - 全局数据绑定
@@ -8,7 +8,7 @@
 
 
 
-## 1、全局异常处理
+# 2、@ControllerAdvice 全局异常处理
 
 1、MyGlobalException.java + @RestControllerAdvice = 返回字符串
 
@@ -60,7 +60,7 @@ public class MyGlobalException {
 
 
 
-## 2、全局数据绑定
+# 3、@ControllerAdvice 全局数据绑定
 
 1、MyGlobalData.java
 
@@ -117,7 +117,7 @@ s = username
 
 
 
-## 3、全局数据预处理
+# 4、@ControllerAdvice 全局数据预处理
 
 1、MyGlobalData.java
 

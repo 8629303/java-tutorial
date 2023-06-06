@@ -1,7 +1,9 @@
 > 转载与参考：
 >
-> 1. https://www.cnblogs.com/cangqiongbingchen/p/10180535.html
-> 2. https://www.cnblogs.com/fan-gx/p/12321351.html
+> 1. Linux中curl详解：https://blog.csdn.net/lemon_TT/article/details/129101461
+> 2. curl命令大全：https://www.cnblogs.com/cangqiongbingchen/p/10180535.html
+> 3. CURL 发送POST请求：https://www.cnblogs.com/fan-gx/p/12321351.html
+> 4. curl 命令详解（超详细）：https://blog.csdn.net/m0_51504545/article/details/123278429
 
 # Curl 的使用
 

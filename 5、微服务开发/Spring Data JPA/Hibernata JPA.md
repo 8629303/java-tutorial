@@ -2,19 +2,19 @@
 
 ## 1、ORM 的介绍
 
-1、什么是 ORM？
+### 1、什么是 ORM？
 
 ORM（Object-Relational Mapping） 表示对象关系映射。在面向对象的软件开发中，通过ORM，就可以把对象映射到关系型数据库中。只要有一套程序能够做到建立对象与数据库的关联，操作对象就可以直接操作数据库数据，就可以说这套程序实现了ORM对象关系映射。简单的说：ORM 就是建立实体类和数据库表之间的关系，从而达到操作实体类就相当于操作数据库表的目的（就是说ORM会把数据表映射成一个Java对象，使开发人员可以关注Java程序）
 
 
 
-2、为什么要使用 ORM？
+### 2、为什么要使用 ORM？
 
 当实现一个应用程序时（不使用O/R Mapping），我们可能会写特别多数据访问层的代码（各种各样的DAO类），从数据库增删改查等操作，而这些代码都是重复的。但使用ORM框架则会大大减少重复性代码。对象关系映射（Object Relational Mapping，简称ORM），主要实现程序对象到关系数据库数据的映射。
 
 
 
-3、ORM 的优缺点
+### 3、ORM 的优缺点
 
 优点：
 
@@ -30,7 +30,9 @@ ORM（Object-Relational Mapping） 表示对象关系映射。在面向对象的
 
 
 
-4、常见ORM思想的框架：JDBC、Hibernate、MyBatis、TopLink、JPA（JPA对ORM框架的再一次封装，这里是一套规范）
+### 4、常见ORM思想的框架
+
+常见ORM思想的框架：JDBC、Hibernate、MyBatis、TopLink、JPA（JPA对ORM框架的再一次封装，这里是一套规范）
 
 1. JDBC：其实JDBC是最原生的API，支持连接并操作各种关系型数据库，也就是说可以用JDBC完成ORM思想的程序编写，如一些有ORM思想的框架底层都调用JDBC，所有这个JDBC我对其理解为ORM思想
 2. Hibernate：这个框架就不用多说了，完全使用ORM思想，不过现在直接使用Hibernate的少了，大多都是在JPA的封装上调用此框架
@@ -38,7 +40,7 @@ ORM（Object-Relational Mapping） 表示对象关系映射。在面向对象的
 
 
 
-5、总结
+### 5、常见ORM框架总结
 
 1. JDBC：快，代码冗余、频繁的开关连接消耗性能、SQL不够灵活
 2. Mybatis：小巧、方便、高效、简单、直接、半自动
@@ -2804,9 +2806,61 @@ Many(manyId=1, manyName=初一, one=One(oneId=1, oneType=初中))
 
 
 
-## 4、NamedQuery 别名查询
+## 4、Query 接口方法介绍
 
-又叫别名查询。主要使用：@NamedQuery 或者 @NamedNativeQuery+  entityManager.createNamedQuery() 来查询
+JPQL 语言和原生 SQL 语句可以是 select 语句、update 语句或 delete语句（注意：无法执行insert语句），它们都通过 Query 接口封装执行。Query 接口封装了执行数据库查询的相关方法。调用 EntityManager 的 createQuery、createNamedQuery 及 createNativeQuery 方法可以获得查询对象，进而调用 Query 接口的相关方法来执行查询操作。
+
+```java
+/**
+ * JPQL 语言和原生 SQL 语句可以是 select 语句、update 语句或 delete语句（没有insert），它们都通过 Query 接口封装执行
+ * Query 接口封装了执行数据库查询的相关方法。调用 EntityManager 的 createQuery、createNamedQuery 及 createNativeQuery 方法可以获得查询对象，进而调用 Query 接口的相关方法来执行查询操作
+ *
+ * int executeUpdate()
+ * 用于执行update或delete语句
+ *
+ * List getResultList()
+ * 用于执行select语句并返回结果集实体列表
+ *
+ * Object getSingleResult()
+ * 用于执行只返回单个结果实体的select语句
+ *
+ * Query setFirstResult(int startPosition)
+ * 用于设置从哪个实体记录开始返回查询结果
+ *
+ * Query setMaxResults(int maxResult)
+ * 用于设置返回结果实体的最大数。与setFirstResult结合使用可实现分页查询
+ *
+ * Query setFlushMode(FlushModeType flushMode)
+ * 设置查询对象的Flush模式。参数可以取2个枚举值：FlushModeType.AUTO 为自动更新数据库记录，FlushMode Type.COMMIT 为直到提交事务时才更新数据库记录
+ *
+ * setHint(String hintName, Object value)
+ * 设置与查询对象相关的特定供应商参数或提示信息。参数名及其取值需要参考特定 JPA 实现库提供商的文档。如果第二个参数无效将抛出IllegalArgumentException异常
+ *
+ * setParameter(int position, Object value)
+ * 为查询语句的指定位置参数赋值。Position 指定参数序号，value 为赋给参数的值
+ *
+ * setParameter(int position, Date d, TemporalType type)
+ * 为查询语句的指定位置参数赋 Date 值。Position 指定参数序号，value 为赋给参数的值，temporalType 取 TemporalType 的枚举常量，包括 DATE、TIME 及 TIMESTAMP 三个，用于将 Java 的 Date 型值临时转换为数据库支持的日期时间类型（java.sql.Date、java.sql.Time及java.sql.Timestamp）
+ *
+ * setParameter(int position, Calendar c, TemporalType type)
+ * 为查询语句的指定位置参数赋 Calenda r值。position 指定参数序号，value 为赋给参数的值，temporalType 的含义及取舍同前
+ *
+ * setParameter(String name, Object value)
+ * 为查询语句的指定名称参数赋值
+ *
+ * setParameter(String name, Date d, TemporalType type)
+ * 为查询语句的指定名称参数赋 Date 值。用法同前
+ *
+ * setParameter(String name, Calendar c, TemporalType type)
+ * 为查询语句的指定名称参数设置Calendar值。name为参数名，其它同前。该方法调用时如果参数位置或参数名不正确，或者所赋的参数值类型不匹配，将抛出 IllegalArgumentException 异常
+ */
+```
+
+
+
+## 5、NamedQuery/@NamedNativeQuery 别名查询
+
+又叫别名查询。主要使用：@NamedQuery 或者 @NamedNativeQuery + entityManager.createNamedQuery() 来查询
 
 实体类：
 
@@ -2920,54 +2974,64 @@ Customer(Id=10, name=Wendy, age=15, sex=false, phone=135000000000, address=西�
 
 
 
-## 5、Query 接口方法介绍
+## 6、JPA 自定义对象接收查询结果集
 
-JPQL 语言和原生 SQL 语句可以是 select 语句、update 语句或 delete语句（注意：无法执行insert语句），它们都通过 Query 接口封装执行。Query 接口封装了执行数据库查询的相关方法。调用 EntityManager 的 createQuery、createNamedQuery 及 createNativeQuery 方法可以获得查询对象，进而调用 Query 接口的相关方法来执行查询操作。
+使用过JPA就会知道，我们借住@Query注解进行查询操作时，如果单表查询返回的是一个字段或者一个实体类时，很容易接收查询的结果；但是如果我们进行多表关联查询，查询的字段并不一定都在一个表中，所以就不能用实体类接收了，对于这样查询结果又一下三种方式处理。
+
+1、用Object[]接收：这种方式显得水平好矬，取值的时候还要通过数组索引去取值，太low了，一堆代码看起来也不好看。如果仅是做一些统计类的查询勉强可以接收。
+
+2、用Map<String, Object>接收：这种方式相对来说要比Object[]好，因为map的key就是我们查询的字段名，再取值的时候直接通过get方法取值就行，比较方便，当是相比直接用一个pojo来接收结果，使用起来还是要差一些。如何才能将结果转成自定义的对象呢，网上有一些文章是这样处理的：先有map来接收，再讲map转成json，最后将json解析成自定义得pojo(参见JPA自定义对象接收查询结果集_klayer_cong的博客-CSDN博客)。这样看起来处理过程有点麻烦，但是比较容易理解，确实也转成了自定义的pojo，如果只是一条查询结果这样实现还说的过去，如果查询出的数量很大，将会大大影响性能，这个时候就不太好了。
+
+3、用@NamedNativeQuery+@SqlResultSetMapping处理（本次使用的是当前方式）
+
+具体实现如下：
 
 ```java
-/**
- * JPQL 语言和原生 SQL 语句可以是 select 语句、update 语句或 delete语句（没有insert），它们都通过 Query 接口封装执行
- * Query 接口封装了执行数据库查询的相关方法。调用 EntityManager 的 createQuery、createNamedQuery 及 createNativeQuery 方法可以获得查询对象，进而调用 Query 接口的相关方法来执行查询操作
- *
- * int executeUpdate()
- * 用于执行update或delete语句
- *
- * List getResultList()
- * 用于执行select语句并返回结果集实体列表
- *
- * Object getSingleResult()
- * 用于执行只返回单个结果实体的select语句
- *
- * Query setFirstResult(int startPosition)
- * 用于设置从哪个实体记录开始返回查询结果
- *
- * Query setMaxResults(int maxResult)
- * 用于设置返回结果实体的最大数。与setFirstResult结合使用可实现分页查询
- *
- * Query setFlushMode(FlushModeType flushMode)
- * 设置查询对象的Flush模式。参数可以取2个枚举值：FlushModeType.AUTO 为自动更新数据库记录，FlushMode Type.COMMIT 为直到提交事务时才更新数据库记录
- *
- * setHint(String hintName, Object value)
- * 设置与查询对象相关的特定供应商参数或提示信息。参数名及其取值需要参考特定 JPA 实现库提供商的文档。如果第二个参数无效将抛出IllegalArgumentException异常
- *
- * setParameter(int position, Object value)
- * 为查询语句的指定位置参数赋值。Position 指定参数序号，value 为赋给参数的值
- *
- * setParameter(int position, Date d, TemporalType type)
- * 为查询语句的指定位置参数赋 Date 值。Position 指定参数序号，value 为赋给参数的值，temporalType 取 TemporalType 的枚举常量，包括 DATE、TIME 及 TIMESTAMP 三个，用于将 Java 的 Date 型值临时转换为数据库支持的日期时间类型（java.sql.Date、java.sql.Time及java.sql.Timestamp）
- *
- * setParameter(int position, Calendar c, TemporalType type)
- * 为查询语句的指定位置参数赋 Calenda r值。position 指定参数序号，value 为赋给参数的值，temporalType 的含义及取舍同前
- *
- * setParameter(String name, Object value)
- * 为查询语句的指定名称参数赋值
- *
- * setParameter(String name, Date d, TemporalType type)
- * 为查询语句的指定名称参数赋 Date 值。用法同前
- *
- * setParameter(String name, Calendar c, TemporalType type)
- * 为查询语句的指定名称参数设置Calendar值。name为参数名，其它同前。该方法调用时如果参数位置或参数名不正确，或者所赋的参数值类型不匹配，将抛出 IllegalArgumentException 异常
- */
+@NamedNativeQuery(
+        name = "querySummary",
+        query = " select t2.city_cd as cityCd,t2.city_name as cityName,DATE_FORMAT(t1.create_time,'%Y-%m-%d') as createDate,t1.sale_type as saleType " +
+                " from tb_project_sale t2 " +
+                " left join tb_project_sale_core t1 on t2.id = t1.id " +
+                " where t1.sale_type is not null ",
+        resultClass = SummaryDTO.class,
+        resultSetMapping = "summaryMapping")
+@MappedSuperclass
+@SqlResultSetMapping(
+        name = "summaryMapping",
+        classes = @ConstructorResult(
+                targetClass = SummaryDTO.class,
+                columns = {
+                        @ColumnResult(name = "cityCd", type = String.class),
+                        @ColumnResult(name = "cityName", type = String.class),
+                        @ColumnResult(name = "createDate", type = String.class),
+                        @ColumnResult(name = "saleType", type = String.class),
+                }
+        )
+)
+
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+public class SummaryDTO {
+    private String cityCd;
+    private String cityName;
+    private String createDate;
+    private String saleType;
+}
+```
+
+```java
+@Repository
+@Transactional
+public class SummaryRepository {
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public List<SummaryDTO> getSummary() {
+        return entityManager.createNamedQuery("querySummary").getResultList();
+    }
+}
 ```
 
 
@@ -7636,10 +7700,117 @@ public class Permission {
 
 
 
+# Hibernate JPA 逻辑删除
+
+在实际开发中，删除操作往往通过修改状态码来实现软删除，以保留历史数据。但JPA中提供的delete方法是直接删除该记录，与需求不符，很难直接使用。如果使用状态码的话，删除需要先查询，再改状态最后调用save方法，查询也需要加上状态码，使用起来比较繁琐。
+对于这种需求，
+
+
+
+## 1、什么是逻辑删除
+
+所谓逻辑删除是指数据已经“不需要”了，但是并没有使用delete语句将这些数据真实的从数据库中删除，而只是用一个标志位将其设置为已经删除。查询也需要加上标志位。
+
+
+
+## 2、为什么需要逻辑删除
+
+对数据进行逻辑删除，一般存在以下原因：
+
+1. 防止数据误删除，不能找回数据；
+2. 这些数据还具有一定的商业价值，比如用户的注册信息；
+3. 虽然这些数据可以删除，但是这些数据还有关联数据，这些关联数据不能删除。
+
+对数据进行逻辑删除，可以保证数据的安全性和完整性。但是，逻辑删除也会带来的一些问题：
+
+数据库表的数据冗余，导致查询缓慢；
+
+1. 写sql进行数据处理时需要排除那些已经逻辑删除的数据，这就会导致sql复杂，容易出错，特别是涉及多表查询时；
+2. 进行逻辑删除时，还需要考虑与之相关的数据怎么处理；
+3. 还有，如果数据表的某个字段要求唯一，并强制约束，比如用户表中的登录用户名字段，设计为逻辑删除的话，一旦有新的同用户名记录就无法插入。但如果不将该字段设置为唯一性约束的，那么在每次插入数据的时候，都需先进行一次查询，看看有无未（逻辑）删除的同名记录存在，低效率是一回事，而且在高并发的系统中，很难保证其正确性。
+
+所以是否需要对数据进行逻辑删除，需要根据具体的业务场景，以及逻辑删除的优缺点进行综合考虑。
+
+综合考虑，对于中小型的项目，逻辑删除所带来的好处有限，但带来的问题却很多。如果平时做好数据备份工作，还是可以预防物理删除隐患的。但心里应该清除，当项目大到一定程度，对数据安全性的要求高到一定程度，使用逻辑删除代替物理删除是必然的，在后面的数据库设计中，可以先小范围的尝试使用逻辑删除，一旦开发模式成熟，就全面使用逻辑删除代替物理删除。
+
+
+
+## 3、JPA 实现逻辑删除
+
+我们可以通过jpa提供的`@Where`与`@SQLDelete`两个注解来实现：
+
+1. 通过`@SQLDelete`注解，可以替换jpa默认的delete的实现sql。
+2. 通过`@Where`注解，可以给所有通过JPA生成的查询语句拼接一段自定义sql。
+3. `@SQLDeleteAll`、`@SQLInsert`和`@SQLUpdate`功能都差不多。
+
+如果我们需要实现逻辑删除，那么就应该实现以下功能：
+
+1. 修改删除语句，通过status字段进行删除。
+2. 在查询时带上状态码进行查询
+
+假设我们定义status为状态码，1为正常，2为删除，那么实体类上面可以加上如下注解：
+
+```java
+@Data
+@Entity
+@Table(name = "sys_user")
+@SQLDelete(sql = "update sys_user set deleted = 0 where id = ?")
+@Where(clause = "deleted != 0")
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String username;
+    private String password;
+    /**
+     * 逻辑删除标志位，0 未删除，1 已删除
+     */
+    private Integer deleted;
+}
+```
+
+
+
+## 4、更新当前 session 中的删除状态
+
+由于 @SQLDelete 的原理是在生成 SQL 语句的时候对默认的 delete 语句进行替换，因此，Hibernate 并不知道他所管理的 Entity 的相应字段在执行过删除操作后进行了改变。通常情况下，这并没有什么问题，因为只要 Hibernate 执行了逻辑删除的 SQL，新的实体在查询的时候就会感知到删除状态。然而，在某些情况下，如执行了 EntityManager.remove(Object entity) 后，并没有立即 flush 到数据库，并立即对该 entity 进行操作，那么此时 entity 的相应字段并不会变为删除状态。解决这种情况的方法就是通过 @PreRemove 注解来注册一个回调函数，在该函数中更新相应字段的状态。这样，Hibernate 在执行删除之前，会回调该方法，从而更新相应字段的状态。
+
+```java
+@Data
+@Entity
+@Table(name = "sys_user")
+@SQLDelete(sql = "update sys_user set deleted = 0 where id = ?")
+@Where(clause = "deleted != 0")
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String username;
+    private String password;
+    /**
+     * 逻辑删除标志位，0 未删除，1 已删除
+     */
+    private Integer deleted;
+    
+    /**
+     * 更新当前 session 中的删除状态
+     */
+    @PreRemove
+    public void deleteUser() {
+        this.deleted = 1;
+    }
+}
+```
+
+如果想实现物理删除与逻辑删除同时存在，可以参考：JPA和Mybatis的逻辑删除：https://cloud.tencent.com/developer/article/1948671
+
+
+
 # 参考文献 & 鸣谢
 
-1. CSDN（C语言中文社区）十分钟入门 JPA：https://blog.csdn.net/csdn_wangchong/article/details/103095115
-2. CSDN（詠聖wK）JPA注解大全详解参考手册：https://blog.csdn.net/yswKnight/article/details/79257372
-3. CSDN（入秋枫叶）JPA注释详解参考手册：https://blog.csdn.net/yiyelanxin/article/details/100107335
-4. JPA注解大全详解参考手册：https://www.e-learn.cn/topic/2044460
-5. Chapter 4 - JPA Queries (JPQL / Criteria) (objectdb.com)：https://www.objectdb.com/java/jpa/query
+1. Hibernate ORM 6.1.7.Final User Guide：https://docs.jboss.org/hibernate/orm/current/userguide/html_single/Hibernate_User_Guide.html
+2. CSDN（C语言中文社区）十分钟入门 JPA：https://blog.csdn.net/csdn_wangchong/article/details/103095115
+3. CSDN（詠聖wK）JPA注解大全详解参考手册：https://blog.csdn.net/yswKnight/article/details/79257372
+4. CSDN（入秋枫叶）JPA注释详解参考手册：https://blog.csdn.net/yiyelanxin/article/details/100107335
+5. JPA注解大全详解参考手册：https://www.e-learn.cn/topic/2044460
+6. Chapter 4 - JPA Queries (JPQL / Criteria) (objectdb.com)：https://www.objectdb.com/java/jpa/query

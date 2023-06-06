@@ -276,8 +276,6 @@ public class RequestWrapperController {
 java.lang.IllegalStateException: getReader() has already been called for this request
 ```
 
-
-
 1、创建 wrapper 类及 filter 类
 
 ```java

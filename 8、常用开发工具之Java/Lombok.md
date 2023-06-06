@@ -1,4 +1,4 @@
-## Lombok的介绍和安装
+## Lombok 介绍与安装
 
 > 参考：
 >
@@ -57,7 +57,7 @@ pom.xml 添加依赖进行版本管理
 
 
 
-## Lombok常用注解介绍
+## Lombok 常用注解介绍
 
 1. @Data：在JavaBean中使用，注解包含包含getter、setter、NoArgsConstructor注解
 2. @Value注解和@Data类似，区别在于它会把所有成员变量默认定义为private final修饰，并且不会生成set方法

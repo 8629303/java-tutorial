@@ -846,7 +846,7 @@ $ docker run -itd mycentos:7 /bin/bash
 
 ## 3、DockerFile 构建镜像实战
 
-### 3.1、DockerFile命令详解
+### 3.1、DockerFile 命令详解
 
 > Dockerfile常用的指令：http://www.szliwen.com/?p=998
 >
@@ -869,9 +869,9 @@ $ docker run -itd mycentos:7 /bin/bash
 
 
 
-### 3.2、DockerFIle构建镜像
+### 3.2、DockerFIle 构建镜像
 
-1、DockerFile快速入门
+1、DockerFile 快速入门
 
 ```shell
 $ cd /home
@@ -1010,7 +1010,7 @@ root         1  0.0  0.0  49632  1540 ?        Rs   15:54   0:00 ps aux
 # 2.CMD参数是可以在容器启动时追加bash命令覆盖，而ENTRYPOINT不会
 ```
 
-4、DockerFile文件示例
+4、DockerFile 文件示例
 
 ```shell
 # This dockerfile demo for project build to docker images
@@ -1084,7 +1084,7 @@ CMD /usr/sbin/nginx
 
 
 
-### 3.3、DockerFile构建Java
+### 3.3、DockerFile 构建 Java
 
 1、下载安装JDK和Tomcat安装包：
 
@@ -1137,7 +1137,7 @@ docker run -itd -p 80:8080 -v /root/test/ROOT:/usr/local/tomcat/webapps/ROOT myc
 
 
 
-### 3.4、DockerFile构建Nginx
+### 3.4、DockerFile 构建 Nginx
 
 1、下载Nginx安装包
 
@@ -1188,7 +1188,7 @@ docker run -itd -p 80:80 mycentos:nginx /usr/local/nginx/sbin/nginx -g "daemon o
 
 
 
-### 3.5.、DockerFile构建Redis
+### 3.5.、DockerFile 构建 Redis
 
 1、下载Redis安装包：
 
@@ -1243,7 +1243,7 @@ OK
 
 
 
-### 3.6、DockerFile构建MySQL
+### 3.6、DockerFile 构建 MySQL
 
 首先准备初始化SQL文件—init.sql：
 
@@ -3276,4 +3276,6 @@ net.ipv4.ip_forward=1
 4. 泽火测试学院(原名飞天小子)：https://www.cnblogs.com/zhuochong/category/1310443.html
 5. docker安装常见软件：https://blog.csdn.net/wenge1477/article/details/103828680
 6. 博客园（程序员自由之路）磁盘空间爆满：https://www.cnblogs.com/54chensongxia/p/15138314.html
-6. [Docker命令详解（build篇）](https://www.cnblogs.com/yfalcon/p/9044183.html)、[Docker命令详解（run篇）](https://www.cnblogs.com/yfalcon/p/9044246.html)
+7. [Docker命令详解（build篇）](https://www.cnblogs.com/yfalcon/p/9044183.html)、[Docker命令详解（run篇）](https://www.cnblogs.com/yfalcon/p/9044246.html)
+8. Docker 常用命令小册子：https://glory.blog.csdn.net/article/details/101845129
+9. Docker小工具: runlike 和 whaler：https://glory.blog.csdn.net/article/details/118994320
