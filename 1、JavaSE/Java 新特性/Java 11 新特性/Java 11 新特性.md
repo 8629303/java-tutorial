@@ -34,7 +34,516 @@ JDK 文档查看及下载地址如下：
 
 
 
-## 1、String API 增强
+## 1、HTTP Client 增强【正式版】
+
+> 321: HTTP Client (Standard)
+
+> 参考文献：
+>
+> 1. Java11 HttpClient小试牛刀：https://blog.csdn.net/weixin_34221775/article/details/91665426
+> 2. Java 11 HttpClient简介：https://blog.csdn.net/allway2/article/details/112725692
+
+### 1、发展历史
+
+从 JDK1.1 开始，JDK 中就有 HttpURLConnection 来提供了网络连接的能力，但是由于实现的比较古早，其有很多的局限性。比如 HttpURLConnection 是通过底层提供的socket连接来进行通信，而每一个 HttpURLConnection 实例只能发送一个请求，之后只能通过 close() 释放请求的网络资源，或在持久化连接时用 disconnect() 来关闭关闭底层socket。而其基类 URLConnection 是为了支持很多协议而设计的，但诸如 FTP 这种协议已经不咋用了。
+
+HttpURLConnection 并不是不能使用，由于不需要依赖，在一些 Demo 项目的时候也会偶尔拿来用。但 HttpURLConnection 本身已经太过古早，并且很难说 HttpURLConnection 能够胜任包含各种鉴权信息、各种 COOKIE 信息的访问请求。
+
+针对这种情况网络上各种大神提供了更多高级的封装，比较流行的有 Apache的HttpClient、Okhttp Client、Spring Cloud Feign 之类的。这些封装提供了更丰富的资源与更便捷的封装，也支持了更高级功能如 HTTP/2 协议、异步请求等。
+
+Java 9 提供了一个新的 Http 请求工具 HttpClient，经过了 Java 10 的再次预览，最终在 Java 11 中作为正式功能提供使用，同时也完全替换了仅有阻塞模式的 HttpURLConnection。
+
+从 Java 9 到 Java 11 Http Client 的变化如下：
+
+- 从 Java 9 的 jdk.incubator.httpclient 模块迁移到 java.net.http 模块，包名由 jdk.incubator.http 改为 java.net.http。
+- 原来的诸如 HttpResponse.BodyHandler.asString() 方法变更为 HttpResponse.BodyHandlers.ofString()，变化一为 BodyHandler 改为 BodyHandlers，变化二为 asXXX() 之类的方法改为 ofXXX()，由 as 改为 of。
+- 官方文档：https://docs.oracle.com/en/java/javase/11/docs/api/java.net.http/java/net/http/package-summary.html
+
+
+
+### 2、HttpClient 简介
+
+在 Java 11 中 Http Client API 得到了标准化的支持。主要的特性有：
+
+- 支持 HTTP/1.1 和 HTTP/2
+- 支持 HTTPS/TLS
+- 支持 WebSocket
+- 有简单的阻塞使用方法
+- 支持异步发送，异步时间通知
+- 支持响应式流
+
+HTTP 2.0 其他的客户端也能支持，而 HttpClient 使用 CompletableFuture 作为异步的返回数据。WebSocket 的支持则是 HttpClient 的优势。响应式流的支持是 HttpClient 的一大优势。
+
+而 HttpClient 中的 NIO 模型、函数式编程、CompletableFuture 异步回调、响应式流让 HttpClient 拥有极强的并发处理能力，所以其性能极高，而内存占用则更少。
+
+HttpClient的主要类有：
+
+- java.net.http.HttpClient
+- java.net.http.HttpRequest
+- java.net.http.HttpResponse
+- java.net.http.WebSocket【暂不介绍】
+
+
+
+### 3、HttpClient 类
+
+HttpClient 类是最核心的类，它支持使用建造者模式进行复杂对象的构建，主要的参数有：
+
+- Http 协议的版本（HTTP 1.1 或者 HTTP 2.0），默认是 2.0。
+- 是否遵从服务器发出的重定向
+- 连接超时时间
+- 代理
+- 认证
+
+HttpClient 的API：
+
+- HttpClient API：
+
+  ```java
+  // 创建一个 HttpClient
+  public static Builder newBuilder();
+  public static HttpClient newHttpClient();
+  // webSocket协议的请求客户端的构建者
+  public WebSocket.Builder newWebSocketBuilder();
+  // 获取 CookieHandler
+  public abstract Optional<CookieHandler> cookieHandler();
+  public abstract Optional<Duration> connectTimeout();
+  public abstract Redirect followRedirects();
+  public abstract Optional<ProxySelector> proxy();
+  public abstract SSLContext sslContext();
+  public abstract Optional<Executor> executor();
+  ```
+
+- HttpClient.Builder 的 API
+
+  ```java
+  // 缓存cookie设置
+  public Builder cookieHandler(CookieHandler cookieHandler);
+  // 连接超时时间
+  public Builder connectTimeout(Duration duration);
+  // 证书信息设置
+  public Builder sslContext(SSLContext sslContext);
+  // SSL / TLS / DTLS连接的参数 设置
+  public Builder sslParameters(SSLParameters sslParameters);
+  // 涉及到异步操作用到的 线程池
+  public Builder executor(Executor executor);
+  // 是否支持重定向 Redirect.SAME_PROTOCOL
+  public Builder followRedirects(Redirect policy);
+  // 协议版本，HTTP/1.1 还是 HTTP/2
+  public Builder version(HttpClient.Version version);
+  public Builder priority(int priority);
+  // 配置代理 
+  public Builder proxy(ProxySelector proxySelector);
+  // 认证 Authenticator.getDefault()
+  public Builder authenticator(Authenticator authenticator);
+  ```
+
+- HttpClient 调用 API
+
+  ```java
+  // 阻塞调用
+  <T> HttpResponse<T> send(HttpRequest request, HttpResponse.BodyHandler<T> responseBodyHandler);
+  // 相当于使用了多路复用I/O
+  <T> CompletableFuture<HttpResponse<T>> sendAsync(HttpRequest request, BodyHandler<T> responseBodyHandler);
+  abstract <T> CompletableFuture<HttpResponse<T>> sendAsync(HttpRequest request, 
+                                                            BodyHandler<T> responseBodyHandler,
+                                                            PushPromiseHandler<T> pushPromiseHandler);
+  ```
+
+【操作示例】构建 HttpClient 两种方式
+
+```java
+// 也可以直接全部默认的便捷创建
+HttpClient clientSimple = HttpClient.newHttpClient();
+
+// 可以用参数调整
+HttpClient client = HttpClient.newBuilder()
+        .cookieHandler(CookieHandler.getDefault()) // 缓存cookie设置,使用默认的CookieManager
+        .version(HttpClient.Version.HTTP_1_1) // 遵循HTTP协议的1.1版本
+        .followRedirects(HttpClient.Redirect.NORMAL) // 正常的重定向
+        .connectTimeout(Duration.ofSeconds(20)) // 连接的超时时间为20秒
+        .proxy(ProxySelector.of(new InetSocketAddress("proxy.example.com", 8080))) // 设置代理
+        //.authenticator(Authenticator.getDefault()) // 默认的身份认证
+        // 自定义的身份认证
+        .authenticator(new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication("admin", "password".toCharArray());
+            }
+        })
+        .build();
+```
+
+
+
+### 4、HttpRequest 类
+
+HttpRequest 是描述请求体的类，也支持通过建造者模式构建复杂对象，主要的参数有：
+
+- 请求地址
+- 请求方法：GET、POST、DELETE 等（默认是GET）
+- 请求体 (按需设置，例如 GET 不用 body，但是 POST 要设置)
+- 请求超时时间（默认）
+- 请求头
+
+对于 HttpRequest 请求内容可以使用 BodyPublishers 封装的函数生成。
+
+```java
+HttpRequest.BodyPublishers::ofByteArray(byte[]);
+HttpRequest.BodyPublishers::ofByteArrays(Iterable);
+HttpRequest.BodyPublishers::ofFile(Path);
+HttpRequest.BodyPublishers::ofString(String);
+HttpRequest.BodyPublishers::ofInputStream(Supplier<InputStream>);
+```
+
+【操作示例】GET、POST、PUT、DELETE 请求 API
+
+```java
+// 直接GET访问
+HttpRequest requestGet = HttpRequest.newBuilder(URI.create("http://www.baidu.com")).build();
+
+// 使用参数组合进行对象构建，读取文件作为请求体
+HttpRequest requestPost = HttpRequest.newBuilder()
+        .uri(URI.create("http://www.baidu.com"))
+        .timeout(Duration.ofSeconds(20))
+        .header("Content-type", "application/json")
+        .POST(HttpRequest.BodyPublishers.ofFile(Paths.get("data.json")))
+        .build();
+
+// 使用PUT请求
+HttpRequest requestPut = HttpRequest.newBuilder()
+        .uri(URI.create("http://www.baidu.com"))
+        .timeout(Duration.ofSeconds(20))
+        .header("Content-type", "application/json")
+        .PUT(HttpRequest.BodyPublishers.ofFile(Paths.get("data.json")))
+        .build();
+
+// 使用DELETE请求
+HttpRequest.Builder requestDelete = HttpRequest.newBuilder().uri(URI.create("http://www.baidu.com/1")).DELETE()
+```
+
+**注意**：在 JDK16 中，有一个全新的 HttpRequest.newBuilder(HttpRequest request, BiPredicate filter) 方法，它创建了一个生成器，它的配置是从已经存在的 HttpRequest 复制。
+
+
+
+### 5、HttpResponse 类
+
+HttpResponse 没有提供外部可以创建的实现类，它是一个接口，从 client 的返回值中创建获得。接口中的主要方法为：
+
+```java
+public interface HttpResponse<T> {
+    public int statusCode();
+    public HttpRequest request();
+    public Optional<HttpResponse<T>> previousResponse();
+    public HttpHeaders headers();
+    public T body();
+    public URI uri();
+    public Optional<SSLSession> sslSession();
+    public HttpClient.Version version();
+}
+```
+
+对于响应的解析读取可以使用 BodyHandlers 或者 BodySubscribers 封装的函数处理。
+
+```java
+HttpResponse.BodyHandlers::ofByteArray();
+HttpResponse.BodyHandlers::ofString();
+HttpResponse.BodyHandlers::ofFile(Path);
+HttpResponse.BodyHandlers::discarding();
+```
+
+
+
+### 6、HTTP / 2
+
+Java HTTP Client 支持 HTTP / 1.1和 HTTP / 2。默认情况下，客户端将使用 HTTP / 2 发送请求 。发送到尚不支持 HTTP / 2 的服务器的请求 将自动降级为 HTTP / 1.1。以下是 HTTP / 2 带来的主要改进的摘要：
+
+- 标头压缩。HTTP / 2使用HPACK压缩，从而减少了开销。
+- 与服务器的单一连接减少了建立多个TCP连接所需的往返次数。
+- 多路复用。在同一连接上，同时允许多个请求。
+- 服务器推送。可以将其他将来需要的资源发送给客户端。
+- 二进制格式。更紧凑。
+
+因为 HTTP / 2 是默认的首选协议，并且实现在必要时无缝回退到 HTTP / 1.1，所以当 HTTP / 2 部署更广泛时，Java HTTP Client 可以为将来做好准备。
+
+
+
+### 7、操作实例
+
+#### 1、设置 Timeout
+
+```java
+// 1.set connect timeout
+HttpClient client = HttpClient.newBuilder()
+        .connectTimeout(Duration.ofMillis(5000)) // 连接的超时时间
+        .build();
+
+// 2.set read timeout
+HttpRequest request = HttpRequest.newBuilder()
+        .uri(URI.create("http://openjdk.java.net/"))
+        .timeout(Duration.ofMillis(5009)) // 请求的超时时间
+        .build();
+```
+
+- HttpConnectTimeoutException 实例
+
+  ```java
+  Caused by: java.net.http.HttpConnectTimeoutException: HTTP connect timed out
+  	at java.net.http/jdk.internal.net.http.ResponseTimerEvent.handle(ResponseTimerEvent.java:68)
+  	at java.net.http/jdk.internal.net.http.HttpClientImpl.purgeTimeoutsAndReturnNextDeadline(HttpClientImpl.java:1248)
+  	at java.net.http/jdk.internal.net.http.HttpClientImpl$SelectorManager.run(HttpClientImpl.java:877)
+  Caused by: java.net.ConnectException: HTTP connect timed out
+  	at java.net.http/jdk.internal.net.http.ResponseTimerEvent.handle(ResponseTimerEvent.java:69)
+  	... 2 more
+  ```
+
+- HttpTimeoutException 实例
+
+  ```java
+  java.net.http.HttpTimeoutException: request timed out
+   
+  	at java.net.http/jdk.internal.net.http.HttpClientImpl.send(HttpClientImpl.java:559)
+  	at java.net.http/jdk.internal.net.http.HttpClientFacade.send(HttpClientFacade.java:119)
+  	at com.example.HttpClientTest.testTimeout(HttpClientTest.java:40)
+  ```
+
+
+
+#### 2、设置 Authenticator
+
+```java
+HttpClient client = HttpClient.newBuilder()
+        .authenticator(new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication("admin", "password".toCharArray());
+            }
+        })
+        .build();
+```
+
+- authenticator可以用来设置HTTP authentication，比如Basic authentication
+- 虽然Basic authentication也可以自己设置header，不过通过authenticator省得自己去构造header
+
+
+
+#### 3、设置 Proxy
+
+```java
+// 设置指定代理
+HttpClient client = HttpClient.newBuilder()
+          .proxy(ProxySelector.of(new InetSocketAddress("www-proxy.com", 8080)))
+          .build();
+
+// 设置系统范围的默认代理选择器
+HttpClient.newBuilder().proxy(ProxySelector.getDefault()).build();
+```
+
+
+
+#### 4、设置 Header
+
+```java
+// 方式一
+HttpRequest request1 = HttpRequest.newBuilder()
+        .uri(URI.create("https://www.example.com/get"))
+        .headers("key1", "value1", "key2", "value2")
+        .build();
+// 方式二
+HttpRequest request2 = HttpRequest.newBuilder()
+        .uri(URI.create("https://www.example.com/get"))
+        .header("key1", "value1")
+        .header("key2", "value2")
+        .build();
+// 方式三
+HttpRequest request3 = HttpRequest.newBuilder()
+        .uri(URI.create("https://www.example.com/get"))
+        .setHeader("key1", "value1")
+        .setHeader("key2", "value2")
+        .build();
+```
+
+- addHeader：添加一个新的请求头字段，一个请求头中允许有重名字段，将附加到列表的末尾）
+- setHeader：设置一个请求头字段，有则覆盖，无则添加。
+
+
+
+#### 5、GET JSON
+
+```java
+record TitleRecord(Integer id, Integer userId, String title) implements Serializable {}
+TitleRecord titleRecord = get("https://jsonplaceholder.typicode.com/albums/1", TitleRecord.class);
+
+public static <W> W get(String uri, Class<W> targetType) {
+    try {
+        HttpClient           client       = HttpClient.newHttpClient();
+        HttpRequest          request      = HttpRequest.newBuilder(URI.create(uri)).GET().build();
+        HttpResponse<String> response     = client.send(request, HttpResponse.BodyHandlers.ofString());
+        ObjectMapper         objectMapper = new ObjectMapper();
+        return objectMapper.readValue(response.body(), targetType);
+    } catch (Exception e) {
+        System.err.println("error: {}");
+        throw new RuntimeException(e);
+    }
+}
+```
+
+返回的 Response 只能是 String、文件 或者 流。body json 需要自己转换为 JavaBean。
+
+
+
+#### 6、POST JSON
+
+1、POST JSON 的话，Body 自己 JSON 化为 String，然后 header 指定是 JSON 格式。
+
+```java
+record TitleRecord(Integer id, Integer userId, String title) implements Serializable {}
+TitleRecord titleRecord = post("https://jsonplaceholder.typicode.com/posts", new TitleRecord(1, 1, "test title"), TitleRecord.class);
+
+public static <W> W post(String uri, Record record, Class<W> targetType) {
+    try {
+        HttpClient   client       = HttpClient.newHttpClient();
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestBody = objectMapper
+                .writerWithDefaultPrettyPrinter()
+                .writeValueAsString(record);
+        HttpRequest request = HttpRequest.newBuilder(URI.create(uri))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        return objectMapper.readValue(response.body(), targetType);
+    } catch (Exception e) {
+        System.err.println("error: {}");
+        throw new RuntimeException(e);
+    }
+}
+```
+
+
+
+#### 7、POST 表单
+
+```java
+HttpClient client = HttpClient.newBuilder().build();
+HttpRequest request = HttpRequest.newBuilder()
+        .uri(URI.create("http://www.example.com/post"))
+        .header("Content-Type", "application/x-www-form-urlencoded")
+        .POST(HttpRequest.BodyPublishers.ofString("name1=value1&name2=value2"))
+        .build();
+HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+```
+
+- header 指定内容是表单类型，然后通过BodyPublishers.ofString传递表单数据，需要自己构建表单参数
+
+
+
+#### 8、文件下载
+
+使用 HttpResponse.BodyHandlers.ofFile 来接收文件
+
+```java
+HttpClient client = HttpClient.newHttpClient();
+HttpRequest request = HttpRequest.newBuilder()
+        .uri(URI.create("http://localhost:8080/file/download"))
+        .build();
+
+CompletableFuture<Path> result = client
+        .sendAsync(request, HttpResponse.BodyHandlers.ofFile(Paths.get("/tmp/body.txt")))
+        .thenApply(HttpResponse::body);
+System.out.println(result.get());
+```
+
+
+
+#### 9、并发请求
+
+```java
+HttpClient   client = HttpClient.newHttpClient();
+List<String> urls   = List.of("http://www.baidu.com", "http://www.alibaba.com/", "http://www.tencent.com");
+List<HttpRequest> requests = urls.stream()
+        .map(url -> HttpRequest.newBuilder(URI.create(url)))
+        .map(reqBuilder -> reqBuilder.build())
+        .collect(Collectors.toList());
+
+List<CompletableFuture<HttpResponse<String>>> futures = requests.stream()
+        .map(request -> client.sendAsync(request, HttpResponse.BodyHandlers.ofString()))
+        .collect(Collectors.toList());
+futures.stream()
+        .forEach(e -> e.whenComplete((resp, err) -> {
+            if (err != null) {
+                err.printStackTrace();
+            } else {
+                System.out.println(resp.body());
+                System.out.println(resp.statusCode());
+            }
+        }));
+CompletableFuture.allOf(futures.toArray(CompletableFuture<?>[]::new)).join();
+```
+
+- sendAsync 方法返回的是 CompletableFuture，可以方便地进行转换、组合等操作
+- 这里使用 CompletableFuture.allOf 组合在一起，最后调用 join 等待所有 future 完成
+
+
+
+#### 10、同步与异步请求
+
+【操作示例 1】
+
+```java
+// 同步调用
+HttpClient client = HttpClient.newHttpClient();
+HttpRequest request = HttpRequest.newBuilder(URI.create("uri")).build();
+HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+System.out.println(response.body());
+
+// 异步调用-1
+HttpClient client = HttpClient.newHttpClient();
+HttpRequest request = HttpRequest.newBuilder(URI.create("uri")).build();
+CompletableFuture<HttpResponse<String>> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+HttpResponse<String> result = response.get();
+System.out.println(result.body());
+
+// 异步调用-2
+client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+        .thenApply(HttpResponse::body)
+        .thenAccept(System.out::println)
+        .join();
+```
+
+【操作示例 2】
+
+```java
+HttpClient httpClient = HttpClient.newBuilder()
+        .version(HttpClient.Version.HTTP_1_1)
+        .connectTimeout(Duration.ofSeconds(5)).build();
+
+HttpRequest request = HttpRequest.newBuilder().GET().uri(URI.create("https://cn.bing.com/"))
+        .setHeader("User-Agent", "Java Aysnc HTTPClient Example...").build();
+
+// sendAsync(): Sends the given request asynchronously using this client with
+// the given response body handler.
+// Equivalent to: sendAsync(request, responseBodyHandler, null).
+CompletableFuture<HttpResponse<String>> asyncResponse = httpClient
+        .sendAsync(request, HttpResponse.BodyHandlers.ofString());
+
+try {
+    String asyncResultBody       = asyncResponse.thenApply(HttpResponse::body).get(5, TimeUnit.SECONDS);
+    int    asyncResultStatusCode = asyncResponse.thenApply(HttpResponse::statusCode).get(5, TimeUnit.SECONDS);
+
+    System.out.println("=============== AsyncHTTPClient Body:===============  \n" + asyncResultBody);
+    System.out.println("\n=============== AsyncHTTPClient Status Code:===============  \n" + asyncResultStatusCode);
+
+} catch (InterruptedException | ExecutionException | TimeoutException e) {
+    e.printStackTrace();
+}
+```
+
+- 更多同异步、并发访问，设置代理等方式，可以参考官方文档：https://openjdk.org/groups/net/httpclient/recipes-incubating.html
+
+
+
+## 2、String API 增强
 
 自 JDK9 和 JDK10 都为 Java 增加了许多的 API，如今 JDK11 又增加了许多字符串自带方法。
 
@@ -126,7 +635,7 @@ System.out.println(lineCount); // 1
 
 
 
-## 2、File API  增强
+## 3、File API  增强
 
 使得读写文件变得更加方便。
 
@@ -147,7 +656,7 @@ System.out.println(s);
 
 
 
-## 3、Optional 增强
+## 4、Optional 增强
 
 新增了empty() 方法来判断指定的 Optional 对象是否为空。
 
@@ -156,56 +665,6 @@ var optional = Optional.empty();
 // 判断指定的 Optional 对象是否为空
 System.out.println(optional.isEmpty()); // true
 ```
-
-
-
-## 4、HTTP Client 增强
-
-> 321: HTTP Client (Standard)
-
-在 Java 11 中 Http Client API 得到了标准化的支持。且支持 HTTP/1.1 和 HTTP/2 ，也支持 WebSockets。
-
-```java
-// 同步调用
-HttpClient client             = HttpClient.newHttpClient();
-HttpRequest request           = HttpRequest.newBuilder(URI.create("")).build();
-BodyHandler<String>  handler  = HttpResponse.BodyHandlers.ofString();
-HttpResponse<String> response = client.send(request,handler);
-String body                   = response.body();
-System.out.println(body);
-
-// 异步调用
-HttpClient client             = HttpClient.newHttpClient();
-HttpRequest request           = HttpRequest.newBuilder(URI.create("")).build();
-BodyHandler<String>  handler  = HttpResponse.BodyHandlers.ofString();
-CompletableFuture<HttpResponse<String>> response = client.sendAsync(request,handler);
-HttpResponse<String> result   = response.get();
-String body                   = result.body();
-System.out.println(body);
-```
-
-简单写法如下：
-
-```java
-HttpClient client = HttpClient.newHttpClient();
-HttpRequest request = HttpRequest.newBuilder()
-        .uri(URI.create("https://www.hao123.com"))
-        .build();
-
-// 同步调用
-HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-System.out.println(response.body());
-
-// 异步调用
-client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-        .thenApply(HttpResponse::body)
-        .thenAccept(System.out::println)
-        .join();
-```
-
-更多同步异步请求，并发访问，设置代理等方式，可以参考官方文档。
-
-- HTTP Client OpenJDK 官方文档：https://openjdk.org/groups/net/httpclient/recipes-incubating.html
 
 
 
