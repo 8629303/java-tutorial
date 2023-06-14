@@ -3113,10 +3113,10 @@ public class JavaAPIDemo {
 | ------------------------------------------------------------ | ---------------------------------------- |
 | public Annotation[] getAnnotations()                         | 获取全部Annotation信息                   |
 | public Annotation[] getDeclaredAnnotations()                 | 获取全部Annotation信息(忽略继承的注解)   |
-| `public <T extends Annotation> T getAnnotation(Class<T> annotationClass)` | 获取指定类型的Annotation                 |
-| `public <T extends Annotation> T getDeclaredAnnotation(Class<T> annotationClass)` | 获取指定类型的Annotation(忽略继承的注解) |
-| `public <T extends Annotation> T[] getAnnotationsByType(Class<T> annotationClass)` | 返回该元素指定类型的注解                 |
-| `public <T extends Annotation> T[] getDeclaredAnnotationsByType(Class<T> annotationClass)` | 返回直接存在该元素上某类型的注释         |
+| public < T extends Annotation > T getAnnotation(Class< T > annotationClass) | 获取指定类型的Annotation                 |
+| public < T extends Annotation > T getDeclaredAnnotation(Class< T > annotationClass) | 获取指定类型的Annotation(忽略继承的注解) |
+| public < T extends Annotation > T[] getAnnotationsByType(Class< T > annotationClass) | 返回该元素指定类型的注解                 |
+| public < T extends Annotation > T[] getDeclaredAnnotationsByType(Class< T > annotationClass) | 返回直接存在该元素上某类型的注释         |
 | public boolean isAnnotationPresent(Class<? extends Annotation> annotationClass) | 是否存在指定的Annotation                 |
 
 ![image.png](https://ucc.alicdn.com/pic/developer-ecology/fa527e5dc53d4c4a953235a51de6a5a7.png)
