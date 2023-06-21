@@ -95,12 +95,9 @@ public @interface TableDataUnique {
 
             return map.get("count").equals(0L);
         }
-
+        
     }
-
 }
- 
- 
 ```
 
 ```java

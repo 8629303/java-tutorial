@@ -588,6 +588,7 @@ for (int i = 0; i < 10; i++) {
 > 1. JAVA8之 日期时间时区之 Clock和Instant 笔记：https://blog.csdn.net/kfepiza/article/details/115494220
 > 2. Java8 Clock Instant 用法及代码示例：https://vimsky.com/examples/usage/java-8-clock-instant-method-with-examples.html
 > 3. Java8 Instant时间戳使用小记：https://www.php1.cn/detail/Java8Instant_Shi_afb2f78b.html
+> 4. JAVA时间戳类Instant：https://mp.weixin.qq.com/s/ncoAsCDE3BuCUSJlx99niA
 
 ### 1、Instant 类的说明
 
@@ -4947,14 +4948,32 @@ LocalDateTime、ZoneId、Instant、ZonedDateTime 和 long 都可以互相转换�
 └─────────────┘                                           └─────────────┘
 ```
 
+```
+          ┌────────────────────> ┌───────────────┐ <─────────────────┐
+          ⬆                      │ LocalDateTime │                   ⬆
+          ⬆    ┌───────────────  └───────────────┘  ─────────────┐   ⬆
+          ⬆    ⬇               atZone ⬇    ⬆ toLocalDateTime     ⬇   ⬆
+          ⬆    ⬇                      ⬇    ⬆         toLocalDate ⬇   ⬆ atTime
+   atDate ⬆    ⬇ toLocalTime          ⬇    ⬆      atStartOfDay   ⬇   ⬆
+       ┌───────────┐             ┌───────────────┐ ───────> ┌───────────┐
+       │ LocalDate │ <────────── │ ZonedDateTime │          │ LocalTime │
+       └───────────┘ toLocalTime └───────────────┘ <─────── └───────────┘
+                                      ⬇    ⬆      toLocalDate
+                                      ⬇    ⬆
+ Date.from(zonedDateTime.toInstant()) ⬇    ⬆ toInstant().atZone()
+                                    ┌─────────┐
+                                    │  Date   │
+                                    └─────────┘
+```
+
 
 
 # 参考文献 & 鸣谢
 
-> Java 8 时间类：
->
-> 1. Java方向盘-日期时间（CSDN）：https://blog.csdn.net/f641385712/category_10749009.html
-> 2. Java方向盘-日期时间（公众号）：https://mp.weixin.qq.com/mp/appmsgalbum?action=getalbum&__biz=MzI0MTUwOTgyOQ==&scene=24&album_id=1696358010555547649&count=3#wechat_redirect
-> 3. ThinkWon：https://thinkwon.blog.csdn.net/article/details/111087199
-> 4. java8时间使用（概念）：https://blog.csdn.net/xj80231314/article/details/86711095
-> 5. Java日期时间教程 - 一点教程 (yiidian.com)：http://www.yiidian.com/java-date
+1. JSR-310（java8 新日期时间API）【**最全教程**】：https://blog.csdn.net/shi_hong_fei_hei/article/details/120477317
+2. Java日期时间教程【一点教程】http://www.yiidian.com/java-date
+3. java.time包教程【易百教程】https://www.yiibai.com/javatime
+4. Java的日期与时间（目录）https://blog.csdn.net/tjgykhulj/article/details/68952451
+5. Java方向盘-日期时间：https://blog.csdn.net/f641385712/category_10749009.html、[[YourBatman]-日期时间-公众号目录](https://mp.weixin.qq.com/mp/appmsgalbum?action=getalbum&__biz=MzI0MTUwOTgyOQ==&scene=24&album_id=1696358010555547649&count=3#wechat_redirect)
+6. Java8日期时间API【ThinkWon】：https://thinkwon.blog.csdn.net/article/details/111087199
+7. **日期时间时区等**：https://blog.csdn.net/kfepiza/category_10948478.html

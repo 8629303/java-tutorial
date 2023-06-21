@@ -42,6 +42,7 @@ JDK 文档查看及下载地址如下：
 >
 > 1. Java11 HttpClient小试牛刀：https://blog.csdn.net/weixin_34221775/article/details/91665426
 > 2. Java 11 HttpClient简介：https://blog.csdn.net/allway2/article/details/112725692
+> 3. 1024sky HttpClient API 详解：https://www.1024sky.cn/blog/tag/2/210
 
 ### 1、发展历史
 

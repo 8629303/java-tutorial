@@ -1,6 +1,6 @@
-> 彻底搞懂过滤器、拦截器、监听器、AOP，看这一篇就足够了：https://blog.csdn.net/xiaorui51/article/details/108753111
+> - 彻底搞懂过滤器、拦截器、监听器、AOP，看这一篇就足够了：https://blog.csdn.net/xiaorui51/article/details/108753111
 >
-> SpringBoot 过滤器、拦截器、监听器对比及使用场景：https://blog.csdn.net/qq_38020915/article/details/116431612
+> - SpringBoot 过滤器、拦截器、监听器对比及使用场景：https://blog.csdn.net/qq_38020915/article/details/116431612
 >
 
 # 一、关系图
@@ -807,6 +807,7 @@ Spring中拦截器有三个方法：
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -816,22 +817,55 @@ public class CustomHandlerInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-        throws Exception {
+            throws Exception {
         log.info("preHandle:请求前调用");
-        // 返回 false 则请求中断
+        User user = (User) request.getSession().getAttribute("user");
+        if (!ObjectUtils.isEmpty(user)) {
+            return true;
+        } else {
+            // 不管是转发还是重定向，必须返回false。否则出现多次提交响应的错误
+            redirect(request, response);
+            return false;  // 返回 false 则请求中断
+        }
         return true;
     }
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, 
+    public void postHandle(HttpServletRequest request, HttpServletResponse response,
                            Object handler, ModelAndView modelAndView) throws Exception {
         log.info("postHandle:请求后调用");
     }
 
     @Override
     public void afterCompletion(HttpServletRequest req, HttpServletResponse resp, Object handler, Exception ex)
-        throws Exception {
+            throws Exception {
         log.info("afterCompletion:请求调用完成后回调方法，即在视图渲染完成后回调");
+    }
+
+    /*
+     * 对于请求是ajax请求重定向问题的处理方法
+     * @param request
+     * @param response
+     *
+     */
+    public void redirect(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {// ajax
+            // 获取当前请求的路径
+            response.setHeader("Access-Control-Expose-Headers", "REDIRECT,CONTENT_PATH");
+            // 告诉ajax我是重定向
+            response.setHeader("REDIRECT", "REDIRECT");
+            // 告诉ajax我重定向的路径
+            StringBuffer url = request.getRequestURL();
+            String contextPath = request.getContextPath();
+            String path = url.replace(url.indexOf(contextPath) + contextPath.length(), url.length(), "/").toString();
+            response.setHeader("CONTENT_PATH", path);
+        } else {// http
+            response.sendRedirect("/page/login");
+        }
+
+        response.getWriter().write(403);
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
     }
 }
 ```
@@ -839,15 +873,56 @@ public class CustomHandlerInterceptor implements HandlerInterceptor {
 2、通过实现WebMvcConfigurer 接口完成拦截器的注册。（旧版本中是继承WebMvcConfigurerAdapter注册拦截器，不过已废弃）
 
 ```java
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import javax.annotation.Resource;
+
 @Configuration
 public class MyWebMvcConfigurer implements WebMvcConfigurer {
     @Resource
     CustomHandlerInterceptor customHandlerInterceptor;
-    
+
+    /*
+     * 拦截器依赖于Spring容器，此处拦截了所有，还可以对静态资源进行放行
+     */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // 注册拦截器 拦截规则, 多个拦截器时 依次添加 执行顺序按添加顺序
+        // 注册拦截器拦截规则, 多个拦截器时依次添加执行顺序按添加顺序
         registry.addInterceptor(customHandlerInterceptor).addPathPatterns("/*");
+        // 多个拦截器时也可以通过Order手动设置控制，值越小越先执行
+        registry.addInterceptor(customHandlerInterceptor).addPathPatterns("/v1").order(1);
+        registry.addInterceptor(customHandlerInterceptor).addPathPatterns("/v2").order(2);
+        // 此处拦截了所有，并且对静态资源进行放行
+        registry.addInterceptor(customHandlerInterceptor)
+                .addPathPatterns("/*")
+                .excludePathPatterns("/user/login", "/static/**");
+    }
+
+    /*
+     * 不要要写控制器即可完成页面跳转访问
+     * @param registry
+     */
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/v1").setViewName("v1");
+        registry.addViewController("/v2").setViewName("v2");
+    }
+
+    /**
+     * 自定义静态资源映射 SpringBoot 默认为我们提供了静态资源映射:
+     *     classpath:/META-INF/resources
+     *     classpath:/resources
+     *     classpath:/static
+     *     classpath:/public
+     * 优先级：META-INF/resources > resources > static > public
+     */
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("/static/**").addResourceLocations("file:E:/static/");
     }
 }
 ```
@@ -871,6 +946,41 @@ CustomFilter  : customFilter 请求处理之后----doFilter方法之后处理响
 请求链路调用顺序图如下所示：
 
 ![img](SpringBoot 2.x 拦截器过滤器与监听器.assets/5d0af5abad7e12e425040a72a4463357_1402x536.png)
+
+
+
+## 5、注意事项
+
+1、静态资源问题
+
+- SpringBoot2.x以后版本拦截器也会拦截静态资源，在配置拦截器是需要将姿态资源放行。
+
+  ```java
+  /*
+   * 拦截器依赖于Spring容器，此处拦截了所有，需要对静态资源进行放行
+   */
+  @Override
+  public void addInterceptors(InterceptorRegistry registry) {
+      registry.addInterceptor(new PageInterceptor()).addPathPatterns("/**")
+          .excludePathPatterns("/page/login", "/user/login","/page/ajax","/static/**");
+  }
+  ```
+
+- SpringBoot2.x 自定义静态资源映射
+
+  ```yaml
+  spring:
+    mvc:
+      static-path-pattern: /static/**
+  ```
+
+- 默认目录：
+
+  - classpath:/META-INF/resources
+  - classpath:/resources
+  - classpath:/static
+  - classpath:/public
+  - 优先级：META-INF/resources > resources > static > public
 
 
 

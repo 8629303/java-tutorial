@@ -328,7 +328,7 @@ public class JavaAPIDemo {
 
 静态工厂设计模式：
 
-![image.png](https://ucc.alicdn.com/pic/developer-ecology/9e8300d8e1a04f7999dd979d147ea46d.png)
+![image.png](Java 反射与注解.assets/9e8300d8e1a04f7999dd979d147ea46d.png)
 
 此种工厂设计模式属于静态工厂设计模式，也就是说如果现在要追加一个子类，则意味着工厂类一定要做出修改，因为如果不追加判断是无法获取指定接口对象的。
 
@@ -431,7 +431,7 @@ public class JavaAPIDemo {
 
 反射工厂设计模式：
 
-![image.png](https://ucc.alicdn.com/pic/developer-ecology/56ed15f351f849d890f17665dbc4c96c.png)
+![image.png](Java 反射与注解.assets/56ed15f351f849d890f17665dbc4c96c.png)
 
 但现在依然需要进一步思考，因为在实际的项目开发过程中，有可能会存在有大量的接口，并且这些接口都可能需要通过工厂类实例化，所以此时的工厂设计模式不应该只为IMessage接口服务，应该为所有接口服务。
 
@@ -582,7 +582,7 @@ www.xxxx.cn
 
 单例设计模式问题：
 
-![image.png](https://ucc.alicdn.com/pic/developer-ecology/d6cbe2c3fcfe41f294604ab7c95cd0ec.png)
+![image.png](Java 反射与注解.assets/d6cbe2c3fcfe41f294604ab7c95cd0ec.png)
 
 操作示例 3：修改getInstance()进行同步处理
 
@@ -1220,7 +1220,7 @@ String
 
 在以后开发中进行反射处理的时候，往往会利用Field类和Method类实现类中的setter方法的调用。
 
-![image.png](https://ucc.alicdn.com/pic/developer-ecology/39469674e6b144e2bf8854b95dd99fa2.png)
+![image.png](Java 反射与注解.assets/39469674e6b144e2bf8854b95dd99fa2.png)
 
 
 
@@ -1348,7 +1348,7 @@ public class JavaAPIDemo {
 
 反射与简单Java类：
 
-![image.png](https://ucc.alicdn.com/pic/developer-ecology/7fc10decffeb42bea773681d5d7a9b87.png)
+![image.png](Java 反射与注解.assets/7fc10decffeb42bea773681d5d7a9b87.png)
 
 设计的基本结构：
 
@@ -1391,7 +1391,7 @@ public class JavaAPIDemo {
 
 反射与简单Java类：
 
-![image.png](https://ucc.alicdn.com/pic/developer-ecology/370ca16ec0f04be092e44b901753a1e2.png)
+![image.png](Java 反射与注解.assets/370ca16ec0f04be092e44b901753a1e2.png)
 
 操作示例：
 
@@ -2287,7 +2287,7 @@ public class JavaAPIDemo {
 
 在Java语言中提供了一个系统的环境变量：CLASSPATH，这个环境属性的作用主要是在JVM进程启动时进行类加载路径的定义，在JVM中可以根据类加载器而后进行指定路径中类的加载，也就是说找到了类的加载器就意味着找到了类的来源。ClassLoader类加载器图如下：
 
-![image.png](https://ucc.alicdn.com/pic/developer-ecology/316ff411884049efa150a27697f0bdae.png)
+![image.png](Java 反射与注解.assets/316ff411884049efa150a27697f0bdae.png)
 
 
 
@@ -2331,7 +2331,7 @@ null
 
 从JDK1.8之后的版本（JDK1.9，JDK1.10）提供有一个“PlatformClassLoader”类加载器，而在JDK1.8及以前的版本中提供的加载器为“ ExtClassLoader”，因为在JDK的安装目录中提供了一个ext的目录，开发者可以将*.jar文件拷贝到此目录中，这样就可以直接执行了，但是这样的处理开发并不安全，最初的时候也是不提倡使用的，所以从JDK1.9开始将其彻底废除了，同时为了与系统类加载器和应用类加载器之间保持设计的平衡，提供有平台类加载器。
 
-![image.png](https://ucc.alicdn.com/pic/developer-ecology/0758764a15a84fc3a4d603c72995cb31.png)
+![image.png](Java 反射与注解.assets/0758764a15a84fc3a4d603c72995cb31.png)
 
 当你获得了类加载器后就可以利用类加载器来实现类的反射加载处理：
 
@@ -2347,7 +2347,7 @@ protected Class<?> findClass(String name) throws ClassNotFoundException;
 
 自定义类加载器：
 
-![image.png](https://ucc.alicdn.com/pic/developer-ecology/1de67f30666846518ae5564dce2fd449.png)
+![image.png](Java 反射与注解.assets/1de67f30666846518ae5564dce2fd449.png)
 
 1、随意编写一个程序类，并且将这个类保存在D盘（D:\Message.java）
 
@@ -2451,7 +2451,7 @@ www.example.cn
 
 如果在以后结合网络程序开发的话，就可以通过一个远程的服务器来确定一个类的功能。
 
-![image.png](https://ucc.alicdn.com/pic/developer-ecology/f4770756ef7d4943955cc7170db96f41.png)
+![image.png](Java 反射与注解.assets/f4770756ef7d4943955cc7170db96f41.png)
 
 5、观察当前的Message类的加载器的情况
 
@@ -2551,7 +2551,7 @@ public class JavaAPIDemo {
 
 传统代理设计：
 
-![image.png](https://ucc.alicdn.com/pic/developer-ecology/2d7906b1be244235bfa7407efad0f361.png)
+![image.png](Java 反射与注解.assets/2d7906b1be244235bfa7407efad0f361.png)
 
 以上的操作代码是一个最为标准的代理设计，但是如果要进一步的去思考会发现客户端的接口与具体的子类产生了耦合问题，所以这样的操作如果从实际的开发来讲，最好再引入工厂设计模式进行代理对象的获取。
 
@@ -2570,7 +2570,7 @@ public class JavaAPIDemo {
 
 动态代理设计模式：
 
-![image.png](https://ucc.alicdn.com/pic/developer-ecology/77c6189e21d3434188ef44e5d1174581.png)
+![image.png](Java 反射与注解.assets/77c6189e21d3434188ef44e5d1174581.png)
 
 在进行动态代理实现的操作中，首先需要关注的就是一个InvocationHandler接口，这个接口规定了代理方法的执行。
 
@@ -2598,7 +2598,7 @@ public interface InvocationHandler{
 
 代理方法：
 
-![image.png](https://ucc.alicdn.com/pic/developer-ecology/60725c9ee29941aea3f8641bdf8de23f.png)
+![image.png](Java 反射与注解.assets/60725c9ee29941aea3f8641bdf8de23f.png)
 
 操作示例 2：实现动态代理机制
 
@@ -3054,8 +3054,6 @@ public class JavaAPIDemo {}
 
 
 
-
-
 ## 4、自定义注解
 
 使用@interface自定义注解分析：
@@ -3119,7 +3117,7 @@ public class JavaAPIDemo {
 | public < T extends Annotation > T[] getDeclaredAnnotationsByType(Class< T > annotationClass) | 返回直接存在该元素上某类型的注释         |
 | public boolean isAnnotationPresent(Class<? extends Annotation> annotationClass) | 是否存在指定的Annotation                 |
 
-![image.png](https://ucc.alicdn.com/pic/developer-ecology/fa527e5dc53d4c4a953235a51de6a5a7.png)
+![image.png](Java 反射与注解.assets/fa527e5dc53d4c4a953235a51de6a5a7.png)
 
 操作示例 1：获取接口和接口子类上的Annotation信息
 
@@ -3433,26 +3431,44 @@ class Member {
 public class JavaAPIDemo {
     public static void main(String ...args) throws NoSuchFieldException, IllegalAccessException {
         {
-            // 通过反射修改运行中的方法上的注解属性
-            Field field = Member.class.getDeclaredField("value"); // 获取Member的name字段
-            Name name = field.getAnnotation(Name.class); // 获取的Name注解实例
-            InvocationHandler h = Proxy.getInvocationHandler(name); // 获取name这个代理实例所持有的 InvocationHandler
-            Field hField = h.getClass().getDeclaredField("memberValues");  // 获取 AnnotationInvocationHandler 的 memberValues 字段
-            hField.setAccessible(true); // 因为这个字段是 private final 修饰，所以要打开权限
-            Map memberValues = (Map) hField.get(h); // 获取 memberValues
-            memberValues.put("value", "customFiledName"); // 修改 value 属性值
-            System.out.println(name.value()); // 获取 name 的 value 属性值
+            /**
+             * 通过反射修改运行中的方法上的注解属性
+             */
+            // 获取Member的name字段
+            Field field = Member.class.getDeclaredField("value");
+            // 获取的Name注解实例
+            Name name = field.getAnnotation(Name.class);
+            // 获取name这个代理实例所持有的 InvocationHandler
+            InvocationHandler h = Proxy.getInvocationHandler(name);
+            // 获取 AnnotationInvocationHandler 的 memberValues 字段
+            Field hField = h.getClass().getDeclaredField("memberValues");
+            // 因为这个字段是 private final 修饰，所以要打开权限
+            hField.setAccessible(true);
+            // 获取 memberValues
+            Map memberValues = (Map) hField.get(h);
+            // 修改 value 属性值
+            memberValues.put("value", "customFiledName");
+            // 获取 name 的 value 属性值
+            System.out.println(name.value());
         }
         System.out.println("---------------------------分割线---------------------------");
         {
-            // 通过反射修改运行中的类上的注解属性
+            /**
+             * 通过反射修改运行中的类上的注解属性
+             */
             Name name = Member.class.getDeclaredAnnotation(Name.class);
-            InvocationHandler h = Proxy.getInvocationHandler(name); // 获取代理实例所持有的 InvocationHandler
-            Field hField = h.getClass().getDeclaredField("memberValues");  // 获取 AnnotationInvocationHandler 的 memberValues 字段
-            hField.setAccessible(true); // 因为这个字段是 private final 修饰，所以要打开权限
-            Map memberValues = (Map) hField.get(h); // 获取 memberValues
-            memberValues.put("value", "customTypeName"); // 修改 value 属性值
-            System.out.println(name.value()); // 获取 name 的 value 属性值
+            // 获取代理实例所持有的 InvocationHandler
+            InvocationHandler h = Proxy.getInvocationHandler(name);
+            // 获取 AnnotationInvocationHandler 的 memberValues 字段
+            Field hField = h.getClass().getDeclaredField("memberValues");
+            // 因为这个字段是 private final 修饰，所以要打开权限
+            hField.setAccessible(true);
+            // 获取 memberValues
+            Map memberValues = (Map) hField.get(h);
+            // 修改 value 属性值
+            memberValues.put("value", "customTypeName");
+            // 获取 name 的 value 属性值
+            System.out.println(name.value());
         }
         System.out.println("---------------------------分割线---------------------------");
         {
@@ -3463,7 +3479,9 @@ public class JavaAPIDemo {
         }
     }
 }
+```
 
+```java
 // 输出内容
 customFiledName
 ---------------------------分割线---------------------------
@@ -3473,9 +3491,13 @@ customTypeName
 customFiledName
 ```
 
-PS：membervalues属性为JDK中存储所有成员变量值的Map
+PS：membervalues属性为JDK中存储所有成员变量值的Map。
 
-
+> 如果是Java17的话需要增加如下JVM启动参数：
+>
+> ```bash
+> --add-opens java.base/sun.reflect.annotation=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED
+> ```
 
 # 反射系列方法大全汇总
 
