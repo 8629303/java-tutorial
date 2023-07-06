@@ -232,14 +232,13 @@
 
 # 参考文献 & 鸣谢
 
-1. https://www.cnblogs.com/hkgov/p/12209317.html
-2. https://blog.csdn.net/qq_35246620/article/details/53648746
-3. https://github.com/judasn/IntelliJ-IDEA-Tutorial
-4. https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/practical-skills/keymap-windows.md
-5. https://www.cntofu.com/book/143/settings-introduce-1.md（老版）
-6. **IntelliJ IDEA DEFAULT KEYMAP**：https://www.jetbrains.com/idea/docs/IntelliJIDEA_ReferenceCard_Mac.pdf
-
-
+1. IDEA 教程之基础篇（二）：IntelliJ IDEA 快捷键大全 + 动图演示：https://blog.csdn.net/weixin_67276852/article/details/124159843
+2. IntelliJ IDEA 快捷键：https://www.cnblogs.com/hkgov/p/12209317.html
+3. IntelliJ IDEA 常用快捷键 之 Windows 版：https://blog.csdn.net/qq_35246620/article/details/53648746
+4. IntelliJ IDEA 常用快捷键 之 Windows 版：https://github.com/guobinhit/intellij-idea-tutorial/blob/master/articles/practical-skills/keymap-windows.md
+5. IntelliJ IDEA 简体中文专题教程：https://github.com/judasn/IntelliJ-IDEA-Tutorial
+6. IntelliJ IDEA 简体中文专题教程：https://www.cntofu.com/book/143/settings-introduce-1.md（老版）
+7. **IntelliJ IDEA DEFAULT KEYMAP**：https://www.jetbrains.com/idea/docs/IntelliJIDEA_ReferenceCard_Mac.pdf
 
 
 

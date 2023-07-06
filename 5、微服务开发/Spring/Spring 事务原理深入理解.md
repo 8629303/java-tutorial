@@ -1,6 +1,6 @@
-> 作者：SpringForAll；来源：https://mp.weixin.qq.com/s/JzoY4jMyydW_Ae9aIM4ETA
+> - 作者：SpringForAll；来源：https://mp.weixin.qq.com/s/JzoY4jMyydW_Ae9aIM4ETA
 >
-> Spring事务详解：https://blog.csdn.net/csdn_wyl2016/category_11607107.html
+> - Spring事务详解：https://blog.csdn.net/csdn_wyl2016/category_11607107.html
 
 # 一、Spring 事务基本原理
 

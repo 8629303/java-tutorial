@@ -3,7 +3,7 @@
 
 # Spring 事务开启的两种方式
 
-## 1、@Trasactional 自动提交【注解事务】
+## 1、Trasactional 自动提交【注解事务】
 
 1、方法上增加@Trasactional注解：@Transactional 注解是通过 AOP 方式实现的，默认捕获 RuntimeException 的异常并触发方法中所有数据库操作（增、删、改）回滚。如果自定义异常需要设置，@Transactional(rollbackOn = Exception.class)
 
@@ -165,7 +165,7 @@ public class TransactionUtil {
     @Autowired
     private PlatformTransactionManager transactionManager;
 
-    public <T> boolean transactional(Object entity, Consumer<Object> consumer) {
+    public <T> boolean transactional(T entity, Consumer<T> consumer) {
         TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
         try {
             consumer.accept(entity);

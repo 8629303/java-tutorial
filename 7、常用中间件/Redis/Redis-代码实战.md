@@ -5911,6 +5911,97 @@ spring.redis.cluster.nodes=ip1:port1,ip2:port2,ip3:port3
 
 
 
+## 8、Redis Configuration 配置
+
+1、使用 Lettuce 配置 RedisTemplate：
+
+```java
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CachingConfigurerSupport;
+import org.springframework.cache.interceptor.KeyGenerator;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.cache.RedisCacheWriter;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+/**
+ * @ClassName RedisConfig
+ * @Author admin
+ * @Version 1.0
+ */
+@Configuration
+public class RedisConfig extends CachingConfigurerSupport {
+
+    /**
+     * 自定义缓存key的生成策略.
+     * 默认的生成策略是看不懂的(乱码内容) 通过Spring的依赖注入特性进行自定义的配置注入并且此类是一个配置类可以更多程度的自定义配置
+     */
+    @Bean
+    @Override
+    public KeyGenerator keyGenerator() {
+        return (target, method, params) -> {
+            StringBuilder sb = new StringBuilder();
+            sb.append(target.getClass().getName());
+            sb.append(method.getName());
+            for (Object obj : params) {
+                sb.append(obj.toString());
+            }
+            return sb.toString();
+        };
+    }
+
+    /**
+     * 缓存配置管理器
+     */
+    @Bean
+    public CacheManager cacheManager(LettuceConnectionFactory factory) {
+        // 以锁写入的方式创建RedisCacheWriter对象
+        RedisCacheWriter writer = RedisCacheWriter.lockingRedisCacheWriter(factory);
+        // 创建默认缓存配置对象
+        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig();
+        RedisCacheManager cacheManager = new RedisCacheManager(writer, config);
+        return cacheManager;
+    }
+
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate(LettuceConnectionFactory factory) {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        // Redis 连接工厂设置
+        template.setConnectionFactory(factory);
+
+        // 序列化配置: 使用Jackson2JsonRedisSerialize 替换默认序列化, 将对象解析成可以序列化的对象
+        Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
+
+        // Jackson的配置, 使用Mapper对象进行转义
+        ObjectMapper om = new ObjectMapper();
+        om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+        om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+        jackson2JsonRedisSerializer.setObjectMapper(om);
+
+        // String 类型的序列化
+        StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
+        // 在使用注解@Bean返回RedisTemplate的时候，同时配置hashKey与hashValue的序列化方式。
+        template.setKeySerializer(stringRedisSerializer); // key采用String的序列化方式
+        template.setValueSerializer(jackson2JsonRedisSerializer); // value序列化方式采用jackson
+        template.setHashKeySerializer(stringRedisSerializer); // hash的key也采用String的序列化方式
+        template.setHashValueSerializer(jackson2JsonRedisSerializer); // hash的value序列化方式采用jackson
+        // 最后必须执行这个函数,初始化RedisTemplate
+        template.afterPropertiesSet();
+        return template;
+    }
+}
+```
+
+
+
 # Redis RedisTemplate 详解
 
 ## 1、RedisTemplate 简介

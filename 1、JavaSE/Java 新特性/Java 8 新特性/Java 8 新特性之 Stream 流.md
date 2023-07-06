@@ -1925,6 +1925,7 @@ publicclass CollectorsExample {
 }
 ```
 
+- 更多用法可以参考：Java8 -- 05 -- Collectors类常用方法解析：https://blog.csdn.net/Goodbye_Youth/article/details/106875308
 
 
 # 六、参考文献 & 鸣谢
@@ -1935,3 +1936,4 @@ publicclass CollectorsExample {
 4. 纪莫，博客园：https://www.cnblogs.com/jimoer/p/10995574.html
 5. 【Java8新特性】面试官：谈谈Java8中的Stream API有哪些终止操作？https://blog.csdn.net/l1028386804/article/details/106416723
 6. Java 8 Stream API学习总结：https://blog.csdn.net/qq_28336351/article/details/106153368
+7. **JDK8 Stream 效率如何**？https://mp.weixin.qq.com/s/lBZPbVveEPPO6brga3xOJQ

@@ -1,4 +1,4 @@
-# 一、SpringApplication 自定义启动
+# 一、SpringApplication 自定义启动方式
 
 > 来源：Springboot教程系列(2) 小谈SpringApplication启动：http://it.hzqiuxm.com/springboot%e6%95%99%e7%a8%8b%e7%b3%bb%e5%88%97%e4%b9%8b-2/
 
@@ -12,7 +12,7 @@ SpringBoot项目中有一个启动类，该启动类会使用@SpringbootApplicat
 
 ## 1、第一种：SpringApplicationAPI 方式
 
-1、本类作为run参数
+1、方式一：本类作为run参数
 
 ```java
 @SpringBootApplication
@@ -23,7 +23,7 @@ public class NovelApplication {
 }
 ```
 
-2、其他类作为启动run启动参数
+2、方式二：其他类作为启动run启动参数
 
 ```java
 public class NovelApplication {
@@ -152,6 +152,7 @@ SpringApplicationBuilder类是Spring框架的一部分，它可以用来构建�
 > 2. 作者：涛姐涛哥；来源：https://www.cnblogs.com/taojietaoge/p/16075820.html
 > 3. 作者：Fly丶X；来源：https://blog.csdn.net/weixin_44947701/article/details/124055713
 > 4. 作者：业余草；来源：https://mp.weixin.qq.com/s/viDJc489EjuCPLPWNAnIzA
+> 5. 3分钟了解 SpringBoot 的启动流程：https://mp.weixin.qq.com/s/eT2A76G-42MvvN6RMZcPMg
 
 SpringBoot 的启动经过了一系列的处理（装配、加载、监听...），我们先看看整体过程的流程图：
 
@@ -4149,5 +4150,4 @@ public class TestSpringBootApplication {
 {"ID":4,"NAME":"Sandy","TYPE":"master"},
 {"ID":5,"NAME":"Oliver","TYPE":"master"}]
 ```
-
 

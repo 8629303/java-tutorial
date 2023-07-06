@@ -183,15 +183,16 @@ HttpServletRequestWrapper 采用装饰者模式对 HttpServletRequest 进行包�
 
 
 
-### 3、代码实现1 处理SprngBoot MVC参数
+### 3、代码实现1 处理 SprngBoot MVC 参数
 
 1、新增wrapper类及filter 类
 
 ```java
 public class MyFilter implements Filter {
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-        throws IOException, ServletException {
+    public void doFilter(ServletRequest request, 
+                         ServletResponse response, 
+                         FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
         chain.doFilter(new MyHttpServletRequestWrapper(req), resp);
@@ -282,8 +283,9 @@ java.lang.IllegalStateException: getReader() has already been called for this re
 @Slf4j
 public class MyFilter implements Filter {
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
+    public void doFilter(ServletRequest request, 
+                         ServletResponse response, 
+                         FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
         MyHttpServletRequestWrapper myRequest = new MyHttpServletRequestWrapper(req, resp);
@@ -307,11 +309,6 @@ class MyHttpServletRequestWrapper extends HttpServletRequestWrapper {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
         requestBody = StreamUtils.copyToByteArray(request.getInputStream());
-    }
-
-    @Override
-    public BufferedReader getReader() {
-        return new BufferedReader(new InputStreamReader(getInputStream()));
     }
 
     @Override
@@ -342,6 +339,11 @@ class MyHttpServletRequestWrapper extends HttpServletRequestWrapper {
             public void setReadListener(ReadListener readListener) {
             }
         };
+    }
+    
+    @Override
+    public BufferedReader getReader() {
+        return new BufferedReader(new InputStreamReader(getInputStream()));
     }
 }
 ```
@@ -393,7 +395,125 @@ public class RequestWrapperController {
 
 
 
-### 5、代码实现3 实现动态添加请求头信息
+### 5、代码实现3 动态添加RequestBody参数
+
+在【代码实现 3】基础上进行修改：
+
+1、创建 wrapper 类及 filter 类
+
+```java
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StreamUtils;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+
+@Slf4j
+public class MyFilter implements Filter {
+    @Override
+    public void doFilter(ServletRequest request,
+                         ServletResponse response,
+                         FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse resp = (HttpServletResponse) response;
+        MyHttpServletRequestWrapper myRequest = new MyHttpServletRequestWrapper(req, resp);
+        chain.doFilter(myRequest, resp);
+        // 增加和修改requestBody中的参数
+        myRequest.setRequestBody("city", "GZ");
+        System.out.println("测试读取流: " + StreamUtils.copyToString(myRequest.getInputStream(), StandardCharsets.UTF_8));
+    }
+}
+
+/**
+ * 首先在构造的时候，就通过 IO 流将数据读取出来并存入到一个 byte 数组中，
+ * 然后重写 getReader 和 getInputStream 方法，在这两个读取 IO 流的方法中，
+ * 都从 byte 数组中返回 IO 流数据出来，这样就实现了反复读取了。
+ * 接下来定义一个过滤器，让这个装饰后的 Request 生效
+ */
+class MyHttpServletRequestWrapper extends HttpServletRequestWrapper {
+    private byte[] requestBody;
+    public MyHttpServletRequestWrapper(HttpServletRequest request,
+                                       ServletResponse response) throws IOException {
+        super(request);
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        requestBody = StreamUtils.copyToByteArray(request.getInputStream());
+    }
+
+    @Override
+    public ServletInputStream getInputStream() {
+        final ByteArrayInputStream bais = new ByteArrayInputStream(requestBody);
+        return new ServletInputStream() {
+            @Override
+            public int read() {
+                return bais.read();
+            }
+
+            @Override
+            public int available() {
+                return requestBody.length;
+            }
+
+            @Override
+            public boolean isFinished() {
+                return false;
+            }
+
+            @Override
+            public boolean isReady() {
+                return false;
+            }
+
+            @Override
+            public void setReadListener(ReadListener readListener) {
+            }
+        };
+    }
+    
+    @Override
+    public BufferedReader getReader() {
+        return new BufferedReader(new InputStreamReader(getInputStream()));
+    }
+
+    /**
+     * 获取请求体
+     * @return 请求体
+     */
+    public void setRequestBody(String k, String v) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode objectNode = objectMapper.readValue(requestBody, ObjectNode.class);
+        objectNode.put(k, v);
+        objectNode.put("name", "Java");
+        requestBody = objectMapper.writeValueAsBytes(objectNode);
+    }
+}
+```
+
+2、访问API（POST）：localhost:8080/wrapper/testWrapper，下面是request body参数
+
+```json
+{"name": "Sam"}
+```
+
+3、打印结果如下
+
+```
+{"name": "Sam"}
+测试读取流: {"name":"Java","city":"GZ"}
+```
+
+
+
+### 6、代码实现4 实现动态添加请求头信息
 
 1、创建 wrapper 类及 filter 类
 
@@ -497,7 +617,7 @@ xxxxxx
 
 
 
-### 6、参考文献 & 鸣谢
+### 7、参考文献 & 鸣谢
 
 > 1. HttpServletRequestWrapper 去除@RequestBody参数两端的空格：https://mp.weixin.qq.com/s/-72uNCI2nYbL9rwbigs-bQ
 > 2. HttpServletRequestWrapper 解决流只能读取一次的问题：https://blog.csdn.net/qq_43437874/article/details/122102362

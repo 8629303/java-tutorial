@@ -1,6 +1,6 @@
-> 作者：武哥聊编程]；来源：https://mp.weixin.qq.com/s/MowhCzlMG48deW7NkVQkxQ
+> 1. 作者：武哥聊编程]；来源：https://mp.weixin.qq.com/s/MowhCzlMG48deW7NkVQkxQ
 >
-> 作者：编了个程（Yasin x）；来源：https://mp.weixin.qq.com/s/pjT8D3iEYauSWJas_xGbDg
+> 2. 作者：编了个程（Yasin x）；来源：https://mp.weixin.qq.com/s/pjT8D3iEYauSWJas_xGbDg
 
 Mockito 是一种 Java Mock 框架，他主要是用来做 mock 测试的，他可以模拟任何 Spring 管理的 Bean、模拟方法的返回值、模拟抛出异常...等，在了解 Mockito 的具体用法之前，得先了解什麽是 mock 测试
 
@@ -398,14 +398,14 @@ Integer i = userService.insertUser(new User()); //会返回100
 
 ```java
 Mockito.when(userService.getUserById(9)).thenThrow(new RuntimeException("mock throw exception"));
-User user = userService.getUserById(9); //会抛出一个RuntimeException
+User user = userService.getUserById(9); // 会抛出一个RuntimeException
 ```
 
 如果方法没有返回值的话（即是方法定义为`public void myMethod() {...}`），要改用 doThrow() 抛出 Exception
 
 ```java
 Mockito.doThrow(new RuntimeException("mock throw exception")).when(userService).print();
-userService.print(); //会抛出一个RuntimeException
+userService.print(); // 会抛出一个RuntimeException
 ```
 
 

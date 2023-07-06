@@ -5067,6 +5067,15 @@ Hibernate:
 CustConvertVO(id=2, username=sam)
 ```
 
+5、@Converter(autoApply = true) 的使用
+
+```java
+@Converter(autoApply = true)
+public class CustConvert implements AttributeConverter<String, String> {}
+```
+
+- 使用该注解可以无需在Entity对象上显式使用`@Convert(converter = CustConvert.class)`，注意：旨在同一package下生效。
+
 
 
 ## 9、Hibernate-Validation 校验注解

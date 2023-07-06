@@ -1,3 +1,5 @@
+> 常用类库方法解析：https://blog.csdn.net/goodbye_youth/category_9124345.html
+
 # 基础的类库
 
 ## 1、StringBuffer【类】

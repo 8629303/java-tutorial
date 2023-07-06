@@ -4970,10 +4970,13 @@ LocalDateTime、ZoneId、Instant、ZonedDateTime 和 long 都可以互相转换�
 
 # 参考文献 & 鸣谢
 
-1. JSR-310（java8 新日期时间API）【**最全教程**】：https://blog.csdn.net/shi_hong_fei_hei/article/details/120477317
+1. JSR-310（java8 新日期时间API）【**小虚竹-最全教程**】：https://blog.csdn.net/shi_hong_fei_hei/article/details/120477317
 2. Java日期时间教程【一点教程】http://www.yiidian.com/java-date
 3. java.time包教程【易百教程】https://www.yiibai.com/javatime
 4. Java的日期与时间（目录）https://blog.csdn.net/tjgykhulj/article/details/68952451
 5. Java方向盘-日期时间：https://blog.csdn.net/f641385712/category_10749009.html、[[YourBatman]-日期时间-公众号目录](https://mp.weixin.qq.com/mp/appmsgalbum?action=getalbum&__biz=MzI0MTUwOTgyOQ==&scene=24&album_id=1696358010555547649&count=3#wechat_redirect)
 6. Java8日期时间API【ThinkWon】：https://thinkwon.blog.csdn.net/article/details/111087199
 7. **日期时间时区等**：https://blog.csdn.net/kfepiza/category_10948478.html
+8. Java-128-time包-1：https://mp.weixin.qq.com/s/SxMhDqVNJAj3A_p1GOqwQQ
+9. Java-129-time包-2：https://mp.weixin.qq.com/s/qoaPH09K9CubaF-_Y7_b_Q
+10. Java-130-time包-3-常见的日期转换：https://mp.weixin.qq.com/s/WEo7pm07BT0WphVNOaOd6w
