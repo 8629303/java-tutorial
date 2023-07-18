@@ -159,7 +159,7 @@ public class JUnit5DemonTest {
 
 | 注解                  | 作用                                                         |
 | :-------------------- | :----------------------------------------------------------- |
-| @SpringBootTest       | 用于指定测试类启用Spring Boot Test，默认会提供Mock环境       |
+| @SpringBootTest       | 用于指定测试类启用SpringBoot Test，默认会提供Mock环境        |
 | @ExtendWith           | 如果只想启用Spring环境进行简单测试，不想启用SpringBoot环境，可以配置扩展为：SpringExtension |
 | @SpringJunitConfig    | 可以只指定需要加载到Spring容器中的类，不需要的类不会加载到spring容器中，此属于Spring的注解 |
 | @ContextConfiguration | 指定需要加载到Spring中的类，与@SpringJunitConfig类似，需要搭配@ExtendWith使用 |
@@ -302,7 +302,7 @@ public class FirstTest {
 
 ### 3、指定测试方法顺序
 
-我们可以通过@TestMethodOrder注解和@Order注解来指定所有测试方法的执行顺序，具体代码如下。
+我们可以通过**@TestMethodOrder**注解和**@Order**注解来指定所有测试方法的执行顺序，具体代码如下。
 
 ```java
 import lombok.extern.slf4j.Slf4j;

@@ -10,6 +10,7 @@ MockMvc是由spring-test / spring-boot-starter-test包提供，实现了对http�
 | :--------: | :----------------------------------------------------------: |
 |   方法一   | mockMvc = MockMvcBuilders.standaloneSetup(new HelloWorldController()).build();<br />通过参数指定一组控制器，这样就不需要从上下文获取了 |
 |   方法二   | mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();<br />指定WebApplicationContext，将会从该上下文获取相应的控制器并得到相应的MockMvc |
+|   方法三   | @SpringBootTest + @AutoConfigureMockMvc + @Autowired MockMvc mockMvc |
 
 mockMvc的基本步骤：
 
