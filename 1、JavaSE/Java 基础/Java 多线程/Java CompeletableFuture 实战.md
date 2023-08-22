@@ -528,3 +528,10 @@ System.out.println("任务完成后:" + future.join());
 // 任务完成后:10
 ```
 
+
+
+# 参考文献 & 鸣谢
+
+1. 基础篇：异步编程不会？我教你啊！CompeletableFuture：https://mp.weixin.qq.com/s/siixcALGcVDPGqwNpJdc1w
+2. 奇淫巧技，CompletableFuture 异步多线程是真的优雅：https://mp.weixin.qq.com/s/Af6Y9kx3RBPfCpzf5w0OCA
+

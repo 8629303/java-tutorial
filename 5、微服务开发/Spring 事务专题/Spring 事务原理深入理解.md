@@ -4,7 +4,7 @@
 
 # 一、Spring 事务基本原理
 
-Spring事务的本质其实就是数据库对事务的支持，没有数据库的事务支持，spring是无法提供事务功能的。对于纯JDBC操作数据库，想要用到事务，可以按照以下步骤进行：
+Spring 事务的本质其实就是数据库对事务的支持，没有数据库的事务支持，Spring 是无法提供事务功能的。对于纯JDBC操作数据库，想要用到事务，可以按照以下步骤进行：
 
 1. 获取连接：Connection con = DriverManager.getConnection()
 2. 开启事务：con.setAutoCommit(true/false);
@@ -60,7 +60,7 @@ public void saveSomething(Long  id, String name) {
 
 
 
-## AOP 代理的两种实现
+## 1、AOP 代理的两种实现
 
 - JDK是代理接口，私有方法必然不会存在在接口里，所以就不会被拦截到；
 - Cglib是子类，private的方法照样不会出现在子类里，也不能被拦截。
@@ -137,6 +137,202 @@ public class PersonServiceImpl implements PersonService {
     public void delete() {
         personRepository.delete(1L);
         throw new RuntimeException();
+    }
+}
+```
+
+
+
+## 2、@Transactional 注解详解
+
+### 1、@Transactional 介绍及注意事项
+
+**@Transactional 加在类上：**说明该事务作用于类中的所有方法
+
+**@Transactional 加载方法上：**说明该事务只作用域该方法，只能加在public方法上
+
+**@Transactional 避坑注意事项**： 
+
+1. **@Transactional 注解只能加在 public 方法上**，这是由 Spring AOP 的本质动态代理决定的。如果你在 protected、private 或者默认可见性的方法上使用 @Transactional 注解，这将被忽略，也不会抛出任何异常。 Spring默认使用的是jdk自带的基于接口的代理，而没有使用基于类的代理CGLIB。
+2. **@Transactional注解底层使用的是动态代理来进行实现的**，如果在调用本类中的方法，此时不添加@Transactional注解，而是在调用类中使用this调用本类中的另外一个添加了@Transactional注解，此时this调用的方法上的@Transactional注解是不起作用的，**因为 @Transactional其实是为你的类做了一个代理，既然是代理类那么只有调用代理类才能真正的执行到增强的方法，如果是在类的内部调用的化意味着没有调用增强的方法，所以声明式事务是不生效的。**
+3. **【重点中的重点】 Spring 在扫描 Bean 的时候会扫描方法上是否包含 @Transactional 注解，如果包含，Spring 会为这个Bean动态地生成一个子类（即代理类，proxy），代理类是继承原来那个Bean的。此时，当这个有注解的方法被调用的时候，实际上是由代理类来调用的，代理类在调用之前就会启动transaction。然而，如果这个有注解的方法是被同一个类中的其他方法调用的，那么该方法的调用并没有通过代理类，而是直接通过原来的那个Bean，所以就不会启动transaction，我们看到的现象就是@Transactional注解无效。**（总结来说就是：同类中，无事务的方法，调用添加事务的方法，这个方法的事务并不生效）
+4. **如果异常被try｛｝catch｛｝了**，事务就不回滚了，如果想让事务回滚必须再往外抛try｛｝catch｛throw Exception｝。
+5. @Transactional 注解标识的方法，处理过程尽量的简单。尤其是带锁的事务方法，能不放在事务里面的最好不要放在事务里面。可以将常规的数据库查询操作放在事务前面进行，而事务内进行增、删、改、加锁查询等操作。
+6. @Transactional既可以作用于接口，接口方法上以及类已经类的方法上。**但是Spring官方不建议接口或者接口方法上使用该注解**，因为这只有在使用基于接口的代理时它才会生效。
+7. 你当然可以在接口上使用 @Transactional 注解，但是这将只能当你设置了基于接口的代理时它才生效。因为注解是不能继承的，这就意味着如果你正在使用基于类的代理时，那么事务的设置将不能被基于类的代理所识别，而且对象也将不会被事务代理所包装（将被确认为严重的）。**因此，请接受Spring团队的建议并且在具体的类上使用 @Transactional 注解。**
+
+
+
+### 2、@Transactional 属性介绍
+
+```java
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Inherited
+@Documented
+public @interface Transactional {
+    @AliasFor("transactionManager")
+    String value() default "";
+
+    @AliasFor("value")
+    String transactionManager() default "";
+
+    Propagation propagation() default Propagation.REQUIRED;
+
+    Isolation isolation() default Isolation.DEFAULT;
+
+    int timeout() default -1;
+
+    boolean readOnly() default false;
+
+    Class<? extends Throwable>[] rollbackFor() default {};
+
+    String[] rollbackForClassName() default {};
+
+    Class<? extends Throwable>[] noRollbackFor() default {};
+
+    String[] noRollbackForClassName() default {};
+}
+```
+
+| 属性                   | 类型                               | 描述                                       |
+| :--------------------- | :--------------------------------- | :----------------------------------------- |
+| value                  | String                             | 可选的限定描述符，指定使用的事务管理器     |
+| propagation            | enum: Propagation                  | 定义事务的生命周期，详细可查看下方。       |
+| isolation              | enum: Isolation                    | 可选的事务隔离级别设置，决定了事务的完整性 |
+| readOnly               | boolean                            | 读写或只读事务，默认读写                   |
+| timeout                | int (in seconds granularity)       | 事务超时时间设置                           |
+| rollbackFor            | Class对象数组，必须继承自Throwable | 导致事务回滚的异常类数组                   |
+| rollbackForClassName   | 类名数组，必须继承自Throwable      | 导致事务回滚的异常类名字数组               |
+| noRollbackFor          | Class对象数组，必须继承自Throwable | 不会导致事务回滚的异常类数组               |
+| noRollbackForClassName | 类名数组，必须继承自Throwable      | 不会导致事务回滚的异常类名字数组           |
+
+- propagation：定义事务的生命周期，有REQUIRED、SUPPORTS、MANDATORY、REQUIRES_NEW、NOT_SUPPORTED、NEVER、NESTED，详细含义可查阅枚举类org.springframework.transaction.annotation.Propagation源码。
+
+#### 1、propagation属性（事务传播行为）
+
+**Spring事务有7种传播行为**：使用 propagation 指定事务的传播行为, 即当前的事务方法被另外一个事务方法调用时如何使用事务, 常用属性值有: SUPPORTS ：对于只包含查询的方法一般使用这个。
+
+@Transactional(propagation = Propagation.REQUIRED)：默认之为 Propagation.REQUIRED。
+
+| 属性                      | 描述                                                         |
+| :------------------------ | ------------------------------------------------------------ |
+| Propagation.REQUIRED      | 如果当前没有事务，就创建一个新事务，如果当前存在事务，就加入该事务，该设置是最常用的设置 |
+| Propagation.SUPPORTS      | 支持当前事务，如果当前存在事务，就加入该事务，如果当前不存在事务，就以非事务执行 |
+| Propagation.MANDATORY     | 支持当前事务，如果当前存在事务，就加入该事务，如果当前不存在事务，就抛出异常 |
+| Propagation.REQUIRES_NEW  | 创建新事务，无论当前存不存在事务，都创建新事务               |
+| Propagation.NOT_SUPPORTED | 以非事务方式执行操作，如果当前存在事务，就把当前事务挂起（不需要事务管理的(只查询的)） |
+| Propagation.NEVER         | 以非事务方式执行，如果当前存在事务，则抛出异常               |
+| Propagation.NESTED        | 如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则执行与PROPAGATION_REQUIRED类似的操作 |
+
+
+
+#### 2、isolation属性（事务隔离级别）
+
+使用 isolation 指定事务的隔离级别, 属性值为：**@Transactional(isolation = Isolation.READ_COMMITTED)**
+
+| 属性             | 描述                                                         |
+| :--------------- | ------------------------------------------------------------ |
+| DEFAULT          | （默认值）使用底层数据库的默认隔离级别，对大多数据库来说默认隔离级别都是READ_COMMITTED |
+| READ_UNCOMMITTED | 允许事务读取其它事务未提交的数据变更 (会出现脏读, 不可重复读) 基本不使用 |
+| READ_COMMITTED   | 只允许事务读取已提交的数据 (可以避免脏读，但可能出现不可重复读和幻读) |
+| REPEATABLE_READ  | 可重复读，确保事务可以多次从一个字段中读取相同的值，在这个事务延续期间，禁止其他事务对这个字段进行更新 (可以避免脏读和不可重复读，但可能出现幻读) |
+| SERIALIZABLE     | 串行化，确保事务可以从一个表中读取相同的行，在这个事务延续期间，不允许其他事务对该表执行插入、修改、删除的操作。（所有并发问题都可避免，但效率十分低下） |
+
+最常用的取值为：**READ_COMMITTED**。事务的隔离级别要得到底层数据库引擎的支持, 而不是应用程序或者框架的支持. 
+
+- Oracle 支持的 2 种事务隔离级别：READ_COMMITED , SERIALIZABLE 。
+- MySQL 支持 4 中事务隔离级别。
+
+
+
+#### 3、rollbackFor属性（事务回滚设置）
+
+Spring 框架的事务管理默认地只在发生不受控异常（RuntimeException 和 Error）时才进行事务回滚。
+
+也就是说，当事务方法抛出受控异常（ Exception 中除了 RuntimeException 及其子类以外的）时不会进行事务回滚。
+
+- 受控异常（checked exceptions）：就是非运行时异常，即Exception中除了RuntimeException及其子类以外的。
+
+- 不受控异常（unchecked exceptions）：RuntimeException和Error。
+
+
+rollbackFor 属性在这里就可以发挥它的作用了，这里我们修改成 Exception 异常就回滚。
+
+-  @Transactional(rollbackFor = Exception.class)
+
+
+ 这里你可以使用 java 已声明的异常；也可以使用自定义异常；也可同时设置多个异常类，中间用逗号间隔。
+
+-  @Transactional(rollbackFor = {SQLException.class，UserAccountException.class}) 
+
+
+
+#### 4、noRollbackFor属性（事务不回滚设置）
+
+默认情况下 Spring 的声明式事务对所有的运行时异常进行回滚. 可以通过noRollbackFor属性进行设置例外异常。如： 
+
+- @Transactional(noRollbackFor = {UserAccountException.class}) 
+
+上面设置了遇到UserAccountException异常不回滚。 一般不建议设置这个属性，通常情况下默认即可。
+
+
+
+#### 5、readOnly 属性
+
+@Transactional(readOnly = false)：默认为 ：false 
+
+- 指定事务是否为只读，表示这个事务只读取数据但不更新数据。
+- 这样可以帮助数据库引擎优化事务。
+- 如果只有查询数据操作，应设置 readOnly=true。
+
+
+
+#### 6、timeout 属性
+
+@Transactional(timeout = 5)：
+
+- 指定强制回滚之前事务可以占用的时间。单位：秒。
+- 如果执行时间超过这个时间就强制回滚。
+
+
+
+#### 7、操作示例
+
+```java
+/**
+ * @Transactional默认只有遇到 RuntimeException 和 error 的时候才回滚
+ * 可以通过 rollbackFor 的设置来增加回滚的条件
+ */
+@Transactional(propagation = Propagation.REQUIRED,
+               isolation = Isolation.DEFAULT,
+               rollbackFor = {Exception.class},
+               timeout = 5)
+@Service
+public class UsersServiceImpl implements UsersService {
+
+    @Resource
+    UsersBeanMapper usersBeanMapper;
+
+    @Transactional(readOnly = true)
+    @Override
+    public UsersBean getUserByLogin(String username, String pwd) throws Exception {
+        UsersBean UsersBean=usersBeanMapper.selectByUsersBean(new UsersBean(username, pwd));
+        return UsersBean;
+    }
+
+    @Override
+    public int deleteById(Integer id) {
+        try {
+            int row = usersBeanMapper.deleteByPrimaryKey(id);
+            if (row<1) {
+                throw new MyException("我没有找到对应的ID，无法进行删除");
+            }
+            return row;
+        } catch (Exception e) {
+            throw new RuntimeException("我执行的时候出错了");
+            // throw new SQLException("我执行sql的时候出错了");
+        }
     }
 }
 ```
@@ -344,7 +540,4 @@ public String interfaceTest(Map<String, Object> map) {
 # 十、参考文献 & 鸣谢
 
 1. Spring事务详解：https://blog.csdn.net/csdn_wyl2016/category_11607107.html
-2. http://www.cnblogs.com/fenglie/articles/4097759.html
-3. https://www.zhihu.com/question/39074428/answer/88581202
-4. http://blog.csdn.net/andyzhaojianhui/article/details/51984157
 5. Spring 声名式事务@Transactional注解详解：https://blog.csdn.net/fox_bert/article/details/99460057

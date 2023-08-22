@@ -454,9 +454,8 @@ password=123456
 
 这是 MyBatis 中极为重要的调整设置，它们会改变 MyBatis 的运行时行为。 下表描述了设置中各项的意图、默认值等。
 
-|                                  |                                                              |                                                              |                                                       |
-| :------------------------------- | :----------------------------------------------------------- | :----------------------------------------------------------- | :---------------------------------------------------- |
 | 设置名                           | 描述                                                         | 有效值                                                       | 默认值                                                |
+| :------------------------------- | :----------------------------------------------------------- | :----------------------------------------------------------- | :---------------------------------------------------- |
 | cacheEnabled                     | 全局地开启或关闭配置文件中的所有映射器已经配置的任何缓存。   | true \| false                                                | true                                                  |
 | lazyLoadingEnabled               | 延迟加载的全局开关。当开启时，所有关联对象都会延迟加载。 特定关联关系中可通过设置 `fetchType` 属性来覆盖该项的开关状态。 | true \| false                                                | false                                                 |
 | aggressiveLazyLoading            | 当开启时，任何方法的调用都会加载该对象的所有属性。 否则，每个属性会按需加载（参考 `lazyLoadTriggerMethods`)。 | true \| false                                                | false （在 3.4.1 及之前的版本默认值为 true）          |
@@ -504,6 +503,38 @@ password=123456
     <setting name="jdbcTypeForNull" value="OTHER"/>
     <setting name="lazyLoadTriggerMethods" value="equals,clone,hashCode,toString"/>
     <setting name="logImpl" value="LOG4J"/>
+</settings>
+
+<!-- 全局参数 -->
+<settings>
+    <!-- 使全局的映射器启用或禁用缓存 -->
+    <setting name="cacheEnabled" value="true"/>
+    <!-- 全局启用或禁用延迟加载。当禁用时，所有关联对象都会即时加载 -->
+    <setting name="lazyLoadingEnabled" value="true"/>
+    <!-- 当启用时，有延迟加载属性的对象在被调用时将会完全加载任意属性。否则，每种属性将会按需要加载 -->
+    <setting name="aggressiveLazyLoading" value="true"/>
+    <!-- 是否允许单条sql 返回多个数据集  (取决于驱动的兼容性) default:true -->
+    <setting name="multipleResultSetsEnabled" value="true"/>
+    <!-- 是否可以使用列的别名 (取决于驱动的兼容性) default:true -->
+    <setting name="useColumnLabel" value="true"/>
+    <!-- 允许JDBC 生成主键。需要驱动器支持。如果设为true，这个设置将强制使用被生成的主键，有一些驱动器不兼容不过仍然可以执行。  default:false  -->
+    <setting name="useGeneratedKeys" value="true"/>
+    <!-- 指定 MyBatis 如何自动映射 数据基表的列 NONE：不隐射 PARTIAL:部分  FULL:全部  -->
+    <setting name="autoMappingBehavior" value="PARTIAL"/>
+    <!-- 这是默认的执行类型  （SIMPLE: 简单；REUSE: 执行器可能重复使用prepared statements语句；BATCH: 执行器可以重复执行语句和批量更新）  -->
+    <!-- 对于批量更新操作缓存SQL以提高性能 BATCH,SIMPLE -->
+    <setting name="defaultExecutorType" value="SIMPLE"/>
+    <!-- 数据库超过25000秒仍未响应则超时 -->
+    <setting name="defaultStatementTimeout" value="25000"/>
+    <!-- 使用驼峰命名法转换字段。 -->
+    <setting name="mapUnderscoreToCamelCase" value="true"/>
+    <!-- 设置本地缓存范围 session:就会有数据的共享  statement:语句范围 (这样就不会有数据的共享 ) defalut:session -->
+    <setting name="localCacheScope" value="SESSION"/>
+    <!-- 设置但JDBC类型为空时,某些驱动程序 要指定值,default:OTHER，插入空值时不需要指定类型 -->
+    <setting name="jdbcTypeForNull" value="NULL"/>
+    <!-- 设置关联对象加载的形态，此处为按需加载字段(加载字段由SQL指 定)，不会加载关联表的所有字段，以提高性能 -->
+    <setting name="aggressiveLazyLoading" value="false"/>
+    <setting name="logImpl" value="org.apache.ibatis.logging.stdout.StdOutImpl"/>
 </settings>
 ```
 
@@ -1600,6 +1631,7 @@ plugins在配置文件中的位置必须符合要求，否则会报错，顺序�
 <plugins> 
     <!-- 使用下面的方式配置参数，推荐的两个项目中有所有的参数介绍 -->
     <plugin interceptor="com.github.pagehelper.PageInterceptor">
+         <!-- 使用MySQL方言的分页 -->
         <property name="dialect" value="mysql"/>
     </plugin>
 </plugins>
@@ -3174,3 +3206,12 @@ public void testQueryUserById(){
 
    
 
+
+
+# SpringBoot 整合 Mybatis
+
+> 1. Mybatis极简配置：https://mp.weixin.qq.com/s/SmxFvQTFc-wqCWizMpNiRQ
+> 2. springboot2.x基础教程：集成mybatis最佳实践：https://mp.weixin.qq.com/s/x2NEB-3XalUwA2S-RjrZDw
+> 3. Spring Boot整合MyBatis(保姆级教程)：https://mp.weixin.qq.com/s/6Oihr6F05lHu1YJMKjNsiA
+
+在启动主类上配置 `@MapperScan` 或者直接在 Mapper 类上增加注解 `@Mapper` ，两种方法起到的结果是一样的。不过建议选择在启动主类上配置 `@MapperScan` ，不然在每个 Mapper 类上加注解也麻烦，还容易漏加。
