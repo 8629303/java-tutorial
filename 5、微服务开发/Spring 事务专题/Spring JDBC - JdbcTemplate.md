@@ -11,6 +11,125 @@ JdbcTemplate 位于 spring-jdbc-x.x.x.jar 中，其全限定命名为 org.spring
 - spring-core-x.x.x.jar
 - spring-beans-x.x.x.jar
 
+> 环境搭建：
+
+- 需要导入Spring的 tx 和 jdbc 模块
+- 需要相关数据库的驱动
+- 数据库连接池（仅就本文非必需）
+- 需要有相应的数据库进行操作
+
+1、导入依赖
+
+```xml
+<properties>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+    <spring-version>5.3.29</spring-version>
+    <mysql-connector-version>5.1.49</mysql-connector-version>
+</properties>
+
+<dependencies>
+    <!-- Spring的 context 和 jdbc 模块 -->
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>${spring-version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-jdbc</artifactId>
+        <version>${spring-version}</version>
+    </dependency>
+
+    <!-- H2数据库驱动 -->
+    <dependency>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
+        <version>2.2.220</version>
+    </dependency>
+
+    <!-- Mysql数据库驱动 -->
+    <!--        <dependency>-->
+    <!--            <groupId>mysql</groupId>-->
+    <!--            <artifactId>mysql-connector-java</artifactId>-->
+    <!--            <version>${mysql-connector-version}</version>-->
+    <!--        </dependency>-->
+    <!-- 阿里的德鲁伊连接池 -->
+    <!--        <dependency>-->
+    <!--            <groupId>com.alibaba</groupId>-->
+    <!--            <artifactId>druid</artifactId>-->
+    <!--            <version>${druid-version}</version>-->
+    <!--        </dependency>-->
+</dependencies>
+<repositories>
+    <repository>
+        <id>nexus-aliyun</id>
+        <name>nexus-aliyun</name>
+        <url>https://maven.aliyun.com/nexus/content/groups/public/</url>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+    </repository>
+</repositories>
+```
+
+2、简单使用
+
+```java
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+
+public class Main {
+    public static void main(String[] args) {
+        // 获取数据源, 这里使用H数据库, 不知道为什么使用mem内存模式一直报错, 所以使用file文件模式
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("org.h2.Driver"); // 驱动
+        dataSource.setUrl("jdbc:h2:file:~/test;;DATABASE_TO_UPPER=false"); // 数据库连接
+        dataSource.setUsername("sa"); // 用户
+        dataSource.setPassword(""); // 密码
+        // 如果要使用其他数据源只需要修改上面部分, 然后把dataSource注入JdbcTemplate即可
+
+        // 获取 JdbcTemplate
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+
+        // 先初始化表和初始化数据
+        jdbcTemplate.execute("drop table if exists user_info");
+        jdbcTemplate.execute("create table user_info(user_id int primary key, user_name varchar(255))");
+        jdbcTemplate.update("insert into user_info values(1, 'Java')");
+        jdbcTemplate.update("insert into user_info values(2, 'Python')");
+        jdbcTemplate.update("insert into user_info values(3, 'JavaScript')");
+
+        // 查询数据
+        System.out.println(jdbcTemplate.queryForList("select * from user_info"));
+    }
+}
+```
+
+```、
+[{user_id=1, user_name=Java}, {user_id=2, user_name=Python}, {user_id=3, user_name=JavaScript}]
+```
+
+3、配置文件定义，将数据源连接池以及 jdbcTemplate 改为配置文件定义。或者直接@Bean定义也行。
+
+```xml
+<!-- 德鲁伊连接池 -->
+<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+    <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+    <property name="url" value="jdbc:mysql://localhost:3306/test?serverTimezone=Asia/Shanghai"/>
+    <property name="username" value="root"/>
+    <property name="password" value="root"/>
+</bean>
+
+<!-- jdbcTemplate -->
+<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+    <!-- 设置数据源 -->
+    <property name="dataSource" ref="dataSource"/>
+</bean>
+```
+
 
 
 # 二、JdbcTemplate 方法使用概述
@@ -31,6 +150,36 @@ JdbcTemplate 主要提供以下五类或四类方法：
 - execute：可以执行所有SQL语句，一般用于执行DDL语句。
 - update：用于执行INSERT、UPDATE、DELETE等DML语句。
 - queryXxx：用于DQL数据查询语句。
+
+query 方法及 queryForXXX 方法 重点概述：
+
+- queryForObject：查询结果，将结果封装为对象，一般用于聚合函数的查询。一般用户单行单列或单行多列
+- queryForMap()：查询结果将结果集封装为map集合，列名作为key，值作为value。 该方法只能查一行数据。一般用于单行多列
+- queryForList()：查询结果将结果集封装为list集合。注意：每一条记录为一个Map集合，再将Map集合装载到List集合中。一般用于多行多列。
+- queryForRowSet：查询结果将结果集封装为SqlRowSet对象，该对象是一个集合，可以理解为ResultSet对象，一般用于多行多列。
+- queryForStream：查询结果将结果集封装为Stream对象，该对象可以转换成绩集合也可以是单个对象。一般用于多行多列。
+- query()：查询结果，将结果封装为JavaBean对象。
+  1. query 的参数：RowCallbackHandler，这个回调方式，一条记录回调一次，不返回结果。
+  2. query 的参数：ResultSetExtractor，这个回调方式，接收的是批量的结果，一次对所有的结果进行转换。返回类型为泛型ResultSetExtractor< T >，T 可以是单个JavaBean也可以是一个List。
+  3. query 的参数：RowMapper，一般我们使用BeanPropertyRowMapper实现类。可以完成数据到JavaBean的自动封装new BeanPropertyRowMapper<类型>(类型.class)。RowMapper 返回结果是List。
+
+JdbcTemplate类支持的回调类：
+
+- 预编译语句及存储过程创建回调：用于根据JdbcTemplate提供的连接创建相应的语句；
+  - PreparedStatementCreator：通过回调获取JdbcTemplate提供的Connection，由用户使用该Conncetion创建相关的PreparedStatement；
+  - CallableStatementCreator：通过回调获取JdbcTemplate提供的Connection，由用户使用该Conncetion创建相关的CallableStatement；
+- 预编译语句设值回调：用于给预编译语句相应参数设值；
+  - PreparedStatementSetter：通过回调获取JdbcTemplate提供的PreparedStatement，由用户来对相应的预编译语句相应参数设值；
+  - BatchPreparedStatementSetter：类似于PreparedStatementSetter，但用于批处理，需要指定批处理大小；
+- 自定义功能回调：提供给用户一个扩展点，用户可以在指定类型的扩展点执行任何数量需要的操作；
+  -  StatementCallback：通过回调获取JdbcTemplate提供的Statement，用户可以在该Statement执行任何数量的操作；
+  - PreparedStatementCallback：通过回调获取JdbcTemplate提供的PreparedStatement，用户可以在该PreparedStatement执行任何数量的操作；
+  - CallableStatementCallback：通过回调获取JdbcTemplate提供的CallableStatement，用户可以在该CallableStatement执行任何数量的操作；
+- 结果集处理回调：通过回调处理ResultSet或将ResultSet转换为需要的形式；
+  - RowMapper：用于将结果集每行数据转换为需要的类型，用户需实现方法mapRow(ResultSet rs, int rowNum)来完成将每行数据转换为相应的类型。
+  - RowMapper：用于将结果集每行数据转换为需要的类型，用户需实现方法mapRow(ResultSet rs, int rowNum)来完成将每行数据转换为相应的类型。
+  - RowCallbackHandler：用于处理ResultSet的每一行结果，用户需实现方法processRow(ResultSet rs)来完成处理，在该回调方法中无需执行rs.next()，该操作由JdbcTemplate来执行，用户只需按行获取数据然后处理即可。
+  - ResultSetExtractor：用于结果集数据提取，用户需实现方法extractData(ResultSet rs)来处理结果集，用户必须处理整个结果集；
 
 
 
@@ -1505,7 +1654,100 @@ public void execute() {
 
 
 
-## 7、queryForList 系列
+## 7、queryForRowSet 系列
+
+queryForRowSet 方法也是 JdbcOperations 接口的方法，由 JdbcTemplate 子类进行了重写。queryForRowSet 方法返回是 SqlRowSet 对象，这是一个集合，也就是说，可以查询多条记录。【与 queryForMap 的区别：queryForMap 返回 Map 集合，并且只能放回一行数据。而 queryForRowSet 返回的是一个SqlRowSet对象，这是个集合对象，所以可以查询多条记录】
+
+### 1、queryForRowSet(String sql)
+
+```java
+public SqlRowSet queryForRowSet(String sql) throws DataAccessException {}
+```
+
+返回一个SqlRowSet 对象。且查询SQL不能动态传参。
+
+操作案例请参考：queryForRowSet(String sql, Object[] args, int[] argTypes)
+
+
+
+### 2、queryForRowSet(String sql, @Nullable Object... args)
+
+```java
+public SqlRowSet queryForRowSet(String sql, @Nullable Object... args) throws DataAccessException {}
+```
+
+与上面方法唯一的区别是：查询SQL能动态传参。
+
+操作案例请参考：queryForRowSet(String sql, Object[] args, int[] argTypes)
+
+
+
+### 3、queryForRowSet(String sql, Object[] args, int[] argTypes)
+
+```java
+public SqlRowSet queryForRowSet(String sql, Object[] args, int[] argTypes) throws DataAccessException {}
+```
+
+查询带有参数的 SQL，并且指定参数在数据库中的类型，如果SQL中没有参数，则为null。
+
+```java
+@Autowired
+JdbcTemplate jdbcTemplate;
+
+@PostConstruct
+public void execute() {
+    // 先初始化表和初始化数据
+    jdbcTemplate.execute("drop table if exists user_info");
+    jdbcTemplate.execute("create table user_info(user_id int primary key, user_name varchar(255))");
+    jdbcTemplate.update("insert into user_info values(1, 'Java')");
+    jdbcTemplate.update("insert into user_info values(2, 'Python')");
+    jdbcTemplate.update("insert into user_info values(3, 'JavaScript')");
+
+    String sql = "select * from user_info";
+    SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql);
+    List<UserInfo> userInfos = new ArrayList<>();
+    while (rowSet.next()) {
+        userInfos.add(new UserInfo(rowSet.getInt(1), rowSet.getString(2)));
+    }
+    System.out.println(userInfos);
+    userInfos.clear();
+
+    sql = "select * from user_info where user_id = ?";
+    rowSet = jdbcTemplate.queryForRowSet(sql, 1);
+    while (rowSet.next()) {
+        userInfos.add(new UserInfo(rowSet.getInt(1), rowSet.getString(2)));
+    }
+    System.out.println(userInfos);
+    userInfos.clear();
+
+    Object[] param = {1};
+    int[] index = {Types.INTEGER};
+    rowSet = jdbcTemplate.queryForRowSet(sql, param, index);
+    while (rowSet.next()) {
+        userInfos.add(new UserInfo(rowSet.getInt(1), rowSet.getString(2)));
+    }
+    System.out.println(userInfos);
+    userInfos.clear();
+}
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public static class UserInfo {
+    private int userId;
+    private String userName;
+}
+```
+
+```
+[UserInfo(userId=1, userName=Java), UserInfo(userId=2, userName=Python), UserInfo(userId=3, userName=JavaScript)]
+[UserInfo(userId=1, userName=Java)]
+[UserInfo(userId=1, userName=Java)]
+```
+
+
+
+## 8、queryForList 系列
 
 queryForList() 方法查询有两种形式：
 
@@ -1740,7 +1982,7 @@ public void execute() {
 
 
 
-## 8、query 系列
+## 9、query 系列
 
 
 
@@ -1765,7 +2007,7 @@ public void execute() {
     jdbcTemplate.update("insert into user_info values(2, 'Python')");
     jdbcTemplate.update("insert into user_info values(3, 'JavaScript')");
 
-    // 查询单个对象, RowCallbackHandler 这个回调方式，不返回结果；一条记录回调一次
+    // 查询单个对象, 这个回调方式, 一条记录回调一次, 不返回结果
     UserInfo userInfo = new UserInfo();
     jdbcTemplate.query("select * from user_info where user_id = 1", new RowCallbackHandler() {
         @Override
@@ -1776,7 +2018,7 @@ public void execute() {
     });
     System.out.println(userInfo);
 
-    // 查询多个对象, 返回该对象List, , RowCallbackHandler 这个回调方式，不返回结果；一条记录回调一次
+    // 查询多个对象, 这个回调方式, 一条记录回调一次, 不返回结果, 我们可以用List去一条一条的接收数据
     List<UserInfo> userInfos = new ArrayList<>();
     jdbcTemplate.query("select * from user_info", rs -> {
         userInfos.add(new UserInfo(rs.getInt(1), rs.getString(2)));
@@ -1821,7 +2063,7 @@ public void execute() {
     jdbcTemplate.update("insert into user_info values(2, 'Python')");
     jdbcTemplate.update("insert into user_info values(3, 'JavaScript')");
 
-    // 查询单个对象, RowCallbackHandler 这个回调方式，不返回结果；一条记录回调一次
+    // 查询单个对象, 这个回调方式, 一条记录回调一次, 不返回结果
     UserInfo userInfo = new UserInfo();
     jdbcTemplate.query("select * from user_info where user_id = ?", new RowCallbackHandler() {
         @Override
@@ -1832,7 +2074,7 @@ public void execute() {
     }, 1);
     System.out.println(userInfo);
 
-    // 查询多个对象, 返回该对象List, , RowCallbackHandler 这个回调方式，不返回结果；一条记录回调一次
+    // 查询多个对象, 这个回调方式, 一条记录回调一次, 不返回结果, 我们可以用List去一条一条的接收数据
     List<UserInfo> userInfos = new ArrayList<>();
     jdbcTemplate.query("select * from user_info where user_id < ?", rs -> {
         userInfos.add(new UserInfo(rs.getInt(1), rs.getString(2)));
@@ -1885,7 +2127,7 @@ public void execute() {
     jdbcTemplate.update("insert into user_info values(2, 'Python')");
     jdbcTemplate.update("insert into user_info values(3, 'JavaScript')");
 
-    // 查询单个对象, RowCallbackHandler 这个回调方式，不返回结果；一条记录回调一次
+    // 查询单个对象, 这个回调方式, 一条记录回调一次, 不返回结果
     Object[] param1 = {1};
     int[] index1 = {Types.INTEGER};
     String sql = "select * from user_info where user_id = ?";
@@ -1899,7 +2141,7 @@ public void execute() {
     });
     System.out.println(userInfo);
 
-    // 查询多个对象, 返回该对象List, , RowCallbackHandler 这个回调方式，不返回结果；一条记录回调一次
+    // 查询多个对象, 这个回调方式, 一条记录回调一次, 不返回结果, 我们可以用List去一条一条的接收数据
     Object[] param2 = {4};
     int[] index2 = {Types.INTEGER};
     sql = "select * from user_info where user_id < ?";
@@ -1929,13 +2171,135 @@ UserInfo(userId=1, userName=Java)
 ### 4、query(String sql, @Nullable PreparedStatementSetter pss, RowCallbackHandler rch)
 
 ```java
+public void query(String sql, @Nullable PreparedStatementSetter pss, RowCallbackHandler rch) throws DataAccessException {}
+```
+
+- 第一个参数：需要查询的SQL。
+- 第二个参数：对SQL中的参数处理，如果没有则不处理。
+- 第三个参数：对结果集的每一行进行处理，转换成想要的对象。不需要做ResultSet.next()判断。
+
+```java
+@Autowired
+JdbcTemplate jdbcTemplate;
+
+@PostConstruct
+public void execute() {
+    // 先初始化表和初始化数据
+    jdbcTemplate.execute("drop table if exists user_info");
+    jdbcTemplate.execute("create table user_info(user_id int primary key, user_name varchar(255))");
+    jdbcTemplate.update("insert into user_info values(1, 'Java')");
+    jdbcTemplate.update("insert into user_info values(2, 'Python')");
+    jdbcTemplate.update("insert into user_info values(3, 'JavaScript')");
+
+    // 查询单个对象, 这个回调方式, 一条记录回调一次, 不返回结果
+    UserInfo userInfo = new UserInfo();
+    String sql = "select * from user_info where user_id = ?";
+    jdbcTemplate.query(sql, new PreparedStatementSetter() {
+        @Override
+        public void setValues(PreparedStatement ps) throws SQLException {
+            ps.setInt(1, 1);
+        }
+    }, new RowCallbackHandler() {
+        @Override
+        public void processRow(ResultSet rs) throws SQLException {
+            userInfo.setUserId(rs.getInt(1));
+            userInfo.setUserName(rs.getString(2));
+        }
+    });
+    System.out.println(userInfo);
+
+    // 查询多个对象, 这个回调方式, 一条记录回调一次, 不返回结果, 我们可以用List去一条一条的接收数据
+    List<UserInfo> userInfos = new ArrayList<>();
+    sql = "select * from user_info where user_id < ?";
+    jdbcTemplate.query(sql, ps -> ps.setInt(1, 4), rs -> {
+        userInfos.add(new UserInfo(rs.getInt(1), rs.getString(2)));
+    });
+    System.out.println(userInfos);
+}
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public static class UserInfo {
+    private int userId;
+    private String userName;
+}
+```
+
+```
+UserInfo(userId=1, userName=Java)
+[UserInfo(userId=1, userName=Java), UserInfo(userId=2, userName=Python), UserInfo(userId=3, userName=JavaScript)]
 ```
 
 
 
+### 5、query(PreparedStatementCreator psc, RowCallbackHandler rch)
+
+```java
+public void query(PreparedStatementCreator psc, RowCallbackHandler rch) throws DataAccessException {}
+```
+
+- 参数一：构建一个预编译的SQL语句，如果有可变参数，给其赋值。
+- 参数二：用户处理每一行的结果集，不需要判断ResultSet.next()。
+- 注意：这是个没有返回值的方法。
+
+```java
+@Autowired
+JdbcTemplate jdbcTemplate;
+
+@PostConstruct
+public void execute() {
+    // 先初始化表和初始化数据
+    jdbcTemplate.execute("drop table if exists user_info");
+    jdbcTemplate.execute("create table user_info(user_id int primary key, user_name varchar(255))");
+    jdbcTemplate.update("insert into user_info values(1, 'Java')");
+    jdbcTemplate.update("insert into user_info values(2, 'Python')");
+    jdbcTemplate.update("insert into user_info values(3, 'JavaScript')");
+
+    // 查询单个对象, 这个回调方式, 一条记录回调一次, 不返回结果
+    UserInfo userInfo = new UserInfo();
+    jdbcTemplate.query(new PreparedStatementCreator() {
+        @Override
+        public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+            String sql = "select * from user_info where user_id = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, 1);
+            return ps;
+        }
+    }, new RowCallbackHandler() {
+        @Override
+        public void processRow(ResultSet rs) throws SQLException {
+            userInfo.setUserId(rs.getInt(1));
+            userInfo.setUserName(rs.getString(2));
+        }
+    });
+    System.out.println(userInfo);
+
+    // 查询多个对象, 这个回调方式, 一条记录回调一次, 不返回结果, 我们可以用List去一条一条的接收数据
+    List<UserInfo> userInfos = new ArrayList<>();
+    jdbcTemplate.query(con -> {
+        String sql = "select * from user_info where user_id < ?";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setInt(1, 4);
+        return ps;
+    }, rs -> {
+        userInfos.add(new UserInfo(rs.getInt(1), rs.getString(2)));
+    });
+    System.out.println(userInfos);
+}
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public static class UserInfo {
+    private int userId;
+    private String userName;
+}
+```
 
 
-### 4、query(String sql, ResultSetExtractor rse)
+
+### 6、query(String sql, ResultSetExtractor rse)
 
 ```java
 public <T> T query(final String sql, final ResultSetExtractor<T> rse) throws DataAccessException {}
@@ -1956,7 +2320,7 @@ public void execute() {
     jdbcTemplate.update("insert into user_info values(2, 'Python')");
     jdbcTemplate.update("insert into user_info values(3, 'JavaScript')");
 
-    // 查询单个对象, extractData 接收的是批量的结果，因此可以理解为一次对所有的结果进行转换, 可以和RowMapper方式进行对比
+    // 查询单个对象, 这个回调方式, 接收的是批量的结果，一次对所有的结果进行转换, 返回泛型<T>
     String sql = "select * from user_info where user_id = 1";
     UserInfo userInfo = jdbcTemplate.query(sql, new ResultSetExtractor<UserInfo>() {
         @Override
@@ -1967,7 +2331,7 @@ public void execute() {
     });
     System.out.println(userInfo);
 
-    // 查询多个对象, 返回该对象List. ResultSetExtractor 是一次对所有的结果进行转换, 可以和RowMapper方式进行对比
+    // 查询多个对象, 这个回调方式, 接收的是批量的结果，一次对所有的结果进行转换, 返回List<T>
     List<UserInfo> userInfos = jdbcTemplate.query("select * from user_info", rs -> {
         List<UserInfo> list = new ArrayList<>();
         while (rs.next()) {
@@ -1994,7 +2358,7 @@ UserInfo(userId=1, userName=Java)
 
 
 
-### 5、query(String sql, ResultSetExtractor rse, @Nullable Object... args)
+### 7、query(String sql, ResultSetExtractor rse, @Nullable Object... args)
 
 ```java
 public <T> T query(String sql, ResultSetExtractor<T> rse, @Nullable Object... args) throws DataAccessException {}
@@ -2015,7 +2379,7 @@ public void execute() {
     jdbcTemplate.update("insert into user_info values(2, 'Python')");
     jdbcTemplate.update("insert into user_info values(3, 'JavaScript')");
 
-    // 查询单个对象
+    // 查询单个对象, 这个回调方式, 接收的是批量的结果，一次对所有的结果进行转换, 返回泛型<T>
     String sql = "select * from user_info where user_id = ?";
     UserInfo userInfo = jdbcTemplate.query(sql, new ResultSetExtractor<UserInfo>() {
         @Override
@@ -2026,8 +2390,9 @@ public void execute() {
     }, 1);
     System.out.println(userInfo);
 
-    // 查询多个对象, 返回该对象List
-    List<UserInfo> userInfos = jdbcTemplate.query("select * from user_info where user_id < ?", rs -> {
+    // 查询多个对象, 这个回调方式, 接收的是批量的结果，一次对所有的结果进行转换, 返回List<T>
+    sql = "select * from user_info where user_id < ?";
+    List<UserInfo> userInfos = jdbcTemplate.query(sql, rs -> {
         List<UserInfo> list = new ArrayList<>();
         while (rs.next()) {
             list.add(new UserInfo(rs.getInt(1), rs.getString(2)));
@@ -2053,7 +2418,7 @@ UserInfo(userId=1, userName=Java)
 
 
 
-### 1、query(String sql, Object[] args, int[] argTypes, ResultSetExtractor rse)
+### 8、query(String sql, Object[] args, int[] argTypes, ResultSetExtractor rse)
 
 ```java
 public <T> T query(String sql, Object[] args, int[] argTypes, ResultSetExtractor<T> rse) throws DataAccessException {}
@@ -2077,7 +2442,7 @@ public void execute() {
     jdbcTemplate.update("insert into user_info values(2, 'Python')");
     jdbcTemplate.update("insert into user_info values(3, 'JavaScript')");
 
-    // 查询单个对象
+    // 查询单个对象, 这个回调方式, 接收的是批量的结果，一次对所有的结果进行转换, 返回泛型<T>
     Object[] param1 = {1};
     int[] index1 = {Types.INTEGER};
     String sql = "select * from user_info where user_id = ?";
@@ -2090,7 +2455,7 @@ public void execute() {
     });
     System.out.println(userInfo);
 
-    // 查询多个对象, 返回该对象List
+    // 查询多个对象, 这个回调方式, 接收的是批量的结果，一次对所有的结果进行转换, 返回List<T>
     Object[] param2 = {4};
     int[] index2 = {Types.INTEGER};
     sql = "select * from user_info where user_id < ?";
@@ -2120,15 +2485,18 @@ UserInfo(userId=1, userName=Java)
 
 
 
-### 7、query(String sql, RowMapper< T > rowMapper)
+### 9、query(String sql, @Nullable PreparedStatementSetter pss, ResultSetExtractor< T > rse)
 
 ```java
-public <T> List<T> query(String sql, RowMapper<T> rowMapper) throws DataAccessException {}
+public <T> T query(String sql, @Nullable PreparedStatementSetter pss, ResultSetExtractor<T> rse) throws DataAccessException {}
 ```
 
-该方法返回一个RowMapper指定泛型对象的List集合，用户需要通过mapRow(ResultSet rs, int rowNum)实现方法手动将每一行转换为需要的类型，可以是Map也可以是自定义的对象。不支持动态传入参数。
+和上面的方法一样，使用的是PreparedStatementSetter来支持动态的参数，需要处理SQL中的占位符。具体的处理方式都一样。
 
 ```java
+@Autowired
+JdbcTemplate jdbcTemplate;
+
 @PostConstruct
 public void execute() {
     // 先初始化表和初始化数据
@@ -2138,14 +2506,242 @@ public void execute() {
     jdbcTemplate.update("insert into user_info values(2, 'Python')");
     jdbcTemplate.update("insert into user_info values(3, 'JavaScript')");
 
-    String sql = "select * from user_info";
-    List<UserInfo> list = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(UserInfo.class));
-    System.out.println(list);
+    // 查询单个对象, 这个回调方式, 接收的是批量的结果，一次对所有的结果进行转换, 返回泛型<T>
+    String sql = "select * from user_info where user_id = ?";
+    UserInfo userInfo = jdbcTemplate.query(sql, new PreparedStatementSetter() {
+        @Override
+        public void setValues(PreparedStatement ps) throws SQLException {
+            ps.setInt(1, 1);
+        }
+    }, new ResultSetExtractor<UserInfo>() {
+        @Override
+        public UserInfo extractData(ResultSet rs) throws SQLException, DataAccessException {
+            rs.next();
+            return new UserInfo(rs.getInt(1), rs.getString(2));
+        }
+    });
+    System.out.println(userInfo);
 
+    // 查询多个对象, 这个回调方式, 接收的是批量的结果，一次对所有的结果进行转换, 返回List<T>
+    sql = "select * from user_info where user_id < ?";
+    List<UserInfo> userInfos = jdbcTemplate.query(sql, ps -> ps.setInt(1, 4), rs -> {
+        List<UserInfo> list = new ArrayList<>();
+        while (rs.next()) {
+            list.add(new UserInfo(rs.getInt(1), rs.getString(2)));
+        }
+        return list;
+    });
+    System.out.println(userInfos);
+}
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public static class UserInfo {
+    private int userId;
+    private String userName;
+}
+```
+
+```
+UserInfo(userId=1, userName=Java)
+[UserInfo(userId=1, userName=Java), UserInfo(userId=2, userName=Python), UserInfo(userId=3, userName=JavaScript)]
+```
+
+
+
+### 10、query(PreparedStatementCreator psc, @Nullable final PreparedStatementSetter pss, final ResultSetExtractor< T > rse)
+
+```java
+public <T> T query(PreparedStatementCreator psc, 
+                   @Nullable final PreparedStatementSetter pss, 
+                   final ResultSetExtractor<T> rse) throws DataAccessException {}
+```
+
+***这是个很重要的方法，其它很多query()方法底层都是调用这个方法实现的。***该方法有三个参数：
+
+- PreparedStatementCreator：创建一个预编译的SQL语句。
+
+- PreparedStatementSetter：如果SQL中有动态的参数占位符，则给占位符赋值参数值。
+
+- ResultSetExtractor：处理SQL执行的结果，将结果集中每一行转换为需要对象，需要先调用ResultSet.next()。
+
+```java
+@Autowired
+JdbcTemplate jdbcTemplate;
+
+@PostConstruct
+public void execute() {
+    // 先初始化表和初始化数据
+    jdbcTemplate.execute("drop table if exists user_info");
+    jdbcTemplate.execute("create table user_info(user_id int primary key, user_name varchar(255))");
+    jdbcTemplate.update("insert into user_info values(1, 'Java')");
+    jdbcTemplate.update("insert into user_info values(2, 'Python')");
+    jdbcTemplate.update("insert into user_info values(3, 'JavaScript')");
+
+    // 查询单个对象, 这个回调方式, 接收的是批量的结果，一次对所有的结果进行转换, 返回泛型<T>
+    UserInfo userInfo = jdbcTemplate.query(new PreparedStatementCreator() {
+        @Override
+        public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+            String sql = "select * from user_info where user_id = ?";
+            return con.prepareStatement(sql);
+        }
+    }, new PreparedStatementSetter() {
+        @Override
+        public void setValues(PreparedStatement ps) throws SQLException {
+            ps.setInt(1, 1);
+        }
+    }, new ResultSetExtractor<UserInfo>() {
+        @Override
+        public UserInfo extractData(ResultSet rs) throws SQLException, DataAccessException {
+            rs.next();
+            return new UserInfo(rs.getInt(1), rs.getString(2));
+        }
+    });
+    System.out.println(userInfo);
+
+    // 查询多个对象, 这个回调方式, 接收的是批量的结果，一次对所有的结果进行转换, 返回List<T>
+    List<UserInfo> userInfos = jdbcTemplate.query(con -> {
+        String sql = "select * from user_info where user_id < ?";
+        return con.prepareStatement(sql);
+    }, ps -> ps.setInt(1, 4), rs -> {
+        List<UserInfo> list = new ArrayList<>();
+        while (rs.next()) {
+            list.add(new UserInfo(rs.getInt(1), rs.getString(2)));
+        }
+        return list;
+    });
+    System.out.println(userInfos);
+}
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public static class UserInfo {
+    private int userId;
+    private String userName;
+}
+```
+
+```
+UserInfo(userId=1, userName=Java)
+[UserInfo(userId=1, userName=Java), UserInfo(userId=2, userName=Python), UserInfo(userId=3, userName=JavaScript)]
+```
+
+
+
+### 11、query(PreparedStatementCreator psc, final ResultSetExtractor< T > rse)
+
+```java
+public <T> T query(PreparedStatementCreator psc, ResultSetExtractor<T> rse) throws DataAccessException {}
+```
+
+该方法其实和上面的一样，从其方法内部的实现可以看出就是调用上面的方法（query(PreparedStatementCreator psc, @Nullable final PreparedStatementSetter pss, final ResultSetExtractor< T > rse)）。只是不支持传入动态的参数了，使用方式和上面类似：
+
+```java
+@Autowired
+JdbcTemplate jdbcTemplate;
+
+@PostConstruct
+public void execute() {
+    // 先初始化表和初始化数据
+    jdbcTemplate.execute("drop table if exists user_info");
+    jdbcTemplate.execute("create table user_info(user_id int primary key, user_name varchar(255))");
+    jdbcTemplate.update("insert into user_info values(1, 'Java')");
+    jdbcTemplate.update("insert into user_info values(2, 'Python')");
+    jdbcTemplate.update("insert into user_info values(3, 'JavaScript')");
+
+    // 查询单个对象, 这个回调方式, 接收的是批量的结果，一次对所有的结果进行转换, 返回泛型<T>
+    UserInfo userInfo = jdbcTemplate.query(new PreparedStatementCreator() {
+        @Override
+        public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+            String sql = "select * from user_info where user_id = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, 1); // 实际上这种方式不算是动态传参
+            return ps;
+        }
+    }, new ResultSetExtractor<UserInfo>() {
+        @Override
+        public UserInfo extractData(ResultSet rs) throws SQLException, DataAccessException {
+            rs.next();
+            return new UserInfo(rs.getInt(1), rs.getString(2));
+        }
+    });
+    System.out.println(userInfo);
+
+    // 查询多个对象, 这个回调方式, 接收的是批量的结果，一次对所有的结果进行转换, 返回List<T>
+    List<UserInfo> userInfos = jdbcTemplate.query(con -> {
+        String sql = "select * from user_info where user_id < ?";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setInt(1, 4); // 实际上这种方式不算是动态传参
+        return ps;
+    }, rs -> {
+        List<UserInfo> list = new ArrayList<>();
+        while (rs.next()) {
+            list.add(new UserInfo(rs.getInt(1), rs.getString(2)));
+        }
+        return list;
+    });
+    System.out.println(userInfos);
+}
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public static class UserInfo {
+    private int userId;
+    private String userName;
+}
+```
+
+```
+UserInfo(userId=1, userName=Java)
+[UserInfo(userId=1, userName=Java), UserInfo(userId=2, userName=Python), UserInfo(userId=3, userName=JavaScript)]
+```
+
+
+
+### 12、query(String sql, RowMapper< T > rowMapper)
+
+```java
+public <T> List<T> query(String sql, RowMapper<T> rowMapper) throws DataAccessException {}
+```
+
+该方法返回一个RowMapper指定泛型对象的List集合，用户需要通过mapRow(ResultSet rs, int rowNum)实现方法手动将每一行转换为需要的类型，可以是Map也可以是自定义的对象。不支持动态传入参数。
+
+```java
+@Autowired
+JdbcTemplate jdbcTemplate;
+
+@PostConstruct
+public void execute() {
+    // 先初始化表和初始化数据
+    jdbcTemplate.execute("drop table if exists user_info");
+    jdbcTemplate.execute("create table user_info(user_id int primary key, user_name varchar(255))");
+    jdbcTemplate.update("insert into user_info values(1, 'Java')");
+    jdbcTemplate.update("insert into user_info values(2, 'Python')");
+    jdbcTemplate.update("insert into user_info values(3, 'JavaScript')");
+
+    // 这个回调方式, 一行数据回调一次, 结果自动封装到List中, 可理解为 RowCallbackHandler + ResultSetExtractor
+    String sql = "select * from user_info where user_id = 1";
+    jdbcTemplate.query(sql, new RowMapper<UserInfo>() {
+        @Override
+        public UserInfo mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new UserInfo(rs.getInt(1), rs.getString(2));
+        }
+    });
+
+    // BeanPropertyRowMapper 为 RowMapper的子类, 可以直接转换为 Java Bean, 是 Spring 封装的.
+    sql = "select * from user_info";
+    userInfos = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(UserInfo.class));
+    System.out.println(userInfos);
+
+    // ColumnMapRowMapper 为 RowMapper的子类, 可以直接转换为 Map, 是 Spring 封装的.
     List<Map<String, Object>> userNames = jdbcTemplate.query(sql, new ColumnMapRowMapper());
     System.out.println(userNames);
 
-    List<Integer> ids = jdbcTemplate.query(sql, (RowMapper<Integer>) (rs, rowNum) -> rs.getInt(1));
+    // 查询多行单列
+    List<Integer> ids = jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt(1));
     System.out.println(ids);
 }
 
@@ -2159,6 +2755,7 @@ public static class UserInfo {
 ```
 
 ```
+[UserInfo(userId=1, userName=Java)]
 [UserInfo(userId=1, userName=Java), UserInfo(userId=2, userName=Python), UserInfo(userId=3, userName=JavaScript)]
 [{user_id=1, user_name=Java}, {user_id=2, user_name=Python}, {user_id=3, user_name=JavaScript}]
 [1, 2, 3]
@@ -2166,7 +2763,7 @@ public static class UserInfo {
 
 
 
-### 8、query(String sql, RowMapper< T > rowMapper, @Nullable Object... args)
+### 13、query(String sql, RowMapper< T > rowMapper, @Nullable Object... args)
 
 ```java
 public <T> List<T> query(String sql, RowMapper<T> rowMapper, @Nullable Object... args) throws DataAccessException {}
@@ -2189,13 +2786,26 @@ public void execute() {
     jdbcTemplate.update("insert into user_info values(2, 'Python')");
     jdbcTemplate.update("insert into user_info values(3, 'JavaScript')");
 
-    String sql = "select * from user_info where user_id < ?";
-    List<UserInfo> list = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(UserInfo.class), 4);
-    System.out.println(list);
+    // 这个回调方式, 一行数据回调一次, 结果自动封装到List中, 可理解为 RowCallbackHandler + ResultSetExtractor
+    String sql = "select * from user_info where user_id = ?";
+    List<UserInfo> userInfos = jdbcTemplate.query(sql, new RowMapper<UserInfo>() {
+        @Override
+        public UserInfo mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new UserInfo(rs.getInt(1), rs.getString(2));
+        }
+    }, 1);
+    System.out.println(userInfos);
 
+    // BeanPropertyRowMapper 为 RowMapper的子类, 可以直接转换为 Java Bean, 是 Spring 封装的.
+    sql = "select * from user_info where user_id < ?";
+    userInfos = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(UserInfo.class), 4);
+    System.out.println(userInfos);
+
+    // ColumnMapRowMapper 为 RowMapper的子类, 可以直接转换为 Map, 是 Spring 封装的.
     List<Map<String, Object>> userNames = jdbcTemplate.query(sql, new ColumnMapRowMapper(), 4);
     System.out.println(userNames);
 
+    // 查询多行单列
     List<Integer> ids = jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt(1), 4);
     System.out.println(ids);
 }
@@ -2210,6 +2820,7 @@ public static class UserInfo {
 ```
 
 ```
+[UserInfo(userId=1, userName=Java)]
 [UserInfo(userId=1, userName=Java), UserInfo(userId=2, userName=Python), UserInfo(userId=3, userName=JavaScript)]
 [{user_id=1, user_name=Java}, {user_id=2, user_name=Python}, {user_id=3, user_name=JavaScript}]
 [1, 2, 3]
@@ -2217,7 +2828,7 @@ public static class UserInfo {
 
 
 
-### 9、query(String sql, Object[] args, int[] argTypes, RowMapper< T > rowMapper
+### 14、query(String sql, Object[] args, int[] argTypes, RowMapper< T > rowMapper
 
 ```java
 public <T> List<T> query(String sql, Object[] args, int[] argTypes, RowMapper<T> rowMapper) throws DataAccessException {}
@@ -2241,16 +2852,98 @@ public void execute() {
     jdbcTemplate.update("insert into user_info values(2, 'Python')");
     jdbcTemplate.update("insert into user_info values(3, 'JavaScript')");
 
-    Object[] param = {4};
-    int[] index = {Types.INTEGER};
-    String sql = "select * from user_info where user_id < ?";
-    List<UserInfo> list = jdbcTemplate.query(sql, param, index,new BeanPropertyRowMapper<>(UserInfo.class));
-    System.out.println(list);
+        // 这个回调方式, 一行数据回调一次, 结果自动封装到List中, 可理解为 RowCallbackHandler + ResultSetExtractor
+        Object[] param = {1};
+        int[] index = {Types.INTEGER};
+        String sql = "select * from user_info where user_id = ?";
+        List<UserInfo> userInfos = jdbcTemplate.query(sql, param, index, new RowMapper<UserInfo>() {
+            @Override
+            public UserInfo mapRow(ResultSet rs, int rowNum) throws SQLException {
+                return new UserInfo(rs.getInt(1), rs.getString(2));
+            }
+        });
+        System.out.println(userInfos);
 
-    List<Map<String, Object>> userNames = jdbcTemplate.query(sql, param, index, new ColumnMapRowMapper());
+        // BeanPropertyRowMapper 为 RowMapper的子类, 可以直接转换为 Java Bean, 是 Spring 封装的.
+        param[0] = 4;
+        sql = "select * from user_info where user_id < ?";
+        userInfos = jdbcTemplate.query(sql, param, index, new BeanPropertyRowMapper<>(UserInfo.class));
+        System.out.println(userInfos);
+
+        // ColumnMapRowMapper 为 RowMapper的子类, 可以直接转换为 Map, 是 Spring 封装的.
+        List<Map<String, Object>> userNames = jdbcTemplate.query(sql, param, index, new ColumnMapRowMapper());
+        System.out.println(userNames);
+
+        // 查询多行单列
+        List<Integer> ids = jdbcTemplate.query(sql, param, index, (rs, rowNum) -> rs.getInt(1));
+        System.out.println(ids);
+}
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public static class UserInfo {
+    private int userId;
+    private String userName;
+}
+```
+
+```
+[UserInfo(userId=1, userName=Java)]
+[UserInfo(userId=1, userName=Java), UserInfo(userId=2, userName=Python), UserInfo(userId=3, userName=JavaScript)]
+[{user_id=1, user_name=Java}, {user_id=2, user_name=Python}, {user_id=3, user_name=JavaScript}]
+[1, 2, 3]
+```
+
+
+
+### 15、query(String sql, @Nullable PreparedStatementSetter pss, RowMapper< T > rowMapper)
+
+```java
+public <T> List<T> query(String sql, @Nullable PreparedStatementSetter pss, RowMapper<T> rowMapper) throws DataAccessException {}
+```
+
+使用的是PreparedStatementSetter来支持动态的参数，需要处理SQL中的占位符。具体的处理方式都一样。
+
+```java
+@Autowired
+JdbcTemplate jdbcTemplate;
+
+@PostConstruct
+public void execute() {
+    // 先初始化表和初始化数据
+    jdbcTemplate.execute("drop table if exists user_info");
+    jdbcTemplate.execute("create table user_info(user_id int primary key, user_name varchar(255))");
+    jdbcTemplate.update("insert into user_info values(1, 'Java')");
+    jdbcTemplate.update("insert into user_info values(2, 'Python')");
+    jdbcTemplate.update("insert into user_info values(3, 'JavaScript')");
+
+    // 这个回调方式, 一行数据回调一次, 结果自动封装到List中, 可理解为 RowCallbackHandler + ResultSetExtractor
+    String sql = "select * from user_info where user_id = ?";
+    List<UserInfo> userInfos = jdbcTemplate.query(sql, new PreparedStatementSetter() {
+        @Override
+        public void setValues(PreparedStatement ps) throws SQLException {
+            ps.setInt(1, 1);
+        }
+    }, new RowMapper<UserInfo>() {
+        @Override
+        public UserInfo mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new UserInfo(rs.getInt(1), rs.getString(2));
+        }
+    });
+    System.out.println(userInfos);
+
+    // BeanPropertyRowMapper 为 RowMapper的子类, 可以直接转换为 Java Bean, 是 Spring 封装的.
+    sql = "select * from user_info where user_id < ?";
+    userInfos = jdbcTemplate.query(sql,  ps -> ps.setInt(1, 4), new BeanPropertyRowMapper<>(UserInfo.class));
+    System.out.println(userInfos);
+
+    // ColumnMapRowMapper 为 RowMapper的子类, 可以直接转换为 Map, 是 Spring 封装的.
+    List<Map<String, Object>> userNames = jdbcTemplate.query(sql, ps -> ps.setInt(1, 4), new ColumnMapRowMapper());
     System.out.println(userNames);
 
-    List<Integer> ids = jdbcTemplate.query(sql, param, index, (rs, rowNum) -> rs.getInt(1));
+    // 查询多行单列
+    List<Integer> ids = jdbcTemplate.query(sql, ps -> ps.setInt(1, 4), (rs, rowNum) -> rs.getInt(1));
     System.out.println(ids);
 }
 
@@ -2264,8 +2957,105 @@ public static class UserInfo {
 ```
 
 ```
+[UserInfo(userId=1, userName=Java)]
 [UserInfo(userId=1, userName=Java), UserInfo(userId=2, userName=Python), UserInfo(userId=3, userName=JavaScript)]
 [{user_id=1, user_name=Java}, {user_id=2, user_name=Python}, {user_id=3, user_name=JavaScript}]
 [1, 2, 3]
 ```
 
+
+
+### 16、query(PreparedStatementCreator psc, RowMapper< T > rowMapper)
+
+```java
+public <T> List<T> query(PreparedStatementCreator psc, RowMapper<T> rowMapper) throws DataAccessException {}
+```
+
+- 第一个参数：创建一个预编译的SQL，如果SQL中有占位符，则需要进行处理。
+- 第二个参数：查询的每一行结果集，需要手动进行转换为想要的对象。
+- 注意：这个方法和上面的几个query(rowMapper)方法返回的是List< T >对象。无论查询时单条记录还是多条记录，返回的都是List。
+
+```java
+@Autowired
+JdbcTemplate jdbcTemplate;
+
+@PostConstruct
+public void execute() {
+    // 先初始化表和初始化数据
+    jdbcTemplate.execute("drop table if exists user_info");
+    jdbcTemplate.execute("create table user_info(user_id int primary key, user_name varchar(255))");
+    jdbcTemplate.update("insert into user_info values(1, 'Java')");
+    jdbcTemplate.update("insert into user_info values(2, 'Python')");
+    jdbcTemplate.update("insert into user_info values(3, 'JavaScript')");
+
+    // 这个回调方式, 一行数据回调一次, 结果自动封装到List中, 可理解为 RowCallbackHandler + ResultSetExtractor
+    List<UserInfo> userInfos = jdbcTemplate.query(new PreparedStatementCreator() {
+        @Override
+        public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+            String sql = "select * from user_info where user_id = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, 1);
+            return ps;
+        }
+    }, new RowMapper<UserInfo>() {
+        @Override
+        public UserInfo mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new UserInfo(rs.getInt(1), rs.getString(2));
+        }
+    });
+    System.out.println(userInfos);
+
+    // BeanPropertyRowMapper 为 RowMapper的子类, 可以直接转换为 Java Bean, 是 Spring 封装的.
+    userInfos = jdbcTemplate.query(con -> {
+        String sql = "select * from user_info where user_id < ?";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setInt(1, 4);
+        return ps;
+    }, new BeanPropertyRowMapper<>(UserInfo.class));
+    System.out.println(userInfos);
+
+    // ColumnMapRowMapper 为 RowMapper的子类, 可以直接转换为 Map, 是 Spring 封装的.
+    List<Map<String, Object>> userNames = jdbcTemplate.query(con -> {
+        String sql = "select * from user_info where user_id < ?";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setInt(1, 4);
+        return ps;
+    }, new ColumnMapRowMapper());
+    System.out.println(userNames);
+
+    // 查询多行单列
+    List<Integer> ids = jdbcTemplate.query(con -> {
+        String sql = "select * from user_info where user_id < ?";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setInt(1, 4);
+        return ps;
+    }, (rs, rowNum) -> rs.getInt(1));
+    System.out.println(ids);
+}
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public static class UserInfo {
+    private int userId;
+    private String userName;
+}
+```
+
+```
+[UserInfo(userId=1, userName=Java)]
+[UserInfo(userId=1, userName=Java), UserInfo(userId=2, userName=Python), UserInfo(userId=3, userName=JavaScript)]
+[{user_id=1, user_name=Java}, {user_id=2, user_name=Python}, {user_id=3, user_name=JavaScript}]
+[1, 2, 3]
+```
+
+
+
+# 参考文献 & 鸣谢
+
+1. NamedParameterJdbcTemplate使用详解：https://blog.csdn.net/m0_58680865/article/details/126901687
+2. Spring中JdbcTemplate各个方法的使用介绍（持续更新中....）：https://blog.csdn.net/whxjason/article/details/108949343
+3. SpringBoot高级篇JdbcTemplate之数据查询上篇：https://mp.weixin.qq.com/s/SeN5q4g92LfHYOAVlQxytA
+4. SpringBoot高级篇JdbcTemplate之数据查询下篇：https://mp.weixin.qq.com/s/laab3OyzTKL8mfR80Wy_QA
+5. 【JavaWeb】73：JdbcTemplate竟然只能算是江南七怪级别的：https://mp.weixin.qq.com/s/qsVKW3wwbAYYi4zrrReL5A
+6. Spring之JdbcTemplate使用：https://www.cnblogs.com/antLaddie/p/12859647.html

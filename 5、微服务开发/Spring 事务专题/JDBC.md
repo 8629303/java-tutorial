@@ -36,16 +36,21 @@ Java 中定义了访问数据库的接口，可以为多种关系型数据库提
 
 
 
-### 3、数据库驱动
+### 3、JDBC 操作步骤
 
-MySQL 数据库驱动
+Java程序使用`JDBC`接口访问关系数据库的时候，需要以下几步：
 
-- mysql-connector-java-5.1.X  适用于 5.X 版本
-- mysql-connector-java-8.0.X  适用于 8.X 版本
+- 创建全局`DataSource`实例，表示数据库连接池；
+- 在需要读写数据库的方法内部，按如下步骤访问数据库：
+- 从全局`DataSource`实例获取`Connection`实例；
+- 通过`Connection`实例创建`PreparedStatement`实例；
+- 执行`SQL`语句，如果是查询，则通过`ResultSet`读取结果集，如果是修改，则获得`int`结果。
+
+正确编写`JDBC`代码的关键是使用`try ... finally`释放资源，涉及到事务的代码需要正确提交或回滚事务。
 
 
 
-### 4、环境的搭建
+### 4、JDBC 环境搭建
 
 方式一：没有使用 Maven 构建项目的情况下
 
@@ -67,7 +72,13 @@ MySQL 数据库驱动
   </dependency>
   ```
 
-  
+
+上面我们使用的是 H2 数据库驱动，想用 MySQL 数据库驱动如下：
+
+- mysql-connector-java-5.1.X  适用于 5.X 版本
+- mysql-connector-java-8.0.X  适用于 8.X 版本
+
+
 
 ## 二、JDBC API 对象说明
 
@@ -1238,6 +1249,8 @@ public class JdbcQuery {
 
 **编写连接池需实现java.sql.DataSource接口。**
 
+**数据源（DataSource）**：是一种升级版的 DriverManager。之所以需要这种升级版，原因是 DriverManager 过于底层。数据源可以由连接池作为实现，用以减少连接数据库时所带来的消耗。DataSource 位于 java**x**.sql.DataSource （不是 `java.sql.DataSource`）。从代码逻辑来讲，DataSource 与 DriverManage 几乎是等同的，DataSource 同样有一个类似的方法 `Connection getConnection(...)`。
+
 
 
 ### 2、开源数据库连接池
@@ -1739,9 +1752,42 @@ public class DruidDemo {
 
 
 
+## 十一、元数据【了解】
+
+### 1、什么是元数据
+
+- 元数据：MetaData，定义数据的数据。在数据库里，指数据库、表、字段等等的定义信息
+- JDBC里有哪些常见的元数据对象：
+  - `DatabaseMetaData`：定义数据库的信息，名称、类型、版本等等
+  - `ParameterMetaData`：定义预编译对象的信息，包含了预编译的SQL中，参数的个数、类型等等
+  - `ResultSetMetaData`：定义结果集对象的信息，包含查询结果集里，列的个数、名称、类型等等
 
 
-## 十一、常见异常信息
+
+### 2、ParameterMetaData
+
+- 怎样获取：`preparedStatement.getParameterMetaData()`
+
+- 使用的API：
+
+  - 获取预编译SQL中，参数个数：`getParameterCount()`
+  - 获取预编译SQL中，参数类型：`getParamteType(int 参数序号)`
+
+  > 注意：并非所有数据库都可以获取SQL中参数类型，比如：MySql
+
+
+
+### 3、ResultSetMetaData
+
+- 怎样获取：`resultSet.getMetadata()`
+- 使用的API：
+  - 获取结果集中，列的个数：`getColumnCount()`
+  - 获取结果集中，列的名称：`getColumnName(int 列序号)`
+  - 获取结果集中，列的类型：`getColumnType(int 列序号)`
+
+
+
+## 十二、常见异常信息
 
 - java.lang.ClassNotFoundException：找不到类（类名书写错误、没有导入jar包）
 
@@ -1768,3 +1814,5 @@ public class DruidDemo {
 - JDBC基础：https://mp.weixin.qq.com/s/gFbVoPxuLlOmJFK-i74hCg
 - 连接池&JDBCTemplate：https://mp.weixin.qq.com/s/c4AwjX-IwWmFP2qdN3yAWw
 - JDBC核心技术笔记—— 目录：https://blog.csdn.net/kuaixiao0217/article/details/124578876
+- JDBC 系列篇：https://blog.csdn.net/lizhiqiang1217/category_8979965.html
+- JDBC、DriverManager(驱动管理器) 与DataSource(数据源) 的区别：https://blog.csdn.net/qq_39326472/article/details/123389429
