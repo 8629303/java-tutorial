@@ -1,8 +1,8 @@
-# 1、Mybatis简介
+# 1、Mybatis 简介
 
 ![20200710204728](Mybatis/20200710204728.png)
 
-## 1.1、什么是MyBatis
+## 1.1、什么是 MyBatis
 
 1. MyBatis 是一款优秀的**持久层框架**
 2. MyBatis 避免了几乎所有的 JDBC 代码和手动设置参数以及获取结果集的过程
@@ -60,9 +60,9 @@
 
 
 
-# 2、MyBatis第一个程序
+# 2、MyBatis 入门
 
-**思路流程：搭建环境-->导入Mybatis--->编写代码--->测试**
+**思路流程：搭建环境-->导入Mybatis-->编写代码-->测试**
 
 ## 2.1、代码演示
 
@@ -373,7 +373,7 @@ public void getUserList() throws IOException {
 
 
 
-# 3、配置解析
+# 3、Mybatis 配置解析
 
 > XML配置：https://mybatis.org/mybatis-3/zh/configuration.html
 
@@ -802,9 +802,9 @@ MyBatis 允许你在已映射语句执行过程中的某一点进行拦截调用
 
 
 
-# 4、CRUD操作
+# 4、XML CRUD 操作
 
-## 4.1、CRUD
+## 4.1、CRUD 操作
 
 1. 在`UserMapper.java`接口中添加对应的方法
 
@@ -976,7 +976,7 @@ User selectUserByNP3(User user);
 
 
 
-## 4.3、模糊查询（like）
+## 4.3、模糊查询 like
 
 > **思考题：模糊查询like语句该怎么写?**
 
@@ -1015,7 +1015,38 @@ list<name> names = mapper.selectlike(wildcardname);
 
 
 
-## 4.4、CRUD核心代码
+## 4.4、关于 @Param
+
+`@Param`注解用于给方法参数起一个名字。以下是总结的使用原则：
+
+- 在方法只接受一个参数的情况下，可以不使用`@Param`
+- 在方法接受多个参数的情况下，建议一定要使用`@Param`注解给参数命名
+- 如果参数是 `JavaBean` ， 则不能使用`@Param`
+- 不使用`@Param`注解时，参数只能有一个，并且是`Javabean`
+
+
+
+## 4.5、$ 与 # 的区别
+
+- `#{}` 的作用主要是替换预编译语句`(PrepareStatement)`中的占位符? 【推荐使用】
+
+  ```sql
+  INSERT INTO user (name) VALUES (#{name});
+  INSERT INTO user (name) VALUES (?);
+  ```
+
+- `${}` 的作用是直接进行字符串替换
+
+  ```sql
+  INSERT INTO user (name) VALUES ('${name}');
+  INSERT INTO user (name) VALUES ('kuangshen');
+  ```
+
+**总结：**使用注解和配置文件协同开发，才是`MyBatis`的最佳实践！
+
+
+
+## 4.6、CRUD 核心代码
 
 1、UserMapper.java
 
@@ -1190,11 +1221,9 @@ public class MyTest {
 
 
 
-
-
 # 5、ResultMap
 
-## 5.1、查询字段为null
+## 5.1、查询字段为 null
 
 **要解决的问题：属性名和字段名不一致**
 
@@ -1407,7 +1436,7 @@ Setting autocommit to false on JDBC Connection [com.mysql.jdbc.JDBC4Connection@7
 
 
 
-## 6.2、Log4j
+## 6.2、Log4j 打印日志
 
 **简介：**
 
@@ -1497,7 +1526,7 @@ public void selectUser() {
 
 
 
-## 6.3、limit实现分页
+## 6.3、limit 实现分页
 
 **思考：为什么需要分页？**
 
@@ -1561,7 +1590,7 @@ public void testSelectUser() {
 
 
 
-## 6.4、RowBounds分页
+## 6.4、RowBounds 分页
 
 我们除了使用`Limit`在`SQL`层面实现分页，也可以使用`RowBounds`在Java代码层面实现分页，当然此种方式作为了解即可。我们来看下如何实现的！
 
@@ -1604,7 +1633,7 @@ public void testUserByRowBounds() {
 
 
 
-## 6.5、PageHelper
+## 6.5、PageHelper 插件
 
 官方文档：https://pagehelper.github.io/
 
@@ -1676,13 +1705,11 @@ public void testUserByRowBounds() {
 
 
 
-
-
 # 7、使用注解开发
 
-## 7.1、利用注解开发
+## 7.1、简单注解开发
 
-- **mybatis最初配置信息是基于 XML ,映射语句(SQL)也是定义在 XML 中的。而到MyBatis 3提供了新的基于注解的配置。不幸的是，Java 注解的的表达力和灵活性十分有限。最强大的 MyBatis 映射并不能用注解来构建**
+- **Mybatis最初配置信息是基于 XML ,映射语句(SQL)也是定义在 XML 中的。而到MyBatis 3提供了新的基于注解的配置。不幸的是，Java 注解的的表达力和灵活性十分有限。最强大的 MyBatis 映射并不能用注解来构建**
 - `sql` 类型主要分成 :
   - `@select ()`
   - `@update ()`
@@ -1704,7 +1731,7 @@ public List<User> getAllUser();
 ```xml
 <!--使用class绑定接口-->
 <mappers>
-	<mapper class="com.kuang.mapper.UserMapper"/>
+  <mapper class="com.kuang.mapper.UserMapper"/>
 </mappers>
 ```
 
@@ -1735,7 +1762,7 @@ public void testGetAllUser() {
 
 
 
-## 7.2、注解增删改查
+## 7.2、简单注解 CRUD
 
 改造`MybatisUtils`工具类的`getSession()` 方法，使用自动提交事务
 
@@ -1753,7 +1780,8 @@ public static SqlSession getSession(boolean flag){
 
 【注意】确保实体类和数据库字段对应
 
-CRUD示例：
+> CRUD 操作示例：
+>
 
 1、编写接口方法注解
 
@@ -1815,39 +1843,6 @@ public void testDeleteUser() {
 ```
 
 【注意点：增删改一定记得对事务的处理】
-
-
-
-## 7.3、关于@Param
-
-`@Param`注解用于给方法参数起一个名字。以下是总结的使用原则：
-
-- 在方法只接受一个参数的情况下，可以不使用`@Param`
-- 在方法接受多个参数的情况下，建议一定要使用`@Param`注解给参数命名
-- 如果参数是 `JavaBean` ， 则不能使用`@Param`
-- 不使用`@Param`注解时，参数只能有一个，并且是`Javabean`
-
-
-
-## 7.4、\#与$的区别
-
-- `#{}` 的作用主要是替换预编译语句`(PrepareStatement)`中的占位符? 【推荐使用】
-
-  ```sql
-  INSERT INTO user (name) VALUES (#{name});
-  INSERT INTO user (name) VALUES (?);
-  ```
-
-- `${}` 的作用是直接进行字符串替换
-
-  ```sql
-  INSERT INTO user (name) VALUES ('${name}');
-  INSERT INTO user (name) VALUES ('kuangshen');
-  ```
-
-**总结：**使用注解和配置文件协同开发，才是`MyBatis`的最佳实践！
-
-
 
 
 
@@ -2303,7 +2298,7 @@ public void testGetTeacher2(){
 
 
 
-# 10、动态SQL
+# 10、动态 SQL
 
 ## 10.1、介绍
 
