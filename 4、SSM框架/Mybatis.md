@@ -1,7 +1,5 @@
 # 1、Mybatis 简介
 
-![20200710204728](Mybatis/20200710204728.png)
-
 ## 1.1、什么是 MyBatis
 
 1. MyBatis 是一款优秀的**持久层框架**
@@ -9,7 +7,9 @@
 3. MyBatis 可以使用简单的 XML 或 注解来配置和映射原生信息，将接口和 Java 的 实体类（Plain Old Java Objects，普通的 Java对象）映射成数据库中的记录
 4. MyBatis 本是Apache的一个开源项目ibatis, 2010年这个项目由Apache迁移到了Google Code，并改名为MyBatis
 5. 2013年11月迁移到 Github : https://github.com/mybatis/mybatis-3
-6. Mybatis官方文档 : http://www.mybatis.org/mybatis-3/zh/index.html
+6. Mybatis 官方文档 : https://www.mybatis.org/mybatis-3/zh/index.html
+7. Mybatis 整合SpringBoot 官网教程：https://mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/zh/index.html
+8. Mybatis 支持技术教程：https://blog.mybatis.org/p/products.html
 
 
 
@@ -64,7 +64,7 @@
 
 **思路流程：搭建环境-->导入Mybatis-->编写代码-->测试**
 
-## 2.1、代码演示
+## 2.1、环境搭建
 
 1、搭建实验数据库
 
@@ -74,15 +74,19 @@ CREATE DATABASE `mybatis`;
 USE `mybatis`;
 DROP TABLE IF EXISTS `user`;
 -- 建表
-CREATE TABLE `user` (
-    `id` int(20) NOT NULL,
+CREATE TABLE `user`
+(
+    `id`   int(20) NOT NULL,
     `name` varchar(30) DEFAULT NULL,
-    `pwd` varchar(30) DEFAULT NULL,
+    `pwd`  varchar(30) DEFAULT NULL,
     PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
 -- 插入测试数据
-insert  into `user`(`id`,`name`,`pwd`) values 
-(1,'小刘','123456'),(2,'张三','abcdef'),(3,'李四','987654');
+insert into `user`(`id`, `name`, `pwd`)
+values (1, '小刘', '123456'),
+       (2, '张三', 'abcdef'),
+       (3, '李四', '987654');
 ```
 
 2、导入`MyBatis`相关 jar 包（`Github`上或者官网上找）
@@ -126,14 +130,14 @@ insert  into `user`(`id`,`name`,`pwd`) values
             <dataSource type="POOLED">
                 <property name="driver" value="com.mysql.jdbc.Driver"/>
                 <property name="url"
-                          value="jdbc:mysql://192.168.3.55:3306/mybatis?useSSL=false&amp;useUnicode=true&amp;characterEncoding=utf8"/>
+                          value="jdbc:mysql://127.0.0.1:3306/mybatis?useSSL=false&amp;useUnicode=true&amp;characterEncoding=utf8"/>
                 <property name="username" value="root"/>
                 <property name="password" value="password"/>
             </dataSource>
         </environment>
     </environments>
     <mappers>
-        <mapper resource="dao/userMapper.xml"/>
+        <mapper resource="mapper/userMapper.xml"/>
     </mappers>
 </configuration>
 ```
@@ -150,7 +154,9 @@ insert  into `user`(`id`,`name`,`pwd`) values
 
 
 
-4、编写`MyBatis`工具类（官方帮助文档内有）：`MybatisUtils.java`
+## 2.2、快速入门
+
+1、编写`MyBatis`工具类（官方帮助文档内有）：`MybatisUtils.java`
 
 - 从 `XML` 中构建 `SqlSessionFactory`（本次使用从XML构建）
 - 不使用` XML` 构建 `SqlSessionFactory`（不常用，看官网）
@@ -188,21 +194,61 @@ public class MybatisUtils {
 }
 ```
 
-5、创建实体类：`User.java`
+2、创建实体类：`User.java`
 
 ```java
 package pojo;
 
 public class User {
-   private int id;  //id
-   private String name;   //姓名
-   private String pwd;   //密码
-   
-   // 省略：有参和无参构造，set/get/toString()
+    private int id;
+    // 姓名
+    private String name;
+    // 密码
+    private String pwd;
+
+    public User () {}
+    public User(int id, String name, String pwd) {
+        this.id = id;
+        this.name = name;
+        this.pwd = pwd;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPwd() {
+        return pwd;
+    }
+
+    public void setPwd(String pwd) {
+        this.pwd = pwd;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", pwd='" + pwd + '\'' +
+            '}';
+    }
 }
 ```
 
-6、编写`Mapper`接口类：`UserMapper.java`
+3、编写`Mapper`接口类：`UserMapper.java`
 
 ```java
 package mapper;
@@ -216,7 +262,7 @@ public interface UserMapper {
 }
 ```
 
-7、编写`Mapper.xml`配置文件：`src/java/resources/mapper/userMapper.xml`（`namespace` 十分重要，不能写错！）
+4、编写`Mapper.xml`配置文件：`src/java/resources/mapper/userMapper.xml`（`namespace` 十分重要，不能写错！）
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
@@ -233,7 +279,7 @@ public interface UserMapper {
 </mapper>
 ```
 
-8、编写测试类
+5、编写测试类
 
 ```java
 import mapper.UserMapper;
@@ -246,13 +292,13 @@ import java.util.List;
 public class MyTest {
     @Test
     public void selectUser() {
-        // 方法一:
+        // 方法一: 直接使用SqlSession查询, 参数:package.class.method
         try (SqlSession session = MybatisUtils.getSession()) {
-            List<User> users = session.selectList("dao.UserMapper.selectUser");
+            List<User> users = session.selectList("mapper.UserMapper.selectUser");
             users.forEach(System.out::println);
         }
 
-        // 方法二:
+        // 方法二: 使用SqlSession获取反射的Mapper接口, 参数为mapper.class
         try (SqlSession session = MybatisUtils.getSession()) {
             UserMapper mapper = session.getMapper(UserMapper.class);
             List<User> users = mapper.selectUser();
@@ -262,7 +308,7 @@ public class MyTest {
 }
 ```
 
-9、运行测试，成功的查询出来的我们的数据！
+6、运行测试，成功的查询出来的我们的数据！
 
 ```
 pojo.User{id=1, name='小刘', pwd='123456'}
@@ -275,9 +321,9 @@ pojo.User{id=3, name='李四', pwd='987654'}
 
 
 
-## 2.2、问题说明
+## 2.3、静态资源过滤问题
 
-**可能出现问题说明：Maven静态资源过滤问题**
+**可能出现问题说明：Maven 静态资源过滤问题**
 
 - 如果`xml`文件配置`src/main/java`目录下一定需要配置该插件
 
@@ -306,7 +352,7 @@ pojo.User{id=3, name='李四', pwd='987654'}
 
 
 
-## 2.3、SqlSessionFactory 源码
+## 2.4、SqlSessionFactory 源码
 
 ```java
 public interface SqlSessionFactory {
@@ -324,9 +370,7 @@ public interface SqlSessionFactory {
 
 
 
-
-
-## 2.4、Mybatis 流程分析
+## 2.5、Mybatis 流程分析
 
 使用一个查询的示例来分析：
 
@@ -361,7 +405,7 @@ public void getUserList() throws IOException {
 
 **流程分析：**
 
-1. resource 就是获取你的全局配置文件（`mybatis-config.xml`）
+1. resource 就是获取你的全局配置文件（mybatis-config.xml）
 2. 通过ibatis下的Resources资源中的getResourceAsStream方法把你的全局配置文件变成输入流inputStream
 3. SqlSessionFactoryBuilder 是SqlSession工厂建造者，负责创建SqlSessionFactory , 通过该类下的build方法返回值是SqlSessionFactory 也就将我们的输入流变成 SqlSessionFactory
 4. 拿到SqlSessionFactory 可以调用其openSession方法得到SqlSession
@@ -719,7 +763,7 @@ MyBatis 允许你在已映射语句执行过程中的某一点进行拦截调用
 ```xml
 <!-- 将包内的映射器接口实现全部注册为映射器 -->
 <!-- 但是需要配置文件名称和接口名称一致，并且位于同一目录下 -->
-<!-- 如mapper接口采用注解的方式，则无需映射文件 -->
+<!-- 如Mapper接口采用注解的方式，则无需映射文件 -->
 <mappers>
      <package name="org.mybatis.builder"/>
 </mappers>
@@ -910,7 +954,7 @@ public void testDeleteUser() {
 
 ## 4.2、参数各种取值
 
-1. 单个参数，\#{参数名}
+1、单个参数，\#{参数名}
 
 ```java
 // 根据id查询用户
@@ -926,7 +970,7 @@ User selectUserById(int id);
 
 
 
-2. 多个参数，`@Param`指定名称，接口方法的参数前加 `@Param`属性
+2、多个参数，`@Param`指定名称，接口方法的参数前加 `@Param`属性
 
 ```java
 // 通过密码和名字查询用户：@Param方式
@@ -942,7 +986,7 @@ User selectUserByNP(@Param("username") String username,@Param("pwd") String pwd)
 
 
 
-3. 多个参数，万能的Map
+3、多个参数，万能的 Map
 
 ```java
 // 通过密码和名字查询用户：Map方式
@@ -958,7 +1002,7 @@ User selectUserByNP2(Map<String,Object> map);
 
 
 
-4. 多个参数，传入POJO或者JavaBean
+4、多个参数，传入POJO或者JavaBean
 
 ```java
 // 通过密码和名字查询用户：Map方式
@@ -972,7 +1016,7 @@ User selectUserByNP3(User user);
 </select>
 ```
 
-**总结**：`如果参数过多，我们可以考虑直接使用Map实现，如果参数比较少，直接传递参数即可`
+> **总结**：如果参数过多，我们可以考虑直接使用Map实现，如果参数比较少，直接传递参数即可
 
 
 
@@ -1015,7 +1059,77 @@ list<name> names = mapper.selectlike(wildcardname);
 
 
 
-## 4.4、关于 @Param
+## 4.4、获取自增主键
+
+首先修改建表语句，把主键改为自增。
+
+```sql
+-- 建库
+CREATE DATABASE `mybatis`;
+USE `mybatis`;
+DROP TABLE IF EXISTS `user`;
+-- 建表
+CREATE TABLE `user`
+(
+    `id`   int(20) PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    `name` varchar(30) DEFAULT NULL,
+    `pwd`  varchar(30) DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
+-- 插入测试数据
+insert into `user`(`id`, `name`, `pwd`)
+values (1, '小刘', '123456'),
+       (2, '张三', 'abcdef'),
+       (3, '李四', '987654');
+```
+
+1、通过属性进行获取
+
+| 属性             | 描述                                         |
+| ---------------- | -------------------------------------------- |
+| useGeneratedKeys | 为 true 则返回主键的值                       |
+| keyProperty      | 实体类中属性名                               |
+| keyColumn        | 数据库主键字段名(如果id是第一列可以省略不写) |
+
+```xml
+<!-- useGeneratedKeys 是否使用自动生成的主键 默认为false -->
+<!-- keyProperty 传入对象保存主键的属性名 -->
+<!-- keyColumn 结果集中主键列的名字 如果 主键为第一列可以省略 -->
+<!-- 在执行添加后会自动将新增数据的主键赋值给对对应参数的对应属性值 -->
+<insert id="addUser" parameterType="pojo.User" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    insert into user (name,pwd) values (#{name},#{pwd})
+</insert>
+```
+
+
+
+2、通过selectKey标签进行获取
+
+| 属性        | 描述                                         |
+| ----------- | -------------------------------------------- |
+| resultType  | 查询主键结果类型,可以不写会自动识别          |
+| order       | BEFORE 或 AFTER。指定SQL执行的顺序           |
+| keyProperty | 实体类中属性名                               |
+| keyColumn   | 数据库主键字段名(如果id是第一列可以省略不写) |
+
+```xml
+<insert id="addUser" parameterType="pojo.User">
+    <!--
+    resultType 查询返回的结果
+    keyProperty 传入对象保存数据的属性
+    keyColumn 查询结果主键的列名
+    order 执行查询语句在其他语句的时间 after之后  befor之前
+    -->
+    <selectKey resultType="int" keyColumn="id" keyProperty="id" order="AFTER">
+        SELECT LAST_INSERT_ID()  as id
+    </selectKey>
+    insert into user (name,pwd) values (#{name},#{pwd})
+</insert>
+```
+
+
+
+## 4.5、关于 @Param
 
 `@Param`注解用于给方法参数起一个名字。以下是总结的使用原则：
 
@@ -1026,7 +1140,7 @@ list<name> names = mapper.selectlike(wildcardname);
 
 
 
-## 4.5、$ 与 # 的区别
+## 4.6、$ 与 # 的区别
 
 - `#{}` 的作用主要是替换预编译语句`(PrepareStatement)`中的占位符? 【推荐使用】
 
@@ -1046,7 +1160,7 @@ list<name> names = mapper.selectlike(wildcardname);
 
 
 
-## 4.6、CRUD 核心代码
+## 4.7、CRUD 核心代码
 
 1、UserMapper.java
 
@@ -1265,7 +1379,7 @@ public interface UserMapper {
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="dao.UserMapper">
+<mapper namespace="mapper.UserMapper">
     <!-- 根据id查询用户 -->
     <select id="selectUserById" resultType="pojo.User">
       select * from user where id = #{id}
@@ -1689,11 +1803,11 @@ public void testUserByRowBounds() {
     SqlSession session = MybatisUtils.getSession();
     UserMapper mapper = session.getMapper(UserMapper.class);
     
-    //第一种，Mapper接口方式的调用，推荐这种使用方式。
+    // 第一种：推荐这种使用方式。
 	PageHelper.startPage(1, 10);
 	List<User> users1 = mapper.getUserByPagehelper();
 
-    //第二种，Mapper接口方式的调用
+    // 第二种
     PageHelper.offsetPage(1, 10);
     List<User> users2 = mapper.getUserByPagehelper();
 
@@ -1707,31 +1821,116 @@ public void testUserByRowBounds() {
 
 # 7、使用注解开发
 
-## 7.1、简单注解开发
+| 注解            | 说明                                   |
+| --------------- | -------------------------------------- |
+| @Insert         | 实现新增                               |
+| @Delete         | 实现删除                               |
+| @Update         | 实现更新                               |
+| @Select         | 实现查询                               |
+| @Result         | 实现结果集封装                         |
+| @Results        | 可以与@Result 一起使用，封装多个结果集 |
+| @ResultMap      | 实现引用@Results 定义的封装            |
+| @One            | 实现一对一结果集封装                   |
+| @Many           | 实现一对多结果集封装                   |
+| @InsertProvider | 实现动态 SQL 映射新增                  |
+| @UpdateProvider | 实现动态 SQL 映射删除                  |
+| @SelectProvider | 实现动态 SQL 映射更新                  |
+| @SelectProvider | 实现动态 SQL 映射查询                  |
+| @CacheNamespace | 实现注解二级缓存的使用                 |
 
-- **Mybatis最初配置信息是基于 XML ,映射语句(SQL)也是定义在 XML 中的。而到MyBatis 3提供了新的基于注解的配置。不幸的是，Java 注解的的表达力和灵活性十分有限。最强大的 MyBatis 映射并不能用注解来构建**
-- `sql` 类型主要分成 :
-  - `@select ()`
-  - `@update ()`
-  - `@Insert ()`
-  - `@delete ()`
+## 7.1、简单注解
 
-**注意：**利用注解开发就不需要`mapper.xml`映射文件了 .
+**Mybatis最初配置信息是基于 XML ,映射语句(SQL)也是定义在 XML 中的。而到 MyBatis3 提供了新的基于注解的配置。不幸的是，Java 注解的的表达力和灵活性十分有限。最强大的 MyBatis 映射并不能用注解来构建。**
 
-1、我们在我们的接口中添加注解
+MyBatis 主要提供了以下CRUD注解：
+
+- @select ()
+- @update ()
+- @Insert ()
+- @delete ()
+
+**注意：利用注解开发就不需要 mapper.xml 映射文件了。**
+
+1、改造`MybatisUtils`工具类的`getSession()` 方法，使用自动提交事务
 
 ```java
-// 查询全部用户
-@Select("select id,name,pwd password from user")
-public List<User> getAllUser();
+package utils;
+
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import java.io.IOException;
+import java.io.InputStream;
+
+public class MybatisUtils {
+
+    private static SqlSessionFactory sqlSessionFactory;
+    public static final String RESOURCE = "mybatis-config.xml";
+
+    static {
+        try {
+            InputStream inputStream = Resources.getResourceAsStream(RESOURCE);
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 获取SqlSession连接并且自动提交事务
+     */
+    public static SqlSession getSession() {
+        return getSession(true); // 事务自动提交
+    }
+
+    /**
+     * 根据参数决定是否开启自动提交事务
+     */
+    public static SqlSession getSession(boolean flag) {
+        return sqlSessionFactory.openSession(flag);
+    }
+}
 ```
 
-2、在`mybatis`的核心配置文件中注入
+2、我们在我们的接口中添加注解与SQL语句。【注意】确保实体类和数据库字段对应
+
+```java
+package mapper;
+
+import org.apache.ibatis.annotations.*;
+import pojo.User;
+import java.util.List;
+
+public interface UserMapper {
+    // 查询全部用户
+    @Select("select id,name,pwd from user")
+    List<User> getAllUser();
+
+    // 根据id查询用户
+    @Select("select * from user where id = #{id}")
+    User selectUserById(@Param("id") int id);
+
+    // 添加一个用户
+    @Insert("insert into user (id,name,pwd) values (#{id},#{name},#{pwd})")
+    int addUser(User user);
+
+    // 修改一个用户
+    @Update("update user set name=#{name},pwd=#{pwd} where id = #{id}")
+    int updateUser(User user);
+
+    // 根据id删除用
+    @Delete("delete from user where id = #{id}")
+    int deleteUser(@Param("id") int id);
+}
+```
+
+3、在mybatis的核心配置文件中注入Mapper接口，实际上也可以使用package扫描，这里使用class是为了大家加深印象。
 
 ```xml
-<!--使用class绑定接口-->
+<!--使用class绑定接口, 或者package也可以-->
 <mappers>
-  <mapper class="com.kuang.mapper.UserMapper"/>
+    <mapper class="mapper.UserMapper"/>
 </mappers>
 ```
 
@@ -1748,64 +1947,7 @@ public void testGetAllUser() {
 	users.forEach(System.out::println);
     session.close();
 }
-```
 
-4、利用`Debug`查看本质
-
-5、本质上利用了`jvm`的动态代理机制
-
-![20200710224201](Mybatis/20200710224201.png)
-
-6、`Mybatis`详细的执行流程
-
-![20200710225201](Mybatis/20200710225201.png)
-
-
-
-## 7.2、简单注解 CRUD
-
-改造`MybatisUtils`工具类的`getSession()` 方法，使用自动提交事务
-
-```java
-// 获取SqlSession连接并且自动提交事务
-public static SqlSession getSession(){
-    return getSession(true); // 事务自动提交
-}
-
-// 根据参数决定是否开启自动提交事务
-public static SqlSession getSession(boolean flag){
-    return sqlSessionFactory.openSession(flag);
-}
-```
-
-【注意】确保实体类和数据库字段对应
-
-> CRUD 操作示例：
->
-
-1、编写接口方法注解
-
-```java
-// 根据id查询用户
-@Select("select * from user where id = #{id}")
-User selectUserById(@Param("id") int id);
-
-// 添加一个用户
-@Insert("insert into user (id,name,pwd) values (#{id},#{name},#{pwd})")
-int addUser(User user);
-
-// 修改一个用户
-@Update("update user set name=#{name},pwd=#{pwd} where id = #{id}")
-int updateUser(User user);
-
-// 根据id删除用
-@Delete("delete from user where id = #{id}")
-int deleteUser(@Param("id")int id);
-```
-
-2、测试
-
-```java
 @Test
 public void testSelectUserById() {
     SqlSession session = MybatisUtils.getSession();
@@ -1842,7 +1984,624 @@ public void testDeleteUser() {
 }
 ```
 
-【注意点：增删改一定记得对事务的处理】
+> 注意：增删改一定记得对事务的处理
+
+
+
+## 7.2、映射注解
+
+Mybatis 主要提供这些映射注解：
+
+- @Results：用于填写结果集的多个字段的映射关系，@Results可以定义id属性并且被@ResultMap引用
+- @Result：用于填写结果集的单个字段的映射关系.
+- @ResultMap：根据ID关联XML里面`<resultMap>`，或者引用 @Results。
+
+1、例如上面的getAllUser方法，我们可以在查询SQL的基础上，指定返回的结果集的映射关系，其中property表示实体对象的属性名，column表示对应的数据库字段名。
+
+```java
+// 查询全部用户
+@Results({
+    @Result(property = "id", column = "user_id"),
+    @Result(property = "name", column = "user_name"),
+    @Result(property = "pwd", column = "user_pwd")
+})
+@Select("select id as user_id,name as user_name,pwd as user_pwd from user")
+public List<User> getAllUser();
+```
+
+```java
+@Test
+public void testGetAllUser() {
+    SqlSession session = MybatisUtils.getSession();
+    UserMapper mapper = session.getMapper(UserMapper.class);
+
+    List<User> users = mapper.getAllUser();
+	users.forEach(System.out::println);
+    session.close();
+}
+```
+
+```
+User{id=1, name='小刘', pwd='123456'}
+User{id=2, name='张三', pwd='abcdef'}
+User{id=3, name='李四', pwd='987654'}
+```
+
+
+
+2、@ResultMap 引用 @Results 的值。
+
+```java
+// 查询全部用户
+@Results(id = "userMap",value = {
+    @Result(property = "id", column = "user_id"),
+    @Result(property = "name", column = "user_name"),
+    @Result(property = "pwd", column = "user_pwd")
+})
+@Select("select id as user_id,name as user_name,pwd as user_pwd from user")
+public List<User> getAllUser();
+
+// 根据id查询用户
+@Select("select id as user_id,name as user_name,pwd as user_pwd from user where user_id = #{id}")
+@ResultMap(value="empMap")
+User selectUserById(@Param("id") int id);
+```
+
+
+
+3、为了方便演示和免除手工编写映射关系的烦恼，这里提供了一个快速生成映射结果集的方法，具体内容如下：
+
+```xml
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.14.3</version>
+    <scope>compile</scope>
+</dependency>
+```
+
+```java
+package utils;
+
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import pojo.User;
+import java.lang.reflect.Field;
+
+public class GenerateResults {
+    public static void main(String[] args) {
+        System.out.println(getResultsStr(User.class));
+    }
+
+    /**
+     * 1.用于获取结果集的映射关系
+     */
+    public static String getResultsStr(Class<?> origin) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("@Results({\n");
+        for (Field field : origin.getDeclaredFields()) {
+            String property = field.getName();
+            // 映射关系：对象属性(驼峰)->数据库字段(下划线)
+            String column = PropertyNamingStrategies.SnakeCaseStrategy.INSTANCE
+                    .translate(field.getName()).toUpperCase();
+            stringBuilder.append("        ");
+            String format = String.format("@Result(property = \"%s\", column = \"%s\"),\n", property, column);
+            stringBuilder.append(format);
+        }
+        stringBuilder.append("})");
+        return stringBuilder.toString();
+    }
+}
+```
+
+```
+@Results({
+        @Result(property = "id", column = "ID"),
+        @Result(property = "name", column = "NAME"),
+        @Result(property = "pwd", column = "PWD"),
+})
+```
+
+
+
+## 7.3、高级注解
+
+> SQL 语句构建器：https://mybatis.org/mybatis-3/zh/statement-builders.html
+
+MyBatis3 主要提供了以下CRUD的高级注解：
+
+- @SelectProvider
+- @InsertProvider
+- @UpdateProvider
+- @DeleteProvider
+
+顾名思义，这些高级注解主要用于动态SQL，以@SelectProvider为例，主要包含两个注解属性，其中 type 表示工具类，method 表示工具类的某个方法，用于返回具体的SQL。两个参数详解如下：
+
+- type：SQL类的Class对象（写动态的sql的类的类名）
+- method：类中该方法名（方法可以是静态或者非静态的，但是必须是public的）
+
+> @XxxProvider 注解 CRUD 操作动态 SQL 案例如下
+
+1、编写Mapper接口，使用 @XxxProvider 注解动态编写SQL
+
+```java
+package mapper;
+
+import org.apache.ibatis.annotations.*;
+import pojo.User;
+import java.util.List;
+
+/**
+ * 使用注解指定某个工具类的方法来动态编写SQL.
+ */
+public interface UserMapper {
+
+    @SelectProvider(type = UserSqlProvider.class, method = "findAllByName")
+    List<User> findAllByName(@Param("name") String name);
+    
+    @SelectProvider(type = UserSqlProvider.class, method = "findUserByNameAndPwd")
+    User findUserByNameAndPwd(@Param("name") String name, @Param("pwd") String pwd);
+
+    // 添加一个用户
+    @InsertProvider(type = UserSqlProvider.class, method = "addUserForStatic")
+    int addUserForStatic(User user);
+
+    // 添加一个用户
+    @InsertProvider(type = UserSqlProvider.class, method = "addUserForDynamic")
+    int addUserForDynamic(User user);
+
+    // 修改一个用户
+    @UpdateProvider(type = UserSqlProvider.class, method = "updateUser")
+    int updateUser(User user);
+
+    // 根据id删除用
+    @DeleteProvider(type = UserSqlProvider.class, method = "deleteUser")
+    int deleteUser(@Param("id") int id);
+}
+```
+
+2、新建 UserSqlProvider 工具类，所有的动态 SQL 都在此编写
+
+```java
+package mapper;
+
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.jdbc.SQL;
+import pojo.User;
+import java.util.Objects;
+
+/**
+ * 主要用途：根据复杂的业务需求来动态生成SQL.
+ * <p>
+ * 目标：使用Java工具类来替代传统的XML文件.(例如：UserSqlProvider.java <-- UserMapper.xml)
+ */
+public class UserSqlProvider {
+
+    /**
+     * 方式1：在工具类的方法里,可以自己手工编写SQL。可以存手动拼接动态SQL
+     */
+    public String findAllByName(@Param("name") String name) {
+        return "select * from user where name = #{name}";
+    }
+
+    /**
+     * 方式2：也可以根据官方提供的API来编写动态SQL。
+     */
+    public String findUserByNameAndPwd(@Param("name") String name, @Param("pwd") String pwd) {
+        return new SQL() {{
+            SELECT("*");
+            FROM("user");
+            if (name != null) {
+                WHERE("name = #{name} and pwd like #{pwd}");
+            }
+            if (pwd != null) {
+                WHERE("pwd like #{pwd}");
+            }
+        }}.toString();
+    }
+
+    /**
+     * 静态SQL插入
+     */
+    public String addUserForStatic(User user) {
+        return new SQL() {{
+            INSERT_INTO("user");
+            INTO_COLUMNS("id", "name", "pwd");
+            INTO_VALUES(String.valueOf(user.getId()), user.getName(), user.getPwd());
+        }}.toString();
+    }
+
+    /**
+     * 动态SQL插入数据
+     */
+    public String addUserForDynamic(User user) {
+        return new SQL() {{
+            INSERT_INTO("user");
+            INTO_COLUMNS("id", "name", "pwd");
+            if (Objects.nonNull(user.getName())) {
+                VALUES("name", user.getName());
+            }
+            if (Objects.nonNull(user.getPwd())) {
+                VALUES("pwd", user.getPwd());
+            }
+        }}.toString();
+    }
+
+    /**
+     * 动态SQL修改数据
+     */
+    public String updateUser(User user) {
+        return new SQL() {{
+            UPDATE("user");
+            // 动态条件写法
+            if (Objects.nonNull(user.getName())) {
+                SET("name = #{name}");
+            }
+            if (Objects.nonNull(user.getPwd())) {
+                SET("pwd = #{pwd}");
+            }
+            WHERE("id = #{id}");
+        }}.toString();
+    }
+
+    /**
+     * 根据ID删除用户
+     */
+    public String deleteUser(@Param("id") int id) {
+        return new SQL() {{
+            DELETE_FROM("user");
+            WHERE("id = #{id}");
+        }}.toString();
+    }
+}
+```
+
+3、编写测试类
+
+```java
+import mapper.UserMapper;
+import org.apache.ibatis.session.SqlSession;
+import org.junit.Test;
+import pojo.User;
+import utils.MybatisUtils;
+import java.util.List;
+
+public class MyTest {
+    @Test
+    public void findAllByNameTest() {
+        SqlSession session = MybatisUtils.getSession();
+        UserMapper mapper = session.getMapper(UserMapper.class);
+
+        List<User> users = mapper.findAllByName("小刘");
+        users.forEach(System.out::println);
+        session.close();
+    }
+
+    @Test
+    public void findUserByNameAndPwdTest() {
+        SqlSession session = MybatisUtils.getSession();
+        UserMapper mapper = session.getMapper(UserMapper.class);
+
+        User user = mapper.findUserByNameAndPwd("小刘", "123456");
+        System.out.println(user);
+        session.close();
+    }
+
+    @Test
+    public void addUserForStaticTest() {
+        SqlSession session = MybatisUtils.getSession();
+        UserMapper mapper = session.getMapper(UserMapper.class);
+
+        User user = new User(6, "Sam", "123456");
+        int i = mapper.addUserForStatic(user);
+        System.out.println(i);
+        session.close();
+    }
+
+    @Test
+    public void addUserForDynamicTest() {
+        SqlSession session = MybatisUtils.getSession();
+        UserMapper mapper = session.getMapper(UserMapper.class);
+
+        User user = new User(7, "JoJo", null);
+        int i = mapper.addUserForDynamic(user);
+        System.out.println(i);
+        session.close();
+    }
+
+    @Test
+    public void updateUserTest() {
+        SqlSession session = MybatisUtils.getSession();
+        UserMapper mapper = session.getMapper(UserMapper.class);
+
+        User user = new User(7, "JoJo", "666666");
+        int i = mapper.updateUser(user);
+        System.out.println(i);
+        session.close();
+    }
+
+    @Test
+    public void deleteUserTest() {
+        SqlSession session = MybatisUtils.getSession();
+        UserMapper mapper = session.getMapper(UserMapper.class);
+
+        int i = mapper.deleteUser(7);
+        System.out.println(i);
+        session.close();
+    }
+}
+```
+
+
+
+4、使用注意事项：
+
+1. 在Mapper接口和@XxxtProvide方法类中，不要使用重载，也就是说，不要使用方法名相同参数不同的方法 。
+2. XxxtProvide 类中的方法可以是静态或者非静态的，但是必须是public的。
+3. XxxtProvide 类中的方法参数：对于只有一个参数的情况也需要假@param。这点与Mapper接口不一样。在超过一个参数的情况下，可以使用多个 @param，也可以使用 Map 作为参数，也可以使用 JavaBean 作为参数。
+
+
+
+## 7.4、联表注解
+
+### 1、一对一 & 多对一
+
+> 多对一或者一对一中：**一端写法 @One**，这里只展示了一对多，一对一本质一样。把List去掉即可。
+
+1、准备数据库脚本
+
+```sql
+DROP TABLE IF EXISTS `teacher`;
+CREATE TABLE `teacher` (
+    `id` INT(10) NOT NULL,
+    `name` VARCHAR(30) DEFAULT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+-- 插入测试数据
+INSERT INTO teacher(`id`, `name`) VALUES (1, '码老师');
+
+DROP TABLE IF EXISTS `student`;
+CREATE TABLE `student` (
+    `id` INT(10) NOT NULL,
+    `name` VARCHAR(30) DEFAULT NULL,
+    `tid` INT(10) DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    KEY `fktid` (`tid`),
+    CONSTRAINT `fktid` FOREIGN KEY (`tid`) REFERENCES `teacher` (`id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8
+-- 插入测试数据
+INSERT INTO `student` (`id`, `name`, `tid`) VALUES ('1', '小明', '1');
+INSERT INTO `student` (`id`, `name`, `tid`) VALUES ('2', '小红', '1');
+INSERT INTO `student` (`id`, `name`, `tid`) VALUES ('3', '小张', '1');
+INSERT INTO `student` (`id`, `name`, `tid`) VALUES ('4', '小李', '1');
+INSERT INTO `student` (`id`, `name`, `tid`) VALUES ('5', '小王', '1');
+```
+
+2、编写数据表对应的Entity，这里使用了 Lombok 注解
+
+```xml
+<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <version>1.18.20</version>
+</dependency>
+```
+
+```java
+@Data 
+public class Teacher {
+    private int id;
+    private String name;
+}
+```
+
+```java
+@Data
+public class Student {
+    private int id;
+    private String name;
+    // 多个学生可以是同一个老师，即多对一
+    private Teacher teacher;
+}
+```
+
+3、编写对应的Mapper接口，这里本人偷懒，只写了一个StudentMapper，TeacherMapper中的方法放到了StudentMapper中：
+
+```java
+package mapper;
+
+import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.mapping.FetchType;
+import pojo.Student;
+import pojo.Teacher;
+import java.util.List;
+
+public interface StudentMapper {
+    /**
+     * 获取所有学生及对应老师的信息
+     * 先查询出每个学生的信息,然后通过tid外键字段,去查询getTeacherById方法.最后把查到的teacher设置到Student.teacher中
+     * column = "tid"是mapper.StudentMapper.getTeacherById方法传递的参数，
+     * property = "teacher"是Student对象的teacher属性。
+     * 如果是一对一时：@One中SELECT查询返回了多行结果，则会抛出TooManyResultsException异常。
+     */
+    @Results(id = "studentMap", value = {
+            @Result(column = "tid", property = "teacher",
+                    one = @One(select = "mapper.StudentMapper.getTeacherById", fetchType = FetchType.LAZY))
+    })
+    @Select("select * from student")
+	List<Student> getStudents();
+
+    // 本人这里偷懒了, 没有把 getTeacherById 放到新建的 TeacherMapper 接口中
+    @Select("select * from teacher where id = #{id}")
+    Teacher getTeacherById(@Param("id") int id);
+}
+```
+
+4、在mybatis的核心配置文件中注入Mapper接口，实际上也可以使用package扫描，这里使用class是为了大家加深印象。
+
+```xml
+<mappers>
+    <mapper class="mapper.StudentMapper"/>
+</mappers>
+```
+
+5、编写测试用例
+
+```java
+import mapper.StudentMapper;
+import org.apache.ibatis.session.SqlSession;
+import org.junit.Test;
+import pojo.Student;
+import utils.MybatisUtils;
+import java.util.List;
+
+public class MyTest {
+    @Test
+    public void findAllByNameTest() {
+        SqlSession session = MybatisUtils.getSession();
+        StudentMapper mapper = session.getMapper(StudentMapper.class);
+
+        List<Student> students = mapper.getStudents();
+        students.forEach(System.out::println);
+        session.close();
+    }
+}
+```
+
+```
+Student(id=1, name=小明, teacher=Teacher(id=1, name=码老师))
+Student(id=2, name=小红, teacher=Teacher(id=1, name=码老师))
+Student(id=3, name=小张, teacher=Teacher(id=1, name=码老师))
+Student(id=4, name=小李, teacher=Teacher(id=1, name=码老师))
+Student(id=5, name=小王, teacher=Teacher(id=1, name=码老师))
+```
+
+
+
+### 2、一对多
+
+> 一对多或者多对多中的**多端写法 @Many**
+>
+> 一对多的理解：
+>
+> - 一个老师拥有多个学生
+> - 如果对于老师这边，就是一个一对多的现象，即从一个老师下面拥有一群学生（集合）
+>
+> 通过**子查询**，先**查询老师信息**，**再通过老师主键**，在学生外键表中查询和老师相关联的学生信息
+
+1、编写数据表对应的 Entity
+
+```java
+package pojo;
+import lombok.Data;
+import java.util.List;
+
+@Data
+public class Teacher {
+    private int id;
+    private String name;
+    // 一个老师多个学生
+    private List<Student> students;
+}
+```
+
+```java
+package pojo;
+import lombok.Data;
+
+@Data
+public class Student {
+    private int id;
+    private String name;
+    private int tid;
+}
+```
+
+2、编写对应的Mapper接口，这里本人偷懒，只写了一个TeacherMapper，StudentMapper中的方法放到了TeacherMapper中：
+
+```java
+package mapper;
+import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.mapping.FetchType;
+import pojo.Student;
+import pojo.Teacher;
+import java.util.List;
+
+public interface TeacherMapper {
+    /**
+     * 获取指定老师，及老师下的所有学生
+     *
+     * @Many 中:
+     * - column是一对多的外键 , 写的是一的主键的列名
+     * - property 是属性字段名 students
+     */
+    @Results({
+            @Result(column = "id",
+                    property = "students",
+                    many = @Many(select = "mapper.TeacherMapper.getStudentById", fetchType = FetchType.LAZY))
+    })
+    @Select("select * from teacher where id = #{id}")
+    Teacher getTeacherById(int id);
+
+    // 本人这里偷懒了, 没有把 getStudentById 放到新建的 StudentMapper 接口中
+    @Select("select * from student where tid = #{tid}")
+    List<Student> getStudentById(@Param("tid") int tid);
+}
+```
+
+3、在mybatis的核心配置文件中注入Mapper接口，实际上也可以使用package扫描，这里使用class是为了大家加深印象。
+
+```xml
+<mappers>
+    <mapper class="mapper.TeacherMapper"/>
+</mappers>
+```
+
+4、编写测试用例
+
+```java
+import mapper.TeacherMapper;
+import org.apache.ibatis.session.SqlSession;
+import org.junit.Test;
+import pojo.Teacher;
+import utils.MybatisUtils;
+
+public class MyTest {
+    @Test
+    public void findAllByNameTest() {
+        SqlSession session = MybatisUtils.getSession();
+        TeacherMapper mapper = session.getMapper(TeacherMapper.class);
+
+        Teacher teacher = mapper.getTeacherById(1);
+        System.out.println(teacher);
+        session.close();
+    }
+}
+```
+
+```
+Teacher(id=0, name=码老师, students=[Student(id=1, name=小明, tid=1), Student(id=2, name=小红, tid=1), Student(id=3, name=小张, tid=1), Student(id=4, name=小李, tid=1), Student(id=5, name=小王, tid=1)])
+```
+
+
+
+## 7.5、注解开发原理
+
+1、利用Debug查看本质
+
+2、本质上利用了JVM的动态代理机制
+
+![20200710224201](Mybatis/20200710224201.png)
+
+3、Mybatis 详细的执行流程
+
+![20200710225201](Mybatis/20200710225201.png)
+
+
+
+
+
+
 
 
 
@@ -1852,8 +2611,6 @@ public void testDeleteUser() {
 
 - 多个学生对应一个老师
 - 如果对于学生这边，就是一个多对一的现象，即从学生这边关联一个老师！
-
-
 
 ## 8.1、数据库设计
 
@@ -1893,9 +2650,9 @@ INSERT INTO `student` (`id`, `name`, `tid`) VALUES ('5', '小王', '1');
 
 ## 8.2、搭建测试环境
 
-1、`IDEA`安装`Lombok`插件：Setting =》 Plugins =》 lombok安装
+1、IDEA安装Lombok插件：Setting =》 Plugins =》 Lombok安装
 
-2、引入`Maven`依赖
+2、引入Maven依赖
 
 ```xml
 <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
@@ -2150,12 +2907,10 @@ public class Student {
 public class Teacher {
     private int id;
     private String name;
-    //一个老师多个学生
+    // 一个老师多个学生
     private List<Student> students;
 }
 ```
-
-
 
 
 
@@ -2236,6 +2991,7 @@ public Teacher getTeacher2(int id);
 <select id="getTeacher2" resultMap="TeacherStudent2">
     select * from teacher where id = #{id}
 </select>
+
 <resultMap id="TeacherStudent2" type="Teacher">
     <!--column是一对多的外键 , 写的是一的主键的列名-->
     <collection property="students" 
@@ -3199,7 +3955,6 @@ public void testQueryUserById(){
 
 7. MyBatis 的执行流程：https://mp.weixin.qq.com/s/UqgXw0qOW1H1-Dqh5NtueA
 
-   
 
 
 
@@ -3208,5 +3963,74 @@ public void testQueryUserById(){
 > 1. Mybatis极简配置：https://mp.weixin.qq.com/s/SmxFvQTFc-wqCWizMpNiRQ
 > 2. springboot2.x基础教程：集成mybatis最佳实践：https://mp.weixin.qq.com/s/x2NEB-3XalUwA2S-RjrZDw
 > 3. Spring Boot整合MyBatis(保姆级教程)：https://mp.weixin.qq.com/s/6Oihr6F05lHu1YJMKjNsiA
+> 4. SpringBoot Mybatis 配置文件形式：https://blog.csdn.net/ceaningking/article/details/129718773
+> 5. 详解mybatis的配置setMapperLocations多个路径两种方法：https://blog.csdn.net/TreeShu321/article/details/104547973
 
-在启动主类上配置 `@MapperScan` 或者直接在 Mapper 类上增加注解 `@Mapper` ，两种方法起到的结果是一样的。不过建议选择在启动主类上配置 `@MapperScan` ，不然在每个 Mapper 类上加注解也麻烦，还容易漏加。
+
+
+# SpringBoot + Mybatis 配置方式
+
+1、单独 mybatis-config.xml 配置Mybatis
+
+1、mybatis-config.xml
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!--configuration核心配置文件-->
+<!-- 顺序: properties->settings->typeAliases->typeHandlers->
+           objectFactory->objectWrapperFactory->reflectorFactory->
+           plugins->environments->databaseIdProvider->mappers-->
+<configuration>
+    <!--jdbc.properties配置文件-->
+    <properties resource="jdbc.properties"></properties>
+
+    <!--设置mybatis输出日志 Mybatis默认就是STDOUT_LOGGING-->
+    <settings>
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+    </settings>
+
+    <!--  类型别名 默认为类名 指定这个后 mapper的xml文件指定返回值时候 可直接写类名(不区分大小写) 建议直接拷贝类名  -->
+    <typeAliases>
+        <package name="com.ceaning.crudp.entity"/>
+    </typeAliases>
+
+    <!-- 环境配置 -->
+    <!-- development IDEA默认 开发环境 -->
+    <!-- 可以自定义 比如定义test formal 看心情 每个SqlSessionFactory实例只能选择一种环境 这个可随时配置 -->
+    <!-- test 测试环境 -->
+    <!-- formal 正式环境 -->
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <!-- 映射器 每一个mapper.xml都需要在Mybatis的核心文件中注册! -->
+    <!-- 注册方式1 使用xml文件 <mapper resource="com/ceaning/efmis/mapper/UserMapper.xml"/> -->
+    <!-- 注册方式2 使用class文件 <mapper class="com.ceaning.efmis.mapper.UserMapper"/> -->
+    <!-- 注册方式3 mapper代理方式 <package name="com.ceaning.efmis.mapper"/> -->
+    <!--
+        注册方式2(使用class文件)和注册方式3(使用包扫描注册)
+        1.接口和他的Mapper配置文件必须同名
+        2.接口和他的Mapper配置文件必须在同一个包下
+    -->
+    <mappers>
+        <package name="com.ceaning.crudp.mapper"/>
+    </mappers>
+</configuration>
+```
+
+
+
+2、单独 application.yml 配置Mybatis
+
+3、单独使用 JavaConfig 的形式配置Mybatis
+

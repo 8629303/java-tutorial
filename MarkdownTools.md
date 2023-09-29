@@ -93,3 +93,84 @@ ASCII 画图工具
 - Cloudreve：一个开源的私兼备的云文件网盘系统。支持多家云存储驱动，客户端直传、下载限速、文件管理、用户权限分配等功能。官网：https://cloudreve.org/
 
 - Deskreen：一个可将电脑屏幕共享到任意带有浏览器的设备上，使之成为电脑的第二块屏幕的应用程序。官网：https://deskreen.com/lang-zh_CN
+
+***
+
+**原型设计工具：**Axure（Axure RP）、墨刀、Pixso
+
+***
+
+**低代码 & 无代码 平台或框架：**
+
+- Appsmith（PC）：https://github.com/appsmithorg/appsmith
+
+  Appsmith 是一款开源低代码框架，主要用于构建管理面板、内部工具和仪表板等，允许拖放 UI 组件来构建页面，通过连接到任何 API、数据库或 [GraphQL](https://so.csdn.net/so/search?q=GraphQL&spm=1001.2101.3001.7020) 源，并使用 JavaScript 语言编写逻辑，可以在短时间内创建内部应用程序。
+
+- Amis（PC）：https://github.com/baidu/amis
+
+  Amis 是百度开源的一块前端低代码框架，通过 JSON 配置就能生成各种后台页面，内置了 100+ 种 UI 组件，能够满足各种页面组件展现的希求，极大减少开发成本，甚至可以不需要了解前端。
+
+- LowCodeEngine：https://github.com/alibaba/lowcode-engine
+
+  LowCodeEngine 低代码引擎是一款为低代码平台开发者提供的，具备强大扩展能力的低代码研发框架。由阿里巴巴前端委员会、钉钉宜搭联合出品。使用者只需要基于低代码引擎便可以快速定制符合自己业务需求的低代码平台。
+
+- H5/PC-Dooring（PC、H5）：https://github.com/MrXujiang/h5-Dooring、https://github.com/MrXujiang/pc-Dooring
+
+  H5-Dooring是一款功能强大、专业可靠的H5可视化页面配置解决方案，致力于提供一套简单方便、专业可靠、无限可能的H5落地页最佳实践。技术栈以 React 和 TypeScript 为主，后台采用 nodejs 开发。除了 H5 版，还提供了 PC 版。
+
+- Mometa：https://github.com/imcuttle/mometa
+
+  mometa 不是传统主流的低代码平台（如 amis/云凤蝶），mometa 是面向研发的、代码可视化设计编辑 平台，它更像是 dreamweaver、gui 可视编 之于 程序员。mometa 定位更多是 基于程序员本地开发的模式，新增了可视化编码的能力（修改的也是本地的代码文件本身）
+
+- form-generator：https://github.com/JakHuang/form-generator
+
+  Element UI 表单设计及代码生成器，可将生成的代码直接运行在基于Element的vue项目中；也可导出JSON表单，使用配套的解析器将JSON解析成真实的表单。
+
+- tmagic-editor（PC、H5、TV）：https://github.com/Tencent/tmagic-editor
+
+  tmagic-editor 是一款由腾讯技术中心出品的一款开源低代码框架，能够实现零代码/低代码生成页面 ， 可以快速搭建可视化页面生产平台，让非技术人员可以通过拖拽和配置，自助生成H5页面、PC页面、TV页面，大大降低页面生产成本 。
+
+- shida （H5）：https://github.com/tnfe/shida
+  shida 是一个视频可视化搭建项目，开发者可以通过拖拽就可以快速地生产一个短视频，使用方式就像易企秀或百度 H5 等 h5 低代码平台一样。shida的后端视频合成部分是基于FFCreator进行开发的，FFCreator 是一个基于 node.js 的轻量、灵活的短视频加工库，只需要添加几张图片或视频片段再加一段背景音乐，就可以快速生成一个很酷的视频短片。
+
+- Yao：https://github.com/YaoApp/yao
+
+  Yao 是一款支持快速创建 Web 服务和管理后台的开源低代码应用引擎。只需使用 JSON 即可创建数据库模型、编写 API 接口、描述管理后台界面的低代码引擎，使用 Yao 构建的应用可运行在云端或物联网设备上。
+
+- NocoBase：https://github.com/nocobase/nocobase
+
+  NocoBase 是一个极易扩展的开源无代码开发平台。无需编程，使用 NocoBase 搭建自己的协作平台、管理系统，只需要几分钟时间。如果你有以下需求，NocoBase 就是为你设计的：
+
+  - 开发组织内部管理系统
+  - 通过无代码开发，满足大部分业务需求
+  - 无代码开发在操作上足够简单，满足非开发人员；在功能上足够灵活，接近原生开发
+  - 可以非常方便的进行扩展开发
+  - 私有部署，掌控全部代码和数据
+
+-  Sparrow：https://github.com/sparrow-js/sparrow
+
+  sparrow 是一个场景化低代码（LowCode）搭建工作台，它的核心目标仅有一条“提升研发效率”，目前提供基于Vue、Element-UI 组件库中后台项目的实践，实时输出源代码。
+
+- vite-vue3-lowcode：https://github.com/buqiyuan/vite-vue3-lowcode
+
+  vite-vue3-lowcode 是一个基于 Vite2.x + Vue3.x + TypeScript 的 H5 低代码平台，可视化拖拽、可视化编辑器 visual editor 类似易企秀的 H5 制作、建站工具、可视化搭建工具，目前还只是一个简单的模板，可以自己部署学习。
+
+- 华炎魔方：https://github.com/steedos/steedos-platform
+
+  华炎魔方是 Salesforce 低代码平台的开源替代方案，使用可视化工具进行模型设计, 页面设计, 流程设计, 报表设计 ， 只需点击鼠标，就能快速创建应用程序，实现敏捷开发的新高度。
+
+- Awesome Lowcode：https://github.com/taowen/awesome-lowcode
+
+  Awesome Lowcode 是国内低代码平台从业者交流项目，包含了国内外的一些低代码平台。
+
+> 参考文献：
+>
+> 1. 盘点12个 yyds 的低代码开源项目：https://mp.weixin.qq.com/s/2pTDHCQPtnta3I1njPN3iw
+> 2. 推荐10个开源的前端低代码项目：https://blog.csdn.net/MrWen2395772383/article/details/129548420
+
+***
+
+**原型设计工具 + 无代码设计 = 数睿数据 Smardaten**：http://appstore.smardaten.com/
+
+***
+
