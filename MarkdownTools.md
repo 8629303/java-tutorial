@@ -9,11 +9,15 @@
 
 **程序员常用画图工具：**
 
-- 画图工具：draw.io：https://app.diagrams.net
-- 画图工具：processOn：https://www.processon.com/
-- 轻量在线图形工具大合集：visionon：https://pub.visionon.cn/
-- 手绘白板工具：Excalidraw：https://excalidraw.com/
-- 小画桌协作白板 官网链接：https://www.xiaohuazhuo.com/
+- 在线画图工具：
+  - Draw.io：https://app.diagrams.net
+  - ProcessOn：https://www.processon.com/
+  - Visionon：https://pub.visionon.cn/
+
+- 屏幕共享画板工具：
+  - Excalidraw 手绘白板工具：https://excalidraw.com/
+  - 小画桌协作白板：https://www.xiaohuazhuo.com/
+
 - 思维导图工具：xmind：https://xmind.cn/
 - 代码贴图工具：carbon：https://carbon.now.sh
 - 文章编写工具：typora、语雀
@@ -21,6 +25,20 @@
 ***
 
 **居家办公常用工具：https://mp.weixin.qq.com/s/u3oSQum1TTrPwfPxitkLkg**
+
+**【小沐学写作】程序员必备技能：画图工具汇总：https://blog.csdn.net/hhy321/article/details/121916357**
+
+**画图工具之：流程图 & 原型图 & UML图 等工具：**
+
+- Draw.io【一款强大且支持在线编辑和导出的流程图绘制神器】：https://app.diagrams.net
+
+  Draw.io是一款非常出色的免费流程图绘制工具。利用这款工具，您可以轻松地绘制各种图表、图示和图形，涵盖了流程图、UML类图、组织结构图、泳道图、E-R图、文氏图等多种类型，适用于商务、工程、电气、网络设计、软件设计等各个领域的专业绘图需求。Draw.io致力于成为一款完全开源、免费且高质量的绘图软件。
+
+  这款软件内置了丰富的绘图资源，包括各种形状、图标、连接器和模板，能够满足绝大多数绘图需求。它还支持导入第三方图标资源，以满足更多的需求，完全可以替代微软Visio等流程图软件。
+
+- ProcessOn：https://www.processon.com/
+
+  专业强大的作图工具，支持多人实时在线协作，可用于原型图、UML、BPMN、网络拓扑图等多种图形绘制。国内版的 Draw.io。
 
 - VisionOn：https://pub.visionon.cn/
 
@@ -30,31 +48,21 @@
 
   PlantUML 是一个可以让你快速编写UML图的组件。支持顺序图，用例图，类图，对象图，活动图 (旧语法)，组件图，部署图，状态图，时序图。
 
-- Graphviz：https://graphviz.org/
-
-  Graphviz 是开源的图形可视化软件。图形可视化是一种将结构信息表示为抽象图形和网络图的方法。它在网络，生物信息学，软件工程，数据库和网页设计，机器学习以及其他技术领域的可视化界面中具有重要的应用。
-
-- ioDraw【**大合集**】：https://www.iodraw.com/
+- ioDraw【**大合集**，个人部署版，内部包含 ASCII 画图工具】：https://www.iodraw.com/
 
   ioDraw 是免费的在线作图软件，用于制作流程图、思维导图、甘特图、白板手绘图、拓扑图、组织结构图、UML、ER和时序图、平面设计图、电子电路图等，无需注册即可使用
 
-- 类似 ioDraw，也是一个画图工具合集【**大合集**】：https://tilipa.zlsam.com/
+- 类似 ioDraw，也是一个画图工具合集【**大合集**，个人部署版，内部包含 ASCII 画图工具】：https://tilipa.zlsam.com/
+
+**画图工具之：画板 & 白板 工具：**
 
 - 小画桌协作白板 官网链接：https://www.xiaohuazhuo.com/
 
   小画桌协作白板：是一款非常轻但功能非常全面的在线白板工具，内置有视频通话、演示跟随、思维导图、实时评论等实用功能，它就像是一个无限大的线上协作空间，每个参与协作的伙伴都能通过手绘、便利贴、上传各类文件等元素进行创作。
 
-- 即时设计 官网链接：https://js.design/
+- 手绘白板工具：Excalidraw：https://excalidraw.com/
 
-  即时设计是一个专业级 UI 设计协作平台，兼具完善的 Sketch 基础功能和 Figma 高阶功能。支持多人实时在线编辑，可实现直播级同步，能满足不同规模团队的多人办公需求。另有产品原型交互连线、内置开发标注切图、实时打点评论反馈等实用协作功能，可满足用户从创作到评审到交付的一站式工作需求，**大大提高产品、设计、研发的协作效能。**
-
-- Tower 官网链接：**http://m6z.cn/6w3J5H**
-
-  Tower 应该是国内第一批做协作工具的，2012 年成立，产品体验丝滑，所以也获得了很好的口碑。无论是软件开发、产品设计、市场、行政、法律法务，各类团队都可以用 Tower 来管理项目，同时他们还提供了很多模板，一键启用，很方便。
-
-***
-
-ASCII 画图工具
+**画图工具之：ASCII 画图工具：**
 
 - textik：https://textik.com
 
@@ -70,15 +78,15 @@ ASCII 画图工具
 
   Monodraw 是 Mac 上一个 ASCII 码文本编辑器，旨在成为最终的 ASCII 艺术编辑器。因为 ASCII 作为一个概念，是简单明了的文本，Monodraw 为您提供了所有必要的工具，用于创建基于文本的艺术，从 ASCII 图片到图表，布局，流程图，算法，数据结构，二进制格式等等。Monodraw 允许您轻松创建基于文本的艺术（如图表，布局，流程图），并可视化地表示算法，数据结构，二进制格式等。因为它只是文本，所以几乎可以在任何地方轻松嵌入。
 
-- ioDraw【个人部署版，内部包含 ASCII 画图工具】：https://www.iodraw.com/
-
-  ioDraw 是免费的在线作图软件，用于制作流程图、思维导图、甘特图、白板手绘图、拓扑图、组织结构图、UML、ER和时序图、平面设计图、电子电路图等，无需注册即可使用
-
-- 类似 ioDraw，也是一个画图工具合集【个人部署版，内部包含 ASCII 画图工具】：https://tilipa.zlsam.com/
+- Ascii-Generato【一块图片或文本转 ASCII 的工具】：https://ascii-generator.site/
 
 ***
 
 **团队协作远程管理工具：https://mp.weixin.qq.com/s/SfmhlexYCGIOW-ppdbJK5Q**
+
+- Tower 官网链接：**http://m6z.cn/6w3J5H**
+
+  Tower 应该是国内第一批做协作工具的，2012 年成立，产品体验丝滑，所以也获得了很好的口碑。无论是软件开发、产品设计、市场、行政、法律法务，各类团队都可以用 Tower 来管理项目，同时他们还提供了很多模板，一键启用，很方便。
 
 - 局域网文件传输 | Feem：**手机电脑跨平台局域网文件传输工具神器**，速度快，无限制，可离线。官网：https://feem.io/
 
@@ -97,6 +105,10 @@ ASCII 画图工具
 ***
 
 **原型设计工具：**Axure（Axure RP）、墨刀、Pixso、Figma、即时设计（国内版figma）
+
+- 即时设计 官网链接：https://js.design/
+
+  即时设计是一个专业级 UI 设计协作平台，兼具完善的 Sketch 基础功能和 Figma 高阶功能。支持多人实时在线编辑，可实现直播级同步，能满足不同规模团队的多人办公需求。另有产品原型交互连线、内置开发标注切图、实时打点评论反馈等实用协作功能，可满足用户从创作到评审到交付的一站式工作需求，**大大提高产品、设计、研发的协作效能。**
 
 ***
 
