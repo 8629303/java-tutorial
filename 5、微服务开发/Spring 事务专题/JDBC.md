@@ -2,7 +2,7 @@
 
 
 
-## 一、JDBC【Java Database Connectivity】
+## 一、JDBC 快速认识
 
 ### 1、JDBC 产生背景
 
@@ -55,8 +55,8 @@ Java程序使用`JDBC`接口访问关系数据库的时候，需要以下几步�
 方式一：没有使用 Maven 构建项目的情况下
 
 - 在项目下新建 lib 文件夹，用于存放 jar 文件。
-  - 将 mysql 驱动 mysql-connector-java-5.1.X 复制到项目的 lib 文件夹中。
-  - 将 h2 驱动 h2-2.2.220.jar 复制到项目 lib 文件夹中。
+  - 如果使用 mysql 数据库，将 mysql 驱动 mysql-connector-java-5.1.X 复制到项目的 lib 文件夹中。
+  - 如果使用 h2 数据库，将 h2 驱动 h2-2.2.220.jar 复制到项目 lib 文件夹中。
 - 选中 lib 文件夹右键 Add as Libraay，点击 OK。
 
 方式二：使用 Maven 构建项目的情况下
@@ -92,6 +92,9 @@ JDBC 是由多个接口和类进行功能实现。
 | java.sql.PreparedStatement | interface | SQL 语句被预编译并存储在此对象中，可以使用此对象多次高效地执行该语句 |
 | java.sql.CallableStatement | interface |                    用于执行 SQL 存储过程                     |
 |     java.sql.ResultSet     | interface |             保存SQL查询语句的结果数据（结果集）              |
+| java.sql.DatabaseMetaData  | interface |            定义数据库的信息，名称、类型、版本等等            |
+| java.sql.ParameterMetaData | interface | 定义预编译对象的信息，包含了预编译的SQL中，参数的个数、类型等等 |
+| java.sql.ResultSetMetaData | interface | 定义结果集对象的信息，包含查询结果集里，列的个数、名称、类型等等 |
 |   java.sql.SQLException    | class     |               处理数据库应用程序时所发生的异常               |
 
 
@@ -100,8 +103,13 @@ JDBC 是由多个接口和类进行功能实现。
 
 JDBC 程序中的 DriverManager 用于加载驱动，并创建与数据库的链接，这个API的常用方法：
 
-- DriverManager.registerDriver(new Driver());
-- DriverManager.getConnection(url, user, password);
+| 方法                                                         | 说明                                                         |
+| :----------------------------------------------------------- | :----------------------------------------------------------- |
+| public static void registerDriver(Driver driver)             | 用于在DriverManager中注册给定的驱动程序                      |
+| public static void deregisterDriver(Driver driver)           | 用于通过DriverManager注销给定的驱动程序（从列表中删除该驱动程序） |
+| public static Connection getConnection(String url)           | 用于建立与指定URL的连接                                      |
+| public static Connection getConnection(String url,String userName,String password) | 用于使用指定的URL，数据库用户名和密码建立连接                |
+| public static Connection getConnection(String url, Properties prop) | 用于使用指定的URL，数据库用户名和密码建立连接                |
 
 **注意：在实际开发中并不推荐采用registerDriver方法注册驱动**。原因有二：
 
@@ -119,16 +127,16 @@ JDBC 程序中的 DriverManager 用于加载驱动，并创建与数据库的链
 
 JDBC 程序中的 Connection 接口，它用于代表数据库的连接，Collection 是数据库编程中最重要的一个对象，客户端与数据库所有交互都是通过 Connection 对象完成的，这个对象的常用方法：
 
-- createStatement()：创建向数据库发送sql的statement对象。
-
-- prepareStatement(sql) ：创建向数据库发送预编译sql的PrepareSatement对象。
-
-- connection.prepareCall()：创建执行 SQL 存储过程的CallableStatement对象。
-- setAutoCommit(boolean autoCommit)：设置事务是否自动提交。默认是 true 开启自动提交事务。
-
-- commit()：在链接上提交事务。
-
-- rollback() ：在此链接上回滚事务
+| 方法                                                         | 说明                                                         |
+| :----------------------------------------------------------- | :----------------------------------------------------------- |
+| public Statement createStatement()                           | 创建一个可用于执行SQL查询的Statement对象，无参               |
+| public Statement createStatement(int resultSetType,int resultSetConcurrency) | 创建一个Statement对象，参数一：结果集滚动类型，参数二：是否为可以更新的结果集 |
+| public PreparedStatement prepareStatement(String sql)        | 创建向数据库发送预编译sql的PrepareSatement对象。             |
+| public CallableStatement prepareCall(String sql)             | 创建执行 SQL 存储过程的CallableStatement对象。               |
+| public void setAutoCommit(boolean status)                    | 用于设置事务是否自动提交，默认为true                         |
+| public void commit()                                         | 提交事务                                                     |
+| public void rollback()                                       | 回滚事务                                                     |
+| public void close()                                          | 关闭连接                                                     |
 
 
 
@@ -136,12 +144,14 @@ JDBC 程序中的 Connection 接口，它用于代表数据库的连接，Collec
 
 JDBC 程序中的 Statement 对象用于向数据库发送SQL语句， Statement 对象常用方法：
 
-- execute(String sql)：用于向数据库发送任意SQL语句
-- executeQuery(String sql) ：用于向数据发送查询语句。
-- executeUpdate(String sql)：用于向数据库发送insert、update 或 delete 语句。
-- addBatch(String sql) ：把多条SQL语句放到一个批处理中。
-- executeBatch()：向数据库发送一批SQL语句执行
-- clearBatch()：清空缓存的数据，实际上就是清空批处理中的SQL语句。
+| 方法                                      | 说明                                                         |
+| :---------------------------------------- | :----------------------------------------------------------- |
+| public boolean execute(String sql)        | 用于向数据库发送任意SQL语句（不管是查询还是更新）            |
+| public ResultSet executeQuery(String sql) | 用于执行Select查询。它返回ResultSet的对象                    |
+| public int executeUpdate(String sql)      | 用于执行更新类操作，它可以用于执行Insert，Update、Delete等SQL语句 |
+| public void addBatch( String sql )        | 把多条SQL语句放到一个批处理中。                              |
+| public int[] executeBatch()               | 向数据库发送一批SQL语句执行                                  |
+| public void clearBatch()                  | 清空缓存的数据，实际上就是清空批处理中的SQL语句。            |
 
 
 
@@ -151,20 +161,26 @@ JDBC 程序中的 ResultSet 用于代表SQL语句的执行结果。Resultset 封
 
 ResultSet 既然用于封装执行结果的，所以该对象提供的都是用于获取数据的get方法：
 
-- 获取任意类型的数据
-  - getObject(int index)：根据索引获取，索引从1开始。
-  - getObject(string columnName)：根据字段名获取。
-
-- 获取指定类型的数据，例如：
-  - getString(int index)：根据索引获取，索引从1开始。
-  - getString(String columnName)：根据字段名获取。
-
-- ResultSet还提供了对结果集进行滚动的方法：
-  - next()：移动到下一行
-  - Previous()：移动到前一行
-  - absolute(int row)：移动到指定行
-  - beforeFirst()：移动resultSet的最前面。
-  - afterLast() ：移动到resultSet的最后面。
+| 方法                                       | 说明                                                         |
+| :----------------------------------------- | :----------------------------------------------------------- |
+| public boolean next()                      | 用于将光标从当前位置移到下一行。                             |
+| public boolean previous()                  | 用于将光标从当前位置移到上一行。                             |
+| public boolean absolute(int row)           | 用于将光标移动到ResultSet对象中的指定行号。                  |
+| public boolean relative(int row)           | 用于将光标移动到ResultSet对象中的相对行号，它可以是正数或负数。 |
+| public boolean first()                     | 用于将光标移动到结果集对象的第一行。                         |
+| public boolean last()                      | 用于将光标移动到结果集对象的最后一行。                       |
+| public void beforeFirst()                  | 用于将光标移动到结果集对象的前面，就在第一行之前。           |
+| public void afterLast()                    | 用于将光标移动到结果集对象的末尾，在最后一行之后。           |
+| public boolean isFirst()                   | 检索光标是否位于此结果集对象的第一行。                       |
+| public boolean isLast()                    | 检索光标是否在此结果集对象的最后一行。                       |
+| public boolean isBeforeFirst()             | 检索光标是否在此结果集对象的第一行之前。                     |
+| public boolean isAfterLast()               | 检索光标是否在此结果集对象的最后一行之后。                   |
+| public String getObject(int columnIndex)   | 用于根据列索引查询该列数据。（Object类型）                   |
+| public String getObject(String columnName) | 用于根据列名称查询该列数据。（Object类型）                   |
+| public int getInt(int columnIndex)         | 用于根据列索引查询该列数据。（int类型）                      |
+| public int getInt(String columnName)       | 用于根据列名称查询该列数据。（int类型）                      |
+| public String getString(int columnIndex)   | 用于根据列索引查询该列数据。（String类型）                   |
+| public String getString(String columnName) | 用于根据列名称查询该列数据。（String类型）                   |
 
 
 
@@ -172,7 +188,7 @@ ResultSet 既然用于封装执行结果的，所以该对象提供的都是用�
 
 JDBC 程序运行完后，切记要释放程序在运行过程中，创建的那些与数据库进行交互的对象，这些对象通常是ResultSet, Statement和Connection对象，特别是Connection对象，它是非常稀有的资源，用完后必须马上释放，如果Connection不能及时、正确的关闭，极易导致系统宕机。Connection的使用原则是尽量晚创建，尽量早的释放。
 
-为确保资源释放代码能运行，资源释放代码也一定要放在fifinally语句中。
+为确保资源释放代码能运行，资源释放代码也一定要放在finally语句中。
 
 
 
@@ -188,9 +204,18 @@ Class.forName("org.h2.Driver"); // H2加载驱动
 
 其他常用数据库驱动如下：
 
-- Oracle：oracle.jdbc.driver.OracleDriver
-- Postgresql：org.postgresql.Driver
-- MySQL：com.mysql.jdbc.Driver
+| RDBMS      | JDBC驱动程序名称                | URL格式                                            |
+| ---------- | ------------------------------- | -------------------------------------------------- |
+| MySQL      | com.mysql.jdbc.Driver           | jdbc:mysql://hostname/databaseName                 |
+| Postgresql | org.postgresql.Driver           | jdbc:postgresql://hostname:port/dbname             |
+| Oracle     | oracle.jdbc.driver.OracleDriver | jdbc:oracle:thin:@hostname:portNumber:databaseName |
+| H2Database | org.h2.Driver                   | jdbc:h2:dbType:dbname                              |
+| DB2        | com.ibm.db2.jdbc.net.DB2Driver  | jdbc:db2:hostname:port Number/databaseName         |
+|            |                                 |                                                    |
+
+
+
+
 
 
 
@@ -1752,7 +1777,7 @@ public class DruidDemo {
 
 
 
-## 十一、元数据【了解】
+## 十一、JDBC 元数据
 
 ### 1、什么是元数据
 

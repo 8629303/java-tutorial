@@ -540,4 +540,5 @@ public String interfaceTest(Map<String, Object> map) {
 # 十、参考文献 & 鸣谢
 
 1. Spring事务详解：https://blog.csdn.net/csdn_wyl2016/category_11607107.html
-5. Spring 声名式事务@Transactional注解详解：https://blog.csdn.net/fox_bert/article/details/99460057
+2. Spring事务最佳应用指南（包含：事务传播类型、事务失效场景、使用建议、事务源码分析）:https://blog.csdn.net/CSDN_WYL2016/article/details/134228745
+3. Spring 声名式事务@Transactional注解详解：https://blog.csdn.net/fox_bert/article/details/99460057

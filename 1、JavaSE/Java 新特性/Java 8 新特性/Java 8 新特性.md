@@ -1436,7 +1436,8 @@ Files.list(new File(".").toPath()).forEach(System.out::println);
 
 1. 【**史上最全 Java 8 新特性**】Java 8 新特性大全：https://moonce.blog.csdn.net/article/details/111146637
 2. Java8新特性详解（精编-史上最全版）：https://blog.csdn.net/weixin_45101064/article/details/104444768
-3. 全网最通透的Java8版本特性讲解：https://mp.weixin.qq.com/s/muKflQV9Erz857Ym8jjrZA
-4. Java 8 新特性-终极指南：https://blog.csdn.net/wang_luwei/article/details/125274881
-5. Java 8新特性-Lambda表达式：https://thinkwon.blog.csdn.net/article/details/113764085
-6. Java8教程【一点教程】：http://www.yiidian.com/java8/
+3. Java8新特性详解【CSDN：ThinkWon】：https://blog.csdn.net/thinkwon/category_10805022.html
+4. 全网最通透的Java8版本特性讲解：https://mp.weixin.qq.com/s/muKflQV9Erz857Ym8jjrZA
+5. Java 8 新特性-终极指南：https://blog.csdn.net/wang_luwei/article/details/125274881
+6. Java 8新特性-Lambda表达式：https://thinkwon.blog.csdn.net/article/details/113764085
+7. Java8教程【一点教程】：http://www.yiidian.com/java8/

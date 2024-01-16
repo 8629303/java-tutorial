@@ -1,8 +1,5 @@
 # 认识反射机制
 
-> 1. Java反射学习系列-绪论：https://hanchao.blog.csdn.net/article/details/79358924
-> 2. Java-反射与注解：https://www.cnblogs.com/lishisan/p/11219404.html
-
 Java反射机制可以让我们在编译期（Compile Time）之外的运行期（Runtime）检查类，接口，变量以及方法的信息。反射还可以让我们在运行期实例化对象，调用方法，通过调用get和set方法获取变量的值。
 
 1、反射是框架设计的灵魂：
@@ -3851,3 +3848,10 @@ RED上有注解类：java.lang.Deprecated
 | static Object newlnstance(Class<?> componentType, int length) | 根据己有的数组类型开辟新的数组对象 |
 | static void set(Object array,int index,Object value)         | 修改指定位置的内容                 |
 
+
+
+# 参考资料 & 鸣谢
+
+1. Java反射学习系列-绪论：https://hanchao.blog.csdn.net/article/details/79358924
+2. Java反射学习实例：https://blog.csdn.net/hanchao5272/category_9272453.html
+3. Java-反射与注解：https://www.cnblogs.com/lishisan/p/11219404.html

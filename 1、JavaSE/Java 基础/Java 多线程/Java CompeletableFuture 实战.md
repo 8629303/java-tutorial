@@ -1,8 +1,6 @@
 # Java JUC 之 CompletableFuture 实战
 
-> 基础篇：异步编程不会？我教你啊！CompeletableFuture：https://mp.weixin.qq.com/s/siixcALGcVDPGqwNpJdc1w
-
-以前需要异步执行一个任务时，一般是用Thread或者线程池Executor去创建。如果需要返回值，则是调用Executor.submit获取Future。但是多个线程存在依赖组合，我们又能怎么办？可使用同步组件CountDownLatch、CyclicBarrier等；其实有简单的方法，就是用CompletableFuture
+以前需要异步执行一个任务时，一般是用Thread或者线程池Executor去创建。如果需要返回值，则是调用Executor.submit获取Future。但是多个线程存在依赖组合，我们又能怎么办？可使用同步组件CountDownLatch、CyclicBarrier等；其实有简单的方法，就是使用线程回调 CompletableFuture。
 
 - 线程任务的创建
 - 线程任务的串行执行
@@ -534,4 +532,6 @@ System.out.println("任务完成后:" + future.join());
 
 1. 基础篇：异步编程不会？我教你啊！CompeletableFuture：https://mp.weixin.qq.com/s/siixcALGcVDPGqwNpJdc1w
 2. 奇淫巧技，CompletableFuture 异步多线程是真的优雅：https://mp.weixin.qq.com/s/Af6Y9kx3RBPfCpzf5w0OCA
+3. CompletableFuture 入门学习：https://www.cnblogs.com/pingoo/p/14238516.html
+4. CompletableFuture使用详解：https://blog.csdn.net/sermonlizhi/article/details/123356877
 

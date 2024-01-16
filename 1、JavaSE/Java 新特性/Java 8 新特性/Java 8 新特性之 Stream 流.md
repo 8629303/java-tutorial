@@ -125,10 +125,11 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 public class JavaAPIDemo {
     public static void main(String[] args) {
-        // 迭代
+        // 迭代生产
         Stream<BigInteger> bigIntStream = Stream.iterate(BigInteger.ZERO, n -> n.add(BigInteger.TEN)).limit(10);
         BigInteger[] bigIntArr = bigIntStream.toArray(BigInteger[]::new);
         System.out.println(Arrays.toString(bigIntArr)); // [0, 10, 20, 30, 40, 50, 60, 70, 80, 90]
+        
         // 重复生产
         Stream<String> stream = Stream.generate(() -> "test").limit(8);
         String[] strArr = stream.toArray(String[]::new);
