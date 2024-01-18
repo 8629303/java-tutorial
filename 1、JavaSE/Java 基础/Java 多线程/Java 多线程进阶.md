@@ -6489,7 +6489,7 @@ null
 
 ## 2、线程池创建
 
-### 1、四种默认创建方式介绍
+### 1、Executors 四种创建方式
 
 如果要想进行线程池的创建，在 J.U.C 里面是直接提供有相关的工具类的，工具类的名称：java.util.concurrent.Executors，这个类可以创建四种线程池（在整个的开发过程之中，四种线程池就包含了所有可能使用到的类型）。
 
@@ -6513,6 +6513,7 @@ null
    * 如果线程池中没有线程可用, 则创建一个新线程并添加到池中;
    * 如果有线程长时间未被使用(默认60s, 可通过threadFactory配置), 则从缓存中移除.
    * 在需要时使用提供的 ThreadFactory 创建新线程.
+   * ThreadFactory 的作用就是可以修饰我们线程池中的线程，常用操作有 设置线程的名字，设置线程是否为守护线程等等
    */
   public static ExecutorService newCachedThreadPool(ThreadFactory threadFactory) {
       return new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS,
@@ -6534,6 +6535,7 @@ null
   /**
    * 创建一个具有固定线程数的Executor.
    * 在需要时使用提供的 ThreadFactory 创建新线程.
+   * ThreadFactory 的作用就是可以修饰我们线程池中的线程，常用操作有 设置线程的名字，设置线程是否为守护线程等等
    */
   public static ExecutorService newFixedThreadPool(int nThreads, ThreadFactory threadFactory) {
       return new ThreadPoolExecutor(nThreads, nThreads, 0L, TimeUnit.MILLISECONDS,
@@ -6557,6 +6559,7 @@ null
   /**
    * 创建一个使用单个 worker 线程的 Executor.
    * 在需要时使用提供的 ThreadFactory 创建新线程.
+   * ThreadFactory 的作用就是可以修饰我们线程池中的线程，常用操作有 设置线程的名字，设置线程是否为守护线程等等
    */
   public static ExecutorService newSingleThreadExecutor(ThreadFactory threadFactory) {
       return new FinalizableDelegatedExecutorService
@@ -6580,6 +6583,7 @@ null
    * 创建一个具有固定线程数的 可调度Executor.
    * 它可安排任务在指定延迟后或周期性地执行.
    * 在需要时使用提供的 ThreadFactory 创建新线程.
+   * ThreadFactory 的作用就是可以修饰我们线程池中的线程，常用操作有 设置线程的名字，设置线程是否为守护线程等等
    */
   public static ScheduledExecutorService newScheduledThreadPool(int corePoolSize, ThreadFactory threadFactory) {
       return new ScheduledThreadPoolExecutor(corePoolSize, threadFactory);
@@ -6603,6 +6607,7 @@ null
   /**
    * 创建一个单线程线程池，这个线程池可以延时执行任务，或者周期性的执行任务。
    * 在需要时使用提供的 ThreadFactory 创建新线程. 其他与newSingleThreadScheduledExecutor没区别
+   * ThreadFactory 的作用就是可以修饰我们线程池中的线程，常用操作有 设置线程的名字，设置线程是否为守护线程等等
    */
   public static ScheduledExecutorService newSingleThreadScheduledExecutor(ThreadFactory threadFactory) {
       return new DelegatedScheduledExecutorService
@@ -6617,6 +6622,8 @@ Java 里面线程池的顶级接口是 Executor，但是严格意义上讲 Execu
 ### 2、newCachedThreadPool
 
 创建一个可根据需要创建新线程的线程池，但是在以前构造的线程可用时将重用它们。对于执行很多短期异步任务的程序而言，这些线程池通常可提高程序性能。调用 execute 将重用以前构造的线程（如果线程可用）。如果现有线程没有可用的，则创建一个新线程并添加到池中。终止并从缓存中移除那些已有 60 秒钟未被使用的线程。因此，长时间保持空闲的线程池不会使用任何资源。
+
+操作示例 1：创建无限大小的线程池
 
 ```java
 import java.util.concurrent.ExecutorService;
@@ -6648,7 +6655,45 @@ pool-1-thread-3：执行操作。
 pool-1-thread-7：执行操作。
 ```
 
-所谓的无限大小的线程池，指的是如果发现线程池之中的线程数量不足了，那么就会自动创建一个新的线程，而后将这个新创建的线程保存在线程池之中，由于这种操作会无限制的增长，如果超过了其允许的线程个数，则也会出现有性能瓶颈，这种操作只是提供了一个线程的统一管理。
+> 所谓的无限大小的线程池，指的是如果发现线程池之中的线程数量不足了，那么就会自动创建一个新的线程，而后将这个新创建的线程保存在线程池之中，由于这种操作会无限制的增长，如果超过了其允许的线程个数，则也会出现有性能瓶颈，这种操作只是提供了一个线程的统一管理。
+
+操作示例 2：在线程池执行的时候接收到多个 Callable 返回结果。按照多线程的开发来就讲，所有 Callable 处理的过程之中都需要利用 Future 接口之中 get() 方法来获取返回结果的，但是这个结果现在如果在线程池里面，可以考虑一次性接收。
+
+```java
+import java.util.*;
+import java.util.concurrent.*;
+
+public class JavaAPIDemo {
+    public static void main(String[] args) throws InterruptedException {
+        // 创建2个固定大小的线程池
+        ExecutorService service = Executors.newCachedThreadPool();
+        // 在集合中追加所有要执行的线程的任务对象，是Callable的实现
+        Set<Callable<String>> allThreads = new HashSet<>();
+        for (int i = 0; i < 5; i++) {
+            final int temp = i;
+            allThreads.add(() -> String.format("【%s】num = %d", Thread.currentThread().getName(), temp));
+        }
+        List<Future<String>> results = service.invokeAll(allThreads);
+        results.forEach((future) -> {
+            try {
+                System.out.println(future.get());
+            } catch (Exception ignored) {
+            }
+        });
+        service.shutdown(); // 线程池执行完毕后需要关闭
+    }
+}
+```
+
+```java
+【pool-1-thread-1】num = 4
+【pool-1-thread-2】num = 3
+【pool-1-thread-3】num = 1
+【pool-1-thread-4】num = 0
+【pool-1-thread-5】num = 2
+```
+
+批量的 Future + Callable 可以使用 CompletionService 替换，并且 CompletionService 更灵活。
 
 
 
@@ -6846,7 +6891,7 @@ public class JavaAPIDemo {
 延迟3秒后执行
 ```
 
-操作示例 2-1：提交一个待执行的任务（Callable 具有返回值）, 并在给定的延迟后执行该任务。
+操作示例 2：提交一个待执行的任务（Callable 具有返回值）, 并在给定的延迟后执行该任务。
 
 ```java
 import java.util.concurrent.*;
@@ -6864,42 +6909,6 @@ public class JavaAPIDemo {
 
 ```java
 延迟3秒后执行
-```
-
-操作示例 2-2：在线程池执行的时候接收到多个 Callable 返回结果。按照多线程的开发来就讲，所有 Callable 处理的过程之中都需要利用 Future 接口之中 get() 方法来获取返回结果的，但是这个结果现在如果在线程池里面，可以考虑一次性接收。
-
-```java
-import java.util.*;
-import java.util.concurrent.*;
-
-public class JavaAPIDemo {
-    public static void main(String[] args) throws InterruptedException {
-        // 创建2个固定大小的线程池
-        ScheduledExecutorService service = Executors.newScheduledThreadPool(2);
-        // 在集合中追加所有要执行的线程的任务对象，是Callable的实现
-        Set<Callable<String>> allThreads = new HashSet<>();
-        for (int i = 0; i < 5; i++) {
-            final int temp = i;
-            allThreads.add(() -> String.format("【%s】num = %d", Thread.currentThread().getName(), temp));
-        }
-        List<Future<String>> results = service.invokeAll(allThreads);
-        results.forEach((future) -> {
-            try {
-                System.out.println(future.get());
-            } catch (Exception ignored) {
-            }
-        });
-        service.shutdown(); // 线程池执行完毕后需要关闭
-    }
-}
-```
-
-```java
-【pool-1-thread-1】num = 4
-【pool-1-thread-2】num = 3
-【pool-1-thread-2】num = 1
-【pool-1-thread-2】num = 0
-【pool-1-thread-2】num = 2
 ```
 
 操作示例 3：scheduleAtFixedRate：提交一个待执行的任务，在延迟指定时间后定时执行该任务。
@@ -7212,11 +7221,13 @@ public class JavaAPIDemo {
 
 > 并发编程：浅谈CompletionService 和 CompletableFuture ：https://blog.csdn.net/weixin_44735065/article/details/124074027
 
-**CompletionService 产生背景 & 应用场景**：
+**CompletionService 产生背景：**：
 
-Callable + Future（线程池也是同理） 可以实现多个 Task 并行执行，但是遇到前面的 task 执行较慢时，需要阻塞等待前面的 task 执行完才能获取到后面 task 的执行结果。CompletionService 的主要功能就是一边生成任务，一边获取任务的返回值。让两件事分开执行，任务之间不会互相阻塞，可以实现执行完的先获取结果，不在依赖任务顺序。
+Callable + Future（线程池也是同理） 可以实现多个 Task 并行执行，但是遇到前面的 task 执行较慢时，需要阻塞等待前面的 task 执行完才能获取到后面 task 的执行结果。在线程池的开发处理中，如果使用了 Callable 接口则需要进行异步任务结果的接收，为了便于异步数据的返回，J.U.C 中提供了一个 CompletionService 操作接口，该接口可以将所有异步任务的执行结果保存到阻塞队列之中，而后再利用阻塞队列实现结果的的获取。
 
-在线程池的开发处理中，如果使用了 Callable 接口则需要进行异步任务结果的接收，为了便于异步数据的返回，在 J.U.C 中提供了一个 CompletionService 操作接口，该接口可以将所有异步任务的执行结果保存到阻塞队列之中，而后再利用阻塞队列实现结果的的获取。
+CompletionService 的主要功能就是一边生成任务，一边获取任务的返回值。让两件事分开执行，任务之间不会互相阻塞，可以实现执行完的先获取结果，不在依赖任务顺序。
+
+CompletionService 内部通过 "阻塞队列 + FutureTask" 或 "阻塞队列 + 线程池" 实现了任务先完成可优先获取到，即结果按照完成先后顺序排序，内部有一个先进先出的阻塞队列，用于保存已经执行完成的Future，通过调用它的 take() 和 poll() 方法可以获取到一个已经执行完成的 Future，进而通过调用 Future 接口实现类的 get() 方法获取最终的结果。
 
 > **如果现在去考虑到线程池的开发，永远都有一个核心的话题—“阻塞队列”，如果你现在对于阻塞队列的基本特点都无法整明白，强烈建议回顾之前的的阻塞队列，因为阻塞队列可以自动实现操作线程的等待与唤醒，在进行线程池分析的时候也要通过阻塞队列进行使用。**
 
@@ -7224,26 +7235,180 @@ Callable + Future（线程池也是同理） 可以实现多个 Task 并行执�
 
 CompletionService 接口是将 Executor（线程池）和 BlockingQueue（阻塞队列）整合在一起，利用阻塞队列实现所有异步任务结果的保存，而后开发者只需要通过 CompletionService 接口提供的方法即可实现异步任务结果的取出。
 
-CompletionService 是一个接口，如果要想使用这个接口一定要提供有子类，或者是其他的工厂方法来进行实例化对象创建，在 J.U.C 的内部提供有一个 ExecutorCompletionService< V > 实现子类。
+CompletionService 是一个接口，如果要想使用这个接口一定要提供有子类，或者是其他的工厂方法来进行实例化对象创建，在 J.U.C 的内部提供有一个 ExecutorCompletionService 实现子类。
 
-CompletionService 接口提供的方法有 5 个：
+- CompletionService 接口提供的方法有 5 个：
+
+  ```java
+  public interface CompletionService<V> {
+      // 提交线程任务，交由 Executor 对象去执行，并将结果放入阻塞队列；
+      Future<V> submit(Callable<V> task);
+      // 提交线程任务，交由 Executor 对象去执行，并将结果放入阻塞队列；
+      Future<V> submit(Runnable task, V result);
+      // 阻塞等待，在阻塞队列中获取并移除一个元素，该方法是阻塞的，即获取不到的话线程会一直阻塞；
+      Future<V> take() throws InterruptedException;
+      // 非阻塞等待，在阻塞队列中获取并移除一个元素，该方法是非阻塞的，获取不到即返回 null ；
+      Future<V> poll();
+      // 带时间的非阻塞等待，从阻塞队列中非阻塞地获取并移除一个元素，在设置的超时时间内获取不到即返回 null ；
+      Future<V> poll(long timeout, TimeUnit unit) throws InterruptedException;
+  }
+  ```
+
+- ExecutorCompletionService 子类源代码：
+
+  ```java
+  package java.util.concurrent;
+  
+  public class ExecutorCompletionService<V> implements CompletionService<V> {
+      // 执行任务的线程
+      private final Executor executor;
+      // 线程池父类
+      private final AbstractExecutorService aes;
+      // 任务完成会记录在该队列中
+      private final BlockingQueue<Future<V>> completionQueue;
+      // 内部类：实现了FutureTask接口，当任务执行时，会去调用FutureTask的run()
+      private class QueueingFuture extends FutureTask<Void> {
+          QueueingFuture(RunnableFuture<V> task) {
+              super(task, null);
+              this.task = task;
+          }
+          protected void done() { completionQueue.add(task); }
+          private final Future<V> task;
+      }
+      // 两个封装RunnableFuture 参数 最终调用的都是FutureTask的构造方法
+      // 封装RunnableFuture 参数：Callable<V> task
+      private RunnableFuture<V> newTaskFor(Callable<V> task) {
+          if (aes == null)
+              return new FutureTask<V>(task);
+          else
+              return aes.newTaskFor(task);
+      }
+      // 封装RunnableFuture 参数：Runnable task, V result
+      private RunnableFuture<V> newTaskFor(Runnable task, V result) {
+          if (aes == null)
+              return new FutureTask<V>(task, result);
+          else
+              return aes.newTaskFor(task, result);
+      }
+      // 构造方法 参数：Executor executor
+      public ExecutorCompletionService(Executor executor) {
+          if (executor == null)
+              throw new NullPointerException();
+          this.executor = executor;
+          this.aes = (executor instanceof AbstractExecutorService) ?
+              (AbstractExecutorService) executor : null;
+          this.completionQueue = new LinkedBlockingQueue<Future<V>>();
+      }
+      // 构造方法 参数Executor executor, BlockingQueue<Future<V>> completionQueue
+      public ExecutorCompletionService(Executor executor,
+                                       BlockingQueue<Future<V>> completionQueue) {
+          if (executor == null || completionQueue == null)
+              throw new NullPointerException();
+          this.executor = executor;
+          this.aes = (executor instanceof AbstractExecutorService) ?
+              (AbstractExecutorService) executor : null;
+          this.completionQueue = completionQueue;
+      }
+      // 两个任务提交方法：内部都会将其转换为RunnableFutuer实例，然后再封装成QueueingFuture实例作为任务来执行
+      // 任务提交方法：Callable<V> task
+      public Future<V> submit(Callable<V> task) {
+          if (task == null) throw new NullPointerException();
+          RunnableFuture<V> f = newTaskFor(task);
+          executor.execute(new QueueingFuture(f));
+          return f;
+      }
+      // 任务提交方法： 参数 Runnable task, V result
+      public Future<V> submit(Runnable task, V result) {
+          if (task == null) throw new NullPointerException();
+          RunnableFuture<V> f = newTaskFor(task, result);
+          executor.execute(new QueueingFuture(f));
+          return f;
+      }
+  
+      public Future<V> take() throws InterruptedException {
+          return completionQueue.take();
+      }
+  
+      public Future<V> poll() {
+          return completionQueue.poll();
+      }
+  
+      public Future<V> poll(long timeout, TimeUnit unit)
+          throws InterruptedException {
+          return completionQueue.poll(timeout, unit);
+      }
+  }
+  ```
+
+  - 两个封装RunnableFuture 方法 最终调用的都是FutureTask的构造方法: private RunnableFuture newTaskFor(…)
+  - 两个构造方法 参数Executor executor 和 Executor executor, BlockingQueue< Future > completionQueue
+  - 两个任务提交方法：内部都会将其转换为RunnableFutuer实例，然后再封装成QueueingFuture实例作为任务来执行
+  - 一个内部类：实现了FutureTask接口，当任务执行时，会去调用FutureTask的run(), 在任务执行成功，记录返回记录结果的时候，会调用finishCompletion()去唤醒所有阻塞的线程并调用done()方法。而QueueingFuture内部类就实现了done()方法，它将执行完的FutureTask放入到阻塞队列中，当调用take()方法时就可以取到任务的执行结果，如果任务都还没有执行完，就阻塞。
+
+操作示例 1：采用 线程池 + Future 的方案异步执行询价
 
 ```java
-public interface CompletionService<V> {
-    // 提交线程任务，交由 Executor 对象去执行，并将结果放入阻塞队列；
-    Future<V> submit(Callable<V> task);
-    // 提交线程任务，交由 Executor 对象去执行，并将结果放入阻塞队列；
-    Future<V> submit(Runnable task, V result);
-    // 阻塞等待，在阻塞队列中获取并移除一个元素，该方法是阻塞的，即获取不到的话线程会一直阻塞；
-    Future<V> take() throws InterruptedException;
-    // 非阻塞等待，在阻塞队列中获取并移除一个元素，该方法是非阻塞的，获取不到即返回 null ；
-    Future<V> poll();
-    // 带时间的非阻塞等待，从阻塞队列中非阻塞地获取并移除一个元素，在设置的超时时间内获取不到即返回 null ；
-    Future<V> poll(long timeout, TimeUnit unit) throws InterruptedException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.*;
+import java.util.function.Function;
+
+public class JavaAPIDemo {
+    public static void main(String[] args) throws InterruptedException {
+        // 模拟电商报价API
+        Function<Integer, Integer> getPrice = (i) -> {
+            try {
+                TimeUnit.SECONDS.sleep(i);
+                System.out.println("任务" + i);
+            } catch (InterruptedException ignored) {
+            }
+            return i;
+        };
+
+        long start = System.currentTimeMillis();
+
+        // 创建2个固定大小的线程池
+        ExecutorService executor = Executors.newFixedThreadPool(5);
+
+        // 在集合中追加所有要执行的线程的任务对象，是Callable的实现
+        Set<Callable<Integer>> allThreads = new HashSet<>();
+        allThreads.add(() -> getPrice.apply(2));
+        allThreads.add(() -> getPrice.apply(6));
+        allThreads.add(() -> getPrice.apply(4));
+        // 使用invokeAll方法执行集合中的所有Callable任务
+        List<Future<Integer>> futures = executor.invokeAll(allThreads);
+
+        futures.forEach((future) -> {
+            try {
+                System.out.println(future.get());
+            } catch (Exception ignored) {
+            }
+        });
+
+        executor.shutdown();
+        while (true) {
+            if (executor.isTerminated()) {
+                long end = System.currentTimeMillis();
+                System.out.println("耗时：" + (end - start) / 1000 + " s");
+                break;
+            }
+        }
+    }
 }
 ```
 
-操作示例 1：异步任务调度
+```java
+任务2
+任务4
+任务6
+6
+2
+4
+耗时：6 s
+```
+
+操作示例 2：采用 CompletionService 的方案异步执行询价
 
 ```java
 import java.util.concurrent.*;
@@ -7299,7 +7464,7 @@ public class JavaAPIDemo {
 
 此时的线程池的大小为 2，所以每一次只有 2 个线程任务可以被调度，而后被调度执行完成的线程处理结果会自动的保存在结果的阻塞队列之中，后面可以交由其他线程通过此阻塞队列获取数据。
 
-操作示例 2：并行地调用多个服务，只要有一个成功就返回结果
+操作示例 3：并行地调用多个服务，只要有一个成功就返回结果
 
 ```java
 import java.util.ArrayList;
@@ -7335,7 +7500,7 @@ public class JavaAPIDemo {
         try {
             for (int i = 0; i < 3; i++) {
                 Future<Integer> future = cs.take();
-                //将有结果的任务从结果集删除
+                // 将有结果的任务从结果集删除
                 futures.remove(future);
                 result = future.get();
                 if (result != null) {
@@ -7343,7 +7508,7 @@ public class JavaAPIDemo {
                 }
             }
         } finally {
-            //取消剩下的所有任务
+            // 取消剩下的所有任务
             for (Future<Integer> future : futures) {
                 future.cancel(true);
             }
@@ -7444,10 +7609,10 @@ public class JavaAPIDemo {
 耗时：3 s
 ```
 
-简单说一下就是：
+ **CompletionService 应用场景**：
 
-1. 当需要批量提交异步任务的时候建议你使用 CompletionService。
-2. CompletionService 能够让异步任务的执行结果有序化。先执行完的先进入阻塞队列。
+1. 当需要批量提交异步任务的时候建议你使用 CompletionService。CompletionService 将线程池 Executor 和阻塞队列 BlockingQueue 的功能融合在了一起，能够让批量异步任务的管理更简单。
+2. CompletionService 能够让异步任务的执行结果有序化。先执行完的先进入阻塞队列。利用这个特性，你可以轻松实现后续处理的有序性，避免无谓的等待，同时还可以快速实现诸如Forking Cluster这样的需求。
 3. 线程池隔离。CompletionService 支持自己创建线程池，这种隔离性能避免几个特别耗时的任务拖垮整个应用的风险。
 
 

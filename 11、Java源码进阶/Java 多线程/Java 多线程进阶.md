@@ -386,6 +386,30 @@ public class JavaAPIDemo {
 分支任务计算结果：5050
 ```
 
+**面试题：CountedCompleter、RecursiveTask 和 RecursiveAction 的区别？**
+
+CountedCompleter、RecursiveTask 和 RecursiveAction 是 Fork/Join 框架中的类，用于简化并行编程的过程。以下是它们的主要区别：
+
+1. **用途：**
+   - RecursiveTask：这个类设计用于返回结果的任务。它扩展了 ForkJoinTask 类并要求实现 compute 方法，该方法返回一个结果。
+   - RecursiveAction：这个类用于不返回结果的任务。它同样扩展了 ForkJoinTask 类，但要求实现没有返回值的 compute 方法。
+   - CountedCompleter：这是一个更通用的类，可用于具有对其他任务的依赖关系的任务，可以用于既有结果又没有结果的计算。
+2. **完成机制：**
+   - RecursiveTask 和 RecursiveAction 的任务完成时，会通知其父任务。
+   - CountedCompleter 具有更灵活的完成机制。它可以在不同的任务之间建立任意的依赖关系，而不仅仅是父子关系。
+3. **计数机制：**
+   - RecursiveTask 和 RecursiveAction 不提供内建的计数机制。
+   - CountedCompleter 具有内建的计数机制，可以方便地追踪任务的完成状态。它可以通过 `tryComplete()` 方法手动触发任务的完成。
+4. **任务拆分方式：**
+   - RecursiveTask 和 RecursiveAction 通常通过递归地拆分任务来实现并行计算。
+   - CountedCompleter 更为灵活，可以手动管理任务的拆分方式，允许开发人员更精细地控制任务的执行流程。
+
+总的来说，CountedCompleter 提供了更多的灵活性，适用于一些复杂的并行计算场景，而 RecursiveTask 和 RecursiveAction 更专注于简单的任务拆分和结果收集。
+
+***
+
+> **如下为 CountedCompleter 原理扩展知识**：
+
 在早期的JDK实现之中，会提供有一个 java.util.Arrays 类，这个类实现了数组的操作，但是在该类之中有一些方法是采用了并行排序的模式处理的，这个操作里面会包含有大量的分支任务的定义。
 
 ```java
@@ -480,7 +504,237 @@ private static final class Sorter extends CountedCompleter<Void> {
 
 
 
-## 6、ForkJoinPool.ManagedBlocker
+## 6、ForkJoinPool.ManagedBlocker 线程补偿
+
+【**分支线程任务阻塞**】使用分支业务可以充分的发挥出电脑的硬件处理性能，然而在进行分支处理时，有可能所处理的业务会造成阻塞的情况出现。假设现在只设置有2个核心线程，但是却产生了6个分支，如图所示，这样一来只能有2个线程任务执行，而其它的任务则必须进行工作线程资源的等待，从而出现严重的性能问题。
+
+![image-20240117232221071](./Java 多线程进阶.assets/image-20240117232221071.png)
+
+内核线程是有限的，但是你突然创建了太多的分支，导致所有的分支彼此之间出现资源等待的情况，那么最终的结果是有可能分支反而会造成处理性能的下降。
+
+【**线程池资源补偿**】为了解决这种情况下的分支性能处理问题，在 ForkJoinPool 中提供了 **ManagedBlockerl 阻塞管理接口**，开发者可以利用此接口明确的告诉 ForkJoinPool 可能产生阻塞的操作，而后会依据 ManagedBlocker 接口所提供的方法来判断当前线程池的运行情况，如果发现此时线程池资源已经耗尽，但是还有未执行的任务时，就会自动的在线程池中进行**核心线程的补偿**，从而实现分支快速处理的需要。
+
+![image-20240117232907993](./Java 多线程进阶.assets/image-20240117232907993.png)
+
+操作示例 1：观察分支线程任务阻塞的情况，这里 ForkJoinPool 只设置莫2个线程，分支阀值也改成了5，所以会产生20个分支。由于线程池大小设置为 2，所以多余的分支线程会出现等待。
+
+```java
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
+import java.util.concurrent.RecursiveTask;
+
+/**
+ * 实现数据累加的计算
+ */
+class SumTask extends RecursiveTask<Integer> {
+    private static final int THRESHOLD = 5; // 分支阈值
+    private final int start; // 开始计算数值
+    private final int end; // 结束计算数值
+
+    public SumTask(int start, int end) { // 数据的累加配置
+        this.start = start;
+        this.end = end;
+    }
+
+    @Override
+    protected Integer compute() { // 完成计算的处理
+        // 所有的子分支的处理，以及所有相关分支的合并处理都在此方法之中完成
+        int sum = 0; // 保存最终的计算结果
+        boolean isFork = (end - start) <= THRESHOLD; // 是否需要进行分支
+        if (isFork) {   // 计算子分支
+            for (int i = start; i <= end; i++) {
+                sum += i; // 分支处理
+            }
+            System.out.printf("【%s】start = %d、end = %d、sum = %d%n",
+                    Thread.currentThread().getName(), this.start, this.end, sum);
+        } else {    // 需要开启分支
+            int middle = (start + end) / 2;
+            SumTask leftTask = new SumTask(this.start, middle);
+            SumTask rightTask = new SumTask(middle + 1, this.end);
+            leftTask.fork();  // 开启左分支
+            rightTask.fork(); // 开启右分支
+            sum = leftTask.join() + rightTask.join(); // 等待分支处理的执行结果返回
+        }
+        return sum;
+    }
+}
+
+public class JavaAPIDemo {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        SumTask task = new SumTask(1, 100); // 外部的计算操作
+        ForkJoinPool pool = new ForkJoinPool(2); // 开启分支任务池,线程大小设置为2
+        Future<Integer> future = pool.submit(task); // 执行分支任务
+        System.out.println("分支任务计算结果：" + future.get()); // 异步返回
+    }
+}
+```
+
+```java
+【ForkJoinPool-1-worker-1】start = 1、end = 4、sum = 10
+【ForkJoinPool-1-worker-2】start = 51、end = 54、sum = 210
+【ForkJoinPool-1-worker-2】start = 55、end = 57、sum = 168
+【ForkJoinPool-1-worker-1】start = 5、end = 7、sum = 18
+【ForkJoinPool-1-worker-2】start = 58、end = 63、sum = 363
+【ForkJoinPool-1-worker-1】start = 8、end = 13、sum = 63
+【ForkJoinPool-1-worker-2】start = 64、end = 69、sum = 399
+【ForkJoinPool-1-worker-1】start = 14、end = 19、sum = 99
+【ForkJoinPool-1-worker-2】start = 70、end = 75、sum = 435
+【ForkJoinPool-1-worker-1】start = 20、end = 25、sum = 135
+【ForkJoinPool-1-worker-2】start = 76、end = 79、sum = 310
+【ForkJoinPool-1-worker-1】start = 26、end = 29、sum = 110
+【ForkJoinPool-1-worker-2】start = 80、end = 82、sum = 243
+【ForkJoinPool-1-worker-1】start = 30、end = 32、sum = 93
+【ForkJoinPool-1-worker-2】start = 83、end = 88、sum = 513
+【ForkJoinPool-1-worker-1】start = 33、end = 38、sum = 213
+【ForkJoinPool-1-worker-2】start = 89、end = 94、sum = 549
+【ForkJoinPool-1-worker-1】start = 39、end = 44、sum = 249
+【ForkJoinPool-1-worker-2】start = 95、end = 100、sum = 585
+【ForkJoinPool-1-worker-1】start = 45、end = 50、sum = 285
+分支任务计算结果：5050
+```
+
+> 可以发现打印结果中ForkJoinPool始终只使用了2个线程在工作，如果某个分支业务逻辑特别复杂，耗时特别久，那么就会产生线程阻塞等待的情况了。
+
+操作示例 2：观察补偿线程的存在的使用
+
+```java
+import java.util.concurrent.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+/**
+ * 实现数据累加的计算
+ */
+class SumTask extends RecursiveTask<Integer> {
+    private static final int THRESHOLD = 5; // 分支阈值
+    private final int start; // 开始计算数值
+    private final int end; // 结束计算数值
+    private final Lock lock = new ReentrantLock(); // 互斥锁
+
+    public SumTask(int start, int end) { // 数据的累加配置
+        this.start = start;
+        this.end = end;
+    }
+
+    @Override
+    protected Integer compute() { // 完成计算的处理
+        // 所有的子分支的处理，以及所有相关分支的合并处理都在此方法之中完成
+        int sum = 0; // 保存最终的计算结果
+        boolean isFork = (end - start) <= THRESHOLD; // 是否需要进行分支
+        if (isFork) {   // 计算子分支
+            SumHandleManagedBlocker blocker = new SumHandleManagedBlocker(this.start, this.end, this.lock);
+            try {
+                ForkJoinPool.managedBlock(blocker); // 加入阻塞管理
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return blocker.result; // 返回计算的结果
+        } else {    // 需要开启分支
+            int middle = (start + end) / 2;
+            SumTask leftTask = new SumTask(this.start, middle);
+            SumTask rightTask = new SumTask(middle + 1, this.end);
+            leftTask.fork();  // 开启左分支
+            rightTask.fork(); // 开启右分支
+            sum = leftTask.join() + rightTask.join(); // 等待分支处理的执行结果返回
+        }
+        return sum;
+    }
+
+    /**
+     * 自定义线程管理，主要是使用补偿线程
+     */
+    static class SumHandleManagedBlocker implements ForkJoinPool.ManagedBlocker {
+        private Integer result;
+        private final int start;
+        private final int end;
+        private final Lock lock; // 获取一个互斥锁
+
+        public SumHandleManagedBlocker(int start, int end, Lock lock) {
+            this.start = start;
+            this.end = end;
+            this.lock = lock;
+        }
+
+        @Override
+        public boolean block() throws InterruptedException { // 处理延迟任务
+            int sum = 0;
+            this.lock.lock();
+            try {
+                for (int x = start; x <= end; x++) {   // 数学计算
+                    TimeUnit.MILLISECONDS.sleep(100); // 延迟
+                    sum += x; // 执行数据的累加
+                }
+            } finally {
+                this.result = sum; // 返回处理结果
+                this.lock.unlock(); // 解锁
+            }
+            System.out.printf("【%s】处理数据累加业务，start = %d、end = %d、sum = %d%n",
+                    Thread.currentThread().getName(), this.start, this.end, sum);
+            return result != null; // 结束标记，返回是否成功阻塞
+        }
+
+        /**
+         * 如果返回 true，则表示成功阻塞；
+         * 如果返回 false，则表示无法阻塞，并且会创建补偿线程。
+         */
+        @Override
+        public boolean isReleasable() { // 补偿的判断，返回false会创建补偿线程
+            return this.result != null; // 阻塞解除判断
+        }
+    }
+}
+
+
+public class JavaAPIDemo {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        SumTask task = new SumTask(1, 100); // 外部的计算操作
+        ForkJoinPool pool = new ForkJoinPool(2); // 开启分支任务池,线程大小设置为2
+        Future<Integer> future = pool.submit(task); // 执行分支任务
+        System.out.println("分支任务计算结果：" + future.get()); // 异步返回
+    }
+}
+```
+
+```java
+【ForkJoinPool-1-worker-14】处理数据累加业务，start = 30、end = 32、sum = 93
+【ForkJoinPool-1-worker-20】处理数据累加业务，start = 80、end = 82、sum = 243
+【ForkJoinPool-1-worker-16】处理数据累加业务，start = 5、end = 7、sum = 18
+【ForkJoinPool-1-worker-18】处理数据累加业务，start = 55、end = 57、sum = 168
+【ForkJoinPool-1-worker-1】处理数据累加业务，start = 1、end = 4、sum = 10
+【ForkJoinPool-1-worker-2】处理数据累加业务，start = 51、end = 54、sum = 210
+【ForkJoinPool-1-worker-4】处理数据累加业务，start = 76、end = 79、sum = 310
+【ForkJoinPool-1-worker-3】处理数据累加业务，start = 26、end = 29、sum = 110
+【ForkJoinPool-1-worker-13】处理数据累加业务，start = 58、end = 63、sum = 363
+【ForkJoinPool-1-worker-19】处理数据累加业务，start = 95、end = 100、sum = 585
+【ForkJoinPool-1-worker-11】处理数据累加业务，start = 70、end = 75、sum = 435
+【ForkJoinPool-1-worker-17】处理数据累加业务，start = 83、end = 88、sum = 513
+【ForkJoinPool-1-worker-9】处理数据累加业务，start = 64、end = 69、sum = 399
+【ForkJoinPool-1-worker-7】处理数据累加业务，start = 33、end = 38、sum = 213
+【ForkJoinPool-1-worker-15】处理数据累加业务，start = 8、end = 13、sum = 63
+【ForkJoinPool-1-worker-10】处理数据累加业务，start = 20、end = 25、sum = 135
+【ForkJoinPool-1-worker-12】处理数据累加业务，start = 89、end = 94、sum = 549
+【ForkJoinPool-1-worker-5】处理数据累加业务，start = 39、end = 44、sum = 249
+【ForkJoinPool-1-worker-6】处理数据累加业务，start = 45、end = 50、sum = 285
+【ForkJoinPool-1-worker-8】处理数据累加业务，start = 14、end = 19、sum = 99
+分支任务计算结果：5050
+```
+
+原本只有两个线程池的 ForkJoin 结构之中，现在发现变为了20个线程池，由于产生了分支任务处理的阻塞问题，所以在 ForkJoinPool 内部会进行补偿线程的创建，可以提高整体的处理性能。
+
+***
+
+ForkJoinPool.ManagedBlocker 是 ForkJoinPool 框架的一部分，用于处理并行任务的阻塞情况。以下是对它的总结：
+
+1. **所属框架：** ForkJoinPool.ManagedBlocker 是 ForkJoinPool 框架的一部分，这是一个用于执行可拆分和合并的任务的并行计算框架。
+2. **用途：** 该接口用于管理工作者线程的阻塞行为。通常，当工作者线程尝试执行其他任务时，如果某些条件不满足而需要阻塞时，就可以使用 ManagedBlocker 接口。
+3. **接口方法：** 主要的接口方法是 boolean block()。这个方法返回一个布尔值，指示是否成功执行阻塞。如果返回 true，表示成功阻塞；如果返回 false，表示无法阻塞。
+4. **应用场景：** 一个常见的应用场景是在任务中执行可能导致线程阻塞的操作，如等待外部资源或条件满足。通过使用 ManagedBlocker 接口，可以让线程在等待时阻塞而不是一直忙等，提高线程池的效率。
+5. **性能和资源利用率：** 在某些并行计算场景中，使用 ForkJoinPool.ManagedBlocker 可以提高性能和资源利用率，因为它允许线程在等待时释放 CPU 资源，而不是一直占用。
+
+总体而言，ForkJoinPool.ManagedBlocker 提供了一种机制，使得线程在等待条件满足时可以阻塞，从而更有效地管理并行计算中的线程资源。
+
+
 
 ## 7、Phaser
 
