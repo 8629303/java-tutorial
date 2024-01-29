@@ -161,8 +161,8 @@ public class JavaAPIDemo {
 
    ```java
    // List<List<Integer>> x = IntStream.range(1, 5).mapToObj(x -> Arrays.asList(x)).collect(Collectors.toList());
-   List<List<Integer>> x = IntStream.range(1, 5).boxed().collect(Collectors.toList());
-   System.out.println(x); // [[1], [2], [3], [4]]
+   List<Integer> x = IntStream.range(1, 5).boxed().collect(Collectors.toList()); // boxed()将IntStream转成Stream<Integer>
+   System.out.println(x); // [1, 2, 3, 4]
    ```
 
 
@@ -967,7 +967,7 @@ public class JavaAPIDemo {
 
         List<Integer> result = IntStream.range(0, list1.size())
                 .map(i -> list1.get(i) + list2.get(i))
-                .boxed() // 将 IntStream 转换成 Stream
+                .boxed() // 将 IntStream 转换成 Stream<Integer>
                 .collect(Collectors.toList());
         System.out.println(result);
     }

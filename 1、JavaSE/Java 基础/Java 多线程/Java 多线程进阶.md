@@ -3859,7 +3859,7 @@ LockSupport 和 Condition 是 Java 中用于线程同步的两个不同的工具
 
 
 
-# 06、线程锁工具类
+# 06、同步工具类
 
 从本部分开始，所讲解的J.U.C是其应用的部分，而不是其理论的基础实现部分（java.util.concurrent.locks子包为锁的实现机制）。
 
@@ -4034,10 +4034,12 @@ public class JavaAPIDemo {
         for (int x = 0; x < 3; x++) {   // 创建3个线程
             new Thread(() -> {
                 try {
-                    System.out.printf("【Barrier - 等待开始】当前的线程名称：%s%n", Thread.currentThread().getName());
+                    System.out.printf("【Barrier - 等待开始】当前的线程名称：%s%n", 
+                                      Thread.currentThread().getName());
                     TimeUnit.SECONDS.sleep(2); // 模拟业务延迟
                     barrier.await(); // 等待，凑够了2个等待的线程
-                    System.err.printf("〖Barrier - 业务处理完毕〗当前的线程名称：%s%n", Thread.currentThread().getName());
+                    System.err.printf("〖Barrier - 业务处理完毕〗当前的线程名称：%s%n", 
+                                      Thread.currentThread().getName());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -4070,10 +4072,12 @@ public class JavaAPIDemo {
         for (int x = 0; x < 3; x++) {   // 创建3个线程
             new Thread(() -> {
                 try {
-                    System.out.printf("【Barrier - 等待开始】当前的线程名称：%s%n", Thread.currentThread().getName());
+                    System.out.printf("【Barrier - 等待开始】当前的线程名称：%s%n", 
+                                      Thread.currentThread().getName());
                     TimeUnit.SECONDS.sleep(2); // 模拟业务延迟
                     barrier.await(5,TimeUnit.SECONDS); // 等待处理
-                    System.err.printf("〖Barrier - 业务处理完毕〗当前的线程名称：%s%n", Thread.currentThread().getName());
+                    System.err.printf("〖Barrier - 业务处理完毕〗当前的线程名称：%s%n", 
+                                      Thread.currentThread().getName());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -4092,9 +4096,57 @@ public class JavaAPIDemo {
 java.util.concurrent.TimeoutException
 ```
 
+操作示例 3：使用 CyclicBarrier 模拟阶段化处理
+
+```java
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.TimeUnit;
+
+public class JavaAPIDemo {
+    public static void main(String[] args) {
+        // 现在设置的栅栏的数量为2，凑够2个线程就进行触发
+        CyclicBarrier barrier = new CyclicBarrier(2);
+        for (int x = 0; x < 2; x++) {   // 创建3个线程
+            new Thread(() -> {
+                try {
+                    System.out.printf("【Barrier-1 - 等待开始】当前的线程名称：%s%n", 
+                                      Thread.currentThread().getName());
+                    TimeUnit.SECONDS.sleep(2); // 模拟业务延迟
+                    barrier.await(); // 等待，凑够了2个等待的线程
+                    System.err.printf("〖Barrier-1 - 业务处理完毕〗当前的线程名称：%s%n", 
+                                      Thread.currentThread().getName());
+
+                    barrier.await();
+
+                    System.out.printf("【Barrier-2 - 等待开始】当前的线程名称：%s%n", 
+                                      Thread.currentThread().getName());
+                    TimeUnit.SECONDS.sleep(2); // 模拟业务延迟
+                    barrier.await(); // 等待，凑够了2个等待的线程
+                    System.err.printf("〖Barrier-2 - 业务处理完毕〗当前的线程名称：%s%n", 
+                                      Thread.currentThread().getName());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }, "执行者 - " + x).start();
+        }
+    }
+}
+```
+
+```java
+【Barrier-1 - 等待开始】当前的线程名称：执行者 - 0
+【Barrier-1 - 等待开始】当前的线程名称：执行者 - 1
+〖Barrier-1 - 业务处理完毕〗当前的线程名称：执行者 - 1
+〖Barrier-1 - 业务处理完毕〗当前的线程名称：执行者 - 0
+【Barrier-2 - 等待开始】当前的线程名称：执行者 - 0
+【Barrier-2 - 等待开始】当前的线程名称：执行者 - 1
+〖Barrier-2 - 业务处理完毕〗当前的线程名称：执行者 - 0
+〖Barrier-2 - 业务处理完毕〗当前的线程名称：执行者 - 1
+```
+
 除了以上这种傻傻的等待机制之外，还可以进行一些栅栏内部操作统计的操作，例如：实现统计的重置。
 
-操作示例 3：进行栅栏统计重置处理
+操作示例 4：进行栅栏统计重置处理
 
 ```java
 import java.util.concurrent.CyclicBarrier;
@@ -4108,14 +4160,16 @@ public class JavaAPIDemo {
             final int temp = x; // 留给内部类使用
             new Thread(() -> {
                 try {
-                    System.out.printf("【Barrier - 等待开始】当前的线程名称：%s%n", Thread.currentThread().getName());
+                    System.out.printf("【Barrier - 等待开始】当前的线程名称：%s%n", 
+                                      Thread.currentThread().getName());
                     TimeUnit.SECONDS.sleep(2); // 模拟业务延迟
                     if (temp == 2) {    // 设置一个判断条件
                         barrier.reset(); // 重置
                     } else {
                         barrier.await(); // 等待，凑够了2个等待的线程
                     }
-                    System.err.printf("〖Barrier - 业务处理完毕〗当前的线程名称：%s%n", Thread.currentThread().getName());
+                    System.err.printf("〖Barrier - 业务处理完毕〗当前的线程名称：%s%n", 
+                                      Thread.currentThread().getName());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -4146,7 +4200,7 @@ public int await() throws InterruptedException, BrokenBarrierException { // 描�
 }
 ```
 
-操作示例 4：设置达到屏障后的处理线程
+操作示例 5：设置达到屏障后的处理线程
 
 ```java
 import java.util.concurrent.CyclicBarrier;
@@ -4158,13 +4212,15 @@ public class JavaAPIDemo {
         CyclicBarrier barrier = new CyclicBarrier(2, () -> {
             System.out.println("【屏障业务处理】两个子线程已就绪，可以开始执行屏障线程控制。");
         });
-        for (int x = 0; x < 4; x++) {   // 创建3个线程
+        for (int x = 0; x < 4; x++) {   // 创建4个线程
             new Thread(() -> {
                 try {
-                    System.out.printf("【Barrier - 等待开始】当前的线程名称：%s%n", Thread.currentThread().getName());
+                    System.out.printf("【Barrier - 等待开始】当前的线程名称：%s%n", 
+                                      Thread.currentThread().getName());
                     TimeUnit.SECONDS.sleep(2); // 模拟业务延迟
                     barrier.await(); // 等待，凑够了2个等待的线程
-                    System.err.printf("〖Barrier - 业务处理完毕〗当前的线程名称：%s%n", Thread.currentThread().getName());
+                    System.err.printf("〖Barrier - 业务处理完毕〗当前的线程名称：%s%n", 
+                                      Thread.currentThread().getName());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -4281,207 +4337,122 @@ public class JavaAPIDemo {
 
 
 
-## 5、Phaser 多阶段栅栏
+## 5、Phaser 多阶段栅栏 / 阶段器
 
-> https://mp.weixin.qq.com/s/Gk1UNyo_zmAK7KUhS77t5A?poc_token=HFuLkWWjW40-lkOT_7VAm6_EpUqm4GnL-RnfwL3i
+### 1、简单介绍
 
-Phaser由JDK1.7提出，是一个复杂强大的同步辅助类，是对同步工具类CountDownLatch和CyclicBarrier的综合升级，能够支持分阶段实现等待的业务场景。
+Phaser 是 JDK1.7 开始引入的一个同步工具类，主要适用于一些需要分阶段的任务的处理。可以理解为 CountDownLatch 与 CyclicBarrier 的功能集合，同时又支持有良好的分层计算（分支计算处理）能力。Phaser 可以应用在很多场景，如多线程数据处理、任务拆分等。
 
-我们可以回忆下CountDownLatch讲的是先指定N个线程，在N个线程干完活之前，其它线程都需要等待（导游等待旅游团所有人上车才能开车），而CyclicBarrier讲的是先指定N个线程。等N个线程到齐了大家同时干活(多个驴友相约去旅游，先到的需要等待后来的)，而Phaser是两者的结合，可以理解为先指定N个线程，等N个线程到齐后开始干第一阶段的活，等第一阶段所有的线程都干完活了，接着N个线程开始干第二阶段的活，直到所有的阶段完成工作，程序结束，当然需要注意的是每个阶段可以根据业务需要新增或者删除一些线程，并不是开始指定多少个线程每个阶段就必须有多少个线程。
+Phaser 相较于 CyclicBarrier 和 CountDownLatch，具有更高的灵活性：
 
-### 1、Phaser 简单使用
+- 动态注册与注销：Phaser允许在运行时动态地增加或减少参与者，而CyclicBarrier和CountDownLatch在创建时就需要确定参与者数量。
+- 多阶段任务同步：Phaser支持多个阶段任务的同步，每个阶段可以有不同数量的参与者。而CyclicBarrier只支持一个阶段，CountDownLatch只支持一个倒计时阶段。
+- 自定义行为：Phaser 的 onAdvance() 方法可以在每个阶段结束时执行自定义行为，提供了更多的扩展性。
 
-通过Phaser控制多个线程的执行时机：有时候我们希望所有线程到达指定点后再同时开始执行，我们可以利用CyclicBarrier或CountDownLatch来实现，这里给出使用Phaser的版本。
+同时 CountDownLatch、CyclicBarrier 和 Phaser 又被称为：Java 线程同步三剑客。
 
-操作示例 1：
+| 同步器         | 作用                                                         |
+| -------------- | ------------------------------------------------------------ |
+| CountDownLatch | 倒数计数器。初始时设定计数器值，线程可以在计数器上等待，当计数器值归0后，所有等待的线程继续执行 |
+| CyclicBarrier  | 循环栅栏。初始时设定参与线程数，当线程到达栅栏后，会等待其它线程的到达，当到达栅栏的总数满足指定数后，所有等待的线程继续执行 |
+| Phaser         | 多阶段栅栏。可以在初始时设定参与线程数，也可以中途注册/注销参与者，当到达的参与者数量满足栅栏设定的数量后，会进行阶段升级（advance） |
 
-```java
-import java.util.Random;
-import java.util.concurrent.Phaser;
-import java.util.concurrent.TimeUnit;
+尽管 Phaser 具有更高的灵活性，但在某些特定场景下，CyclicBarrier 和 CountDownLatch 可能更适用。例如，当同步点是固定数量的线程且没有多阶段任务时，使用 CyclicBarrier 可能更简单。而在需要一个倒计时门闩时，使用 CountDownLatch 更直观。
 
-public class JavaAPIDemo {
-    // 指定随机种子
-    private static final Random random = new Random(System.currentTimeMillis());
+以下是一些常见的 Phaser 应用场景：
 
-    public static void main(String[] args) {
-        Phaser phaser = new Phaser();
-        // 将线程注册到phaser
-        phaser.register();
-        for (int i = 0; i < 5; i++) {
-            phaser.register(); // 等待其它参与者线程到达
-            new Thread(() -> {
-                try {
-                    System.out.println(Thread.currentThread().getName() + "开始执行");
-                    TimeUnit.SECONDS.sleep(random.nextInt(5));
-                    System.out.println(Thread.currentThread().getName() + "执行完毕");
-                    // 类似CountDownLatch中的 await
-                    phaser.arriveAndAwaitAdvance();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }).start();
-        }
-        phaser.arriveAndAwaitAdvance();
-        System.out.println("all task execute close");
-    }
-}
-```
-
-```java
-Thread-0开始执行
-Thread-1开始执行
-Thread-4开始执行
-Thread-3开始执行
-Thread-2开始执行
-Thread-1执行完毕
-Thread-4执行完毕
-Thread-2执行完毕
-Thread-0执行完毕
-Thread-3执行完毕
-all task execute close
-```
-
-不知道有没有这样的疑惑，phaser.register是向phaser去注册这个线程，那么为什么主线程也需要注册呢？
-
-其实很简单主线程需要等待所有子线程执行完毕才能继续往下面执行所以必须要phaser.arriveAndAwaitAdvance();阻塞等待，而这个语句是意思当前线程已经到达屏障，在此等待一段时间等条件满足后需要向下一个屏障继续执行，如果没有主线程的phaser.register，直接调用phaser.arriveAndAwaitAdvance，在源码中提到可能会有异常，所以必须在主程序中注册phaser.register();
-
-```java
-/**
- * <p>It is a usage error for an unregistered party to invoke this
- * method.  However, this error may result in an {@code
- * IllegalStateException} only upon some subsequent operation on
- * this phaser, if ever.
- * 译：
- * 未注册方调用此函数是一个使用错误方法。但是，这个错误可能会导致
- * {@codeIllegalStateException}仅在一些后续操作这个相位器，如果有的话。
- */
-public int arriveAndDeregister() {
-    return doArrive(ONE_DEREGISTER);
-}
-```
-
-从体验的示例中其实没看出其优势在哪里，上诉场景完全可以采用 CountDownLatch，所以现在换一种场景来说明 Phaser 的优势。假设某校举行期末考试，有三门考试语文、数学、英语，每门课允许学生提前交卷，只有当所有学生完成考试后才能举行下一次的考试，这就是典型的分阶段任务处理。
-
-操作示例 2：Phaser 解决分科考试问题
-
-```java
-import java.util.Random;
-import java.util.concurrent.Phaser;
-import java.util.concurrent.TimeUnit;
-
-public class JavaAPIDemo {
-    // 指定随机种子
-    public static Random random = new Random(System.currentTimeMillis());
-
-    public static void main(String[] args) {
-        // 一次初始化2个 相当于两次register
-        Phaser phaser = new Phaser(2);
-
-        for (int i = 0; i < 2; i++) {
-            new Thread(() -> {
-                try {
-                    System.out.println(Thread.currentThread().getName() + "===开始语文考试===");
-                    TimeUnit.SECONDS.sleep(random.nextInt(5));
-                    System.out.println(Thread.currentThread().getName() + "===结束语文考试===");
-                    phaser.arriveAndAwaitAdvance();
-
-                    System.out.println(Thread.currentThread().getName() + "===开始数学考试===");
-                    TimeUnit.SECONDS.sleep(random.nextInt(5));
-                    System.out.println(Thread.currentThread().getName() + "===结束数学考试===");
-                    phaser.arriveAndAwaitAdvance();
-
-                    System.out.println(Thread.currentThread().getName() + "===开始英语考试===");
-                    TimeUnit.SECONDS.sleep(random.nextInt(5));
-                    System.out.println(Thread.currentThread().getName() + "===结束英语考试===");
-                    phaser.arriveAndAwaitAdvance();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }).start();
-        }
-    }
-}
-```
-
-```java
-Thread-1===开始语文考试===
-Thread-0===开始语文考试===
-Thread-1===结束语文考试===
-Thread-0===结束语文考试===
-Thread-1===开始数学考试===
-Thread-0===开始数学考试===
-Thread-0===结束数学考试===
-Thread-1===结束数学考试===
-Thread-1===开始英语考试===
-Thread-0===开始英语考试===
-Thread-1===结束英语考试===
-Thread-0===结束英语考试===
-```
-
-可以看到三个阶段都是等待所有线程执行完毕后才往下执行，相当于多个栅栏。请注意：通过Phaser类的构造方法构建的party数，也就是线程数需要和循环的次数对应，不然可能影响后续阶段器的正常运行。
+1. 多线程任务分配：Phaser 可以用于将复杂的任务分配给多个线程执行，并协调线程间的合作。
+2. 多级任务流程：Phaser 可以用于实现多级任务流程，在每一级任务完成后触发下一级任务的开始。
+3. 模拟并行计算：Phaser 可以用于模拟并行计算，协调多个线程间的工作。
+4. 阶段性任务：Phaser 可以用于实现阶段性任务，在每一阶段任务完成后触发下一阶段任务的开始。
 
 
 
-### 2、Phaser 两个重要状态
+### 2、阶段概念
 
-在 Phaser 内有2个重要状态，分别是 phase 和 party，乍一看很难理解，他们的定义如下。
+#### 1、phase（阶段）
 
-- phase 就是阶段，如上面提到的语文、数学、英语考试这每个考试对应一个阶段，不过phase是从0开始的，当所有任务执行完毕，准备进入下一个阶段时phase就会加一。
-- party 对应注册到Phaser线程数，party 初始值有两种形式
-  1. 方法一就是通过Phaser的有参构造初始化party值。
-  2. 方法二采用动态注册方法phaser.register()或phaser.bulkRegister(线程数)指定线程数，注销线程调用phaser.arriveAndDeregister()方法party值会减一。
+我们知道，在 CyclicBarrier 中，只有一个栅栏，线程在到达栅栏后会等待其它线程的到达。
+
+Phaser 也有栅栏，在 Phaser 中，栅栏的名称叫做 phase（阶段），在任意时间点，Phaser 只处于某一个 phase（阶段），初始阶段为0，最大达到Integerr.MAX_VALUE，然后再次归零。当所有 parties 参与者都到达后， phase 值会递增。
+
+如果之前学习过 CyclicBarrier 就会知道，Phaser 中的 phase（阶段）这个概念其实和 CyclicBarrier 中的 Generation 很相似，只不过 Generation 没有计数。
 
 
 
-### 3、Phaser 常用的方法
+#### 2、parties（参与者）
 
-| 方法                                           | 描述                                                         |
-| ---------------------------------------------- | ------------------------------------------------------------ |
-| Phaser()                                       | 创建一个新的Phaser对象，初始参与者数量为0。                  |
-| Phaser(int parties)                            | 创建一个新的Phaser对象，初始参与者数量为指定值。             |
-| Phaser(Phaser parent)                          | 创建一个新的Phaser对象，作为指定父Phaser的子Phaser。         |
-| Phaser(Phaser parent, int parties)             | 创建一个新的Phaser对象，作为指定父Phaser的子Phaser，初始参与者数量为指定值。 |
-| int register()                                 | 注册一个新的参与者，增加参与者数量，并返回分配的相对阶段号。 |
-| int bulkRegister(int parties)                  | 注册多个新的参与者，增加参与者数量，并返回分配的相对阶段号。 |
-| int arrive()                                   | 通知到达，并返回当前阶段号。                                 |
-| int arriveAndAwaitAdvance()                    | 通知到达并等待其他参与者到达，返回当前阶段号。               |
-| int arriveAndDeregister()                      | 通知到达并注销当前线程，返回当前阶段号。                     |
-| int arriveAndDeregister(int registeredParties) | 通知到达并注销指定数量的参与者，返回当前阶段号。             |
-| int awaitAdvance(int phase)                    | 等待指定阶段的到达，返回当前阶段号。                         |
-| int awaitAdvanceInterruptibly(int phase)       | 等待指定阶段的到达，允许被中断，返回当前阶段号。             |
-| long getRegisteredParties()                    | 返回当前注册的参与者数量。                                   |
-| int getPhase()                                 | 返回当前阶段号。                                             |
-| int getArrivedParties()                        | 返回已经到达的参与者数量。                                   |
-| int getUnarrivedParties()                      | 返回还未到达的参与者数量。                                   |
-| boolean isTerminated()                         | 检查Phaser是否终止，只有当party的数量是0或者调用forceTermination时才会结束。 |
-| void forceTermination()                        | 强制终止Phaser，使其进入终止状态，未完成的参与者将被唤醒。   |
-| String toString()                              | 返回Phaser对象的字符串表示。                                 |
+parties（参与者）其实就是 CyclicBarrier 中的参与线程的概念。
 
-```java
-// 获取Phaser阶段数，默认0
-public final int getPhase();
-// 向Phaser注册一个线程
-public int register();    
-// 向Phaser注册多个线程
-public int bulkRegister(int parties);
-// 获取已经注册的线程数，也就是重要状态party的值
-public int getRegisteredParties();
-// 到达并且等待其它线程到达
-public int arriveAndAwaitAdvance();
-// 到达后注销不等待其它线程，继续往下执行
-public int arriveAndDeregister();
-// 已到达线程数
-public int getArrivedParties();
-// 未到达线程数
-public int getUnarrivedParties();
-// Phaser是否结束 只有当party的数量是0或者调用方法forceTermination时才会结束
-public boolean isTerminated();
-// 结束Phaser
-public void forceTermination();
-```
+CyclicBarrier 中的参与者在初始构造指定后就不能变更，而 Phaser 既可以在初始构造时指定参与者的数量，也可以中途通过register、bulkRegister、arriveAndDeregister 等方法注册于注销参与者。
 
-代码演示如下：
+
+
+#### 3、arrive（到达） / advance（进阶）
+
+Phaser 注册完 parties（参与者） 之后，参与者的初始状态是 unarrived 的，当参与者 到达（arrive） 当前阶段（phase）后，状态就会变成 arrived 。当阶段的到达参与者数满足条件后（注册的数量等于到达的数量），阶段就会发生 进阶（advance）：也就是 phase 值 + 1。
+
+![image-20240122232907994](./Java 多线程进阶.assets/image-20240122232907994.png)
+
+
+
+#### 4、Termination（终止）
+
+代表当前 Phaser 对象达到终止状态，有点类似于 CyclicBarrier 中的栅栏被破坏的概念。
+
+
+
+#### 5、Tiering（分层）
+
+Phaser 支持 分层（Tiering）： 一种树形结构，通过构造函数可以指定当前待构造的 Phaser 对象的父结点。之所以引入 Tiering ，是因为当一个 Phaser 有大量 参与者（parties） 的时候，内部的同步操作会使性能急剧下降，而分层可以降低竞争，从而减小因同步导致的额外开销。
+
+在一个分层 Phasers 的树结构中，注册和撤销子 Phaser 或父 Phaser 是自动被管理的。当一个 Phaser 的 参与者（parties） 数量变成 0 时，如果有该 Phaser 有父结点，就会将它从父结点中溢移除。
+
+关于 Phaser 的分层，后续我们在讲 Phaser 原理时会进一步讨论。
+
+
+
+### 3、常用方法
+
+#### 1、核心 API
+
+| 方法名称                                           | 描述                                                         |
+| -------------------------------------------------- | ------------------------------------------------------------ |
+| **构造方法**：                                     |                                                              |
+| Phaser()                                           | 创建Phaser对象，初始参与者数量为0.                           |
+| Phaser(int parties)                                | 创建Phaser对象，初始参与者数量为指定值.                      |
+| Phaser(Phaser parent)                              | 创建Phaser对象，作为指定父Phaser的子Phaser.                  |
+| Phaser(Phaser parent, int parties)                 | 创建Phaser对象，作为指定父Phaser的子Phaser，初始参与者数量为指定值. |
+| **增减参与任务数方法**：                           |                                                              |
+| int register()                                     | 动态注册一个新的参与者，增加参与者数量，并返回分配的相对阶段号. |
+| int bulkRegister(int parties)                      | 动态注册多个新的参与者，增加参与者数量，并返回分配的相对阶段号. |
+| int arriveAndDeregister()                          | 通知到达并注销当前线程，不会使线程阻塞，返回当前阶段号.      |
+| int arriveAndDeregister(int registeredParties)     | 通知到达并注销指定数量的参与者，返回当前阶段号.              |
+| **到达、等待方法**：                               |                                                              |
+| int arrive()                                       | 通知到达，但不会使线程阻塞，返回当前阶段号.                  |
+| int arriveAndAwaitAdvance()                        | 通知到达并等待其他参与者到达，返回当前阶段号.                |
+| int awaitAdvance(int phase)                        | 在指定阶段等待，必须是当前阶段才有效.                        |
+| int awaitAdvanceInterruptibly(int phase)           | 等待指定阶段的到达，允许被中断，返回当前阶段号.              |
+| int awaitAdvanceInterruptibly(int, long, TimeUnit) | 同上，并增加了超时时间.                                      |
+| **查询任务数与阶段数**：                           |                                                              |
+| int getPhase()                                     | 返回当前阶段号.                                              |
+| long getRegisteredParties()                        | 返回当前注册的参与者数量.                                    |
+| int getArrivedParties()                            | 返回已经到达的参与者数量.                                    |
+| int getUnarrivedParties()                          | 返回还未到达的参与者数量.                                    |
+| boolean isTerminated()                             | 检查Phaser是否终止，只有当party的数量是0或者调用forceTermination时才会结束. |
+| **终止方法**：                                     |                                                              |
+| void forceTermination()                            | 强制终止Phaser，使其进入终止状态，未完成的参与者将被唤醒.    |
+| onAdvance(int phase, int registeredParties)        | 重写该方法来增加阶段到达动作，该方法返回true将终结Phaser对象. |
+
+
+
+#### 2、入门案例
+
+在 Phaser 中是根据**阶段（phase）**的概念来进行处理的，所有的阶段需要达到指定的参与者线程之后才可以进行阶段的进阶处理，现在假设定义了两个参与者，则其进阶过程是在两个参与者线程全部达到之后进行的。
+
+![image-20240118224342411](./Java 多线程进阶.assets/image-20240118224342411.png)
+
+操作示例 1：所有的执行阶段的控制，全部都是由 Phaser 类来完成处理的，每当触发了任务的执行，就表示阶段的增加（+1 功能）
 
 ```java
 import java.util.concurrent.Phaser;
@@ -4489,59 +4460,95 @@ import java.util.concurrent.TimeUnit;
 
 public class JavaAPIDemo {
     public static void main(String[] args) throws InterruptedException {
-        Phaser phaser = new Phaser(5);
-        System.out.println("当前阶段" + phaser.getPhase());
-
-        System.out.println("注册线程数===" + phaser.getRegisteredParties());
-        // 向phaser注册一个线程
-        phaser.register();
-        System.out.println("注册线程数===" + phaser.getRegisteredParties());
-        // 向phaser注册多个线程，批量注册
-        phaser.bulkRegister(4);
-        System.out.println("注册线程数===" + phaser.getRegisteredParties());
-
-        new Thread(() -> {
-            // 到达且等待
-            phaser.arriveAndAwaitAdvance();
-            System.out.println(Thread.currentThread().getName() + "===执行1");
-        }).start();
-
-        new Thread(() -> {
-            // 到达不等待，从phaser中注销一个线程
-            phaser.arriveAndDeregister();
-            System.out.println(Thread.currentThread().getName() + "===执行2");
-        }).start();
-
-        TimeUnit.SECONDS.sleep(3);
-
-        System.out.println("已到达线程数===" + phaser.getArrivedParties());
-        System.out.println("未到达线程数===" + phaser.getUnarrivedParties());
-
-        System.out.println("Phaser是否结束" + phaser.isTerminated());
-        phaser.forceTermination();
-        System.out.println("Phaser是否结束" + phaser.isTerminated());
+        Phaser phaser = new Phaser(2); // 设置为与线程数量相匹配
+        System.out.println("【Phaser阶段1】" + phaser.getPhase()); // 初始阶段
+        for (int x = 0; x < 2; x++) {   // 循环创建线程
+            TimeUnit.SECONDS.sleep(1);
+            new Thread(() -> {
+                System.out.printf("【%s】我已就位，等待下一步的命令。%n", Thread.currentThread().getName());
+                phaser.arriveAndAwaitAdvance(); // Phaser就位，拥有线程等待
+                System.out.printf("【%s】人员齐备，准备执行新的任务。%n", Thread.currentThread().getName());
+            }, "士兵 - " + x).start();
+        }
+        // TimeUnit.SECONDS.sleep(3); // 等待一下再执行，使用下面等待阶段更加合适
+        phaser.awaitAdvance(phaser.getPhase()); // 确保在输出第二个阶段时，所有线程都已经完成
+        System.out.println("【Phaser阶段2】" + phaser.getPhase()); // 第二个阶段
     }
 }
 ```
 
 ```java
-当前阶段0
-注册线程数===5
-注册线程数===6
-注册线程数===10
-Thread-1===执行2
-已到达线程数===1
-未到达线程数===8
-Phaser是否结束false
-Phaser是否结束true
-Thread-0===执行1
+【Phaser阶段1】0
+【士兵 - 0】我已就位，等待下一步的命令。
+【士兵 - 1】我已就位，等待下一步的命令。
+【士兵 - 1】人员齐备，准备执行新的任务。
+【士兵 - 0】人员齐备，准备执行新的任务。
+【Phaser阶段2】1
+```
+
+操作示例 2：通过如下案例了解整个 Phaser 的流程
+
+```java
+import java.util.concurrent.Phaser;
+import java.util.concurrent.TimeUnit;
+
+public class JavaAPIDemo {
+    public static void main(String[] args) throws InterruptedException {
+        // 初始参与者数量为5
+        Phaser phaser = new Phaser(5);
+        // 返回当前阶段号
+        System.out.println("当前的阶段: " + phaser.getPhase());
+        // 返回当前注册的参与者数量
+        System.out.println("注册线程数: " + phaser.getRegisteredParties());
+        // 向phaser注册一个线程
+        phaser.register();
+        System.out.println("注册线程数: " + phaser.getRegisteredParties());
+        // 向phaser注册多个线程，批量注册
+        phaser.bulkRegister(4);
+        System.out.println("注册线程数: " + phaser.getRegisteredParties());
+
+        new Thread(() -> {
+            // 到达且等待
+            phaser.arriveAndAwaitAdvance();
+            System.out.println(Thread.currentThread().getName() + ": 执行");
+        }, "子线程-1").start();
+
+        new Thread(() -> {
+            // 到达不等待，从phaser中注销一个线程
+            phaser.arriveAndDeregister();
+            System.out.println(Thread.currentThread().getName() + ": 执行");
+        }, "子线程-2").start();
+
+        TimeUnit.SECONDS.sleep(3);
+
+        System.out.println("已到达线程数: " + phaser.getArrivedParties());
+        System.out.println("未到达线程数: " + phaser.getUnarrivedParties());
+
+        System.out.println("Phaser是否结束: " + phaser.isTerminated());
+        phaser.forceTermination();
+        System.out.println("Phaser是否结束: " + phaser.isTerminated());
+    }
+}
+```
+
+```java
+当前的阶段: 0
+注册线程数: 5
+注册线程数: 6
+注册线程数: 10
+子线程-2: 执行
+已到达线程数: 1
+未到达线程数: 8
+Phaser是否结束: false
+子线程-1: 执行
+Phaser是否结束: true
 ```
 
 
 
-### 4、arriveAndAwaitAdvance 解析
+#### 3、arriveAndAwaitAdvance 方法解析
 
-arriveAndAwaitAdvance是Phaser中一个重要实现阻塞的API，其实arriveAndAwaitAdvance是由arrive方法和awaitAdvance方法合并而来，两个方法的作用分别为
+arriveAndAwaitAdvance() 是 Phaser 中一个重要实现阻塞的 API，其实 arriveAndAwaitAdvance 是由 arrive 方法和 awaitAdvance 方法合并而来，两个方法的作用分别为
 
 - arrive：到达屏障但不阻塞，返回值为到达的阶段号。
 - awaitAdvance(int)：接收一个 int 值的阶段号，在指定的屏障处阻塞。
@@ -4622,9 +4629,9 @@ Thread--4===task2 is end
 
 
 
-### 5、Phaser 中断响应
+#### 4、awaitAdvanceInterruptibly 方法解析
 
-我们需要特别注意的就是Phaser所有API中只有awaitAdvanceInterruptibly是响应中断的，其余全部不会响应中断所以不需要对其进行异常处理，演示如下：
+我们需要特别注意的就是 Phaser 所有方法中只有 awaitAdvanceInterruptibly 是响应中断的，其余全部不会响应中断所以不需要对其进行异常处理，演示如下：
 
 ```java
 import java.util.concurrent.Phaser;
@@ -4657,6 +4664,851 @@ java.lang.InterruptedException
 	at com.example.springboot.tech.test.JavaAPIDemo.lambda$main$0(JavaAPIDemo.java:11)
 	at java.base/java.lang.Thread.run(Thread.java:833)
 ```
+
+
+
+### 4、实战应用
+
+#### 1、Phaser 实现多阶段任务案例
+
+操作示例 1：假设有一个三阶段的并行任务，分别是数据读取、数据处理和数据写入。可以使用 Phaser 来同步这三个阶段。
+
+```java
+import java.util.concurrent.Phaser;
+import java.util.concurrent.TimeUnit;
+
+public class JavaAPIDemo {
+    public static void main(String[] args) throws InterruptedException {
+        Phaser phaser = new Phaser(2) {
+            @Override
+            protected boolean onAdvance(int phase, int registeredParties) {
+                switch (phase) {
+                    case 0:
+                        System.out.printf("数据读取完成: phase = %s, registeredParties = %s%n", phase, registeredParties);
+                        break;
+                    case 1:
+                        System.out.printf("数据处理完成: phase = %s, registeredParties = %s%n", phase, registeredParties);
+                        break;
+                    case 2:
+                        System.out.printf("数据写入完成: phase = %s, registeredParties = %s%n", phase, registeredParties);
+                        break;
+
+                }
+                // 判断是否只剩下一个主线程，如果是，返回true,代表终止
+                return phase == 2 || registeredParties == 0;
+            }
+        };
+        for (int x = 0; x < 2; x++) {   // 循环创建线程
+            new Thread(() -> {
+                // 阶段1：数据读取
+                System.out.printf("【%s】阶段1：数据读取，执行readData()%n", Thread.currentThread().getName());
+                phaser.arriveAndAwaitAdvance();
+
+                // 阶段2：数据处理
+                System.out.printf("【%s】阶段2：数据处理，执行processData()%n", Thread.currentThread().getName());
+                phaser.arriveAndAwaitAdvance();
+
+                // 阶段3：数据写入
+                System.out.printf("【%s】阶段2：数据写入，执行writeData()%n", Thread.currentThread().getName());
+                phaser.arriveAndAwaitAdvance();
+            }, "线程-" + x).start();
+        }
+    }
+}
+```
+
+```java
+【线程-0】阶段1：数据读取，执行readData()
+【线程-1】阶段1：数据读取，执行readData()
+数据读取完成: phase = 0, registeredParties = 2
+【线程-0】阶段2：数据处理，执行processData()
+【线程-1】阶段2：数据处理，执行processData()
+数据处理完成: phase = 1, registeredParties = 2
+【线程-1】阶段2：数据写入，执行writeData()
+【线程-0】阶段2：数据写入，执行writeData()
+数据写入完成: phase = 2, registeredParties = 2
+```
+
+
+
+#### 2、Phaser 代替 CountDownLatch
+
+操作示例 1：Phaser 代替 CountDownLatch：arrive & awaitAdvance 替代 countDown & await
+
+```java
+import java.util.concurrent.Phaser;
+import java.util.concurrent.TimeUnit;
+
+public class JavaAPIDemo {
+    public static void main(String[] args) throws InterruptedException {
+        Phaser phaser = new Phaser(2); // 定义2个任务
+        for (int x = 0; x < 2; x++) {   // 循环创建线程
+            TimeUnit.SECONDS.sleep(2); // 延迟
+            new Thread(() -> {
+                // synchronized (phaser) {} arrive方法不是线程安全的，如果不加锁，方法可能会出现很难结束。
+                System.out.printf("【%s】达到已经上车。%n", Thread.currentThread().getName());
+                phaser.arrive(); // 等价于countDown()方法
+            }, "游客 - " + x).start();
+        }
+        phaser.awaitAdvance(phaser.getPhase()); // 等待达到阶段, 等价于countDownLatch.await()方法
+        System.out.println("【主线程】人齐了，开车走人，下一个景点购物消费。");
+    }
+}
+```
+
+```java
+【游客 - 0】达到已经上车。
+【游客 - 1】达到已经上车。
+【主线程】人齐了，开车走人，下一个景点购物消费。
+```
+
+
+
+#### 3、Phaser 代替 CyclicBarrier
+
+操作示例 1：Phaser 代替 CyclicBarrier： arriveAndAwaitAdvance 代替 await
+
+```java
+import java.util.concurrent.Phaser;
+import java.util.concurrent.TimeUnit;
+
+public class JavaAPIDemo {
+    public static void main(String[] args) throws InterruptedException {
+        Phaser phaser = new Phaser(2); // 设置为与线程数量相匹配
+        for (int x = 0; x < 2; x++) {   // 循环创建线程
+            new Thread(() -> {
+                System.out.printf("【%s】我已就位，等待下一步的命令。%n", Thread.currentThread().getName());
+                phaser.arriveAndAwaitAdvance(); // Phaser就位，拥有线程等待. 等价于 cyclicBarrier.await()
+                System.out.printf("【%s】人员齐备，准备执行新的任务。%n", Thread.currentThread().getName());
+                phaser.arriveAndAwaitAdvance(); // Phaser就位，拥有线程等待. 等价于 cyclicBarrier.await()
+                System.out.printf("【%s】任务结束，新的任务执行完毕。%n", Thread.currentThread().getName());
+            }, "士兵 - " + x).start();
+        }
+    }
+}
+```
+
+```java
+【士兵 - 0】我已就位，等待下一步的命令。
+【士兵 - 1】我已就位，等待下一步的命令。
+【士兵 - 0】人员齐备，准备执行新的任务。
+【士兵 - 1】人员齐备，准备执行新的任务。
+【士兵 - 1】任务结束，新的任务执行完毕。
+【士兵 - 0】任务结束，新的任务执行完毕。
+```
+
+
+
+#### 4、Phaser 让主线程等待子线程
+
+操作示例 1：Phaser + CountDownLatch 操作，让主线程等待所有多阶段子线程执行完毕。
+
+```java
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Phaser;
+
+public class JavaAPIDemo {
+    public static void main(String[] args) throws InterruptedException {
+        Phaser phaser = new Phaser(2); // 设置为与线程数量相匹配
+        CountDownLatch countDownLatch = new CountDownLatch(2);
+        for (int x = 0; x < 2; x++) {   // 循环创建线程
+            new Thread(() -> {
+                System.out.printf("【%s】我已就位，等待下一步的命令。%n", Thread.currentThread().getName());
+                phaser.arriveAndAwaitAdvance(); // Phaser就位，拥有线程等待
+                System.out.printf("【%s】人员齐备，准备执行新的任务。%n", Thread.currentThread().getName());
+                phaser.arriveAndAwaitAdvance(); // Phaser就位，拥有线程等待
+                System.out.printf("【%s】任务结束，新的任务执行完毕。%n", Thread.currentThread().getName());
+                countDownLatch.countDown(); // 主要为了让主线程等待子线程全部执行完毕
+            }, "士兵 - " + x).start();
+        }
+        countDownLatch.await(); // 主线程执行结束
+        System.out.println("主线程执行结束");
+    }
+}
+```
+
+```java
+【士兵 - 1】我已就位，等待下一步的命令。
+【士兵 - 0】我已就位，等待下一步的命令。
+【士兵 - 1】人员齐备，准备执行新的任务。
+【士兵 - 0】人员齐备，准备执行新的任务。
+【士兵 - 0】任务结束，新的任务执行完毕。
+【士兵 - 1】任务结束，新的任务执行完毕。
+主线程执行结束
+```
+
+操作示例 2：使用 while (!phaser.isTerminated()) + 轮数控制 来等待子线程的完成，两者缺一不可，不推荐使用，编码复杂容易死循环。
+
+```java
+import java.util.concurrent.Phaser;
+
+public class JavaAPIDemo {
+    public static void main(String[] args) throws InterruptedException {
+        Phaser phaser = new Phaser(2) {
+            @Override
+            protected boolean onAdvance(int phase, int registeredParties) {
+                System.out.printf("【onAdvance()】phase = %s、registeredParties = %s%n",
+                        phase, registeredParties);
+                return phase == 2 || registeredParties == 0;
+            }
+        }; // 设置为与线程数量相匹配
+        for (int x = 0; x < 2; x++) {   // 循环创建线程
+            new Thread(() -> {
+                while (!phaser.isTerminated()) {
+                    System.out.printf("【%s】我已就位，等待下一步的命令。%n", Thread.currentThread().getName());
+                    phaser.arriveAndAwaitAdvance(); // Phaser就位，拥有线程等待
+                    System.out.printf("【%s】人员齐备，准备执行新的任务。%n", Thread.currentThread().getName());
+                    phaser.arriveAndAwaitAdvance(); // Phaser就位，拥有线程等待
+                }
+            }, "士兵 - " + x).start();
+        }
+        phaser.register();
+        while (!phaser.isTerminated()) {
+            phaser.arriveAndAwaitAdvance();
+        }
+        System.out.println("主线程执行结束");
+    }
+}
+```
+
+```java
+【士兵 - 0】我已就位，等待下一步的命令。
+【士兵 - 1】我已就位，等待下一步的命令。
+【onAdvance()】phase = 0、registeredParties = 3
+【士兵 - 1】人员齐备，准备执行新的任务。
+【士兵 - 0】人员齐备，准备执行新的任务。
+【onAdvance()】phase = 1、registeredParties = 3
+【士兵 - 0】我已就位，等待下一步的命令。
+【士兵 - 1】我已就位，等待下一步的命令。
+【onAdvance()】phase = 2、registeredParties = 3
+【士兵 - 1】人员齐备，准备执行新的任务。
+【士兵 - 0】人员齐备，准备执行新的任务。
+主线程执行结束
+```
+
+操作示例 3：如果只有一个阶段的情况下可以使用 awaitAdvance() 方法等待解决（其实CountDownLatch更合适）
+
+```java
+import java.util.concurrent.Phaser;
+
+public class JavaAPIDemo {
+    public static void main(String[] args) {
+        Phaser phaser = new Phaser();
+        for (int i = 0; i < 2; i++) {
+            phaser.register(); // 注册子线程
+            new Thread(() -> {
+                System.out.println(Thread.currentThread().getName() + ": 执行");
+                phaser.arriveAndAwaitAdvance();
+            }).start();
+        }
+        System.out.println(phaser.awaitAdvance(0));
+        System.out.println("主线程结束");
+    }
+}
+```
+
+```java
+Thread-1: 执行
+Thread-0: 执行
+1
+主线程结束
+```
+
+操作示例 4：如果有多个阶段，可以使用主线程+arriveAndAwaitAdvance等待子线程完成。
+
+```java
+import java.util.concurrent.Phaser;
+
+public class JavaAPIDemo {
+    public static void main(String[] args) {
+        // 初始化1个参与者，这个主要给主线程使用
+        Phaser phaser = new Phaser(1);
+        for (int i = 0; i < 2; i++) {
+            phaser.register(); // 注册子线程
+            new Thread(() -> {
+                System.out.println(Thread.currentThread().getName() + ": 执行开始");
+                phaser.arriveAndAwaitAdvance();
+                System.out.println(Thread.currentThread().getName() + ": 执行完成");
+                phaser.arriveAndAwaitAdvance();
+            }).start();
+        }
+        phaser.arriveAndAwaitAdvance();
+        System.out.println("主线程等待执行开始完成");
+        phaser.arriveAndAwaitAdvance();
+        System.out.println("主线程等待执行完成完成");
+        System.out.println("主线程结束");
+    }
+}
+```
+
+```java
+Thread-1: 执行开始
+Thread-0: 执行开始
+主线程等待执行开始完成
+Thread-1: 执行完成
+Thread-0: 执行完成
+主线程等待执行完成完成
+主线程结束
+```
+
+
+
+#### 5、Phaser 实现处理轮数的控制
+
+可以发现每一次 Phaser 执行的时候都会存在有一些的处理阶段，那么可以考虑通过这个处理阶段来实现执行轮数的配置。
+
+操作示例 1：通过 Phaser 控制任务的执行轮数，主要依靠重写 onAdvance() 方法实现。
+
+```java
+import java.util.concurrent.Phaser;
+
+/**
+ * 使用 Phaser 实现处理轮数的控制
+ */
+public class JavaAPIDemo {
+    public static void main(String[] args) {
+        int phases = 3;  // 定义阶段数
+        int parties = 5; // 进入下一个阶段需要的参与数（线程数）
+        // 自定义 onAdvance，可以在每个阶段结束时执行自定义行为
+        Phaser phaser = new Phaser(parties) {
+            @Override
+            protected boolean onAdvance(int phase, int registeredParties) {
+                System.out.println("阶段phase: " + (phase + 1) + " 执行完毕，registeredParties: " + registeredParties);
+                return phase + 1 >= phases || registeredParties == 0; // 返回true就停止phase
+            }
+        };
+        for (int i = 1; i <= parties; i++) {
+            new Thread(() -> {
+                for (int j = 1; j <= phases; j++) {
+                    System.out.println(Thread.currentThread().getName() + " doing 阶段：" + j);
+                    phaser.arriveAndAwaitAdvance();
+                }
+            }, "Thread-" + i).start();
+        }
+    }
+}
+```
+
+```java
+Thread-4 doing 阶段：1
+Thread-3 doing 阶段：1
+Thread-1 doing 阶段：1
+Thread-2 doing 阶段：1
+Thread-5 doing 阶段：1
+阶段phase: 1 执行完毕，registeredParties: 5
+Thread-5 doing 阶段：2
+Thread-4 doing 阶段：2
+Thread-3 doing 阶段：2
+Thread-1 doing 阶段：2
+Thread-2 doing 阶段：2
+阶段phase: 2 执行完毕，registeredParties: 5
+Thread-2 doing 阶段：3
+Thread-4 doing 阶段：3
+Thread-1 doing 阶段：3
+Thread-5 doing 阶段：3
+Thread-3 doing 阶段：3
+阶段phase: 3 执行完毕，registeredParties: 5
+```
+
+
+
+#### 6、Phaser 实现任务层级划分
+
+Phaser 支持分层功能，我们先来考虑下如何用利用 Phaser的分层来实现高并发时的优化，如果任务数持续增大，那么同步产生的开销会非常大，利用 Phaser 分层的功能，我们可以限定每个 Phaser 对象的最大使用线程（任务数），如下图：
+
+![image-20240119103949009](./Java 多线程进阶.assets/image-20240119103949009.png)
+
+可以看到，上述 Phasers 其实构成了一颗多叉树，如果任务数继续增多，还可以将 Phaser 的叶子结点继续分裂，然后将分裂出的子结点供工作线程使用。
+
+Phaser 是一种更高级的多任务的处理，因为在整个的 Phaser 内部维持了一个链表。可以考虑通过链表的形式设置分层的 Phaser 处理，就相当于维持了一棵树的形式。
+
+操作示例 1：Phaser 实现任务层级划分
+
+```java
+import java.util.concurrent.Phaser;
+
+class Tasker implements Runnable { // 定义任务的处理线程
+    private final Phaser phaser;
+
+    public Tasker(Phaser phaser) {
+        this.phaser = phaser;
+        this.phaser.register(); // 将当前线程进行注册
+    }
+
+    @Override
+    public void run() {
+        while (!phaser.isTerminated()) { // 任务还在执行
+            this.phaser.arriveAndAwaitAdvance(); // 等待其他参与者的线程
+            // do something
+            System.out.printf("【%s】业务处理。%n", Thread.currentThread().getName());
+        }
+    }
+}
+
+public class JavaAPIDemo {
+    public static final int THRESHOLD = 4; // 定义每一个Phaser对应的任务数量
+
+    public static void main(String[] args) {
+        int repeat = 2; // 定义任务的重复的周期
+        Phaser phaser = new Phaser() {
+            @Override
+            protected boolean onAdvance(int phase, int registeredParties) {
+                System.out.printf("【onAdvance()处理】进阶处理操作，phase = %s、registeredParties = %s%n",
+                        phase, registeredParties);
+                return phase + 1 >= repeat || registeredParties == 0; // 终止处理
+            }
+        };
+        Tasker[] tasters = new Tasker[10]; // 创建10个子任务
+        build(tasters, 0, tasters.length, phaser); // 创建任务层级
+        for (int x = 0; x < tasters.length; x++) { // 启动线程
+            new Thread(tasters[x], "子线程 - " + x).start();
+        }
+    }
+
+    private static void build(Tasker[] tasters, int low, int high, Phaser parent) {
+        if ((high - low) > THRESHOLD) { // 层级的判断
+            for (int x = low; x < high; x += THRESHOLD) {   // 每次进行2个任务的配置
+                int limit = Math.min(x + THRESHOLD, high); // 获取最小值
+                build(tasters, x, limit, new Phaser(parent)); // 定义层级
+            }
+        } else {
+            for (int x = low; x < high; ++x) {  // 循环创建任务
+                tasters[x] = new Tasker(parent); // 定义任务层级
+            }
+        }
+    }
+}
+```
+
+```java
+【onAdvance()处理】进阶处理操作，phase = 0、registeredParties = 3
+【子线程 - 7】业务处理。
+【子线程 - 6】业务处理。
+【子线程 - 5】业务处理。
+【子线程 - 4】业务处理。
+【子线程 - 2】业务处理。
+【子线程 - 3】业务处理。
+【子线程 - 0】业务处理。
+【子线程 - 9】业务处理。
+【子线程 - 8】业务处理。
+【子线程 - 1】业务处理。
+【onAdvance()处理】进阶处理操作，phase = 1、registeredParties = 3
+【子线程 - 1】业务处理。
+【子线程 - 7】业务处理。
+【子线程 - 2】业务处理。
+【子线程 - 9】业务处理。
+【子线程 - 6】业务处理。
+【子线程 - 8】业务处理。
+【子线程 - 4】业务处理。
+【子线程 - 3】业务处理。
+【子线程 - 0】业务处理。
+【子线程 - 5】业务处理。
+```
+
+所有的子节点之中的任务由子节点的 Phaser 处理，而后父节点的任务进行统一的阶段的调控，相当于实现了传统的分支任务的结构。
+
+
+
+### 5、源码分析
+
+#### 1、主要内部类
+
+```java
+static final class QNode implements ForkJoinPool.ManagedBlocker {
+    final Phaser phaser;
+    final int phase;
+    final boolean interruptible;
+    final boolean timed;
+    boolean wasInterrupted;
+    long nanos;
+    final long deadline;
+    volatile Thread thread; // nulled to cancel wait
+    QNode next;
+
+    QNode(Phaser phaser, int phase, boolean interruptible,
+          boolean timed, long nanos) {
+        this.phaser = phaser;
+        this.phase = phase;
+        this.interruptible = interruptible;
+        this.nanos = nanos;
+        this.timed = timed;
+        this.deadline = timed ? System.nanoTime() + nanos : 0L;
+        thread = Thread.currentThread();
+    }
+}
+```
+
+先完成的参与者放入队列中的节点，这里我们只需要关注thread和next两个属性即可，很明显这是一个单链表，存储着入队的线程。
+
+
+
+#### 2、主要属性
+
+```java
+// 状态变量，用于存储当前阶段phase、参与者数parties、未完成的参与者数unarrived_count
+private volatile long state;
+// 最多可以有多少个参与者，即每个阶段最多有多少个任务
+private static final int  MAX_PARTIES     = 0xffff;
+// 最多可以有多少阶段
+private static final int  MAX_PHASE       = Integer.MAX_VALUE;
+// 参与者数量的偏移量
+private static final int  PARTIES_SHIFT   = 16;
+// 当前阶段的偏移量
+private static final int  PHASE_SHIFT     = 32;
+// 未完成的参与者数的掩码，低16位
+private static final int  UNARRIVED_MASK  = 0xffff;      // to mask ints
+// 参与者数，中间16位
+private static final long PARTIES_MASK    = 0xffff0000L; // to mask longs
+// counts的掩码，counts等于参与者数和未完成的参与者数的'|'操作
+private static final long COUNTS_MASK     = 0xffffffffL;
+private static final long TERMINATION_BIT = 1L << 63;
+
+// 一次一个参与者完成
+private static final int  ONE_ARRIVAL     = 1;
+// 增加减少参与者时使用
+private static final int  ONE_PARTY       = 1 << PARTIES_SHIFT;
+// 减少参与者时使用
+private static final int  ONE_DEREGISTER  = ONE_ARRIVAL|ONE_PARTY;
+// 没有参与者时使用
+private static final int  EMPTY           = 1;
+
+// 用于求未完成参与者数量
+private static int unarrivedOf(long s) {
+    int counts = (int)s;
+    return (counts == EMPTY) ? 0 : (counts & UNARRIVED_MASK);
+}
+// 用于求参与者数量（中间16位），注意int的位置
+private static int partiesOf(long s) {
+    return (int)s >>> PARTIES_SHIFT;
+}
+// 用于求阶段数（高32位），注意int的位置
+private static int phaseOf(long s) {
+    return (int)(s >>> PHASE_SHIFT);
+}
+// 已完成参与者的数量
+private static int arrivedOf(long s) {
+    int counts = (int)s; // 低32位
+    return (counts == EMPTY) ? 0 : (counts >>> PARTIES_SHIFT) - (counts & UNARRIVED_MASK);
+}
+// 用于存储已完成参与者所在的线程，根据当前阶段的奇偶性选择不同的队列
+private final AtomicReferenceevenQ;
+private final AtomicReferenceoddQ;
+```
+
+主要属性为state和evenQ及oddQ：
+
+1. state，状态变量，高32位存储当前阶段phase，中间16位存储参与者的数量，低16位存储未完成参与者的数量
+2. evenQ和oddQ，已完成的参与者存储的队列，当最后一个参与者完成任务后唤醒队列中的参与者继续执行下一个阶段的任务，或者结束任务。
+
+
+
+#### 3、构造方法
+
+```java
+public Phaser() {
+    this(null, 0);
+}
+
+public Phaser(int parties) {
+    this(null, parties);
+}
+
+public Phaser(Phaser parent) {
+    this(parent, 0);
+}
+
+public Phaser(Phaser parent, int parties) {
+    if (parties >>> PARTIES_SHIFT != 0)
+        throw new IllegalArgumentException("Illegal number of parties");
+    int phase = 0;
+    this.parent = parent;
+    if (parent != null) {
+        final Phaser root = parent.root;
+        this.root = root;
+        this.evenQ = root.evenQ;
+        this.oddQ = root.oddQ;
+        if (parties != 0)
+            phase = parent.doRegister(1);
+    }
+    else {
+        this.root = this;
+        this.evenQ = new AtomicReference();
+        this.oddQ = new AtomicReference();
+    }
+    // 状态变量state的存储分为三段
+    this.state = (parties == 0) ? (long)EMPTY :
+        ((long)phase << PHASE_SHIFT) |
+        ((long)parties << PARTIES_SHIFT) |
+        ((long)parties);
+}
+```
+
+构造函数中还有一个parent和root，这是用来构造多层级阶段的，不在本文的讨论范围之内，忽略之。
+
+重点还是看state的赋值方式，高32位存储当前阶段phase，中间16位存储参与者的数量，低16位存储未完成参与者的数量。
+
+
+
+#### 4、register() 方法
+
+注册一个参与者，如果调用该方法时，onAdvance()方法正在执行，则该方法等待其执行完毕。
+
+```java
+public int register() {
+    return doRegister(1);
+}
+private int doRegister(int registrations) {
+    // state应该加的值，注意这里是相当于同时增加parties和unarrived
+    long adjust = ((long)registrations << PARTIES_SHIFT) | registrations;
+    final Phaser parent = this.parent;
+    int phase;
+    for (;;) {
+        // state的值
+        long s = (parent == null) ? state : reconcileState();
+        // state的低32位，也就是parties和unarrived的值
+        int counts = (int)s;
+        // parties的值
+        int parties = counts >>> PARTIES_SHIFT;
+        // unarrived的值
+        int unarrived = counts & UNARRIVED_MASK;
+        // 检查是否溢出
+        if (registrations > MAX_PARTIES - parties)
+            throw new IllegalStateException(badRegister(s));
+        // 当前阶段phase
+        phase = (int)(s >>> PHASE_SHIFT);
+        if (phase < 0)
+            break;
+        // 不是第一个参与者
+        if (counts != EMPTY) {                  // not 1st registration
+            if (parent == null || reconcileState() == s) {
+                // unarrived等于0说明当前阶段正在执行onAdvance()方法，等待其执行完毕
+                if (unarrived == 0)             // wait out advance
+                    root.internalAwaitAdvance(phase, null);
+                // 否则就修改state的值，增加adjust，如果成功就跳出循环
+                else if (UNSAFE.compareAndSwapLong(this, stateOffset,
+                                                   s, s + adjust))
+                    break;
+            }
+        }
+        // 是第一个参与者
+        else if (parent == null) {              // 1st root registration
+            // 计算state的值
+            long next = ((long)phase << PHASE_SHIFT) | adjust;
+            // 修改state的值，如果成功就跳出循环
+            if (UNSAFE.compareAndSwapLong(this, stateOffset, s, next))
+                break;
+        }
+        else {
+            // 多层级阶段的处理方式
+            synchronized (this) {               // 1st sub registration
+                if (state == s) {               // recheck under lock
+                    phase = parent.doRegister(1);
+                    if (phase < 0)
+                        break;
+                    // finish registration whenever parent registration
+                    // succeeded, even when racing with termination,
+                    // since these are part of the same "transaction".
+                    while (!UNSAFE.compareAndSwapLong
+                           (this, stateOffset, s,
+                            ((long)phase << PHASE_SHIFT) | adjust)) {
+                        s = state;
+                        phase = (int)(root.state >>> PHASE_SHIFT);
+                        // assert (int)s == EMPTY;
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    return phase;
+}
+// 等待onAdvance()方法执行完毕
+// 原理是先自旋一定次数，如果进入下一个阶段，这个方法直接就返回了，
+// 如果自旋一定次数后还没有进入下一个阶段，则当前线程入队列，等待onAdvance()执行完毕唤醒
+private int internalAwaitAdvance(int phase, QNode node) {
+    // 保证队列为空
+    releaseWaiters(phase-1);          // ensure old queue clean
+    boolean queued = false;           // true when node is enqueued
+    int lastUnarrived = 0;            // to increase spins upon change
+    // 自旋的次数
+    int spins = SPINS_PER_ARRIVAL;
+    long s;
+    int p;
+    // 检查当前阶段是否变化，如果变化了说明进入下一个阶段了，这时候就没有必要自旋了
+    while ((p = (int)((s = state) >>> PHASE_SHIFT)) == phase) {
+        // 如果node为空，注册的时候传入的为空
+        if (node == null) {           // spinning in noninterruptible mode
+            // 未完成的参与者数量
+            int unarrived = (int)s & UNARRIVED_MASK;
+            // unarrived有变化，增加自旋次数
+            if (unarrived != lastUnarrived &&
+                (lastUnarrived = unarrived) < NCPU)
+                spins += SPINS_PER_ARRIVAL;
+            boolean interrupted = Thread.interrupted();
+            // 自旋次数完了，则新建一个节点
+            if (interrupted || --spins < 0) { // need node to record intr
+                node = new QNode(this, phase, false, false, 0L);
+                node.wasInterrupted = interrupted;
+            }
+        }
+        else if (node.isReleasable()) // done or aborted
+            break;
+        else if (!queued) {           // push onto queue
+            // 节点入队列
+            AtomicReferencehead = (phase & 1) == 0 ? evenQ : oddQ;
+            QNode q = node.next = head.get();
+            if ((q == null || q.phase == phase) &&
+                (int)(state >>> PHASE_SHIFT) == phase) // avoid stale enq
+                queued = head.compareAndSet(q, node);
+        }
+        else {
+            try {
+                // 当前线程进入阻塞状态，跟调用LockSupport.park()一样，等待被唤醒
+                ForkJoinPool.managedBlock(node);
+            } catch (InterruptedException ie) {
+                node.wasInterrupted = true;
+            }
+        }
+    }
+    
+    // 到这里说明节点所在线程已经被唤醒了
+    if (node != null) {
+        // 置空节点中的线程
+        if (node.thread != null)
+            node.thread = null;       // avoid need for unpark()
+        if (node.wasInterrupted && !node.interruptible)
+            Thread.currentThread().interrupt();
+        if (p == phase && (p = (int)(state >>> PHASE_SHIFT)) == phase)
+            return abortWait(phase); // possibly clean up on abort
+    }
+    // 唤醒当前阶段阻塞着的线程
+    releaseWaiters(phase);
+    return p;
+}
+```
+
+增加一个参与者总体的逻辑为：
+
+1. 增加一个参与者，需要同时增加parties和unarrived两个数值，也就是state的中16位和低16位；
+2. 如果是第一个参与者，则尝试原子更新state的值，如果成功了就退出；
+3. 如果不是第一个参与者，则检查是不是在执行onAdvance()，如果是等待onAdvance()执行完成，如果否则尝试原子更新state的值，直到成功退出；
+4. 等待onAdvance()完成是采用先自旋后进入队列排队的方式等待，减少线程上下文切换；
+
+
+
+#### 5、arriveAndAwaitAdvance() 方法
+
+当前线程当前阶段执行完毕，等待其它线程完成当前阶段。
+
+如果当前线程是该阶段最后一个到达的，则当前线程会执行onAdvance()方法，并唤醒其它线程进入下一个阶段。
+
+```java
+public int arriveAndAwaitAdvance() {
+    // Specialization of doArrive+awaitAdvance eliminating some reads/paths
+    final Phaser root = this.root;
+    for (;;) {
+        // state的值
+        long s = (root == this) ? state : reconcileState();
+        // 当前阶段
+        int phase = (int)(s >>> PHASE_SHIFT);
+        if (phase < 0)
+            return phase;
+        // parties和unarrived的值
+        int counts = (int)s;
+        // unarrived的值（state的低16位）
+        int unarrived = (counts == EMPTY) ? 0 : (counts & UNARRIVED_MASK);
+        if (unarrived  1)
+            // 这里是直接返回了，internalAwaitAdvance()方法的源码见register()方法解析
+            return root.internalAwaitAdvance(phase, null);
+
+        // 到这里说明是最后一个到达的参与者
+        if (root != this)
+            return parent.arriveAndAwaitAdvance();
+        // n只保留了state中parties的部分，也就是中16位
+        long n = s & PARTIES_MASK;  // base of next state
+        // parties的值，即下一次需要到达的参与者数量
+        int nextUnarrived = (int)n >>> PARTIES_SHIFT;
+        // 执行onAdvance()方法，返回true表示下一阶段参与者数量为0了，也就是结束了
+        if (onAdvance(phase, nextUnarrived))
+            n |= TERMINATION_BIT;
+        else if (nextUnarrived == 0)
+            n |= EMPTY;
+        else
+            // n 加上unarrived的值
+            n |= nextUnarrived;
+        // 下一个阶段等待当前阶段加1
+        int nextPhase = (phase + 1) & MAX_PHASE;
+        // n 加上下一阶段的值
+        n |= (long)nextPhase << PHASE_SHIFT;
+        // 修改state的值为n
+        if (!UNSAFE.compareAndSwapLong(this, stateOffset, s, n))
+            return (int)(state >>> PHASE_SHIFT); // terminated
+        // 唤醒其它参与者并进入下一个阶段
+        releaseWaiters(phase);
+        // 返回下一阶段的值
+        return nextPhase;
+    }
+}
+```
+
+arriveAndAwaitAdvance 的大致逻辑为：
+
+1. 修改state中unarrived部分的值减`1`；
+2. 如果不是最后一个到达的，则调用internalAwaitAdvance()方法自旋或排队等待；
+3. 如果是最后一个到达的，则调用onAdvance()方法，然后修改state的值为下一阶段对应的值，并唤醒其它等待的线程；
+4. 返回下一阶段的值；
+
+
+
+### 6、应用场景总结
+
+#### 1、局限性及替代方案
+
+尽管 Phaser 在多线程任务同步和阶段控制方面非常强大，但它也有一些局限性。以下是 Phaser 的局限性以及可能的替代方案。
+
+1、局限性：学习曲线。
+
+- 学习曲线：Phaser API 相对于其他同步工具类（CyclicBarrier / CountDownLatch）更加复杂。对于初学者或不熟悉 Phaser 的开发者来说，学习如何使用 Phaser 可能需要更多的时间和精力。
+- 替代方案：在不需要 Phaser 的动态注册和多阶段任务同步特性时，可以考虑使用 CyclicBarrier 或 CountDownLatch。这两种工具类在某些场景下可能更简单易用。
+
+2、局限性：性能开销
+
+- 性能开销：Phaser 的动态注册和多阶段任务同步特性可能导致额外的性能开销，尤其是在高并发场景下。对于对性能要求较高的场景，Phaser 可能不是最佳选择。
+- 替代方案：针对性能要求较高的场景，可以考虑使用 CyclicBarrier、CountDownLatch 或其他低层次的同步工具类（ReentrantLock、Semaphore 等）。
+
+3、局限性：适用场景
+
+- Phaser 虽然强大，但并不适用于所有场景。在有些场景下，其他同步工具类可能更为合适。
+- 替代方案：根据实际项目需求，可以选择以下同步工具类：
+  - CyclicBarrier：适用于固定数量的线程，且只有一个阶段的任务同步。
+  - CountDownLatch：适用于倒计时门闩场景，当所有线程都完成任务后触发某个操作。
+  - Semaphore：适用于限制并发线程数量的场景，如限制资源访问。
+
+在实际项目中，应该根据具体需求和场景选择合适的同步工具类。在某些情况下，Phaser 可能是最佳选择；而在其他情况下，CyclicBarrier、CountDownLatch 或其他同步工具类可能更为合适。
+
+
+
+#### 2、项目中的最佳实践
+
+为了充分利用 Phaser 的特性并确保代码的可读性和可维护性，下面提供了一些在实际项目中使用 Phaser 的最佳实践。
+
+1. 确保合理使用 Phaser：在选择 Phaser 作为同步工具时，确保你的应用场景适合使用 Phaser。Phaser 适用于需要多阶段任务同步和动态注册/取消注册参与者的场景。如果你的应用场景不需要这些特性，可以考虑使用 CyclicBarrier、CountDownLatch 或其他同步工具类。
+2. 遵循 Phaser API 的规范：使用 Phaser 时，应遵循其 API 的规范。例如，使用 arriveAndAwaitAdvance() 等待其他参与者，使用 arriveAndDeregister() 取消注册等。遵循 API 规范可以确保代码的正确性和可读性。
+3. 优雅地处理异常：在使用 Phaser 时，可能会遇到 InterruptedException 和其他异常。应确保在代码中优雅地处理这些异常，例如，使用 try-catch 语句捕获异常并进行适当的处理，而不是简单地忽略异常。
+4. 与其他同步工具类结合使用：在实际项目中，可以考虑将 Phaser 与其他同步工具类结合使用，以满足复杂的同步需求。例如，在一个多阶段任务中，可以使用 Phaser 同步任务阶段，同时使用 Semaphore 限制每个阶段的并发线程数量。
+5. 明确并发控制策略：在使用 Phaser 进行并发控制时，应明确并发控制策略，例如线程池大小、任务阶段划分等。明确的并发控制策略可以帮助你更好地理解代码，同时提高代码的可维护性。
+6. 持续关注性能：在实际项目中使用 Phaser 时，应持续关注性能。如果发现性能瓶颈，可以考虑优化代码或更换同步工具类。在高并发场景下，性能可能是项目成功与否的关键因素。
+
+
+
+### 7、参考文献 & 鸣谢
+
+- 高级Java并发技巧：如何有效利用Phaser实现多阶段任务同步：https://www.51cto.com/article/751519.html
+- Java多线程进阶（十八）—— J.U.C之synchronizer框架：CountDownLatch：https://www.tpvlog.com/article/34
+- 源码分析：Phaser 之更灵活的同步屏障：https://www.bmabk.com/index.php/post/35373.html
+- Java同步器之辅助类Phaser：https://www.cnblogs.com/ciel717/p/16190785.html
+
+
 
 
 
@@ -4797,7 +5649,7 @@ public class JavaAPIDemo {
 
 
 
-## 1、并发单值集合类—CopyOnWriteArrayList
+## 1、并发单值集合类 CopyOnWriteArrayList
 
 在类集之中单值集合一般只有两种：List、Set（Collection子接口）。在J.U.C里面针对于这两个子接口也提供有对应的集合处理类，CopyOnWriteArrayList 与 CopyOnWriteArraySet 两个实现子类。
 
@@ -4944,7 +5796,7 @@ static final class COWIterator<E> implements ListIterator<E> {
 
 
 
-## 2、并发单值集合类—CopyOnWriteArraySet
+## 2、并发单值集合类 CopyOnWriteArraySet
 
 之所以重点分析的是 CopyOnWriteArrayList 这一点可以通过 CopyOnWriteArraySet 子类来观察到：
 
@@ -5053,7 +5905,7 @@ public class JavaAPIDemo {
 
 
 
-## 3、并发符号表—ConcurrentHashMap
+## 3、并发符号表 ConcurrentHashMap
 
 Map 集合已经不再需要重复了，因为从JDK1.8 之后采用了哈希捅的算法来提升 Map 的存储以及红黑树的结构，但是传统的 HashMap 在多线程的访问下依然会存在有数据同步的问题。
 
@@ -5176,7 +6028,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V> implements Concurre
 
 
 
-## 4、跳表集合—ConcurrentSkipListMap
+## 4、跳表集合 ConcurrentSkipListMap
 
 如果说现在给你一个数组，请问最快的数组元素存在与否的判断操作方法使用的一定是二分查找法，如果说现在是一个完整的节点数据结构，最快的数据的查找方法一定是红黑树（因为红黑树按照平衡二叉树的设置保持节点的均衡，可以保证查询性能），但是如果说现在是—个普通的链表，请问如何可以保证查询性能呢？这个时候的性能保证可以通过跳表结构来完成。
 
@@ -5225,7 +6077,7 @@ www.xxx.com
 
 
 
-## 5、跳表集合—ConcurrentSkipListSet
+## 5、跳表集合 ConcurrentSkipListSet
 
 除了可以在 Map 集合上使用跳表结构之外，也可以使用 Set 集合进行跳表集合的处理（在 Java 类集里面，Set 集合的内部也是依靠 Map 集合的形式实现的）
 
@@ -7217,180 +8069,379 @@ public class JavaAPIDemo {
 
 
 
-## 4、CompletionService
+# 10、Fork/Join
 
-> 并发编程：浅谈CompletionService 和 CompletableFuture ：https://blog.csdn.net/weixin_44735065/article/details/124074027
+Fork/Join 框架的实现非常复杂，内部大量运用了位操作和无锁算法，撇开这些实现细节不谈，该框架主要涉及三大核心组件：ForkJoinPool（线程池）、ForkJoinTask（任务）、ForkJoinWorkerThread（工作线程），外加WorkQueue（任务队列）：
 
-**CompletionService 产生背景：**：
+- **ForkJoinPool**：ExecutorService 的实现类，负责工作线程的管理、任务队列的维护，以及控制整个任务调度流程；
+- **ForkJoinTask**：Future 接口的实现类，fork 是其核心方法，用于分解任务并异步执行；而 join 方法在任务结果计算完毕之后才会运行，用来合并或返回计算结果；
+- **ForkJoinWorkerThread**：Thread的子类，作为线程池中的工作线程（Worker）执行任务；
+- **WorkQueue**：任务队列，用于保存任务；
 
-Callable + Future（线程池也是同理） 可以实现多个 Task 并行执行，但是遇到前面的 task 执行较慢时，需要阻塞等待前面的 task 执行完才能获取到后面 task 的执行结果。在线程池的开发处理中，如果使用了 Callable 接口则需要进行异步任务结果的接收，为了便于异步数据的返回，J.U.C 中提供了一个 CompletionService 操作接口，该接口可以将所有异步任务的执行结果保存到阻塞队列之中，而后再利用阻塞队列实现结果的的获取。
 
-CompletionService 的主要功能就是一边生成任务，一边获取任务的返回值。让两件事分开执行，任务之间不会互相阻塞，可以实现执行完的先获取结果，不在依赖任务顺序。
 
-CompletionService 内部通过 "阻塞队列 + FutureTask" 或 "阻塞队列 + 线程池" 实现了任务先完成可优先获取到，即结果按照完成先后顺序排序，内部有一个先进先出的阻塞队列，用于保存已经执行完成的Future，通过调用它的 take() 和 poll() 方法可以获取到一个已经执行完成的 Future，进而通过调用 Future 接口实现类的 get() 方法获取最终的结果。
+## 1、ForkJoinPool 线程池
 
-> **如果现在去考虑到线程池的开发，永远都有一个核心的话题—“阻塞队列”，如果你现在对于阻塞队列的基本特点都无法整明白，强烈建议回顾之前的的阻塞队列，因为阻塞队列可以自动实现操作线程的等待与唤醒，在进行线程池分析的时候也要通过阻塞队列进行使用。**
+当今的时代软件开发需要与硬件进行紧密的结合，结合的时候就必须充分的发挥出所有硬件的处理性能，这个时候在 JDK1.7 之后对于 J.U.C 提供了一个新的改进机制——分支任务。
 
-![image-20240112002307245](./Java 多线程进阶.assets/image-20240112002307245.png)
+在 JDK1.7 之后为了充分利用多核 CPU 的性能优势，可以将一个复杂的业务计算进行拆分，交由多个 CPU 并行计算，这样就可以提高程序的执行性能，这一功能包括以下两个操作：
 
-CompletionService 接口是将 Executor（线程池）和 BlockingQueue（阻塞队列）整合在一起，利用阻塞队列实现所有异步任务结果的保存，而后开发者只需要通过 CompletionService 接口提供的方法即可实现异步任务结果的取出。
+- 分解（Fork）操作：将一个大型业务拆分为若干个小任务在框架中执行；
+- 合并（Join）操作：主任务将等待多个子任务执行完毕后进行结果合并；
 
-CompletionService 是一个接口，如果要想使用这个接口一定要提供有子类，或者是其他的工厂方法来进行实例化对象创建，在 J.U.C 的内部提供有一个 ExecutorCompletionService 实现子类。
+![image-20240113140046069](./Java 多线程进阶.assets/image-20240113140046069.png)
 
-- CompletionService 接口提供的方法有 5 个：
+> 从理论的提出来讲此类的操作没有任何问题，但是如果要是在实际的开发之中，那么就有可能会出现问题。
 
-  ```java
-  public interface CompletionService<V> {
-      // 提交线程任务，交由 Executor 对象去执行，并将结果放入阻塞队列；
-      Future<V> submit(Callable<V> task);
-      // 提交线程任务，交由 Executor 对象去执行，并将结果放入阻塞队列；
-      Future<V> submit(Runnable task, V result);
-      // 阻塞等待，在阻塞队列中获取并移除一个元素，该方法是阻塞的，即获取不到的话线程会一直阻塞；
-      Future<V> take() throws InterruptedException;
-      // 非阻塞等待，在阻塞队列中获取并移除一个元素，该方法是非阻塞的，获取不到即返回 null ；
-      Future<V> poll();
-      // 带时间的非阻塞等待，从阻塞队列中非阻塞地获取并移除一个元素，在设置的超时时间内获取不到即返回 null ；
-      Future<V> poll(long timeout, TimeUnit unit) throws InterruptedException;
-  }
-  ```
+**分支任务分配与工作窃取**：从 JDK1.7 开始为了进一步提高并行计算的处理能力，提供了 **ForkJoinPool** 的任务框架，并且其在已有的线程池概念的基础上进行了扩展。同时考虑到服务的处理性能，引入了"**工作窃取（Work Stealing）机制**"，这样可以在进行线程分配的同时自动分配与之数量相等的任务队列，所有新加入的任务会被平均的分配到对应的任务队列之中，不同的线程处理各自的任务队列，当某一个线程的任务队列已经提前完成时，会从其他线程的队列尾部”窃取”未执行完的任务，如图所示。这样在任务量较大时，可以更好的发挥出多核主机的处理性能。
 
-- ExecutorCompletionService 子类源代码：
+![image-20240113141401910](./Java 多线程进阶.assets/image-20240113141401910.png)
 
-  ```java
-  package java.util.concurrent;
-  
-  public class ExecutorCompletionService<V> implements CompletionService<V> {
-      // 执行任务的线程
-      private final Executor executor;
-      // 线程池父类
-      private final AbstractExecutorService aes;
-      // 任务完成会记录在该队列中
-      private final BlockingQueue<Future<V>> completionQueue;
-      // 内部类：实现了FutureTask接口，当任务执行时，会去调用FutureTask的run()
-      private class QueueingFuture extends FutureTask<Void> {
-          QueueingFuture(RunnableFuture<V> task) {
-              super(task, null);
-              this.task = task;
-          }
-          protected void done() { completionQueue.add(task); }
-          private final Future<V> task;
-      }
-      // 两个封装RunnableFuture 参数 最终调用的都是FutureTask的构造方法
-      // 封装RunnableFuture 参数：Callable<V> task
-      private RunnableFuture<V> newTaskFor(Callable<V> task) {
-          if (aes == null)
-              return new FutureTask<V>(task);
-          else
-              return aes.newTaskFor(task);
-      }
-      // 封装RunnableFuture 参数：Runnable task, V result
-      private RunnableFuture<V> newTaskFor(Runnable task, V result) {
-          if (aes == null)
-              return new FutureTask<V>(task, result);
-          else
-              return aes.newTaskFor(task, result);
-      }
-      // 构造方法 参数：Executor executor
-      public ExecutorCompletionService(Executor executor) {
-          if (executor == null)
-              throw new NullPointerException();
-          this.executor = executor;
-          this.aes = (executor instanceof AbstractExecutorService) ?
-              (AbstractExecutorService) executor : null;
-          this.completionQueue = new LinkedBlockingQueue<Future<V>>();
-      }
-      // 构造方法 参数Executor executor, BlockingQueue<Future<V>> completionQueue
-      public ExecutorCompletionService(Executor executor,
-                                       BlockingQueue<Future<V>> completionQueue) {
-          if (executor == null || completionQueue == null)
-              throw new NullPointerException();
-          this.executor = executor;
-          this.aes = (executor instanceof AbstractExecutorService) ?
-              (AbstractExecutorService) executor : null;
-          this.completionQueue = completionQueue;
-      }
-      // 两个任务提交方法：内部都会将其转换为RunnableFutuer实例，然后再封装成QueueingFuture实例作为任务来执行
-      // 任务提交方法：Callable<V> task
-      public Future<V> submit(Callable<V> task) {
-          if (task == null) throw new NullPointerException();
-          RunnableFuture<V> f = newTaskFor(task);
-          executor.execute(new QueueingFuture(f));
-          return f;
-      }
-      // 任务提交方法： 参数 Runnable task, V result
-      public Future<V> submit(Runnable task, V result) {
-          if (task == null) throw new NullPointerException();
-          RunnableFuture<V> f = newTaskFor(task, result);
-          executor.execute(new QueueingFuture(f));
-          return f;
-      }
-  
-      public Future<V> take() throws InterruptedException {
-          return completionQueue.take();
-      }
-  
-      public Future<V> poll() {
-          return completionQueue.poll();
-      }
-  
-      public Future<V> poll(long timeout, TimeUnit unit)
-          throws InterruptedException {
-          return completionQueue.poll(timeout, unit);
-      }
-  }
-  ```
-
-  - 两个封装RunnableFuture 方法 最终调用的都是FutureTask的构造方法: private RunnableFuture newTaskFor(…)
-  - 两个构造方法 参数Executor executor 和 Executor executor, BlockingQueue< Future > completionQueue
-  - 两个任务提交方法：内部都会将其转换为RunnableFutuer实例，然后再封装成QueueingFuture实例作为任务来执行
-  - 一个内部类：实现了FutureTask接口，当任务执行时，会去调用FutureTask的run(), 在任务执行成功，记录返回记录结果的时候，会调用finishCompletion()去唤醒所有阻塞的线程并调用done()方法。而QueueingFuture内部类就实现了done()方法，它将执行完的FutureTask放入到阻塞队列中，当调用take()方法时就可以取到任务的执行结果，如果任务都还没有执行完，就阻塞。
-
-操作示例 1：采用 线程池 + Future 的方案异步执行询价
+ForkJoinPool 是一个开发框架，而且这个开发框架是在 J.U.C 之中所提供的，那么下面直接打开相应的 JavaDoc 文档：https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/ForkJoinPool.html，通过 JavaDoc 文档的结构可以清楚的发现，ForkJoinPool 属于一个线程池的应用，需要基于线程池提供所有的分支处理的操作环境。
 
 ```java
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+Module java.base
+Package java.util.concurrent
+Class ForkJoinPool
+java.lang.Object
+    java.util.concurrent.AbstractExecutorService
+        java.util.concurrent.ForkJoinPool
+All Implemented Interfaces:
+Executor, ExecutorService
+——————————————————————————————————————————————————————————
+public class ForkJoinPool extends AbstractExecutorService
+用于运行ForkJoinTask的ExecutorService。ForkJoinPool为来自非ForkJoinTask客户端的提交以及管理和监控操作提供入口点。
+```
+
+**ForkJoinPool 类实现结构**：为了实现分支任务线程池的功能，在 J.U.C 中提供了一个 ForkJoinPool 工具类，该类为 ExecutorService 线程池操作类的子类，并在 ForkJoinPool 类中自动提供有一个 WorkQueue 内部类以实现所有工作队列的维护，如图所示。在分支任务处理中会存在有多个工作线程，而每一个工作线程全部由 ForkJoinPool.ForkJoinWorkerThreadFactory 接口进行创建规范化管理（ForkJoinPool 内部提供了 DefaultForkJoinWorkerThreadFactory 内部实现子类），程序可以通过该接口所提供的 newThread() 方法创建 ForkJoinWorkerThread 线程对象，同时在每一个工作线程对象中都会保存有一个 WorkQueue 对象引用，即：不同的工作线程维护各自的任务队列。
+
+![image-20240113142608892](./Java 多线程进阶.assets/image-20240113142608892.png)
+
+在使用 ForkJoin 处理的时候，一定要记住，所有的具体的任务的配置是由 ForkJoinTask 抽象类来定义的，同时其内部会直接提供有完整的 ForkJoinWorkerThreadFactory 工厂接口实例。
+
+
+
+## 2、ForkJoinTask 分支任务抽象类
+
+**ForkJoinTask 类关联结构**：在分支任务处理时，所有的分支任务通过 ForkJoinTask 进行配置。ForkJoinTask 是分支任务，而这个分支任务在实际的开发之中也需要考虑到几种不同的实现，在 J.U.C 中主要分为三种任务类型：
+
+- **RecursiveTask**：有返回值任务
+- **RecursiveAction**：无返回值任务
+- **CountedCompleter**：数量计算有关的任务，在子任务停顿或阻塞的情况下使用
+
+![image-20240113143751379](./Java 多线程进阶.assets/image-20240113143751379.png)
+
+| 方法名称                                                     | 描述                                 |
+| ------------------------------------------------------------ | ------------------------------------ |
+| public final ForkJoinTask< V > fork()                        | 建立分支任务                         |
+| public final V join()                                        | 获取分支结果                         |
+| public final boolean isCompletedNormally()                   | 任务是否执行完毕                     |
+| public boolean isTerminated()                                | 判断工作队列是否有待执行任务未执行完 |
+| public static void invokeAll(ForkJoinTask<?>... tasks)       | 启动分支任务                         |
+| public final Throwable getException()                        | 获取执行异常                         |
+| public boolean awaitTermination(long timeout, TimeUnit unit) | 判断线程池是否在约定时间内完成       |
+| public int getCorePoolSize()                                 | 获取线程池的核心线程数               |
+| public long getQueuedTaskCount()                             | 返回所有工作队列的任务数量           |
+| public int getQueuedSubmissionCount()                        | 返回所有队列待执行的任务数           |
+| public int getRunningThreadCount()                           | 返回正在运行的任务数量               |
+
+
+
+## 3、RecursiveTask 有返回值任务
+
+所有的分支任务的处理执行都需要有具体的任务的处理类，而在进行任务处理类的时候可以使用 RecursiveTask 父类来完成，首先打开该类的定义源代码观察：
+
+```java
+public abstract class RecursiveTask<V> extends ForkJoinTask<V> {
+    private static final long serialVersionUID = 5232453952276485270L;
+    public RecursiveTask() {}
+    @SuppressWarnings("serial") // Conditionally serializable
+    V result;
+    protected abstract V compute(); // 最终的任务通过此方法返回计算结果
+    public final V getRawResult() {
+        return result;
+    }
+    protected final void setRawResult(V value) {
+        result = value;
+    }
+    protected final boolean exec() {
+        result = compute();
+        return true;
+    }
+}
+```
+
+每一个分支任务在执行时可以直接将分支计算的结果进行返回，这时就需要通过 RecursiveTask 继承实现，该类中提供有一个compute()计算方法，在每次分支处理时都会递归调用此方法实现计算，下面将基于分支计算的处理形式实现一个数据累加的操作。
+
+如果说现在要进行一个1～100的数字累加计算操作，那么比较简单的做法就是进行计算的拆分，按照如下的形式处理：
+
+- 第1个任务：计算 "1 + 2 + ... + 50"
+  1. 第1个字分支：计算 "1 + 2 + ... + 25"
+  2. 第2个字分支：计算 "26 + 27 + ... + 50"
+- 第2个任务：计算 "51 + 52 + ... + 100"
+  1. 第1个字分支：计算 "51 + 52 + ... + 75"
+  2. 第2个字分支：计算 "76 + 77 + ... + 100"
+
+操作示例 1：使用分支任务实现数据的累加操作
+
+```java
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
+import java.util.concurrent.RecursiveTask;
+
+/**
+ * 实现数据累加的计算
+ */
+class SumTask extends RecursiveTask<Integer> {
+    private static final int THRESHOLD = 25; // 分支阈值
+    private final int start; // 开始计算数值
+    private final int end; // 结束计算数值
+
+    public SumTask(int start, int end) { // 数据的累加配置
+        this.start = start;
+        this.end = end;
+    }
+
+    @Override
+    protected Integer compute() { // 完成计算的处理
+        // 所有的子分支的处理，以及所有相关分支的合并处理都在此方法之中完成
+        int sum = 0; // 保存最终的计算结果
+        boolean isFork = (end - start) <= THRESHOLD; // 是否需要进行分支
+        if (isFork) {   // 计算子分支
+            for (int i = start; i <= end; i++) {
+                sum += i; // 分支处理
+            }
+            System.out.printf("【%s】start = %d、end = %d、sum = %d%n",
+                    Thread.currentThread().getName(), this.start, this.end, sum);
+        } else {    // 需要开启分支
+            int middle = (start + end) / 2;
+            SumTask leftTask = new SumTask(this.start, middle);
+            SumTask rightTask = new SumTask(middle + 1, this.end);
+            leftTask.fork();  // 开启左分支
+            rightTask.fork(); // 开启右分支
+            sum = leftTask.join() + rightTask.join(); // 等待分支处理的执行结果返回
+        }
+        return sum;
+    }
+}
+
+public class JavaAPIDemo {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        SumTask task = new SumTask(1, 100); // 外部的计算操作
+        ForkJoinPool pool = new ForkJoinPool(); // 开启分支任务池
+        Future<Integer> future = pool.submit(task); // 执行分支任务
+        System.out.println("分支任务计算结果：" + future.get()); // 异步返回
+    }
+}
+```
+
+```java
+【ForkJoinPool-1-worker-1】start = 1、end = 25、sum = 325
+【ForkJoinPool-1-worker-4】start = 76、end = 100、sum = 2200
+【ForkJoinPool-1-worker-2】start = 51、end = 75、sum = 1575
+【ForkJoinPool-1-worker-3】start = 26、end = 50、sum = 950
+分支任务计算结果：5050
+```
+
+通过执行可以发现，所有的分支任务的内部本质上包裹的还是线程池，因为如果要进行分支过多的创建，最终导致的结果就是线程资源的耗尽，所以为了保护电脑硬件资源不透支，使用的是内置的CPU内核数量进行的线程池配置。
+
+![image-20240116234623004](./Java 多线程进阶.assets/image-20240116234623004.png)
+
+
+
+## 4、RecursiveAction 无返回值任务
+
+RecursiveTask 是一种常见的分支任务，该分支任务最大的技术特点在于可以返回计算的结果，但是很多时候的分支任务是不需要进行计算结果返回的，只是需要开启分支，而不需要返回结果，所以为了解决当前的需要就提供了一个 RecursiveAction 抽象类，该类没有返回数据的必要性，【如果硬是想要使用 RecursiveAction 返回值，需要通过额外的结构保存计算结果，而考虑到分支处理操作的同步性，可以考虑创建一个专属的数据存储类，并基于互斥锁实现数据的同步累加。】该类的定义源代码如下：
+
+```java
+public abstract class RecursiveAction extends ForkJoinTask<Void> {
+    private static final long serialVersionUID = 5232453952276485070L;
+    public RecursiveAction() {}
+    protected abstract void compute();
+    public final Void getRawResult() { return null; }
+    protected final void setRawResult(Void mustBeNull) { }
+    protected final boolean exec() {
+        compute();
+        return true;
+    }
+}
+```
+
+本次的开发不再使用新的案例，而是继续使用之前的数字累加的操作，但是这个时候的计算需要在外部额外提供有一个计算结果的保存空间。
+
+![image-20240116235900053](./Java 多线程进阶.assets/image-20240116235900053.png)
+
+操作示例 1：使用 RecursiveAction 实现分支任务
+
+```java
 import java.util.concurrent.*;
-import java.util.function.Function;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+/**
+ * 如果不想使用这个类使用原子的整型也是可以的
+ */
+class CountSave {
+    private final Lock lock = new ReentrantLock(); // 采用一个互斥锁
+    private int sum = 0; // 保存累加结果
+
+    public void add(int num) {
+        this.lock.lock(); // 同步锁定
+        try {
+            this.sum += num; // 进行数据的累加
+        } finally {
+            this.lock.unlock(); // 解锁处理
+        }
+    }
+
+    public int getSum() {
+        return sum;
+    }
+}
+
+/**
+ * 实现数据累加的计算
+ */
+class SumTask extends RecursiveAction {
+    private static final int THRESHOLD = 25; // 分支阈值
+    private final int start; // 开始计算数值
+    private final int end; // 结束计算数值
+    private final CountSave save; // 结果的存储
+
+    public SumTask(int start, int end, CountSave save) { // 数据的累加配置
+        this.start = start;
+        this.end = end;
+        this.save = save; // 保存累加结果使用
+    }
+
+    @Override
+    protected void compute() { // 完成计算的处理
+        // 所有的子分支的处理，以及所有相关分支的合并处理都在此方法之中完成
+        int sum = 0; // 保存最终的计算结果
+        boolean isFork = (end - start) <= THRESHOLD; // 是否需要进行分支
+        if (isFork) {   // 计算子分支
+            for (int i = start; i <= end; i++) {
+                sum += i; // 分支处理
+            }
+            this.save.add(sum); // 保存累加结果
+            System.out.printf("【%s】start = %d、end = %d、sum = %d%n",
+                    Thread.currentThread().getName(), this.start, this.end, sum);
+        } else {    // 需要开启分支
+            int middle = (start + end) / 2;
+            SumTask leftTask = new SumTask(this.start, middle, this.save);
+            SumTask rightTask = new SumTask(middle + 1, this.end, this.save);
+            leftTask.fork(); // 开启左分支
+            rightTask.fork(); // 开启右分支
+        }
+    }
+}
 
 public class JavaAPIDemo {
     public static void main(String[] args) throws InterruptedException {
-        // 模拟电商报价API
-        Function<Integer, Integer> getPrice = (i) -> {
-            try {
-                TimeUnit.SECONDS.sleep(i);
-                System.out.println("任务" + i);
-            } catch (InterruptedException ignored) {
+        CountSave save = new CountSave(); // 保存累加结果
+        SumTask task = new SumTask(1, 100, save); // 外部的计算操作
+        ForkJoinPool pool = new ForkJoinPool(); // 开启分支任务池
+        pool.submit(task); // 执行分支任务
+        while (!task.isDone()) { // 任务没有结束
+            TimeUnit.MILLISECONDS.sleep(100); // 延迟一下
+        }
+        if (task.isCompletedNormally()) { // 任务执行完毕
+            System.out.println("分支任务计算结果：" + save.getSum()); // 异步返回
+        }
+    }
+}
+```
+
+```java
+【ForkJoinPool-1-worker-3】start = 51、end = 75、sum = 1575
+【ForkJoinPool-1-worker-1】start = 76、end = 100、sum = 2200
+【ForkJoinPool-1-worker-4】start = 1、end = 25、sum = 325
+【ForkJoinPool-1-worker-2】start = 26、end = 50、sum = 950
+分支任务计算结果：5050
+```
+
+在实际的工作之中选择那种任务的处理结构，根据实际的要求进行选择即可，分支任务的处理一定要有分支任务项。
+
+
+
+## 5、CountedCompleter 计数完成器任务
+
+在之前已经分析了两种不同的分支任务结构，从 JDK1.8 开始为了更好的解决分支任务阻塞的操作能力，所以对 ForkJoinTask 扩充了一个新的 CountedCompleter 抽象子类，该类的基本实现与之前的任务结构相同，唯一的区别在于在该类中可以挂起指定的任务数量，同时在结束时也可以基于挂起的任务数量来实现任务完成状态的判断。
+
+```java
+public abstract class CountedCompleter<T> extends ForkJoinTask<T> {
+    public abstract void compute();
+}
+```
+
+使用 CountedCompleter 进行开发操作的时候，有一个执行任务的回调处理机制，只要分支处理完成，就可以触发这个回调的操作，这里面可以进行一些分支的后续的线程的释放处理能力。
+
+操作示例 1：定义 CountedCompleter 分支任务
+
+```java
+import java.util.concurrent.CountedCompleter;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
+/**
+ * 实现数据累加的计算
+ */
+class SumTask extends CountedCompleter<AtomicInteger> {
+    private static final int THRESHOLD = 25; // 分支阈值
+    private final int start; // 开始计算数值
+    private final int end; // 结束计算数值
+    private final AtomicInteger result; // 保存最终的存储结果
+
+    public SumTask(int start, int end, AtomicInteger result) { // 数据的累加配置
+        this.start = start;
+        this.end = end;
+        this.result = result; // 保存累加结果使用
+    }
+
+    @Override
+    public void compute() { // 完成计算的处理
+        // 所有的子分支的处理，以及所有相关分支的合并处理都在此方法之中完成
+        int sum = 0; // 保存最终的计算结果
+        boolean isFork = (end - start) <= THRESHOLD; // 是否需要进行分支
+        if (isFork) {   // 计算子分支
+            for (int i = start; i <= end; i++) {
+                sum += i; // 分支处理
             }
-            return i;
-        };
+            this.result.addAndGet(sum); // 数据的累加
+            // 在每一个分支执行完成之后，可以手工的进行回调操作的触发
+            super.tryComplete(); // 钩子触发
+        } else {    // 需要开启分支
+            int middle = (start + end) / 2;
+            SumTask leftTask = new SumTask(this.start, middle, this.result);
+            SumTask rightTask = new SumTask(middle + 1, this.end, this.result);
+            leftTask.fork(); // 开启左分支
+            rightTask.fork(); // 开启右分支
+        }
+    }
 
-        long start = System.currentTimeMillis();
+    /**
+     * 钩子的触发
+     */
+    @Override
+    public void onCompletion(CountedCompleter<?> caller) {
+        System.out.printf("【%s】start = %d、end = %d%n",
+                Thread.currentThread().getName(), this.start, this.end);
+    }
+}
 
-        // 创建2个固定大小的线程池
-        ExecutorService executor = Executors.newFixedThreadPool(5);
-
-        // 在集合中追加所有要执行的线程的任务对象，是Callable的实现
-        Set<Callable<Integer>> allThreads = new HashSet<>();
-        allThreads.add(() -> getPrice.apply(2));
-        allThreads.add(() -> getPrice.apply(6));
-        allThreads.add(() -> getPrice.apply(4));
-        // 使用invokeAll方法执行集合中的所有Callable任务
-        List<Future<Integer>> futures = executor.invokeAll(allThreads);
-
-        futures.forEach((future) -> {
-            try {
-                System.out.println(future.get());
-            } catch (Exception ignored) {
-            }
-        });
-
-        executor.shutdown();
-        while (true) {
-            if (executor.isTerminated()) {
-                long end = System.currentTimeMillis();
-                System.out.println("耗时：" + (end - start) / 1000 + " s");
+public class JavaAPIDemo {
+    public static void main(String[] args) throws InterruptedException {
+        AtomicInteger result = new AtomicInteger(); // 保存最终的计算结果
+        SumTask task = new SumTask(1, 100, result); // 外部的计算操作
+        task.addToPendingCount(1); // 设置准备执行的任务量
+        ForkJoinPool pool = new ForkJoinPool(); // 开启分支任务池
+        pool.submit(task); // 执行分支任务
+        while (task.getPendingCount() != 0) {   // 有任务未执行完毕
+            TimeUnit.MILLISECONDS.sleep(100); // 延迟一下
+            if (result.get() != 0) {    // 有了计算结果
+                System.out.println("分支任务计算结果：" + result); // 异步返回
                 break;
             }
         }
@@ -7399,235 +8450,364 @@ public class JavaAPIDemo {
 ```
 
 ```java
-任务2
-任务4
-任务6
-6
-2
-4
-耗时：6 s
+【ForkJoinPool-1-worker-1】start = 76、end = 100
+【ForkJoinPool-1-worker-3】start = 51、end = 75
+【ForkJoinPool-1-worker-4】start = 1、end = 25
+【ForkJoinPool-1-worker-2】start = 26、end = 50
+分支任务计算结果：5050
 ```
 
-操作示例 2：采用 CompletionService 的方案异步执行询价
+**面试题：CountedCompleter、RecursiveTask 和 RecursiveAction 的区别？**
+
+CountedCompleter、RecursiveTask 和 RecursiveAction 是 Fork/Join 框架中的类，用于简化并行编程的过程。以下是它们的主要区别：
+
+1. **用途：**
+   - RecursiveTask：这个类设计用于返回结果的任务。它扩展了 ForkJoinTask 类并要求实现 compute 方法，该方法返回一个结果。
+   - RecursiveAction：这个类用于不返回结果的任务。它同样扩展了 ForkJoinTask 类，但要求实现没有返回值的 compute 方法。
+   - CountedCompleter：这是一个更通用的类，可用于具有对其他任务的依赖关系的任务，可以用于既有结果又没有结果的计算。
+2. **完成机制：**
+   - RecursiveTask 和 RecursiveAction 的任务完成时，会通知其父任务。
+   - CountedCompleter 具有更灵活的完成机制。它可以在不同的任务之间建立任意的依赖关系，而不仅仅是父子关系。
+3. **计数机制：**
+   - RecursiveTask 和 RecursiveAction 不提供内建的计数机制。
+   - CountedCompleter 具有内建的计数机制，可以方便地追踪任务的完成状态。它可以通过 `tryComplete()` 方法手动触发任务的完成。
+4. **任务拆分方式：**
+   - RecursiveTask 和 RecursiveAction 通常通过递归地拆分任务来实现并行计算。
+   - CountedCompleter 更为灵活，可以手动管理任务的拆分方式，允许开发人员更精细地控制任务的执行流程。
+
+总的来说，CountedCompleter 提供了更多的灵活性，适用于一些复杂的并行计算场景，而 RecursiveTask 和 RecursiveAction 更专注于简单的任务拆分和结果收集。
+
+***
+
+> **如下为 CountedCompleter 原理扩展知识**：
+
+在早期的JDK实现之中，会提供有一个 java.util.Arrays 类，这个类实现了数组的操作，但是在该类之中有一些方法是采用了并行排序的模式处理的，这个操作里面会包含有大量的分支任务的定义。
+
+```java
+public static void parallelSort(byte[] a) {
+    DualPivotQuicksort.sort(a, 0, a.length);
+}
+```
+
+早先的实现都是在内部通过并行任务的处理模式来完成的，也就是之前所学习到RescuiveTask、.RescuiveAction完成。此时该类之中的sort()方法的源代码定义如下【DualPivotQuicksort 类】：
+
+```java
+static void sort(byte[] a, int low, int high) {
+    if (high - low > MIN_BYTE_COUNTING_SORT_SIZE) {
+        countingSort(a, low, high);
+    } else {
+        insertionSort(a, low, high);
+    }
+}
+```
+
+而后内部有一些并行排序的一个实现任务类，例如：Sort、Merger【DualPivotQuicksort 的内部类】
+
+```java
+private static final class Sorter extends CountedCompleter<Void> {
+    private static final long serialVersionUID = 20180818L;
+    private final Object a, b;
+    private final int low, size, offset, depth;
+
+    private Sorter(CountedCompleter<?> parent,
+                   Object a, Object b, int low, int size, int offset, int depth) {
+        super(parent);
+        this.a = a;
+        this.b = b;
+        this.low = low;
+        this.size = size;
+        this.offset = offset;
+        this.depth = depth;
+    }
+
+    @Override
+    public final void compute() {
+        if (depth < 0) {
+            setPendingCount(2);
+            int half = size >> 1;
+            new Sorter(this, b, a, low, half, offset, depth + 1).fork();
+            new Sorter(this, b, a, low + half, size - half, offset, depth + 1).compute();
+        } else {
+            if (a instanceof int[]) {
+                sort(this, (int[]) a, depth, low, low + size);
+            } else if (a instanceof long[]) {
+                sort(this, (long[]) a, depth, low, low + size);
+            } else if (a instanceof float[]) {
+                sort(this, (float[]) a, depth, low, low + size);
+            } else if (a instanceof double[]) {
+                sort(this, (double[]) a, depth, low, low + size);
+            } else {
+                throw new IllegalArgumentException(
+                    "Unknown type of array: " + a.getClass().getName());
+            }
+        }
+        tryComplete();
+    }
+
+    @Override
+    public final void onCompletion(CountedCompleter<?> caller) {
+        if (depth < 0) {
+            int mi = low + (size >> 1);
+            boolean src = (depth & 1) == 0;
+
+            new Merger(null,
+                       a,
+                       src ? low : low - offset,
+                       b,
+                       src ? low - offset : low,
+                       src ? mi - offset : mi,
+                       b,
+                       src ? mi - offset : mi,
+                       src ? low + size - offset : low + size
+                      ).invoke();
+        }
+    }
+
+    private void forkSorter(int depth, int low, int high) {
+        addToPendingCount(1);
+        Object a = this.a; // Use local variable for performance
+        new Sorter(this, a, b, low, high - low, offset, depth).fork();
+    }
+}
+```
+
+考虑到各种阻塞的使用问题，很多的JDK内部类都更换为了CountedCompleter处理结构.
+
+
+
+## 6、ForkJoinPool.ManagedBlocker 线程补偿
+
+【**分支线程任务阻塞**】使用分支业务可以充分的发挥出电脑的硬件处理性能，然而在进行分支处理时，有可能所处理的业务会造成阻塞的情况出现。假设现在只设置有2个核心线程，但是却产生了6个分支，如图所示，这样一来只能有2个线程任务执行，而其它的任务则必须进行工作线程资源的等待，从而出现严重的性能问题。
+
+![image-20240117232221071](./Java 多线程进阶.assets/image-20240117232221071.png)
+
+内核线程是有限的，但是你突然创建了太多的分支，导致所有的分支彼此之间出现资源等待的情况，那么最终的结果是有可能分支反而会造成处理性能的下降。
+
+【**线程池资源补偿**】为了解决这种情况下的分支性能处理问题，在 ForkJoinPool 中提供了 **ManagedBlockerl 阻塞管理接口**，开发者可以利用此接口明确的告诉 ForkJoinPool 可能产生阻塞的操作，而后会依据 ManagedBlocker 接口所提供的方法来判断当前线程池的运行情况，如果发现此时线程池资源已经耗尽，但是还有未执行的任务时，就会自动的在线程池中进行**核心线程的补偿**，从而实现分支快速处理的需要。
+
+![image-20240117232907993](./Java 多线程进阶.assets/image-20240117232907993.png)
+
+操作示例 1：观察分支线程任务阻塞的情况，这里 ForkJoinPool 只设置莫2个线程，分支阀值也改成了5，所以会产生20个分支。由于线程池大小设置为 2，所以多余的分支线程会出现等待。
+
+```java
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
+import java.util.concurrent.RecursiveTask;
+
+/**
+ * 实现数据累加的计算
+ */
+class SumTask extends RecursiveTask<Integer> {
+    private static final int THRESHOLD = 5; // 分支阈值
+    private final int start; // 开始计算数值
+    private final int end; // 结束计算数值
+
+    public SumTask(int start, int end) { // 数据的累加配置
+        this.start = start;
+        this.end = end;
+    }
+
+    @Override
+    protected Integer compute() { // 完成计算的处理
+        // 所有的子分支的处理，以及所有相关分支的合并处理都在此方法之中完成
+        int sum = 0; // 保存最终的计算结果
+        boolean isFork = (end - start) <= THRESHOLD; // 是否需要进行分支
+        if (isFork) {   // 计算子分支
+            for (int i = start; i <= end; i++) {
+                sum += i; // 分支处理
+            }
+            System.out.printf("【%s】start = %d、end = %d、sum = %d%n",
+                    Thread.currentThread().getName(), this.start, this.end, sum);
+        } else {    // 需要开启分支
+            int middle = (start + end) / 2;
+            SumTask leftTask = new SumTask(this.start, middle);
+            SumTask rightTask = new SumTask(middle + 1, this.end);
+            leftTask.fork();  // 开启左分支
+            rightTask.fork(); // 开启右分支
+            sum = leftTask.join() + rightTask.join(); // 等待分支处理的执行结果返回
+        }
+        return sum;
+    }
+}
+
+public class JavaAPIDemo {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        SumTask task = new SumTask(1, 100); // 外部的计算操作
+        ForkJoinPool pool = new ForkJoinPool(2); // 开启分支任务池,线程大小设置为2
+        Future<Integer> future = pool.submit(task); // 执行分支任务
+        System.out.println("分支任务计算结果：" + future.get()); // 异步返回
+    }
+}
+```
+
+```java
+【ForkJoinPool-1-worker-1】start = 1、end = 4、sum = 10
+【ForkJoinPool-1-worker-2】start = 51、end = 54、sum = 210
+【ForkJoinPool-1-worker-2】start = 55、end = 57、sum = 168
+【ForkJoinPool-1-worker-1】start = 5、end = 7、sum = 18
+【ForkJoinPool-1-worker-2】start = 58、end = 63、sum = 363
+【ForkJoinPool-1-worker-1】start = 8、end = 13、sum = 63
+【ForkJoinPool-1-worker-2】start = 64、end = 69、sum = 399
+【ForkJoinPool-1-worker-1】start = 14、end = 19、sum = 99
+【ForkJoinPool-1-worker-2】start = 70、end = 75、sum = 435
+【ForkJoinPool-1-worker-1】start = 20、end = 25、sum = 135
+【ForkJoinPool-1-worker-2】start = 76、end = 79、sum = 310
+【ForkJoinPool-1-worker-1】start = 26、end = 29、sum = 110
+【ForkJoinPool-1-worker-2】start = 80、end = 82、sum = 243
+【ForkJoinPool-1-worker-1】start = 30、end = 32、sum = 93
+【ForkJoinPool-1-worker-2】start = 83、end = 88、sum = 513
+【ForkJoinPool-1-worker-1】start = 33、end = 38、sum = 213
+【ForkJoinPool-1-worker-2】start = 89、end = 94、sum = 549
+【ForkJoinPool-1-worker-1】start = 39、end = 44、sum = 249
+【ForkJoinPool-1-worker-2】start = 95、end = 100、sum = 585
+【ForkJoinPool-1-worker-1】start = 45、end = 50、sum = 285
+分支任务计算结果：5050
+```
+
+> 可以发现打印结果中ForkJoinPool始终只使用了2个线程在工作，如果某个分支业务逻辑特别复杂，耗时特别久，那么就会产生线程阻塞等待的情况了。
+
+操作示例 2：观察补偿线程的存在的使用
 
 ```java
 import java.util.concurrent.*;
-import java.util.function.Function;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+/**
+ * 实现数据累加的计算
+ */
+class SumTask extends RecursiveTask<Integer> {
+    private static final int THRESHOLD = 5; // 分支阈值
+    private final int start; // 开始计算数值
+    private final int end; // 结束计算数值
+    private final Lock lock = new ReentrantLock(); // 互斥锁
+
+    public SumTask(int start, int end) { // 数据的累加配置
+        this.start = start;
+        this.end = end;
+    }
+
+    @Override
+    protected Integer compute() { // 完成计算的处理
+        // 所有的子分支的处理，以及所有相关分支的合并处理都在此方法之中完成
+        int sum = 0; // 保存最终的计算结果
+        boolean isFork = (end - start) <= THRESHOLD; // 是否需要进行分支
+        if (isFork) {   // 计算子分支
+            SumHandleManagedBlocker blocker = new SumHandleManagedBlocker(this.start, this.end, this.lock);
+            try {
+                ForkJoinPool.managedBlock(blocker); // 加入阻塞管理
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return blocker.result; // 返回计算的结果
+        } else {    // 需要开启分支
+            int middle = (start + end) / 2;
+            SumTask leftTask = new SumTask(this.start, middle);
+            SumTask rightTask = new SumTask(middle + 1, this.end);
+            leftTask.fork();  // 开启左分支
+            rightTask.fork(); // 开启右分支
+            sum = leftTask.join() + rightTask.join(); // 等待分支处理的执行结果返回
+        }
+        return sum;
+    }
+
+    /**
+     * 自定义线程管理，主要是使用补偿线程
+     */
+    static class SumHandleManagedBlocker implements ForkJoinPool.ManagedBlocker {
+        private Integer result;
+        private final int start;
+        private final int end;
+        private final Lock lock; // 获取一个互斥锁
+
+        public SumHandleManagedBlocker(int start, int end, Lock lock) {
+            this.start = start;
+            this.end = end;
+            this.lock = lock;
+        }
+
+        @Override
+        public boolean block() throws InterruptedException { // 处理延迟任务
+            int sum = 0;
+            this.lock.lock();
+            try {
+                for (int x = start; x <= end; x++) {   // 数学计算
+                    TimeUnit.MILLISECONDS.sleep(100); // 延迟
+                    sum += x; // 执行数据的累加
+                }
+            } finally {
+                this.result = sum; // 返回处理结果
+                this.lock.unlock(); // 解锁
+            }
+            System.out.printf("【%s】处理数据累加业务，start = %d、end = %d、sum = %d%n",
+                    Thread.currentThread().getName(), this.start, this.end, sum);
+            return result != null; // 结束标记，返回是否成功阻塞
+        }
+
+        /**
+         * 如果返回 true，则表示成功阻塞；
+         * 如果返回 false，则表示无法阻塞，并且会创建补偿线程。
+         */
+        @Override
+        public boolean isReleasable() { // 补偿的判断，返回false会创建补偿线程
+            return this.result != null; // 阻塞解除判断
+        }
+    }
+}
+
 
 public class JavaAPIDemo {
-    public static void main(String[] args) throws InterruptedException, ExecutionException {
-        // 模拟电商报价API
-        Function<Integer, Integer> getPrice = (i) -> {
-            try {
-                TimeUnit.SECONDS.sleep(i);
-            } catch (InterruptedException ignored) {
-            }
-            return i;
-        };
-
-        long start = System.currentTimeMillis();
-
-        // 创建2个固定大小的线程池
-        ExecutorService executor = Executors.newFixedThreadPool(2);
-        // 创建 CompletionService, 现在的线程池统一被CompletionService实例所管理，所有线程任务交由此接口实例操作
-        ExecutorCompletionService<Integer> cs = new ExecutorCompletionService<>(executor);
-        // 异步向电商S1询价
-        cs.submit(() -> getPrice.apply(2));
-        // 异步向电商S2询价
-        cs.submit(() -> getPrice.apply(8));
-        // 异步向电商S3询价
-        cs.submit(() -> getPrice.apply(4));
-
-        // 将结果异步保存到数据库
-        for (int i = 0; i < 3; i++) {
-            System.out.println("任务【" + cs.take().get() + "】完成");
-        }
-
-        executor.shutdown();
-        while (true) {
-            if (executor.isTerminated()) {
-                long end = System.currentTimeMillis();
-                System.out.println("耗时：" + (end - start) / 1000 + " s");
-                break;
-            }
-        }
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        SumTask task = new SumTask(1, 100); // 外部的计算操作
+        ForkJoinPool pool = new ForkJoinPool(2); // 开启分支任务池,线程大小设置为2
+        Future<Integer> future = pool.submit(task); // 执行分支任务
+        System.out.println("分支任务计算结果：" + future.get()); // 异步返回
     }
 }
 ```
 
 ```java
-任务【2】完成
-任务【4】完成
-任务【8】完成
-耗时：8 s
+【ForkJoinPool-1-worker-14】处理数据累加业务，start = 30、end = 32、sum = 93
+【ForkJoinPool-1-worker-20】处理数据累加业务，start = 80、end = 82、sum = 243
+【ForkJoinPool-1-worker-16】处理数据累加业务，start = 5、end = 7、sum = 18
+【ForkJoinPool-1-worker-18】处理数据累加业务，start = 55、end = 57、sum = 168
+【ForkJoinPool-1-worker-1】处理数据累加业务，start = 1、end = 4、sum = 10
+【ForkJoinPool-1-worker-2】处理数据累加业务，start = 51、end = 54、sum = 210
+【ForkJoinPool-1-worker-4】处理数据累加业务，start = 76、end = 79、sum = 310
+【ForkJoinPool-1-worker-3】处理数据累加业务，start = 26、end = 29、sum = 110
+【ForkJoinPool-1-worker-13】处理数据累加业务，start = 58、end = 63、sum = 363
+【ForkJoinPool-1-worker-19】处理数据累加业务，start = 95、end = 100、sum = 585
+【ForkJoinPool-1-worker-11】处理数据累加业务，start = 70、end = 75、sum = 435
+【ForkJoinPool-1-worker-17】处理数据累加业务，start = 83、end = 88、sum = 513
+【ForkJoinPool-1-worker-9】处理数据累加业务，start = 64、end = 69、sum = 399
+【ForkJoinPool-1-worker-7】处理数据累加业务，start = 33、end = 38、sum = 213
+【ForkJoinPool-1-worker-15】处理数据累加业务，start = 8、end = 13、sum = 63
+【ForkJoinPool-1-worker-10】处理数据累加业务，start = 20、end = 25、sum = 135
+【ForkJoinPool-1-worker-12】处理数据累加业务，start = 89、end = 94、sum = 549
+【ForkJoinPool-1-worker-5】处理数据累加业务，start = 39、end = 44、sum = 249
+【ForkJoinPool-1-worker-6】处理数据累加业务，start = 45、end = 50、sum = 285
+【ForkJoinPool-1-worker-8】处理数据累加业务，start = 14、end = 19、sum = 99
+分支任务计算结果：5050
 ```
 
-此时的线程池的大小为 2，所以每一次只有 2 个线程任务可以被调度，而后被调度执行完成的线程处理结果会自动的保存在结果的阻塞队列之中，后面可以交由其他线程通过此阻塞队列获取数据。
+原本只有两个线程池的 ForkJoin 结构之中，现在发现变为了20个线程池，由于产生了分支任务处理的阻塞问题，所以在 ForkJoinPool 内部会进行补偿线程的创建，可以提高整体的处理性能。
 
-操作示例 3：并行地调用多个服务，只要有一个成功就返回结果
+***
 
-```java
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.*;
-import java.util.function.Function;
+ForkJoinPool.ManagedBlocker 是 ForkJoinPool 框架的一部分，用于处理并行任务的阻塞情况。以下是对它的总结：
 
-public class JavaAPIDemo {
-    public static void main(String[] args) throws InterruptedException, ExecutionException {
-        // 模拟电商报价API
-        Function<Integer, Integer> getPrice = (i) -> {
-            try {
-                TimeUnit.SECONDS.sleep(i);
-            } catch (InterruptedException ignored) {
-            }
-            return i;
-        };
+1. **所属框架：** ForkJoinPool.ManagedBlocker 是 ForkJoinPool 框架的一部分，这是一个用于执行可拆分和合并的任务的并行计算框架。
+2. **用途：** 该接口用于管理工作者线程的阻塞行为。通常，当工作者线程尝试执行其他任务时，如果某些条件不满足而需要阻塞时，就可以使用 ManagedBlocker 接口。
+3. **接口方法：** 主要的接口方法是 boolean block()。这个方法返回一个布尔值，指示是否成功执行阻塞。如果返回 true，表示成功阻塞；如果返回 false，表示无法阻塞。
+4. **应用场景：** 一个常见的应用场景是在任务中执行可能导致线程阻塞的操作，如等待外部资源或条件满足。通过使用 ManagedBlocker 接口，可以让线程在等待时阻塞而不是一直忙等，提高线程池的效率。
+5. **性能和资源利用率：** 在某些并行计算场景中，使用 ForkJoinPool.ManagedBlocker 可以提高性能和资源利用率，因为它允许线程在等待时释放 CPU 资源，而不是一直占用。
 
-        long start = System.currentTimeMillis();
-        // 创建线程池
-        ExecutorService executor = Executors.newFixedThreadPool(3);
-        // 创建completionService
-        ExecutorCompletionService<Integer> cs = new ExecutorCompletionService<>(executor);
-        // 用于保存Future对象
-        List<Future<Integer>> futures = new ArrayList<>();
-        // 提交异步任务，并保存 future到 futures
-        futures.add(cs.submit(() -> getPrice.apply(5)));
-        futures.add(cs.submit(() -> getPrice.apply(3)));
-        futures.add(cs.submit(() -> getPrice.apply(2)));
-
-        Integer result = null;
-        // 获取最快返回的任务执行结果
-        try {
-            for (int i = 0; i < 3; i++) {
-                Future<Integer> future = cs.take();
-                // 将有结果的任务从结果集删除
-                futures.remove(future);
-                result = future.get();
-                if (result != null) {
-                    break;
-                }
-            }
-        } finally {
-            // 取消剩下的所有任务
-            for (Future<Integer> future : futures) {
-                future.cancel(true);
-            }
-        }
-
-        executor.shutdown();
-        while (true) {
-            if (executor.isTerminated()) {
-                long end = System.currentTimeMillis();
-                System.out.println("耗时：" + (end - start) / 1000 + " s");
-                break;
-            }
-        }
-        System.out.println("最终结果：" + result);
-    }
-}
-```
-
-```java
-耗时：2 s
-最终结果：2
-```
-
-操作示例 3：（高德笔试题）多个任务并行执行，有一个任务执行失败了，任务就结束。要求：最快
-
-```java
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.*;
-import java.util.function.Function;
-
-public class JavaAPIDemo {
-    public static void main(String[] args) throws InterruptedException, ExecutionException {
-        // 模拟电商报价API
-        Function<Integer, Integer> getPrice = (i) -> {
-            try {
-                if (Objects.nonNull(i)) {
-                    TimeUnit.SECONDS.sleep(i);
-                } else {
-                    // 模拟3秒时出现错误
-                    TimeUnit.SECONDS.sleep(3);
-                }
-            } catch (InterruptedException ignored) {
-            }
-            return i;
-        };
-
-        long start = System.currentTimeMillis();
-        // 创建线程池
-        ExecutorService executor = Executors.newFixedThreadPool(3);
-        // 创建completionService
-        ExecutorCompletionService<Integer> cs = new ExecutorCompletionService<>(executor);
-        // 用于保存Future对象
-        List<Future<Integer>> futures = new ArrayList<>();
-        // 提交异步任务，并保存 future到 futures
-        futures.add(cs.submit(() -> getPrice.apply(5)));
-        futures.add(cs.submit(() -> getPrice.apply(null)));
-        futures.add(cs.submit(() -> getPrice.apply(1)));
-
-        Integer result = null;
-        // 获取最快返回的任务执行结果
-        try {
-            for (int i = 0; i < 3; i++) {
-                Future<Integer> future = cs.take();
-                // 将有结果的任务从结果集删除
-                futures.remove(future);
-                result = future.get();
-                if (Objects.isNull(result)) {
-                    System.out.printf("【任务%s】出现异常。%n", result);
-                    executor.shutdown();
-                    break;
-                }
-                System.out.printf("【任务%s】执行完毕。%n", result);
-            }
-        } finally {
-            // 取消剩下的所有任务
-            for (Future<Integer> future : futures) {
-                future.cancel(true);
-            }
-        }
-
-        // executor.shutdown();
-        while (true) {
-            if (executor.isTerminated()) {
-                long end = System.currentTimeMillis();
-                System.out.println("耗时：" + (end - start) / 1000 + " s");
-                break;
-            }
-        }
-    }
-}
-```
-
-```java
-【任务1】执行完毕。
-【任务null】出现异常。
-耗时：3 s
-```
-
- **CompletionService 应用场景**：
-
-1. 当需要批量提交异步任务的时候建议你使用 CompletionService。CompletionService 将线程池 Executor 和阻塞队列 BlockingQueue 的功能融合在了一起，能够让批量异步任务的管理更简单。
-2. CompletionService 能够让异步任务的执行结果有序化。先执行完的先进入阻塞队列。利用这个特性，你可以轻松实现后续处理的有序性，避免无谓的等待，同时还可以快速实现诸如Forking Cluster这样的需求。
-3. 线程池隔离。CompletionService 支持自己创建线程池，这种隔离性能避免几个特别耗时的任务拖垮整个应用的风险。
+总体而言，ForkJoinPool.ManagedBlocker 提供了一种机制，使得线程在等待条件满足时可以阻塞，从而更有效地管理并行计算中的线程资源。
 
 
 
-# 11、ForkJoin
 
-## 1、RecursiveTask 分支任务
-
-## 2、RecursiveAction 分支任务
-
-## 3、CountedCompleter 分支任务
-
-## 4、ForkJoinPool.ManagedBlocker
-
-## 5、Phaser
 
 
 

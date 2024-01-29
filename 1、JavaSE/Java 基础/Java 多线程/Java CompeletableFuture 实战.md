@@ -73,7 +73,7 @@ System.out.println(future.get()); // value
 
 
 
-## 2、线程串行执行
+## 2、线程任务串行执行
 
 1、任务完成则运行action，不关心上一个任务的结果，无返回值
 
@@ -136,26 +136,33 @@ executor.shutdown();
 
 - 类似 thenApply（区别是 thenCompose 的返回值是 CompletionStage，thenApply 则是返回 U），提供该方法为了和其他 CompletableFuture 任务更好地配套组合使用
 
-  ```java
-  // 第一个异步任务，常量任务
-  CompletableFuture<String> f = CompletableFuture.completedFuture("OK");
-  // 第二个异步任务
-  ExecutorService executor = Executors.newSingleThreadExecutor();
-  CompletableFuture<String> future = CompletableFuture
-          .supplyAsync(() -> "hello world", executor)
-          .thenComposeAsync(data -> {
-              System.out.println(data); return f; //使用第一个任务作为返回
-          }, executor);
-  System.out.println(future.join());
-  executor.shutdown();
-  // --------输出结果--------
-  // hello world
-  // OK
-  ```
+```java
+public <U> CompletableFuture<U> thenCompose(Function<? super T, ? extends CompletionStage<U>> fn);
+public <U> CompletableFuture<U> thenComposeAsync(Function<? super T, ? extends CompletionStage<U>> fn);
+public <U> CompletableFuture<U> thenComposeAsync(Function<? super T, ? extends CompletionStage<U>> fn,
+  Executor executor);
+```
+
+```java
+// 第一个异步任务，常量任务
+CompletableFuture<String> f = CompletableFuture.completedFuture("OK");
+// 第二个异步任务
+ExecutorService executor = Executors.newSingleThreadExecutor();
+CompletableFuture<String> future = CompletableFuture
+        .supplyAsync(() -> "hello world", executor)
+        .thenComposeAsync(data -> {
+            System.out.println(data); return f; //使用第一个任务作为返回
+        }, executor);
+System.out.println(future.join());
+executor.shutdown();
+// --------输出结果--------
+// hello world
+// OK
+```
 
 
 
-## 3、线程并行执行
+## 3、线程任务并行执行
 
 1、 两个CompletableFuture[并行]执行完，然后执行action，不依赖上两个任务的结果，无返回值
 

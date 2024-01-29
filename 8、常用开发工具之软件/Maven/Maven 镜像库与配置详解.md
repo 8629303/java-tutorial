@@ -606,4 +606,12 @@ mirrorOf=external:*  // 如果本地库存在就用本地库的，如果本地�
 
 
 
-Maven 实战小结：https://juejin.cn/post/6844903839435341832
+# Maven setting.xml 详解
+
+- maven的setting.xml配置文件详解：https://www.jianshu.com/p/ba3e3ea36042
+
+
+
+# Maven 实战
+
+- Maven 实战小结：https://juejin.cn/post/6844903839435341832
