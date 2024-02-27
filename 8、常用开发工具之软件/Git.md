@@ -225,6 +225,10 @@ $ git init [project-name]
 
 # 下载一个项目和它的整个代码历史
 $ git clone [url]
+# 通过 SSH 复制一个已创建的仓库
+$ git clone ssh://user@domain.com/repo.git
+# 通过 HTTP 复制一个已创建的仓库
+$ git clone http://domain.com/user/repo.git
 ```
 
 ## 2、配置信息
@@ -254,6 +258,9 @@ $ git add [dir]
 
 # 添加当前目录的所有文件到暂存区
 $ git add .
+
+# 添加所有修改内容到暂存区
+$ git add -A
 
 # 添加每个变化前，都会要求确认
 # 对于同一个文件的多处变化，可以实现分次提交
