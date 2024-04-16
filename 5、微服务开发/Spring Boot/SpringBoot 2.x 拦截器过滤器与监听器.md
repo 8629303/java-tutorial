@@ -87,11 +87,62 @@ Servlet 过滤器是可用于 Servlet 编程的 Java 类，有以下目的：
 
 
 
-### 3、代码实现
+### 3、过滤器（Filter）生命周期
 
-**1、实现及注册方式一：利用WebFilter注解配置**
+Filter 有三个阶段，分别是初始化，拦截和过滤，销毁。
 
-Servlet3.0新增了注解@WebFilter，原先实现过滤器需要在web.xml中进行配置，现在通过此注解，启动启动时会自动扫描自动注册
+- 初始化阶段：web 应用程序启动时，web 服务器将创建 Filter 的实例对象，并调用其 init 方法，完成对象的初始化功能，从而为后续的用户请求作好拦截的准备工作，filter 对象只会创建一次，init 方法也只会执行一次。通过 init 方法的参数，可获得代表当前 filter 配置信息的 FilterConfig 对象（永远只调用一次）
+
+- 拦截和过滤阶段：只要请求资源的路径和拦截的路径相同，那么过滤器就会对请求进行过滤，这个阶段在服务器运行过程中会一直循环，不管第几次，都在调用doGet()，doPost() 方法之前。
+- 销毁阶段：当服务器（Tomcat）关闭时，Web 容器调用 destroy 方法销毁 Filter。destroy 方法在 Filter 的生命周期中仅执行一次。在 destroy 方法中，可以释放过滤器使用的资源(永远只调用一次)；
+
+
+
+### 4、FilterConfig 和 FilterChain 说明
+
+FilterConfig 和 FilterChain 这2个对象是由服务器 (Tomcat) 在创建和调用 Filter 对象时所传入的，这2个对象十分有用，FilterConfig 对象可以读取我们配置的初始参数，FilterChain 可以实现多个 Filter 之间的连接。
+
+1、FilterConfig
+
+```java
+public interface FilterConfig {
+    String getFilterName(); // 获取 filter 的名称
+    ServletContext getServletContext(); // 获取 ServletContext
+    String getInitParameter(String var1); // 获取配置的初始参数的值
+    Enumeration<String> getInitParameterNames(); // 获取配置的所有参数名称
+}
+```
+
+2、FilterChain
+
+```java
+public interface FilterChain {
+    void doFilter(ServletRequest var1, ServletResponse var2) throws IOException, ServletException;
+}
+```
+
+我们查看源码，可以发现 FilterChain 就只有一个方法，其实这个方法就是用来对拦截进行放行的，如果有多个拦截器，那么就会继续调用下一个 Filter 进行拦截。doFilter 方法需要传入个参数，一个是 ServletRequest，一个是 ServletResponse 参数，这个直接传入进行。
+
+Tomcat 在调用过滤器时，默认就会传入 Request 和 Response，这个参数封装了请求和响应，我们直接使用就行。ServletResquest 和 ServletResponse 可以直接强转成 HttpServletRequest 和 HttpServletResponse，然后使用相应的方法。
+
+
+
+
+### 5、代码实现_注册方式一：利用 @WebFilter 注解配置
+
+Servlet3.0 新增了注解 @WebFilter，原先实现过滤器需要在 web.xml 中进行配置，现在通过此注解，启动启动时会自动扫描自动注册。
+
+| 属性名          | 类型             | 描述                                                         |
+| --------------- | ---------------- | ------------------------------------------------------------ |
+| filterName      | String           | 指定过滤器的name属性,（springbean也是用该名称），等价于< filter-name> |
+| urlPatterns     | String[]         | 指定一组过滤器的URL匹配模式。等价于< url-pattern>            |
+| value           | String[]         | 该属性等价于urlPatterns属性，但是两个不应该同时使用          |
+| sevletNames     | String[]         | 指定过滤器将用于哪些servlet。取值是@WebServlet中的name属性的取值，或者是web.xml中< servlet-name> |
+| dispatcherTypes | DispatcherType[] | 指定一组过滤器的转发模式。具体取值包括：ASYNC、ERROR、FORWARD、INCLUDE、REQUEST，默认REQUEST |
+| initParams      | WebInitParam[]   | 指定一组过滤器初始化参数，等价于< init-param>                |
+| asyncSupported  | boolean          | 声明过滤器是否支持异步操作模式，等价于< async-supported>标签 |
+| description     | String           | 过滤器的描述信息，等价于< description>                       |
+| displayName     | String           | 过滤器的显示名，通常配合工具使用，等价于< display-name>      |
 
 ```java
 // 注册器名称为customFilter,拦截的url为所有
@@ -142,9 +193,9 @@ public class XyzApplication {
 
 
 
-**2、注册方式二：FilterRegistrationBean方式**
+### 6、代码实现_注册方式二：FilterRegistrationBean 方式配置
 
-FilterRegistrationBean是SpringBoot提供的，此类提供setOrder方法，可以为filter设置排序值，让Spring在注册Web filter之前排序后再依次注册。首先要改写filter, 其实就删掉@webFilter注解即可，其他的都没有变化。然后的代码是Filter的注册代码
+FilterRegistrationBean 是 SpringBoot 提供的，此类提供 setOrder 方法，可以为 filter 设置排序值，让 Spring 在注册 Web filter 之前排序后再依次注册。首先要改写 filter, 其实就删掉 @WebFilter 注解即可，其他的都没有变化。然后的代码是 Filter 的注册代码
 
 ```java
 @Configuration
@@ -152,20 +203,24 @@ public class FilterRegistration {
     @Bean
     public FilterRegistrationBean filterRegistrationBean() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
-        // Filter可以new，也可以使用依赖注入Bean
-        registration.setFilter(new CustomFilter());
-        // 过滤器名称
-        registration.setName("customFilter");
-        // 拦截路径
-        registration.addUrlPatterns("/*");
-        // 设置顺序
-        registration.setOrder(10);
+        registration.setFilter(new CustomFilter()); // Filter可以new，也可以使用依赖注入Bean
+        registration.setName("customFilter"); // 过滤器名称
+        registration.addUrlPatterns("/*"); // 拦截路径
+        registration.setOrder(10); // 设置优先级 ,数字越小，优先级越高
         return registration;
     }
 }
 ```
 
 注册多个时，就注册多个FilterRegistrationBean即可,启动后，效果和第一种是一样的。可以访问应用内的任意资源进行过滤器测试，因为过滤器是针对所有的请求和响应。可以输入Filter中的log信息。
+
+
+
+### 7、Filter 执行顺序设置
+
+> SptingBoot 过滤器 Filter 的使用方式：https://blog.csdn.net/JokerLJG/article/details/127634366
+
+
 
 
 
@@ -185,7 +240,7 @@ HttpServletRequestWrapper 采用装饰者模式对 HttpServletRequest 进行包�
 
 ### 3、代码实现1 处理 SprngBoot MVC 参数
 
-1、新增wrapper类及filter 类
+1、新增 wrapper 类及 filter 类
 
 ```java
 public class MyFilter implements Filter {
@@ -630,7 +685,7 @@ xxxxxx
 
 ### 1、简单介绍
 
-OncePerRequestFilter类是一个实现了javax.servlet.Filter原生接口的抽象类。OncePerRequestFilter可以保证一次外部请求，只执行一次过滤方法，对于服务器内部之间的forward等请求，不会再次执行过滤方法。OncePerRequestFilter 又称单次过滤器。
+OncePerRequestFilter 类是一个实现了 javax.servlet.Filter 原生接口的抽象类。OncePerRequestFilter 可以保证一次外部请求，只执行一次过滤方法，对于服务器内部之间的 forward 等请求，不会再次执行过滤方法。OncePerRequestFilter 又称单次过滤器。
 
 在学习"OncePerRequestFilter"前，我们先看一下过滤器是什么？
 
@@ -646,7 +701,18 @@ OncePerRequestFilter类是一个实现了javax.servlet.Filter原生接口的抽�
 
 ### 2、使用场景
 
-OncePerRequestFilter的主要目的是为了兼容不同的WEB容器，因为Servlet版本不同，执行的过程也不同，其实不是所有的容器一次请求只过滤一次。所以如果是在SpringBoot或者Spring项目中尽量使用OncePerRequestFilter过滤器。
+OncePerRequestFilter 的主要目的是为了兼容不同的 WEB 容器，因为 Servlet 版本不同，执行的过程也不同，其实不是所有的容器一次请求只过滤一次。所以如果是在 SpringBoot 或者 Spring 项目中尽量使用 OncePerRequestFilter过滤器。
+
+
+
+### 3、执行顺序
+
+SpringBoot 中 OncePerRequestFilter 的执行顺序：
+
+- 当定义了多个Filter时，OncePerRequestFilter总是在第一个Filter之后执行
+- 多个OncePerRequestFilter之间也可以有@Order指定顺序
+- 所有OncePerRequestFilter按顺序执行完毕之后，才执行第二个Filter
+- OncePerRequestFilter也满足Filter队列的出队顺序
 
 
 
@@ -697,6 +763,8 @@ public abstract class OncePerRequestFilter extends GenericFilterBean {
     // ...
 }
 ```
+
+
 
 ### 4、如何使用
 
@@ -1465,5 +1533,257 @@ public class GetRequestInfo {
 com.example.jpa.config.MyListener4监听到事件源：com.example.jpa.controller.GetRequestInfo@58ef9f08.
 用户名: 张三
 密码: 123456
+```
+
+
+
+
+
+
+
+# 六、最佳实践
+
+> 参考文献：
+>
+> - https://www.cnblogs.com/look-word/p/16568752.html
+> - SpringBoot中过滤器@WebFilter的使用以及简单介绍限流算法:https://blog.csdn.net/qq_41114884/article/details/130615162
+
+## 1、打印接口耗时_过滤器方式
+
+这种方式简单点 但是可配置性不高。注意：一定得扫描到 Spring 容器中
+
+1、创建一个类实现 filter 接口
+
+```java
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+
+/**
+ * init:该方法是对filter对象进行初始化的方法，仅在容器初始化filter对象结束后被调用一次，参数FilterConfig可以获得filter的初始化参数；
+ * doFilter:可以对request和response进行`<u>预处理</u>`。`其中FilterChain可以将处理后的`request和response对象传递到过滤链上的下一个资源。
+ * destroy():该方法在容器销毁对象前被调用。
+ **/
+@Component
+public class LogFilter implements Filter {
+    private static final Logger LOG = LoggerFactory.getLogger(LogFilter.class);
+
+    @Override
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) 
+        throws IOException, ServletException {
+        // 打印请求信息
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        LOG.info("------------- LogFilter 开始 -------------");
+        LOG.info("请求地址: {} {}", request.getRequestURL().toString(), request.getMethod());
+        LOG.info("远程地址: {}", request.getRemoteAddr());
+
+        long startTime = System.currentTimeMillis();
+        filterChain.doFilter(servletRequest, servletResponse);
+        LOG.info("------------- LogFilter 结束 耗时：{} ms -------------", System.currentTimeMillis() - startTime);
+    }
+}
+```
+
+2、新增配置filter配置类注册filter
+
+```java
+@Configuration
+public class FilterConfig {
+    @Bean
+    public FilterRegistrationBean MyFilterRegistration() {
+        FilterRegistrationBean registration = new FilterRegistrationBean();
+        registration.setDispatcherTypes(DispatcherType.REQUEST);
+        registration.setFilter(new LogFilter());
+        registration.addUrlPatterns("/*");
+        registration.setName("MyFilter");
+        registration.setOrder(FilterRegistrationBean.HIGHEST_PRECEDENCE);
+        return registration;
+    }
+}
+```
+
+3、测试结果
+
+```java
+```
+
+
+
+
+
+## 2、打印接口耗时_拦截器方式
+
+1、创建拦截器
+
+```java
+/**
+ * 拦截器：Spring框架特有的，常用于登录校验，权限校验，请求日志打印 /login
+ **/
+@Component
+public class LogInterceptor implements HandlerInterceptor {
+    private static final Logger LOG = LoggerFactory.getLogger(LogInterceptor.class);
+
+    @Override
+    public boolean preHandle(HttpServletRequest request, 
+                             HttpServletResponse response, 
+                             Object handler) throws Exception {
+        // 打印请求信息
+        LOG.info("------------- LogInterceptor 开始 -------------");
+        LOG.info("请求地址: {} {}", request.getRequestURL().toString(), request.getMethod());
+        LOG.info("远程地址: {}", request.getRemoteAddr());
+
+        long startTime = System.currentTimeMillis();
+        request.setAttribute("requestStartTime", startTime);
+        return true;
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest request, 
+                           HttpServletResponse response, 
+                           Object handler, 
+                           ModelAndView modelAndView) throws Exception {
+        long startTime = (Long) request.getAttribute("requestStartTime");
+        LOG.info("------------- LogInterceptor 结束 耗时：{} ms -------------", System.currentTimeMillis() - startTime);
+    }
+}
+```
+
+2、注册拦截器
+
+```java
+@Configuration
+public class SpringMvcConfig implements WebMvcConfigurer {
+
+    @Resource
+    private LogInterceptor logInterceptor;
+    /**
+     * 注册拦截器
+     */
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry
+                .addInterceptor(logInterceptor)
+                .addPathPatterns("/**")         // 对那些接口拦截
+                .excludePathPatterns("/login"); // 对哪些接机口放行
+        WebMvcConfigurer.super.addInterceptors(registry);
+    }
+}
+```
+
+
+
+## 3、打印接口耗时_AOP的方式
+
+> 实现思路：
+>
+> - 引入aop依赖
+> - 自定义注解
+> - 定义切面，采用环绕通知
+
+1、引入依赖
+
+```xml
+<!--aop-->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-aop</artifactId>
+</dependency>
+```
+
+2、自定义注解 LogAnnotation
+
+```java
+/**
+ * 日志注解
+ * METHOD 方法上 type 类上
+ */
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface LogAnnotation {
+
+    /**
+     * 模块
+     */
+    String module() default "";
+
+    /**
+     * 简单描述接口的作用
+     */
+    String operation() default "";
+}
+```
+
+3、定义切面
+
+```java
+@Slf4j
+@Aspect
+@Component
+public class LogAspect {
+
+    /**
+     * 切入点
+     */
+    @Pointcut("@annotation(look.word.reggie.common.aop.LogAnnotation)")
+    public void logPointCut() {
+    }
+
+    /**
+     * 环绕通知
+     *
+     * @param point 连接点
+     */
+    @Around("logPointCut()")
+    public Object around(ProceedingJoinPoint point) throws Throwable {
+        long beginTime = System.currentTimeMillis();
+        //执行方法
+        Object result = point.proceed();
+        //执行时长(毫秒)
+        long time = System.currentTimeMillis() - beginTime;
+        //保存日志
+        recordLog(point, time);
+        return result;
+    }
+
+    private void recordLog(ProceedingJoinPoint joinPoint, long time) {
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        // 获取当前方法
+        Method method = signature.getMethod();
+        LogAnnotation logAnnotation = method.getAnnotation(LogAnnotation.class);
+        log.info("=====================log start================================");
+        log.info("module:{}", logAnnotation.module());
+        log.info("operation:{}", logAnnotation.operation());
+
+        // 请求的方法名
+        String className = joinPoint.getTarget().getClass().getName();
+        String methodName = signature.getName();
+        log.info("request method:{}", className + "." + methodName + "()");
+
+        // 请求的参数
+        Object[] args = joinPoint.getArgs();
+        Stream<?> stream = ArrayUtils.isEmpty(args) ? Stream.empty() : Arrays.stream(args);
+        List<Object> logArgs = stream
+            .filter(arg -> (!(arg instanceof HttpServletRequest) && !(arg instanceof HttpServletResponse)))
+            .collect(Collectors.toList());
+        String params = JSON.toJSONString(logArgs);
+        log.info("params:{}", params);
+
+        //获取request 设置IP地址
+        HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
+        log.info("ip:{}", IpUtils.getIpAddr(request));
+
+        log.info("execute time : {} ms", time);
+        log.info("=====================log end================================");
+    }
+}
+```
+
+4、功能测试
+
+```java
 ```
 
