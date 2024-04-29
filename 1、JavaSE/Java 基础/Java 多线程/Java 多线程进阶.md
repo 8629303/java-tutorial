@@ -9782,6 +9782,111 @@ ForkJoinPool.ManagedBlocker 是 ForkJoinPool 框架的一部分，用于处理�
 
 
 
+## 7、ForkJoinPool 自定义线程池
+
+### 1、使用默认线程工厂自定义线程池
+
+ForkJoinPool 是 Java 并发库中用于支持 ForkJoin 框架的线程池。您可以通过以下方式来自定义 ForkJoinPool：
+
+1. 指定池中的线程数量。
+2. 指定工作队列的类型。
+3. 自定义拒绝策略。
+
+以下是一个创建自定义 ForkJoinPool 的示例代码：
+
+```java
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinWorkerThread;
+import java.util.concurrent.LinkedBlockingQueue;
+
+public class CustomForkJoinPool {
+    public static void main(String[] args) {
+        ForkJoinPool pool = new ForkJoinPool(
+            4, // 使用4个线程
+            ForkJoinPool.defaultForkJoinWorkerThreadFactory, // 使用默认的线程工厂
+            null, // 拒绝策略设置为null，使用默认行为
+            new LinkedBlockingQueue<>(1024) // 使用有界队列，防止溢出
+        );
+
+        // 使用pool进行并行计算
+        pool.submit(() -> {
+            // 你的并行任务
+            return null;
+        }).join();
+
+        pool.shutdown(); // 关闭池子
+    }
+}
+```
+
+在这个示例中，我们创建了一个具有自定义线程工厂、拒绝策略和工作队列的 `ForkJoinPool`。您可以根据需要调整线程数、工厂类型、队列容量和拒绝策略的参数。
+
+
+
+### 2、使用自定义线程工厂自定义线程池
+
+要自定义 ForkJoinPool 线程池，你需要实现 ForkJoinPool.ForkJoinWorkerThreadFactory 接口，并重写 newThread() 方法来创建自定义的 ForkJoinWorkerThread 线程。然后，你可以使用自定义的 ForkJoinWorkerThreadFactory 来创建 ForkJoinPool。
+
+下面是一个示例代码，演示了如何自定义 ForkJoinPool 线程池：
+
+```java
+import java.util.concurrent.*;
+
+public class Main {
+    public static void main(String[] args) throws InterruptedException {
+        CountDownLatch count = new CountDownLatch(1);
+        // 创建自定义的ForkJoinWorkerThreadFactory
+        ForkJoinPool.ForkJoinWorkerThreadFactory factory = new MyForkJoinWorkerThreadFactory();
+
+        // 创建ForkJoinPool时指定自定义的ForkJoinWorkerThreadFactory
+        ForkJoinPool forkJoinPool = new ForkJoinPool(4, factory, null, false);
+        // 提交一个ForkJoinTask任务
+        ForkJoinTask<?> task = forkJoinPool.submit(() -> {
+            // 执行任务
+            System.out.println("Executing task in thread: " + Thread.currentThread().getName());
+            count.countDown();
+        });
+        count.await();
+    }
+
+    // 自定义的ForkJoinWorkerThreadFactory
+    static class MyForkJoinWorkerThreadFactory implements ForkJoinPool.ForkJoinWorkerThreadFactory {
+        @Override
+        public ForkJoinWorkerThread newThread(ForkJoinPool pool) {
+            // 创建一个新的ForkJoinWorkerThread
+            return new MyForkJoinWorkerThread(pool);
+        }
+    }
+
+    // 自定义的ForkJoinWorkerThread
+    static class MyForkJoinWorkerThread extends ForkJoinWorkerThread {
+        protected MyForkJoinWorkerThread(ForkJoinPool pool) {
+            super(pool);
+        }
+
+        @Override
+        protected void onStart() {
+            super.onStart();
+            // 线程启动时执行的逻辑
+            System.out.println("Thread started: " + Thread.currentThread().getName());
+        }
+
+        @Override
+        protected void onTermination(Throwable exception) {
+            super.onTermination(exception);
+            // 线程终止时执行的逻辑
+            System.out.println("Thread terminated: " + Thread.currentThread().getName());
+        }
+    }
+}
+```
+
+在这个示例中，我们创建了一个自定义的 MyForkJoinWorkerThreadFactory 类来实现 ForkJoinWorkerThreadFactory 接口，并在 newThread() 方法中创建了自定义的 MyForkJoinWorkerThread 线程。然后，我们使用自定义的 ForkJoinWorkerThreadFactory 来创建 ForkJoinPool。在自定义的 MyForkJoinWorkerThread 类中，我们重写了onStart() 方法和 onTermination() 方法，分别在线程启动时和线程终止时执行一些逻辑。
+
+通过这种方式，我们可以自定义 ForkJoinPool 中的线程，以满足特定的需求或执行一些额外的逻辑。
+
+
+
 # 11、CompletionService 异步增强【异步】
 
 > 并发编程：浅谈CompletionService 和 CompletableFuture ：https://blog.csdn.net/weixin_44735065/article/details/124074027
