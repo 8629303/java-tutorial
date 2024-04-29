@@ -1,8 +1,8 @@
 > SpringBoot的外部化配置：http://it.hzqiuxm.com/springboot%e6%95%99%e7%a8%8b%e7%b3%bb%e5%88%973/#i
 
-# 一、读取Spring配置文件的几种方式
+# 一、Properties 配置文件的几种读取方式
 
-## 1、配置文件绑定变量前言
+## 0、配置文件绑定变量前言
 
 Spring Boot 中读取配置文件有以下 5 种方法：
 
@@ -23,7 +23,7 @@ profile.desc=Spring Boot Profile Desc.
 
 
 
-## 2、@Value 读取配置文件
+## 1、@Value 读取配置文件
 
 使用 @Value 可以读取单个配置项，如下代码所示：
 
@@ -52,7 +52,7 @@ My Profile Name：Spring Boot Profile
 
 
 
-## 3、@ConfigurationProperties 读取配置文件
+## 2、@ConfigurationProperties 读取配置文件
 
 @ConfigurationProperties 和 @Value 的使用略微不同，@Value 是读取单个配置项的，而 @ConfigurationProperties 是读取一组配置项的，我们可以使用 @ConfigurationProperties 加实体类读取一组配置项，如下代码所示：
 
@@ -97,7 +97,7 @@ Profile Object:Profile(name=Spring Boot Profile, desc=Spring Boot Profile Desc.)
 
 
 
-## 4、@PropertySource 读取配置文件
+## 3、@PropertySource 读取配置文件
 
 使用 @PropertySource 注解可以用来指定读取某个配置文件，比如指定读取 abc.properties 配置文件的配置内容，具体实现代码如下：
 
@@ -252,11 +252,11 @@ Properties Name：Spring Boot Profile
 
 
 
-# 二、读取YAML配置文件的几种方式
+# 二、YAML 配置文件的几种读取方式
 
-## 1、Environment
+## 1、Environment 方式读取
 
-在Spring中有一个类Environment，它可以被认为是当前应用程序正在运行的环境，它继承了PropertyResolver接口，因此可以作为一个属性解析器使用。先创建一个yml文件，属性如下：
+在 Spring 中有一个类 Environment，它可以被认为是当前应用程序正在运行的环境，它继承了 PropertyResolver 接口，因此可以作为一个属性解析器使用。先创建一个 yml 文件，属性如下：
 
 ```yaml
 person:
@@ -265,7 +265,7 @@ person:
   age: 18
 ```
 
-用起来也非常简单，直接使用@Autowired就可以注入到要使用的类中，然后调用它的getProperty()方法就可以根据属性名称取出对应的值了。除了简单的获取外，Environment提供的方法还可以对取出的属性值进行类型转换、以及默认值的设置。
+用起来也非常简单，直接使用 @Autowired 就可以注入到要使用的类中，然后调用它的 getProperty() 方法就可以根据属性名称取出对应的值了。除了简单的获取外，Environment 提供的方法还可以对取出的属性值进行类型转换、以及默认值的设置。
 
 ```java
 import org.springframework.beans.factory.annotation.Autowired;
@@ -305,7 +305,7 @@ male
 defaultValue
 ```
 
-除了获取属性外，还可以用来判断激活的配置文件，我们先在application.yml中激活pro文件：
+除了获取属性外，还可以用来判断激活的配置文件，我们先在 application.yml 中激活 pro 文件：
 
 ```yaml
 spring:
@@ -317,7 +317,7 @@ person:
   age: 18
 ```
 
-可以通过acceptsProfiles方法来检测某一个配置文件是否被激活加载，或者通过getActiveProfiles方法拿到所有被激活的配置文件。测试接口：
+可以通过 acceptsProfiles 方法来检测某一个配置文件是否被激活加载，或者通过getActiveProfiles方法拿到所有被激活的配置文件。测试接口：
 
 ```java
 import org.springframework.beans.factory.annotation.Autowired;
@@ -359,9 +359,9 @@ pro
 
 
 
-## 2、YamlPropertiesFactoryBean
+## 2、YamlPropertiesFactoryBean 方式读取
 
-在Spring中还可以使用YamlPropertiesFactoryBean来读取自定义配置的yml文件，而不用再被拘束于application.yml及其激活的其他配置文件。在使用过程中，只需要通过setResources()方法设置自定义yml配置文件的存储路径，再通过getObject()方法获取Properties对象，后续就可以通过它获取具体的属性，下面看一个例子：
+在 Spring 中还可以使用 YamlPropertiesFactoryBean 来读取自定义配置的 yml 文件，而不用再被拘束于 application.yml 及其激活的其他配置文件。在使用过程中，只需要通过 setResources() 方法设置自定义 yml 配置文件的存储路径，再通过 getObject() 方法获取 Properties 对象，后续就可以通过它获取具体的属性，下面看一个例子：
 
 ```yaml
 spring:
@@ -407,7 +407,7 @@ male
 {person2.gender=male, person2.age=18, spring.profiles.active=pro, person2.name=hydra}
 ```
 
-但是这样的使用中有一个问题，那就是只有在这个接口的请求中（或者这个方法）能够取到这个属性的值，如果再写一个接口（或者方法），不使用YamlPropertiesFactoryBean读取配置文件，即使之前的方法已经读取过这个yml文件一次了，第二个接口取到的仍然还是空值。来对这个过程进行一下测试：
+但是这样的使用中有一个问题，那就是只有在这个接口的请求中（或者这个方法）能够取到这个属性的值，如果再写一个接口（或者方法），不使用 YamlPropertiesFactoryBean 读取配置文件，即使之前的方法已经读取过这个 yml 文件一次了，第二个接口取到的仍然还是空值。来对这个过程进行一下测试：
 
 ```java
 import org.springframework.beans.factory.annotation.Value;
@@ -465,7 +465,7 @@ null
 null
 ```
 
-想要解决这个问题也很简单，可以配合PropertySourcesPlaceholderConfigurer使用，它实现了BeanFactoryPostProcessor接口，也就是一个bean工厂后置处理器的实现，可以将配置文件的属性值加载到一个Properties文件中。使用方法如下：
+想要解决这个问题也很简单，可以配合 PropertySourcesPlaceholderConfigurer 使用，它实现了 BeanFactoryPostProcessor 接口，也就是一个 bean 工厂后置处理器的实现，可以将配置文件的属性值加载到一个 Properties 文件中。使用方法如下：
 
 ```java
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
@@ -489,7 +489,7 @@ public class PropertyConfig {
 }
 ```
 
-再次启动上面的主方法，结果如下，可以正常的取到application2.yml中的属性：
+再次启动上面的主方法，结果如下，可以正常的取到 application2.yml 中的属性：
 
 ```
 @Order(-1)先执行....
@@ -501,7 +501,7 @@ hydra
 male
 ```
 
-除了使用YamlPropertiesFactoryBean将yml解析成Properties外，其实我们还可以使用YamlMapFactoryBean解析yml成为`Map`，使用方法非常类似：
+除了使用 YamlPropertiesFactoryBean 将 yml 解析成 Properties 外，其实我们还可以使用 YamlMapFactoryBean 解析 yml 成为`Map`，使用方法非常类似：
 
 ```java
 import org.springframework.beans.factory.config.YamlMapFactoryBean;
@@ -535,9 +535,9 @@ public class TestApplication {
 
 
 
-## 3、ApplicationListener
+## 3、ApplicationListener 方式读取
 
-在上篇介绍原理的文章中，我们知道SpringBoot是通过监听事件的方式来加载和解析的yml文件，那么我们也可以仿照这个模式，来加载自定义的配置文件。
+在上篇介绍原理的文章中，我们知道 SpringBoot 是通过监听事件的方式来加载和解析的yml文件，那么我们也可以仿照这个模式，来加载自定义的配置文件。
 
 首先，定义一个类实现ApplicationListener接口，监听的事件类型为ApplicationEnvironmentPreparedEvent，并在构造方法中传入要解析的yml文件名，自定义的监听器中需要实现接口的`onApplicationEvent()`方法，当监听到ApplicationEnvironmentPreparedEvent事件时会被触发：
 
@@ -624,9 +624,9 @@ male
 
 
 
-## 4、SnakeYml
+## 4、SnakeYml 方式读取
 
-前面介绍的几种方式，在Spring环境下无需引入其他依赖就可以完成的，接下来要介绍的SnakeYml在使用前需要引入依赖，但是同时也可以脱离Spring环境单独使用。先引入依赖坐标：
+前面介绍的几种方式，在 Spring 环境下无需引入其他依赖就可以完成的，接下来要介绍的SnakeYml在使用前需要引入依赖，但是同时也可以脱离Spring环境单独使用。先引入依赖坐标：
 
 ```xml
 <dependency>
@@ -786,7 +786,7 @@ SnakeYml其实实现了非常多的功能，这里就不一一列举了，有兴
 
 
 
-## 5、jackson-dataformat-yaml
+## 5、jackson-dataformat-yaml 方式读取
 
 相比大家平常用jackson比较多的场景是用它来处理json，其实它也可以用来处理yml，使用前需要引入依赖：
 
@@ -876,7 +876,7 @@ class SinglePerson {
 }
 ```
 
-查看生成的yml文件，可以看到jackson对字符串类型严格的添加了引号，还在文档的开头添加了yml的链接符。至于其他jackson读写yml的复杂功能，大家可以在工作中自己去探索使用。
+查看生成的yml文件，可以看到 jackson 对字符串类型严格的添加了引号，还在文档的开头添加了 yml 的链接符。至于其他 jackson 读写 yml 的复杂功能，大家可以在工作中自己去探索使用。
 
 ```yaml
 ---

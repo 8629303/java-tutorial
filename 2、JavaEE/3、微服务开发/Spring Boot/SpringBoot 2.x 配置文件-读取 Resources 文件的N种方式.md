@@ -1,6 +1,6 @@
 > SpringBoot读取Resources文件：https://blog.csdn.net/myli92/article/details/129890193
 
-SpringBoot读取文件一般分为两种，一种是获取文件对象（File/URL）另一种是获取文件的流。
+SpringBoot 读取文件一般分为两种，一种是获取文件对象（File/URL）另一种是获取文件的流。
 
 # 方式 1： getClass.getResource
 

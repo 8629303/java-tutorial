@@ -3506,7 +3506,7 @@ User(id=2, createDate=2022-01-31 21:59:16.245, updateTimestamp=2022-01-31 21:59:
 
 
 
-### 自定义默认值设置注解
+### 自定义默认值注解（类似审计功能）
 
 > 参考文献 & 鸣谢：
 >
@@ -4502,6 +4502,12 @@ private Sex sex;
 
 
 
+### EntityGraph（性能优化注解）
+
+- JPA效率优化—@EntityGraph：https://juejin.cn/post/6869650227268157454
+
+
+
 ## 5、审计功能（Spring Data）
 
 > 参考文献 & 鸣谢：https://blog.csdn.net/qq_28804275/article/details/84801457
@@ -4702,8 +4708,6 @@ Hibernate:
     多对多：
         这个时候需要建立一个中间表，中间表中最少由2个字段组成，这2个字段作为外键指向2张表的主键又组成了联合主键
 ```
-
-
 
 
 
@@ -6396,7 +6400,7 @@ CacheEntity(Id=2, name=Mike, age=58) // 可以发现只发送了一次查询操�
 
 
 
-# Hibernate JPA 锁机制
+# Hibernate JPA 锁的机制
 
 当数据库并发访问的时候为了保证操作的一致性，那么往往会对并发数据的访问做出限制，例如：只允许一个会话处理，这样的机制就称为锁机制，而在`JPA`之中也支持锁机制的处理，而`JPA`支持两类锁：
 
@@ -7823,3 +7827,4 @@ public class User {
 4. CSDN（入秋枫叶）JPA注释详解参考手册：https://blog.csdn.net/yiyelanxin/article/details/100107335
 5. JPA注解大全详解参考手册：https://www.e-learn.cn/topic/2044460
 6. Chapter 4 - JPA Queries (JPQL / Criteria) (objectdb.com)：https://www.objectdb.com/java/jpa/query
+7. **JPA效率优化—@EntityGraph：https://juejin.cn/post/6869650227268157454**

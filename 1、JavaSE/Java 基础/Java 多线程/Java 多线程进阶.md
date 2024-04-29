@@ -8251,7 +8251,7 @@ private static final RejectedExecutionHandler defaultHandler = new AbortPolicy()
 - ThreadPoolExecutor.DiscardPolicy：当线程任务被拒绝的时候，将直接丢弃此任务；
 - ThreadPoolExecutor.DiscardOldestPolicy：当线程任务被拒绝的时候，线程池会自动放弃等待队列之中等待时间最长的任务，并且将被拒绝的任务添加到阻塞队列里面。
 
-操作示例 1：使用 CallerRunsPolicy 拒绝策略
+操作示例 1：使用 CallerRunsPolicy 拒绝策略【**推荐使用**】
 
 ```java
 import java.util.concurrent.Executors;
@@ -8719,6 +8719,328 @@ public RunnableScheduledFuture<?> take() throws InterruptedException {
 2. 采用 DelayedWorkQueue 作为任务队列。该队列是无界队列，所以任务一定能添加成功，但是当工作线程尝试从队列取任务执行时，只有最先到期的任务会出队，如果没有任务或者队首任务未到期，则工作线程会阻塞；
 3. ScheduledThreadPoolExecutor 的任务调度流程与 ThreadPoolExecutor 略有区别，最大的区别就是，先往队列添加任务，然后创建工作线程执行任务。
    另外，maximumPoolSize 这个参数对 ScheduledThreadPoolExecutor 其实并没有作用，因为除非把 corePoolSize 设置为0，这种情况下 ScheduledThreadPoolExecutor 只会创建一个属于非核心线程池的工作线程；否则，ScheduledThreadPoolExecutor 只会新建归属于核心线程池的工作线程，一旦核心线程池满了，就不再新建工作线程。
+
+
+
+## 5、ThreadPoolExecutor 线程池最佳实践
+
+> ThreadPoolExecutor线程池最佳实践：https://cloud.tencent.com/developer/article/2026557
+
+线程池初始化示例：
+
+```java
+private static final ThreadPoolExecutor pool; 
+static {
+    ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat("po-d etail-pool-%d").build();
+    pool = new ThreadPoolExecutor(4, 8, 60L, 
+                                  TimeUnit.MILLISECONDS, 
+                                  new LinkedBlockingQueue<>(512),  
+                                  hreadFactory, 
+                                  new ThreadPoolExecutor.AbortPolicy());
+    pool.allowCoreThreadTimeOut(true);
+}
+```
+
+-  threadFactory：给出带业务语义的线程命名；
+-  corePoolSize：快速启动 4 个线程处理该业务；
+-  maximumPoolSize：IO 密集型业务，当服务器是 4C8G 的，最大线程数设置为 4*2=8；
+-  keepAliveTime：服务器资源紧张，让空闲的线程快速释放；
+-  pool.allowCoreThreadTimeOut(true)：为了在资源紧张的时候，可以让线程释放，释放资源；
+-  workQueue：一个任务的执行时长在 100~300ms，业务高峰期 8 个线程，按照 10s 超时(已经很高了)。10s →8 个线程，可以处理 10 * 1000ms / 200ms * 8 = 400 个任务左右，往上再取一点，512 已经很多了；
+-  handler：极端情况下，一些任务只能丢弃，保护服务端。
+
+
+
+### 1、对线程池名称
+
+创建线程或线程池时请指定有意义的线程名称，方便出错时回溯，即 threadFactory 参数要构造好。建议不同类别的业务用不同的线程池。
+
+```java
+ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat("po-d etail-pool-%d").build();
+private static final ThreadPoolExecutor pool = new ThreadPoolExecutor(4, 8, 60L, 
+                                                                      TimeUnit.MILLISECONDS, 
+                                                                      new LinkedBlockingQueue<>(512),  
+                                                                      hreadFactory, 
+                                                                      new ThreadPoolExecutor.AbortPolicy());
+```
+
+
+
+### 2、工作队列的使用
+
+workQueue 不要使用无界队列，尽量使用有界队列。
+
+当 QPS 很高，发送数据很大，大量的任务被添加到这个无界 LinkedBlockingQueue 中，导致 CPU 和内存飙升服务器挂掉；而且会导致大量新任务在队列中堆积，最终导致 OOM。
+
+| 类型         | 代表                                      | 特点                                                         |
+| :----------- | :---------------------------------------- | :----------------------------------------------------------- |
+| 无界队列     | LinkedBlockingQueue                       | 无界                                                         |
+| 有界队列     | ArrayBlockingQueue、PriorityBlockingQueue | FIFO、优先级                                                 |
+| 同步移交队列 | SynchronousQueue                          | 线程之间移交的机制； 只有在使用无界线程池或者有饱和策略时才建议使用该队列 |
+
+建议优先使用：ArrayBlockingQueue、其次 LinkedBlockingQueue。【注意设置队列大小3、避免 Executors 创建线程池
+
+使用 ThreadPoolExecutor 的构造函数声明线程池，避免使用 Executors 类的 newFixedThreadPool 和 newCachedThreadPool。
+
+Executors 常用方法如下：
+
+1. newCachedThreadPool()：创建一个可缓存的线程池，调用 execute 将重用以前构造的线程（如果线程可用）。如果没有可用的线程，则创建一个新线程并添加到线程池中。终止并从缓存中移除那些已有 60 秒钟未被使用的线程。CachedThreadPool适用于并发执行大量短期耗时短的任务，或者负载较轻的服务器；
+2. newFiexedThreadPool(int nThreads)：创建固定数目线程的线程池，线程数小于nThreads时，提交新的任务会创建新的线程，当线程数等于nThreads时，提交新的任务后任务会被加入到阻塞队列，正在执行的线程执行完毕后从队列中取任务执行，FiexedThreadPool适用于负载略重但任务不是特别多的场景，为了合理利用资源，需要限制线程数量；
+3. newSingleThreadExecutor() 创建一个单线程化的 Executor，SingleThreadExecutor适用于串行执行任务的场景，每个任务按顺序执行，不需要并发执行；
+4. newScheduledThreadPool(int corePoolSize) 创建一个支持定时及周期性的任务执行的线程池，多数情况下可用来替代 Timer 类。ScheduledThreadPool中，返回了一个ScheduledThreadPoolExecutor实例，而ScheduledThreadPoolExecutor实际上继承了ThreadPoolExecutor。从代码中可以看出，ScheduledThreadPool基于ThreadPoolExecutor，corePoolSize大小为传入的corePoolSize，maximumPoolSize大小为Integer.MAX_VALUE，超时时间为0，workQueue为DelayedWorkQueue。实际上ScheduledThreadPool是一个调度池，其实现了schedule、scheduleAtFixedRate、scheduleWithFixedDelay三个方法，可以实现延迟执行、周期执行等操作；
+5. newSingleThreadScheduledExecutor() 创建一个corePoolSize为1的ScheduledThreadPoolExecutor；
+6. newWorkStealingPool(int parallelism)返回一个ForkJoinPool实例，ForkJoinPool 主要用于实现“分而治之”的算法，适合于计算密集型的任务。
+
+**Executors 类看起来功能比较强大、用起来还比较方便，但存在如下弊端**：
+
+1.  FiexedThreadPool 和 SingleThreadPool 任务队列长度为 Integer.MAX_VALUE，可能会堆积大量的请求，从而导致 OOM；
+2.  CachedThreadPool 和 ScheduledThreadPool 允许创建的线程数量为 Integer.MAX_VALUE，可能会创建大量的线程，从而导致 OOM；
+
+使用线程时，可以直接调用 ThreadPoolExecutor 的构造函数来创建线程池，并根据业务实际场景来设置 corePoolSize、blockingQueue、RejectedExecuteHandler 等参数。
+
+
+
+### 4、避免使用局部线程池
+
+使用局部线程池时，若任务执行完后没有执行shutdown()方法或有其他不当引用，极易造成系统资源耗尽。
+
+线程池是可以复用的，一定不要频繁创建线程池比如一个用户请求到了就单独创建一个线程池。
+
+```java
+@GetMapping("wrong")
+public String wrong() throws InterruptedException {
+    // 自定义线程池
+    ThreadPoolExecutor executor = new ThreadPoolExecutor(5,10,1L,
+                                                         TimeUnit.SECONDS,
+                                                         new ArrayBlockingQueue<>(100),
+                                                         new ThreadPoolExecutor.CallerRunsPolicy());
+    //  处理任务
+    executor.execute(() -> {
+        // ......
+    });
+    return "OK";
+}
+```
+
+出现这种问题的原因还是对于线程池认识不够，需要加强线程池的基础知识。
+
+
+
+### **5、合理设置线程池参数**
+
+在使用线程池时，很多同学都有这样的疑问，不知道如何配置线程数量，今天我们一起探讨一下这个问题。
+
+#### 1、经验值 & 粗略计算
+
+1、配置线程数量之前，首先要看任务的类型是 IO密集型，还是CPU密集型？
+
+- 什么是 IO密集型？比如：频繁读取磁盘上的数据，或者需要通过网络远程调用接口。
+- 什么是 CPU 密集型？比如：非常复杂的调用，循环次数很多，或者递归调用层次很深等。
+
+2、有一个简单并且适用面比较广的公式：
+
+- IO 密集型配置线程数经验值是：2N，其中 N 代表 CPU 核数。
+- CPU 密集型配置线程数经验值是：N + 1，其中 N 代表 CPU 核数。
+
+3、如果获取N的值？
+
+```java
+int availableProcessors = Runtime.getRuntime().availableProcessors();
+```
+
+4、那么问题来了，混合型（既包含IO密集型，又包含CPU密集型）的如何配置线程数？
+
+- 混合型如果 IO 密集型，和 CPU 密集型的执行时间相差不太大，可以拆分开，以便于更好配置。如果执行时间相差太大，优化的意义不大，比如 IO 密集型耗时 60s，CPU 密集型耗时 1s。
+
+
+
+#### 2、最佳线程数目算法
+
+除了上面介绍是经验值之外，其实还提供了计算公式：
+
+```
+最佳线程数 = （（线程等待时间+线程CPU时间）/ 线程CPU时间 ）* CPU数目
+```
+
+很显然线程等待时间所占比例越高，需要越多线程。线程CPU时间所占比例越高，需要越少线程。
+
+虽说最佳线程数目算法更准确，但是线程等待时间和线程CPU时间不好测量，实际情况使用得比较少，一般用经验值就差不多了。再配合系统压测，基本可以确定最适合的线程数。
+
+
+
+
+
+### 6、增加异常处理
+
+为了更好地发现、分析和解决问题，建议在使用多线程时增加对异常的处理，异常处理通常有下述方案：
+
+1.  在任务代码处增加 try...catch 异常处理
+2.  如果使用的 Future 方式，则可通过 Future 对象的 get 方法接收抛出的异常
+3.  为工作线程设置 setUncaughtExceptionHandler，在 uncaughtException 方法中处理异常
+
+虽然使用线程池有多种异常处理的方式，但在任务代码中，使用 try-catch 最通用，也能给不同任务的异常处理做精细化。
+
+如下 2 个操作示例分别演示 工作线程与线程池设置 setUncaughtExceptionHandler 处理异常的方式。
+
+操作示例 1：下面是一个示例代码，演示了如何为线程设置未捕获异常处理器
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        // 创建一个线程
+        Thread thread = new Thread(() -> {
+            // 抛出一个异常
+            throw new RuntimeException("Uncaught exception occurred!");
+        });
+
+        // 设置线程的未捕获异常处理器
+        thread.setUncaughtExceptionHandler((t, e) -> {
+            System.out.println("Unhandled exception in thread " + t.getName() + ": " + e.getMessage());
+        });
+
+        // 启动线程
+        thread.start();
+    }
+}
+```
+
+操作示例 2：下面是一个示例代码，演示了如何通过自定义线程工厂为线程池设置未捕获异常处理器：
+
+```java
+import java.util.concurrent.*;
+
+public class Main {
+    public static void main(String[] args) {
+        // 创建一个线程池，使用自定义线程工厂
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(
+            5,
+            10,
+            0L,
+            TimeUnit.MILLISECONDS,
+            new LinkedBlockingQueue<>(),
+            new CustomThreadFactory()
+        );
+
+        // 执行任务
+        executor.execute(() -> {
+            // 抛出一个异常
+            throw new RuntimeException("Uncaught exception occurred!");
+        });
+    }
+
+    // 自定义线程工厂
+    static class CustomThreadFactory implements ThreadFactory {
+        @Override
+        public Thread newThread(Runnable r) {
+            // 创建一个新线程
+            Thread thread = new Thread(r);
+
+            // 设置线程的未捕获异常处理器
+            thread.setUncaughtExceptionHandler((t, e) -> {
+                System.out.println("Unhandled exception in thread " + t.getName() + ": " + e.getMessage());
+            });
+
+            return thread;
+        }
+    }
+}
+```
+
+
+
+### 7、关闭线程池
+
+```javascript
+public void destroy() {
+    try {
+        poolExecutor.shutdown();
+        if (!poolExecutor.awaitTermination(AWAIT_TIMEOUT, TimeUnit.SECONDS)) {
+            poolExecutor.shutdownNow();
+        }
+    } catch (InterruptedException e) {
+        // 如果当前线程被中断，重新取消所有任务
+        pool.shutdownNow();
+        // 保持中断状态
+        Thread.currentThread().interrupt();
+    }
+}
+```
+
+为了实现优雅停机的目标，应当先调用 shutdown 方法，调用这个方法也就意味着，这个线程池不会再接收任何新的任务，但是已经提交的任务还会继续执行。之后,还应当调用 awaitTermination 方法，这个方法可以设定线程池在关闭之前的最大超时时间，如果在超时时间结束之前线程池能够正常关闭则会返回 true，否则，超时会返回 false。通常需要根据业务场景预估一个合理的超时时间，然后调用该方法。
+
+如果 awaitTermination 方法返回 false，但又希望尽可能在线程池关闭之后再做其他资源回收工作，可以考虑再调用一下 shutdownNow 方法，此时队列中所有尚未被处理的任务都会被丢弃，同时会设置线程池中每个线程的中断标志位。shutdownNow 并不保证一定可以让正在运行的线程停止工作，除非提交给线程的任务能够正确响应中断。
+
+
+
+### 8、allowsCoreThreadTimeOut 参数使用
+
+如果是资源紧张的应用，使用 allowsCoreThreadTimeOut 可以提高资源利用率。
+
+在 JDK1.6 之前，线程池会尽量保持 corePoolSize 个核心线程，即使这些线程闲置 了很长时间。这一点曾被开发者诟病，所以从 JDK1.6 开始，提供了方法 allowsCoreThr eadTimeOut，如果传参为 true，则允许闲置的核心线程被终止。
+
+
+
+### 9、考虑初始化所有核心线程
+
+对于请求量比较大的服务，可以在创建线程池的时候直接初始化所有核心线程，减少创建线程池带来的服务毛刺。
+
+调用 prestartAllCoreThreads() 方法来初始化所有的核心线程。接着，我们执行了一个任务，线程池会自动选择一个核心线程来执行任务。
+
+```java
+import java.util.concurrent.ThreadPoolExecutor;
+
+public class Main {
+    public static void main(String[] args) {
+        // 创建一个ThreadPoolExecutor，指定核心线程数为5，最大线程数为10，其他参数使用默认值
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(5, 10, 0L, java.util.concurrent.TimeUnit.MILLISECONDS);
+
+        // 初始化所有核心线程
+        executor.prestartAllCoreThreads();
+
+        // 执行任务
+        executor.execute(() -> {
+            System.out.println("Task executed by thread: " + Thread.currentThread().getName());
+        });
+    }
+}
+```
+
+
+
+### 10、监控线程池
+
+除了参数动态化之外，为了更好地使用线程池，需要对线程池的运行状况有感知，比如当前线程池的负载、分配的资源、任务的执行情况、任务类型（长任务、短任务）。
+
+美团的动态线程池的监控主要包括：线程池活跃度、任务的执行 Transaction（频率、耗时）、Reject 异常、线程池内部统计信息等等，既能帮助用户从多个维度分析线程池的使用情况，又能在出现问题第一时间通知到用户，从而避免故障或加速故障恢复。
+
+
+
+#### 1、运行时状态实时查看
+
+对于资源紧张的应用，如果担心线程池资源使用不当，可以利用 ThreadPoolExecutor 的 API 实现简单的监控，然后进行分析和优化。
+
+用户基于 JDK 原生线程池 ThreadPoolExecutor 提供的几个 public 的 getter 方法，可以读取到当前线程池的运行状态以及参数。
+
+动态化线程池基于这几个接口封装了运行时状态实时查看的功能，用户基于这个功能可以了解线程池的实时状态，比如当前有多少个工作线程，执行了多少个任务，队列中等待的任务数等等。
+
+
+
+#### 2、负载监控和告警
+
+线程池负载关注的核心问题是：基于当前线程池参数分配的资源够不够。
+
+-  事前，美团线程池定义了“活跃度”这个概念，让用户在发生Reject异常之前能够感知线程池负载问题（计算公式：线程池活跃度 = activeCount/maximumPoolSize），当活跃线程数趋向于 maximumPoolSize 时，表示线程负载趋高。
+-  事中，从两方面来看线程池的过载判定条件，一个是发生了 Reject 异常，一个是队列中有等待任务（支持定制阈值）。
+
+
+
+#### 3、任务级精细化监控
+
+在传统的线程池应用场景中，线程池中的任务执行情况对于用户来说是透明的。比如在一个具体的业务场景中，业务开发申请了一个线程池同时用于执行两种任务，一个是发消息任务、一个是发短信任务，这两类任务实际执行的频率和时长对于用户来说没有一个直观的感受，很可能这两类任务不适合共享一个线程池，但是由于用户无法感知，因此也无从优化。
+
+【美团动态化线程池内部实现了任务级别的埋点，且允许为不同的业务任务指定具有业务含义的名称，线程池内部基于这个名称做Transaction打点，基于这个功能，用户可以看到线程池内部任务级别的执行情况，且区分业务。
+
+主要可以监控以下信息：线程池名称、核心线程数、最大线程数、活跃线程数、队列类型、队列容量、队列使用情况、已完成任务数、拒绝任务数等】
 
 
 
@@ -13029,13 +13351,11 @@ completableFuture-threadPool:   1010
 
 
 
-## 12、CompletableFuture 注意事项及方法总结
-
-### 1、使用注意事项
+## 12、CompletableFuture 使用注意事项
 
 CompletableFuture 使我们的异步编程更加便利的、代码更加优雅的同时，我们也要关注下它，使用的一些注意点。
 
-#### 1、Future 需要获取返回值，才能获取异常信息
+### 1、Future 需要获取返回值，才能获取异常信息
 
 Future 需要获取返回值，才能获取到异常信息。如果不加 get() 或 join() 方法，看不到异常信息。使用的时候，考虑是否加 try/catch 或使用 exceptionally 方法。
 
@@ -13054,7 +13374,7 @@ CompletableFuture<Double> future = CompletableFuture.supplyAsync(() -> {
 
 
 
-#### 2、get 方法是阻塞的，不推荐使用 join 方法
+### 2、get 方法是阻塞的，不推荐使用 join 方法
 
 CompletableFuture 的 get() 方法是阻塞的，如果使用它来获取异步调用的返回值，需要添加超时时间。由于join方法没有超时设置，所以也不推荐了。
 
@@ -13068,21 +13388,90 @@ completableFuture.get(5, TimeUnit.SECONDS);
 
 
 
-#### 3、不建议使用默认线程池
+### 3、不建议使用默认线程池
+
+结论：使用 CompletableFuture 异步执行任务时，请务必自定义线程池。
+
+原因：
+
+- CompletableFuture 默认使用的线程池是 ForkJoinPool.commonPool()，而 commonPool 是当前虚拟机进程上的所有 CompletableFuture、parallelStream（并行流） 共享的。
+- CompletableFuture 是否使用默认线程池，和机器的CPU核心数有关。当CPU核心数 - 1 > 1时，CompletableFuture 才会使用默认的线程池，否则机器将会为每个 CompletableFuture 的任务创建一个新线程去执行。
+
+所以，在单核或双核机器上，如果使用 CompletableFuture 没有自定义线程池，CompletableFuture 等于没有使用线程池，机器会为每个任务创建一个新线程，且会有资源耗尽的风险。
+
+在多核机器上，默认线程池池内的核心线程数为机器核心数 - 1。对于一个 4 核的机器来说，最只有 3 个线程，对于 IO 密集型的任务来说，这其实远远不够用，从而导致大量的 IO 任务在等待，甚至服务挂掉。
 
 CompletableFuture 代码中许多方法使用了默认的 **「ForkJoin线程池」**，处理的线程个数是电脑 **「CPU核数-1」**。所以多个异步任务执行时，其实使用的是同一个 ForkJoin.commonPool 线程池，在大量请求过来的时候，处理逻辑复杂的话，响应会很慢。一般建议使用自定义线程池，优化线程池配置参数。
 
+应用场景：
+
+1. 记一次生产环境中的问题。需求是修改一批数据，由于当时并没有提供批量修改的接口，所以只能循环去修改数据，又想到可以使用 CompletableFuture 异步去执行，于是在循环中使用了 CompletableFuture，且没有自定义线程池。本地测试时是通过 IDEA 启动项目只测试了这个功能，没有问题。合到生产环境进行发布验证时，我们组的人都在进行功能验证，并发量增大，导致服务报错。在日志中捕获到了异常信息，有一个线程一直处于等待状态，导致服务卡死。
+2. 虽然在处理 IO 密集型任务时，任务越多，CPU 效率越高，但也有一个限度。所以尽量避免在循环中使用 CompletableFuture，可以将子任务放在循环中，将循环作为一个任务使用 CompletableFuture。
 
 
-#### 4、自定义线程池时，注意饱和策略
+另外，Java 流中的并行流（parallelStream）也使用的是默认的线程池，需要谨慎使用。
+
+
+
+### 4、自定义线程池时，注意饱和策略
 
 CompletableFuture.get() 方法是阻塞的，我们一般建议使用 future.get(5, TimeUnit.SECONDS)。并且一般建议使用自定义线程池。
 
-但是如果线程池拒绝策略是 DiscardPolicy 或者 DiscardOldestPolicy，当线程池饱和时，会直接丢弃任务，不会抛弃异常。因此建议，CompletableFuture 线程池策略最好使用 AbortPolicy，然后耗时的异步线程，做好线程池隔离哦。
+但是如果线程池拒绝策略是 DiscardPolicy 或者 DiscardOldestPolicy，当线程池饱和时，会直接丢弃任务，不会抛弃异常。因此建议，CompletableFuture 线程池策略最好使用 CallerRunsPolicy，其次是使用 AbortPolicy，然后耗时的异步线程，做好线程池隔离哦。
 
 
 
-### 2、发展更新历史
+### 5、禁止嵌套使用 CompletableFuture
+
+嵌套使用 CompletableFuture 可能会使相互依赖的子任务互相等待资源的释放而出现死锁，导致服务崩溃。
+
+假设一种场景，接口 A 有一个子任务 B，B 有一个子任务 C，在编码实现时为每个任务都创建了 CompletableFuture 异步线程，且用的是同一个线程池（该线程池的最大线程数为 2）。在程序执行过程中，程序会依次给 A、B 分配一个线程去执行任务。由于线程池的最大线程数为 2，C 的线程会在队列中等待前面的某一个线程执行完成后释放资源才可执行。但是，由于 C 是 B 的子任务，B 需要等到 C 执行完自己才能执行然后释放资源，同样，A 也需要等待 B 执行完才能释放资源，此时系统进入死锁状态，服务卡死。
+
+分析业务代码，类似如下：【外层全部占用线程池的线程，而里面有需要等待内层的CompletableFuture返回结果，而内层又需要等待外层释放线程】
+
+```java
+@Test
+void test() throws Exception {
+    // 使用此就会卡住
+    ExecutorService pool = Executors.newFixedThreadPool(1);
+    // 使用此就不会
+    ExecutorService pool = ForkJoinPool.commonPool();
+
+    CompletableFuture<String> resp = CompletableFuture.supplyAsync(() -> {
+        CompletableFuture<String> result = CompletableFuture.supplyAsync(() -> {
+            try {
+                SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return "dd";
+        }, pool);
+        try {
+            result.get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "ok";
+    }, pool);
+    resp.get();
+}
+```
+
+结果
+
+1. 死锁造成的，ExecutorService 配置的足够大就不会出错，但是这不治根。
+2. 为什么 forkjoinpool 就不会出错呢？forkjoinpool 会源源不断的创建线程。
+
+解决方案
+
+1. 不要嵌套使用 CompletableFuture
+2. 如果硬要嵌套使用 CompletableFuture，注意给不同的 CompletableFuture 设置不同的自定义线程池。
+
+
+
+## 13、CompletableFuture 方法总结
+
+### 1、发展更新历史
 
 1、Java 8 中新增的主要工具 CompletableFuture。
 
@@ -13196,7 +13585,7 @@ default Future.State state()
 
 
 
-## 13、CompletableFuture 最优实践
+## 14、CompletableFuture 最优实践
 
 ### 1、Stream + CompletableFuture 结合使用
 
@@ -15274,6 +15663,686 @@ class Book {
 你只要能够理解这几个 Flow 内部接口的使用，那么并且能够理解这种所谓的订阅与发布模式的思想就足够了，为的是后续的学习打下一些理论的概念。
 
 
+
+
+
+# 0x01、Java 线程池最佳实践【JavaGuide】
+
+> Java 线程池最佳实践：https://github.com/Snailclimb/JavaGuide/blob/main/docs/java/concurrent/java-thread-pool-best-practices.md
+
+## 1、正确声明线程池
+
+**线程池必须手动通过 `ThreadPoolExecutor` 的构造函数来声明，避免使用`Executors` 类创建线程池，会有 OOM 风险。**
+
+`Executors` 返回线程池对象的弊端如下(后文会详细介绍到)：
+
+- **`FixedThreadPool` 和 `SingleThreadExecutor`**：使用的是无界的 `LinkedBlockingQueue`，任务队列最大长度为 `Integer.MAX_VALUE`,可能堆积大量的请求，从而导致 OOM。
+- **`CachedThreadPool`**：使用的是同步队列 `SynchronousQueue`, 允许创建的线程数量为 `Integer.MAX_VALUE` ，可能会创建大量线程，从而导致 OOM。
+- **`ScheduledThreadPool` 和 `SingleThreadScheduledExecutor`** : 使用的无界的延迟阻塞队列`DelayedWorkQueue`，任务队列最大长度为 `Integer.MAX_VALUE`,可能堆积大量的请求，从而导致 OOM。
+
+说白了就是：**使用有界队列，控制线程创建数量。**
+
+除了避免 OOM 的原因之外，不推荐使用 `Executors`提供的两种快捷的线程池的原因还有：
+
+- 实际使用中需要根据自己机器的性能、业务场景来手动配置线程池的参数比如核心线程数、使用的任务队列、饱和策略等等。
+- 我们应该显示地给我们的线程池命名，这样有助于我们定位问题。
+
+
+
+## 2、监测线程池运行状态
+
+你可以通过一些手段来检测线程池的运行状态比如 SpringBoot 中的 Actuator 组件。
+
+除此之外，我们还可以利用 `ThreadPoolExecutor` 的相关 API 做一个简陋的监控。从下图可以看出， `ThreadPoolExecutor`提供了获取线程池当前的线程数和活跃线程数、已经执行完成的任务数、正在排队中的任务数等等。
+
+![threadpool-methods-information](./Java 多线程进阶.assets/image-20240429162046123.png)
+
+下面是一个简单的 Demo。`printThreadPoolStatus()`会每隔一秒打印出线程池的线程数、活跃线程数、完成的任务数、以及队列中的任务数。
+
+```java
+/**
+ * 打印线程池的状态
+ *
+ * @param threadPool 线程池对象
+ */
+public static void printThreadPoolStatus(ThreadPoolExecutor threadPool) {
+    ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(1, createThreadFactory("print-images/thread-pool-status", false));
+    scheduledExecutorService.scheduleAtFixedRate(() -> {
+        log.info("=========================");
+        log.info("ThreadPool Size: [{}]", threadPool.getPoolSize());
+        log.info("Active Threads: {}", threadPool.getActiveCount());
+        log.info("Number of Tasks : {}", threadPool.getCompletedTaskCount());
+        log.info("Number of Tasks in Queue: {}", threadPool.getQueue().size());
+        log.info("=========================");
+    }, 0, 1, TimeUnit.SECONDS);
+}
+```
+
+
+
+## 3、建议不同类别的业务用不同的线程池
+
+很多人在实际项目中都会有类似这样的问题：**我的项目中多个业务需要用到线程池，是为每个线程池都定义一个还是说定义一个公共的线程池呢？**
+
+一般建议是不同的业务使用不同的线程池，配置线程池的时候根据当前业务的情况对当前线程池进行配置，因为不同的业务的并发以及对资源的使用情况都不同，重心优化系统性能瓶颈相关的业务。
+
+**我们再来看一个真实的事故案例！** (本案例来源自：[《线程池运用不当的一次线上事故》](https://heapdump.cn/article/646639) ，很精彩的一个案例)
+
+![案例代码概览](./Java 多线程进阶.assets/image-20240429162046124.png)
+
+上面的代码可能会存在死锁的情况，为什么呢？画个图给大家捋一捋。
+
+试想这样一种极端情况：假如我们线程池的核心线程数为 **n**，父任务（扣费任务）数量为 **n**，父任务下面有两个子任务（扣费任务下的子任务），其中一个已经执行完成，另外一个被放在了任务队列中。由于父任务把线程池核心线程资源用完，所以子任务因为无法获取到线程资源无法正常执行，一直被阻塞在队列中。父任务等待子任务执行完成，而子任务等待父任务释放线程池资源，这也就造成了 **"死锁"** 。
+
+![线程池使用不当导致死锁](./Java 多线程进阶.assets/image-20240429162046125.png)
+
+解决方法也很简单，就是新增加一个用于执行子任务的线程池专门为其服务。
+
+
+
+## 4、别忘记给线程池命名
+
+初始化线程池的时候需要显示命名（设置线程池名称前缀），有利于定位问题。
+
+默认情况下创建的线程名字类似 `pool-1-thread-n` 这样的，没有业务含义，不利于我们定位问题。
+
+给线程池里的线程命名通常有下面两种方式：
+
+**1、利用 guava 的 `ThreadFactoryBuilder`**
+
+```java
+ThreadFactory threadFactory = new ThreadFactoryBuilder()
+                        .setNameFormat(threadNamePrefix + "-%d")
+                        .setDaemon(true).build();
+ExecutorService threadPool = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.MINUTES, workQueue, threadFactory)
+```
+
+**2、自己实现 `ThreadFactory`。**
+
+```java
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
+
+/**
+ * 线程工厂，它设置线程名称，有利于我们定位问题。
+ */
+public final class NamingThreadFactory implements ThreadFactory {
+
+    private final AtomicInteger threadNum = new AtomicInteger();
+    private final String name;
+
+    /**
+     * 创建一个带名字的线程池生产工厂
+     */
+    public NamingThreadFactory(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public Thread newThread(Runnable r) {
+        Thread t = new Thread(r);
+        t.setName(name + " [#" + threadNum.incrementAndGet() + "]");
+        return t;
+    }
+}
+```
+
+
+
+## 5、正确配置线程池参数
+
+说到如何给线程池配置参数，美团的骚操作至今让我难忘（后面会提到）！
+
+我们先来看一下各种书籍和博客上一般推荐的配置线程池参数的方式，可以作为参考。
+
+### 常规操作
+
+很多人甚至可能都会觉得把线程池配置过大一点比较好！我觉得这明显是有问题的。就拿我们生活中非常常见的一例子来说：**并不是人多就能把事情做好，增加了沟通交流成本。你本来一件事情只需要 3 个人做，你硬是拉来了 6 个人，会提升做事效率嘛？我想并不会。** 线程数量过多的影响也是和我们分配多少人做事情一样，对于多线程这个场景来说主要是增加了**上下文切换** 成本。不清楚什么是上下文切换的话，可以看我下面的介绍。
+
+> 上下文切换：
+>
+> 多线程编程中一般线程的个数都大于 CPU 核心的个数，而一个 CPU 核心在任意时刻只能被一个线程使用，为了让这些线程都能得到有效执行，CPU 采取的策略是为每个线程分配时间片并轮转的形式。当一个线程的时间片用完的时候就会重新处于就绪状态让给其他线程使用，这个过程就属于一次上下文切换。概括来说就是：当前任务在执行完 CPU 时间片切换到另一个任务之前会先保存自己的状态，以便下次再切换回这个任务时，可以再加载这个任务的状态。**任务从保存到再加载的过程就是一次上下文切换**。
+>
+> 上下文切换通常是计算密集型的。也就是说，它需要相当可观的处理器时间，在每秒几十上百次的切换中，每次切换都需要纳秒量级的时间。所以，上下文切换对系统来说意味着消耗大量的 CPU 时间，事实上，可能是操作系统中时间消耗最大的操作。
+>
+> Linux 相比与其他操作系统（包括其他类 Unix 系统）有很多的优点，其中有一项就是，其上下文切换和模式切换的时间消耗非常少。
+
+类比于实现世界中的人类通过合作做某件事情，我们可以肯定的一点是线程池大小设置过大或者过小都会有问题，合适的才是最好。
+
+- 如果我们设置的线程池数量太小的话，如果同一时间有大量任务/请求需要处理，可能会导致大量的请求/任务在任务队列中排队等待执行，甚至会出现任务队列满了之后任务/请求无法处理的情况，或者大量任务堆积在任务队列导致 OOM。这样很明显是有问题的，CPU 根本没有得到充分利用。
+- 如果我们设置线程数量太大，大量线程可能会同时在争取 CPU 资源，这样会导致大量的上下文切换，从而增加线程的执行时间，影响了整体执行效率。
+
+有一个简单并且适用面比较广的公式：
+
+- **CPU 密集型任务(N+1)：** 这种任务消耗的主要是 CPU 资源，可以将线程数设置为 N（CPU 核心数）+1。比 CPU 核心数多出来的一个线程是为了防止线程偶发的缺页中断，或者其它原因导致的任务暂停而带来的影响。一旦任务暂停，CPU 就会处于空闲状态，而在这种情况下多出来的一个线程就可以充分利用 CPU 的空闲时间。
+- **I/O 密集型任务(2N)：** 这种任务应用起来，系统会用大部分的时间来处理 I/O 交互，而线程在处理 I/O 的时间段内不会占用 CPU 来处理，这时就可以将 CPU 交出给其它线程使用。因此在 I/O 密集型任务的应用中，我们可以多配置一些线程，具体的计算方法是 2N。
+
+**如何判断是 CPU 密集任务还是 IO 密集任务？**
+
+CPU 密集型简单理解就是利用 CPU 计算能力的任务比如你在内存中对大量数据进行排序。但凡涉及到网络读取，文件读取这类都是 IO 密集型，这类任务的特点是 CPU 计算耗费时间相比于等待 IO 操作完成的时间来说很少，大部分时间都花在了等待 IO 操作完成上。
+
+拓展一下（参见：[issue#1737](https://github.com/Snailclimb/JavaGuide/issues/1737)）：
+
+线程数更严谨的计算的方法应该是：`最佳线程数 = N（CPU 核心数）∗（1+WT（线程等待时间）/ST（线程计算时间））`，其中 `WT（线程等待时间）=线程运行总时间 - ST（线程计算时间）`。
+
+线程等待时间所占比例越高，需要越多线程。线程计算时间所占比例越高，需要越少线程。
+
+我们可以通过 JDK 自带的工具 VisualVM 来查看 `WT/ST` 比例。
+
+CPU 密集型任务的 `WT/ST` 接近或者等于 0，因此， 线程数可以设置为 N（CPU 核心数）∗（1+0）= N，和我们上面说的 N（CPU 核心数）+1 差不多。
+
+IO 密集型任务下，几乎全是线程等待时间，从理论上来说，你就可以将线程数设置为 2N（按道理来说，WT/ST 的结果应该比较大，这里选择 2N 的原因应该是为了避免创建过多线程吧）。
+
+**注意**：上面提到的公示也只是参考，实际项目不太可能直接按照公式来设置线程池参数，毕竟不同的业务场景对应的需求不同，具体还是要根据项目实际线上运行情况来动态调整。接下来介绍的美团的线程池参数动态配置这种方案就非常不错，很实用！
+
+
+
+### 美团的骚操作
+
+美团技术团队在[《Java 线程池实现原理及其在美团业务中的实践》](https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html)这篇文章中介绍到对线程池参数实现可自定义配置的思路和方法。
+
+美团技术团队的思路是主要对线程池的核心参数实现自定义可配置。这三个核心参数是：
+
+- **`corePoolSize` :** 核心线程数线程数定义了最小可以同时运行的线程数量。
+- **`maximumPoolSize` :** 当队列中存放的任务达到队列容量的时候，当前可以同时运行的线程数量变为最大线程数。
+- **`workQueue`:** 当新任务来的时候会先判断当前运行的线程数量是否达到核心线程数，如果达到的话，新任务就会被存放在队列中。
+
+**为什么是这三个参数？**
+
+我在这篇[《新手也能看懂的线程池学习总结》](https://mp.weixin.qq.com/s?__biz=Mzg2OTA0Njk0OA==&mid=2247485808&idx=1&sn=1013253533d73450cef673aee13267ab&chksm=cea246bbf9d5cfad1c21316340a0ef1609a7457fea4113a1f8d69e8c91e7d9cd6285f5ee1490&token=510053261&lang=zh_CN&scene=21#wechat_redirect) 中就说过这三个参数是 `ThreadPoolExecutor` 最重要的参数，它们基本决定了线程池对于任务的处理策略。
+
+**如何支持参数动态配置？** 且看 `ThreadPoolExecutor` 提供的下面这些方法。
+
+![threadpoolexecutor-methods](./Java 多线程进阶.assets/image-20240429162046126.png)
+
+格外需要注意的是`corePoolSize`， 程序运行期间的时候，我们调用 `setCorePoolSize（）`这个方法的话，线程池会首先判断当前工作线程数是否大于`corePoolSize`，如果大于的话就会回收工作线程。
+
+另外，你也看到了上面并没有动态指定队列长度的方法，美团的方式是自定义了一个叫做 `ResizableCapacityLinkedBlockIngQueue` 的队列（主要就是把`LinkedBlockingQueue`的 capacity 字段的 final 关键字修饰给去掉了，让它变为可变的）。
+
+最终实现的可动态修改线程池参数效果如下。👏👏👏
+
+![动态配置线程池参数最终效果](./Java 多线程进阶.assets/image-20240429162046127.png)
+
+如果我们的项目也想要实现这种效果的话，可以借助现成的开源项目：
+
+- **[Hippo4j](https://github.com/opengoofy/hippo4j)**：异步线程池框架，支持线程池动态变更&监控&报警，无需修改代码轻松引入。支持多种使用模式，轻松引入，致力于提高系统运行保障能力。
+- **[Dynamic TP](https://github.com/dromara/dynamic-tp)**：轻量级动态线程池，内置监控告警功能，集成三方中间件线程池管理，基于主流配置中心（已支持 Nacos、Apollo，Zookeeper、Consul、Etcd，可通过 SPI 自定义实现）。
+
+
+
+## 6、别忘记关闭线程池
+
+当线程池不再需要使用时，应该显式地关闭线程池，释放线程资源。
+
+线程池提供了两个关闭方法：
+
+- **`shutdown（）`** :关闭线程池，线程池的状态变为 `SHUTDOWN`。线程池不再接受新任务了，但是队列里的任务得执行完毕。
+- **`shutdownNow（）`** :关闭线程池，线程池的状态变为 `STOP`。线程池会终止当前正在运行的任务，停止处理排队的任务并返回正在等待执行的 List。
+
+调用完 `shutdownNow` 和 `shuwdown` 方法后，并不代表线程池已经完成关闭操作，它只是异步的通知线程池进行关闭处理。如果要同步等待线程池彻底关闭后才继续往下执行，需要调用`awaitTermination`方法进行同步等待。
+
+在调用 `awaitTermination()` 方法时，应该设置合理的超时时间，以避免程序长时间阻塞而导致性能问题。另外。由于线程池中的任务可能会被取消或抛出异常，因此在使用 `awaitTermination()` 方法时还需要进行异常处理。`awaitTermination()` 方法会抛出 `InterruptedException` 异常，需要捕获并处理该异常，以避免程序崩溃或者无法正常退出。
+
+```java
+// ...
+// 关闭线程池
+executor.shutdown();
+try {
+    // 等待线程池关闭，最多等待5分钟
+    if (!executor.awaitTermination(5, TimeUnit.MINUTES)) {
+        // 如果等待超时，则打印日志
+        System.err.println("线程池未能在5分钟内完全关闭");
+    }
+} catch (InterruptedException e) {
+    // 异常处理
+}
+```
+
+
+
+## 7、线程池尽量不要放耗时任务
+
+线程池本身的目的是为了提高任务执行效率，避免因频繁创建和销毁线程而带来的性能开销。如果将耗时任务提交到线程池中执行，可能会导致线程池中的线程被长时间占用，无法及时响应其他任务，甚至会导致线程池崩溃或者程序假死。
+
+因此，在使用线程池时，我们应该尽量避免将耗时任务提交到线程池中执行。对于一些比较耗时的操作，如网络请求、文件读写等，可以采用异步操作的方式来处理，以避免阻塞线程池中的线程。
+
+
+
+## 8、线程池使用的一些小坑
+
+### 重复创建线程池的坑
+
+线程池是可以复用的，一定不要频繁创建线程池比如一个用户请求到了就单独创建一个线程池。
+
+```java
+@GetMapping("wrong")
+public String wrong() throws InterruptedException {
+    // 自定义线程池
+    ThreadPoolExecutor executor = new ThreadPoolExecutor(5,10,1L,TimeUnit.SECONDS,new ArrayBlockingQueue<>(100),new ThreadPoolExecutor.CallerRunsPolicy());
+
+    //  处理任务
+    executor.execute(() -> {
+      // ......
+    }
+    return "OK";
+}
+```
+
+出现这种问题的原因还是对于线程池认识不够，需要加强线程池的基础知识。
+
+
+
+### Spring 内部线程池的坑
+
+使用 Spring 内部线程池时，一定要手动自定义线程池，配置合理的参数，不然会出现生产问题（一个请求创建一个线程）。
+
+```java
+@Configuration
+@EnableAsync
+public class ThreadPoolExecutorConfig {
+
+    @Bean(name="threadPoolExecutor")
+    public Executor threadPoolExecutor(){
+        ThreadPoolTaskExecutor threadPoolExecutor = new ThreadPoolTaskExecutor();
+        int processNum = Runtime.getRuntime().availableProcessors(); // 返回可用处理器的Java虚拟机的数量
+        int corePoolSize = (int) (processNum / (1 - 0.2));
+        int maxPoolSize = (int) (processNum / (1 - 0.5));
+        threadPoolExecutor.setCorePoolSize(corePoolSize); // 核心池大小
+        threadPoolExecutor.setMaxPoolSize(maxPoolSize); // 最大线程数
+        threadPoolExecutor.setQueueCapacity(maxPoolSize * 1000); // 队列程度
+        threadPoolExecutor.setThreadPriority(Thread.MAX_PRIORITY);
+        threadPoolExecutor.setDaemon(false);
+        threadPoolExecutor.setKeepAliveSeconds(300);// 线程空闲时间
+        threadPoolExecutor.setThreadNamePrefix("test-Executor-"); // 线程名字前缀
+        return threadPoolExecutor;
+    }
+}
+```
+
+
+
+### 线程池和 ThreadLocal 共用的坑
+
+线程池和 `ThreadLocal`共用，可能会导致线程从`ThreadLocal`获取到的是旧值/脏数据。这是因为线程池会复用线程对象，与线程对象绑定的类的静态属性 `ThreadLocal` 变量也会被重用，这就导致一个线程可能获取到其他线程的`ThreadLocal` 值。
+
+不要以为代码中没有显示使用线程池就不存在线程池了，像常用的 Web 服务器 Tomcat 处理任务为了提高并发量，就使用到了线程池，并且使用的是基于原生 Java 线程池改进完善得到的自定义线程池。
+
+当然了，你可以将 Tomcat 设置为单线程处理任务。不过，这并不合适，会严重影响其处理任务的速度。
+
+```properties
+server.tomcat.max-threads=1
+```
+
+解决上述问题比较建议的办法是使用阿里巴巴开源的 `TransmittableThreadLocal`(`TTL`)。`TransmittableThreadLocal`类继承并加强了 JDK 内置的`InheritableThreadLocal`类，在使用线程池等会池化复用线程的执行组件情况下，提供`ThreadLocal`值的传递功能，解决异步执行时上下文传递的问题。
+
+`TransmittableThreadLocal` 项目地址：<https://github.com/alibaba/transmittable-thread-local> 。
+
+
+
+# 0x02、Java多线程：从基本概念到避坑指南
+
+> Java多线程：从基本概念到避坑指南：https://juejin.cn/post/7005369339747106853
+
+## 1. 多线程基本概念
+
+### 1、轻量级进程
+
+在JVM中，一个线程，其实是一个轻量级进程（LWP）。所谓的轻量级进程，其实是用户进程调用系统内核，所提供的一套接口。实际上，它还要调用更加底层的内核线程（KLT）。
+
+实际上，JVM的线程创建销毁以及调度等，都是依赖于操作系统的。如果你看一下Thread类里面的多个函数，你会发现很多都是native的，直接调用了底层操作系统的函数。
+
+下图是JVM在Linux上简单的线程模型。
+
+![image-20240429162046128](./Java 多线程进阶.assets/image-20240429162046128.png)
+
+可以看到，不同的线程在进行切换的时候，会频繁在用户态和内核态进行状态转换。这种切换的代价是比较大的，也就是我们平常所说的上下文切换（Context Switch）。
+
+
+
+### 2、JMM
+
+在介绍线程同步之前，我们有必要介绍一个新的名词，那就是JVM的内存模型JMM。
+
+JMM并不是说堆、metaspace这种内存的划分，它是一个完全不同的概念，指的是与线程相关的Java运行时线程内存模型。
+
+由于Java代码在执行的时候，很多指令都不是原子的，如果这些值的执行顺序发生了错位，就会获得不同的结果。比如，i++的动作就可以翻译成以下的字节码。
+
+```java
+getfield      // Field value:I
+iconst_1
+iadd
+putfield      // Field value:I
+```
+
+这还只是代码层面的。如果再加上CPU每核的各级缓存，这个执行过程会变得更加细腻。如果我们希望执行完`i++`之后，再执行`i--`，仅靠初级的字节码指令，是无法完成的。我们需要一些同步手段。
+
+![image-20240429162046129](./Java 多线程进阶.assets/image-20240429162046129.png)
+
+上图就是JMM的内存模型，它分为主存储器（Main Memory）和工作存储器（Working Memory）两种。我们平常在Thread中操作这些变量，其实是操作的主存储器的一个副本。当修改完之后，还需要重新刷到主存储器上，其他的线程才能够知道这些变化。
+
+### 3、Java 中常见的线程同步方式
+
+为了完成JMM的操作，完成线程之间的变量同步，Java提供了非常多的同步手段。
+
+1. Java 的基类 Object 中，提供了 wait 和 notify 的原语，来完成 monitor 之间的同步。不过这种操作我们在业务编程中很少遇见
+2. 使用 synchronized 对方法进行同步，或者锁住某个对象以完成代码块的同步
+3. 使用 concurrent 包里面的可重入锁。这套锁是建立在 AQS   之上的
+4. 使用 volatile 轻量级同步关键字，实现变量的实时可见性
+5. 使用 Atomic 系列，完成自增自减
+6. 使用 ThreadLocal 线程局部变量，实现线程封闭
+7. 使用 concurrent 包提供的各种工具，比如 LinkedBlockingQueue 来实现生产者消费者。本质还是 AQS
+8. 使用 Thread 的 join，以及各种 await 方法，完成并发任务的顺序执行
+
+从上面的描述可以看出，多线程编程要学的东西可实在太多了。幸运的是，同步方式虽然千变万化，但我们创建线程的方式却没几种。
+
+第一类就是 Thread 类。大家都知道有两种实现方式。第一可以继承 Thread 覆盖它的run方法；第二种是实现 Runnable 接口，实现它的 run      方法；而第三种创建线程的方法，就是通过线程池。
+
+其实，到最后，就只有一种启动方式，那就是 Thread。线程池和 Runnable，不过是一种封装好的快捷方式罢了。
+
+多线程这么复杂，这么容易出问题，那常见的都有那些问题，我们又该如何避免呢？下面，我将介绍10个高频出现的坑，并给出解决方案。
+
+
+
+## 2、避坑指南
+
+![image-20240429162046130](./Java 多线程进阶.assets/image-20240429162046130.png)
+
+### 1、线程池打爆机器
+
+首先，我们聊一个非常非常低级，但又产生了严重后果的多线程错误。
+
+通常，我们创建线程的方式有 Thread，Runnable 和线程池三种。随着 Java1.8 的普及，现在最常用的就是线程池方式。
+
+有一次，我们线上的服务器出现了僵死，就连远程ssh，都登录不上，只能无奈的重启。大家发现，只要启动某个应用，过不了几分钟，就会出现这种情况。最终定位到了几行让人啼笑皆非的代码。
+
+有位对多线程不太熟悉的同学，使用了线程池去异步处理消息。通常，我们都会把线程池作为类的静态变量，或者是成员变量。但是这位同学，却将它放在了方法内部。也就是说，每当有一个请求到来的时候，都会创建一个新的线程池。当请求量一增加，系统资源就被耗尽，最终造成整个机器的僵死。
+
+```java
+void realJob(){
+    ThreadPoolExecutor exe = new ThreadPoolExecutor(...);
+    exe.submit(new Runnable(){...})
+}
+```
+
+这种问题如何去避免？只能通过代码  review。所以多线程相关的代码，哪怕是非常简单的同步关键字，都要交给有经验的人去写。即使没有这种条件，也要非常仔细的对这些代码进行 review。
+
+
+
+### 2、锁要关闭
+
+相比较 synchronized 关键字加的独占锁，concurrent 包里面的 Lock 提供了更多的灵活性。可以根据需要，选择公平锁与非公平锁、读锁与写锁。
+
+但 Lock 用完之后是要关闭的，也就是 lock 和 unlock 要成对出现，否则就容易出现锁泄露，造成了其他的线程永远了拿不到这个锁。
+
+如下面的代码，我们在调用 lock 之后，发生了异常，try 中的执行逻辑将被中断，unlock 将永远没有机会执行。在这种情况下，线程获取的锁资源，将永远无法释放。
+
+```java
+private final Lock lock = new ReentrantLock();
+void doJob(){
+    try{
+        lock.lock();
+        //发生了异常
+        lock.unlock();
+    }catch(Exception e){
+    }
+}
+```
+
+正确的做法，就是将 unlock 函数，放到 finally 块中，确保它总是能够执行。
+
+由于 lock 也是一个普通的对象，是可以作为函数的参数的。如果你把 lock 在函数之间传来传去的，同样会有时序逻辑混乱的情况。在平时的编码中，也要避免这种把 lock 当参数的情况。
+
+
+
+### 3、wait 要包两层
+
+Object 作为 Java 的基类，提供了四个方法`wait` `wait(timeout)` `notify` `notifyAll` ，用来处理线程同步问题，可以看出 wait 等函数的地位是多么的高大。在平常的工作中，写业务代码的同学使用这些函数的机率是比较小的，所以一旦用到很容易出问题。
+
+但使用这些函数有一个非常大的前提，那就是必须使用 synchronized 进行包裹，否则会抛出 IllegalMonitorStateException。比如下面的代码，在执行的时候就会报错。
+
+```java
+final Object condition = new Object();
+public void func(){
+	condition.wait();
+}
+```
+
+类似的方法，还有 concurrent 包里的 Condition 对象，使用的时候也必须出现在 lock 和 unlock 函数之间。
+
+为什么在 wait 之前，需要先同步这个对象呢？因为 JVM 要求，在执行 wait 之时，线程需要持有这个对象的 monitor，显然同步关键字能够完成这个功能。
+
+但是，仅仅这么做，还是不够的，wait 函数通常要放在 while 循环里才行，JDK在代码里做了明确的注释。
+
+重点：这是因为，wait 的意思，是在 notify 的时候，能够向下执行逻辑。但在 notify 的时候，这个 wait 的条件可能已经是不成立的了，因为在等待的这段时间里条件条件可能发生了变化，需要再进行一次判断，所以写在 while 循环里是一种简单的写法。
+
+```java
+final Object condition = new Object();
+public void func(){
+    synchronized(condition){
+        while(<条件成立>){
+            condition.wait();
+        }
+    }
+}
+```
+
+带if条件的 wait 和 notify 要包两层，一层 synchronized，一层 while，这就是 wait 等函数的正确用法。
+
+
+
+### 4、不要覆盖锁对象
+
+使用 synchronized 关键字时，如果是加在普通方法上的，那么锁的就是 this 对象；如果是加载 static 方法上的，那锁的就是 class。除了用在方法上， synchronized 还可以直接指定要锁定的对象，锁代码块，达到细粒度的锁控制。
+
+如果这个锁的对象，被覆盖了会怎么样？比如下面这个。
+
+```java
+List listeners = new ArrayList();
+void add(Listener listener, boolean upsert){
+    synchronized(listeners){
+        List results = new ArrayList();
+        for(Listener ler:listeners){
+            // ...
+        }
+        listeners = results;
+    }
+}
+```
+
+上面的代码，由于在逻辑中，强行给锁`listeners`对象进行了重新赋值，会造成锁的错乱或者失效。
+
+为了保险起见，我们通常把锁对象声明成final类型的。
+
+```java
+final List listeners = new ArrayList();
+```
+
+或者直接声明专用的锁对象，定义成普通的Object对象即可。
+
+```java
+final Object listenersLock = new Object();
+```
+
+
+
+### 5、处理循环中的异常
+
+在异步线程里处理一些定时任务，或者执行时间非常长的批量处理，是经常遇到的需求。我就不止一次看到小伙伴们的程序执行了一部分就停止的情况。
+
+排查到这些中止的根本原因，就是其中的某行数据发生了问题，造成了整个线程的死亡。
+
+我们还是来看一下代码的模板。
+
+```java
+volatile boolean run = true;
+void loop(){
+    while(run){
+    	for(Task task: taskList){
+            //do . sth
+            int a = 1/0;
+    	}
+    }
+}
+```
+
+在 loop 函数中，执行我们真正的业务逻辑。当执行到某个 task 的时候，发生了异常。这个时候，线程并不会继续运行下去，而是会抛出异常直接中止。在写普通函数的时候，我们都知道程序的这种行为，但一旦到了多线程，很多同学都会忘了这一环。
+
+值得注意的是，即使是非捕获类型的`NullPointerException`，也会引起线程的中止。所以，时刻把要执行的逻辑，放在 try catch 中，是个非常好的习惯。
+
+```java
+volatile boolean run = true;
+void loop(){
+    while(run){
+    	for(Task task: taskList){
+    		try{
+                // do . sth
+                int a = 1/0;
+    		}catch(Exception ex){
+    			// log
+    		}
+    	}
+    }
+}
+```
+
+
+
+### 6、HashMap 正确用法
+
+HashMap 在多线程环境下，会产生死循环问题。这个问题已经得到了广泛的普及，因为它会产生非常严重的后果：CPU 跑满，代码无法执行，jstack 查看时阻塞在get方法上。
+
+至于怎么提高 HashMap 效率，什么时候转红黑树转列表，这是阳春白雪的八股界话题，我们下里巴人只关注怎么不出问题。
+
+网络上有详细的文章描述死循环问题产生的场景，大体因为 HashMap 在进行 rehash 时，会形成环形链。某些 get 请求会走到这个环上。JDK 并不认为这是个 bug，虽然它的影响比较恶劣。
+
+如果你判断你的集合类会被多线程使用，那就可以使用线程安全的 ConcurrentHashMap 来替代它。
+
+HashMap 还有一个安全删除的问题，和多线程关系不大，但它抛出的是 ConcurrentModificationException，看起来像是多线程的问题。我们一块来看看它。
+
+```java
+Map<String, String> map = new HashMap<>();
+map.put("xjjdog0", "狗1");
+map.put("xjjdog1", "狗2");
+
+for (Map.Entry<String, String> entry : map.entrySet()) {
+    String key = entry.getKey();
+    if ("xjjdog0".equals(key)) {
+        map.remove(key);
+    }
+}
+```
+
+上面的代码会抛出异常，这是由于 HashMap 的 Fail-Fast 机制。如果我们想要安全的删除某些元素，应该使用迭代器。
+
+```java
+Iterator<Map.Entry<String, String>> iterator = map.entrySet().iterator();
+while (iterator.hasNext()) {
+    Map.Entry<String, String> entry = iterator.next();
+    String key = entry.getKey();
+    if ("xjjdog0".equals(key)) {
+        iterator.remove();
+    }
+}
+```
+
+
+
+### 7、线程安全的保护范围
+
+使用了线程安全的类，写出来的代码就一定是线程安全的么？答案是否定的。
+
+线程安全的类，只负责它内部的方法是线程安全的。如我我们在外面把它包了一层，那么它是否能达到线程安全的效果，就需要重新探讨。
+
+比如下面这种情况，我们使用了线程安全的 ConcurrentHashMap 来存储计数。虽然 ConcurrentHashMap 本身是线程安全的，不会再出现死循环的问题。但 addCounter 函数，明显是不正确的，它需要使用 synchronized 函数包裹才行。
+
+```java
+private final ConcurrentHashMap<String,Integer> counter;
+public int addCounter(String name) {
+    Integer current = counter.get(name);
+    int newValue = ++current;
+    counter.put(name,newValue);
+    return newValue;
+}
+```
+
+这是开发人员常踩的坑之一。要达到线程安全，需要看一下线程安全的作用范围。如果更大维度的逻辑存在同步问题，那么即使使用了线程安全的集合，也达不到想要的效果。
+
+
+
+### 8、volatile 作用有限
+
+volatile 关键字，解决了变量的可见性问题，可以让你的修改，立马让其他线程给读到。
+
+虽然这个东西在面试的时候问的挺多的，包括 ConcurrentHashMap 中对 volatile 的那些优化。但在平常的使用中，你真的可能只会接触到 boolean 变量的值修改。
+
+```java
+volatile boolean closed;  
+public void shutdown() {   
+    closed = true;   
+}  
+```
+
+千万不要把它用在计数或者线程同步上，比如下面这样。
+
+```java
+volatile count = 0;
+void add(){
+    ++count;
+}
+```
+
+这段代码在多线程环境下，是不准确的。这是因为 volatile 只保证可见性，不保证原子性，多线程操作并不能保证其正确性。
+
+直接用 Atomic 类或者同步关键字多好，你真的在乎这纳秒级别的差异么？
+
+
+
+### 9、日期处理要小心
+
+很多时候，日期处理也会出问题。这是因为使用了全局的 Calendar，SimpleDateFormat 等。当多个线程同时执行 format 函数的时候，就会出现数据错乱。
+
+```java
+SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+Date getDate(String str){
+    return format(str);
+}
+```
+
+为了改进，我们通常将 SimpleDateFormat 放在 ThreadLocal 中，每个线程一份拷贝，这样可以避免一些问题。当然，现在我们可以使用线程安全的DateTimeFormatter 了。
+
+```java
+static DateTimeFormatter FOMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss");
+public static void main(String[] args) {
+    ZonedDateTime zdt = ZonedDateTime.now();
+    System.out.println(FOMATTER.format(zdt));
+}
+```
+
+
+
+### 10、不要在构造函数中启动线程
+
+在构造函数，或者 static 代码块中启动新的线程，并没有什么错误。但是，强烈不推荐你这么做。
+
+因为 Java 是有继承的，如果你在构造函数中做了这种事，那么子类的行为将变得非常魔幻。另外，this 对象可能在构造完毕之前，出递到另外一个地方被使用，造成一些不可预料的行为。
+
+所以把线程的启动，放在一个普通方法，比如 start 中，是更好的选择。它可以减少 bug 发生的机率。
+
+
+
+## 3、避坑总结
+
+wait 和 notify 是非常容易出问题的地方，
+
+编码格式要求非常严格。synchronized 关键字相对来说比较简单，但同步代码块的时候依然有许多要注意的点。这些经验，在 concurrent 包所提供的各种API中依然实用。我们还要处理多线程逻辑中遇到的各种异常问题，避免中断，避免死锁。规避了这些坑，基本上多线程代码写起来就算是入门了。
+
+许多 Java 开发，都是刚刚接触多线程开发，在平常的工作中应用也不是很多。如果你做的是 CRUD 的业务系统，那么写一些多线程代码的时候就更少了。但总有例外，你的程序变得很慢，或者排查某个问题，你会直接参与到多线程的编码中来。
+
+我们的各种工具软件，也在大量使用多线程。从 Tomcat，到各种中间件，再到各种数据库连接池缓存等，每个地方都充斥着多线程的代码。
+
+即使是有经验的开发，也会陷入很多`多线程`的陷阱。因为异步会造成时序的混乱，必须要通过强制的手段达到数据的同步。多线程运行，首先要保证准确性，使用线程安全的集合进行数据存储；还要保证效率，毕竟使用多线程的目标就是如此。
+
+希望本文中的这些实际案例，让你对多线程的理解，更上一层楼。
 
 
 

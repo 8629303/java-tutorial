@@ -11011,11 +11011,10 @@ Spring Data JPA 文章汇总：
 2. IT利刃出鞘：https://blog.csdn.net/feiying0canglang/category_11318443.html
 3. 架构悟道：https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzIwMjgxMTY2MQ==&action=getalbum&album_id=2452725517146685442
 
+SpringData JPA 联表查询性能优化：
 
-
-
-
-1. SpringData JPA整理：https://blog.csdn.net/hongyinanhai00/article/details/115047181
+1. JPA效率优化—@EntityGraph：https://juejin.cn/post/6869650227268157454
+2. Spring Data JPA 原理与实战第十三天 解决N+1 SQL问题：https://bgmbk.blog.csdn.net/article/details/124895647
 
 
 
