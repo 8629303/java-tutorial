@@ -13479,7 +13479,21 @@ CompletableFuture<Double> future = CompletableFuture.supplyAsync(() -> {
 
 
 
-### 2、get 方法是阻塞的，不推荐使用 join 方法
+### 2、正确进行异常处理
+
+使用 CompletableFuture 的时候一定要以正确的方式进行异常处理，避免异常丢失或者出现不可控问题。
+
+下面是一些建议：
+
+- 使用 whenComplete 方法可以在任务完成时触发回调函数，并正确地处理异常，而不是让异常被吞噬或丢失。
+- 使用 exceptionally 方法可以处理异常并重新抛出，以便异常能够传播到后续阶段，而不是让异常被忽略或终止。
+- 使用 handle 方法可以处理正常的返回结果和异常，并返回一个新的结果，而不是让异常影响正常的业务逻辑。
+- 使用 CompletableFuture.allOf 方法可以组合多个 CompletableFuture，并统一处理所有任务的异常，而不是让异常处理过于冗长或重复。
+- ……
+
+
+
+### 3、get 方法是阻塞的，不推荐使用 join 方法
 
 CompletableFuture 的 get() 方法是阻塞的，如果使用它来获取异步调用的返回值，需要添加超时时间。由于join方法没有超时设置，所以也不推荐了。
 
@@ -13493,7 +13507,7 @@ completableFuture.get(5, TimeUnit.SECONDS);
 
 
 
-### 3、不建议使用默认线程池
+### 4、不建议使用默认线程池
 
 结论：使用 CompletableFuture 异步执行任务时，请务必自定义线程池。
 
@@ -13518,7 +13532,7 @@ CompletableFuture 代码中许多方法使用了默认的 **「ForkJoin线程池
 
 
 
-### 4、自定义线程池时，注意饱和策略
+### 5、自定义线程池时，注意饱和策略
 
 CompletableFuture.get() 方法是阻塞的，我们一般建议使用 future.get(5, TimeUnit.SECONDS)。并且一般建议使用自定义线程池。
 
@@ -13526,7 +13540,7 @@ CompletableFuture.get() 方法是阻塞的，我们一般建议使用 future.get
 
 
 
-### 5、禁止嵌套使用 CompletableFuture
+### 6、禁止嵌套使用 CompletableFuture
 
 嵌套使用 CompletableFuture 可能会使相互依赖的子任务互相等待资源的释放而出现死锁，导致服务崩溃。
 
