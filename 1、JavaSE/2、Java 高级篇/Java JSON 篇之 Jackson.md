@@ -4047,16 +4047,6 @@ public class TestController {
 
 
 
-
-
-
-
-
-
-
-
-
-
 ## 2、SpringBoot Jackson 配置选项
 
 在上面的时间字段序列化处理，我们已经知道了如何配置，那么在SpringBoot的框架中，针对Jackson的各个配置项主要包含哪些呢？我们通过IDEA的提示可以看到：会出现12个配置项，并且有一个已经过时了。这里就讲解11个正在使用的（本人使用的是SpringBoot 2.5.0 version）

@@ -1,4 +1,4 @@
-## API管理系统介绍
+## 1、API 管理系统介绍
 
 > 前后端都分离了，该搞个好用的API管理系统了！
 >
@@ -14,9 +14,9 @@
 
 
 
-## Swagger 3.X
+## 2、Swagger 3
 
-### OpenApi规范
+### 1、OpenAPI 规范
 
 接口文档
 
@@ -53,7 +53,7 @@ OpenAPI规范经过Reverb Technologies和SmartBear等公司多年的发展，Ope
 
 
 
-### Api文档管理工具对比
+### 2、API 文档管理工具对比
 
 **ApiDoc**
 
@@ -121,7 +121,7 @@ OpenAPI规范经过Reverb Technologies和SmartBear等公司多年的发展，Ope
 
   
 
-### Swagger3快速入门
+### 3、Swagger 3 快速入门
 
 > **springfox3.0 已经支持swagger3了，之前SpringFox未支持 OpenAPI3 标准使用的是springdoc-openapi-ui依赖**
 
@@ -159,7 +159,7 @@ public class Swagger3Config {
 
 
 
-### Swagger3配置详解
+### 4、Swagger 3 配置详解
 
 application.properties配置文件
 
@@ -298,7 +298,7 @@ public Docket api() {
 
 
 
-### Swagger3常用注解
+### 5、Swagger 3 常用注解
 
 |                 注解                  |                             作用                             |
 | :-----------------------------------: | :----------------------------------------------------------: |
@@ -364,9 +364,7 @@ public Docket api() {
     required：是否必填
 ```
 
-
-
-实例：
+操作实例：
 
 ```java
 package com.example.swagger.controller;
@@ -469,11 +467,9 @@ public class User {
 
 
 
+## 3、Swagger 2
 
-
-## Swagger 2.X
-
-### Swagger2简介
+### 1、Swagger 2 简介
 
 > **官网：**https://swagger.io/
 
@@ -485,7 +481,7 @@ public class User {
 
 
 
-### swagger2快速入门
+### 2、Swagger 2 快速入门
 
 1、使用IDEA创建一个SpringBoot项目
 
@@ -523,7 +519,7 @@ public class SwaggerConfig {
 
 
 
-### Swagger2配置详解
+### 3、Swagger 2 配置详解
 
 1、Swagger2配置：
 
@@ -664,7 +660,7 @@ public Docket docket2(){
 
 
 
-### Swagger2常用注解
+### 4、Swagger 2 常用注解
 
 > **参考：**Swagger3.X常用注解即可.
 
@@ -722,7 +718,7 @@ public Docket docket2(){
 
 
 
-#### @Api
+#### 1、@Api
 
 @Api 注解用于标注一个Controller（Class）。在默认情况下，Swagger-Core只会扫描解析具有@Api注解的类，而会自动忽略其他类别资源（JAX-RS endpoints，Servlets等等）的注解。
 
@@ -753,7 +749,7 @@ public class UserController {
 
 
 
-#### @ApiOperation
+#### 2、@ApiOperation
 
 @ApiOperation 注解在用于对一个操作或HTTP方法进行描述。具有相同路径的不同操作会被归组为同一个操作对象。不同的HTTP请求方法及路径组合构成一个唯一操作。
 
@@ -791,7 +787,7 @@ public class UserController {
 
 
 
-#### @ApiParam
+#### 3、@ApiParam
 
 @ApiParam作用于请求方法上，定义api参数的注解。
 
@@ -825,7 +821,7 @@ public class UserController {
 
 
 
-#### @ApiImplicitParams、@ApiImplicitParam
+#### 4、@ApiImplicitParams、@ApiImplicitParam
 
 @ApiImplicitParams、@ApiImplicitParam也可以定义参数.
 
@@ -864,7 +860,7 @@ public class UserController {
 
 
 
-#### @ApiResponses、@ApiResponse
+#### 5、@ApiResponses、@ApiResponse
 
 @ApiResponses、@ApiResponse进行方法返回对象的说明
 
@@ -897,7 +893,7 @@ public class UserController {
 
 
 
-#### @ApiModel、@ApiModelProperty
+#### 6、@ApiModel、@ApiModelProperty
 
 @ApiModel用于描述一个Model的信息（一般用在使用@RequestBody的场景，请求参数无法使用@ApiImplicitParam描述）
 
@@ -944,7 +940,7 @@ public class ApiResult {
 
 
 
-## Swagger增强神器—Knife4j
+## 4、Swagger 增强神器 Knife4j
 
 > 参考：https://mp.weixin.qq.com/s/4HGYX0wpBk8-p3AfFbbBVg
 
@@ -963,7 +959,7 @@ public class ApiResult {
 
 
 
-## 参考文献 & 鸣谢
+## X、参考文献 & 鸣谢
 
 1. Swagger常用注解【博客园】https://www.cnblogs.com/three-fighter/p/12346184.html
 1. 也许是最全面的 Swagger 注解【CSDN】https://blog.csdn.net/dejunyang/article/details/89527586

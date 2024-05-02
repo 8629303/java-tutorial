@@ -6,7 +6,7 @@
 
 使用 `javap` 可以查看 Java 字节码反编译的源文件，`javap` 的命令格式如下：
 
-![图片](「Java」不可不知的 7 个 JDK 命令.assets/640.png)
+![图片](Java 命令行之 不可不知的 7 个 JDK 命令.assets/640.png)
 
 下面来演示下用 `javap -c` 对代码进行反编译，首先写个 `HelloWorld` 类，如下：
 
@@ -42,7 +42,7 @@ public class HelloWorld {
 
 `jps` 是用来查询当前所有进程 pid 的，命令的用法如下图所示：
 
-![图片](「Java」不可不知的 7 个 JDK 命令.assets/640-16673594550263.png)
+![图片](Java 命令行之 不可不知的 7 个 JDK 命令.assets/640-16673594550263.png)
 
 执行 `jps` 可以获取本机 Java 程序的 pid，运行结果如下：
 
@@ -62,7 +62,7 @@ public class HelloWorld {
 
 `jstat` 主要用于监控 JVM，主要是 GC 信息，在性能优化的时候经常用到，命令内容如下所示：
 
-![图片](「Java」不可不知的 7 个 JDK 命令.assets/640-16673594802636.png)
+![图片](Java 命令行之 不可不知的 7 个 JDK 命令.assets/640-16673594802636.png)
 
 比如，上面我们通过 `jps` 查到的进程号 8825，我们使用 `jstat -gc 8825` 来查看该进程的 GC 信息：
 
@@ -80,7 +80,7 @@ public class HelloWorld {
 
 `jcmd` 可以查看 JVM 信息，常用的命令内容如下：
 
-![图片](「Java」不可不知的 7 个 JDK 命令.assets/640-16673595358149.png)
+![图片](Java 命令行之 不可不知的 7 个 JDK 命令.assets/640-16673595358149.png)
 
 先使用 `jcmd 8825 help` 来查看都支持什么命令：
 
@@ -138,7 +138,7 @@ help
 
 `jmap` 打印出 Java 进程内存中 Object 的情况，或者将 JVM 中的堆以二进制输出成文本，命令内容如下：
 
-![图片](「Java」不可不知的 7 个 JDK 命令.assets/640-166735958521012.png)
+![图片](Java 命令行之 不可不知的 7 个 JDK 命令.assets/640-166735958521012.png)
 
 使用 `jmap -heap 8825` 查看当前堆的使用信息：
 
@@ -208,7 +208,7 @@ Heap dump file created
 
 `jhat` 分析 Java 堆的命令，可以将堆中对象以 `html` 的形式显示出来，支持对象查询语言 OQL，命令内容如下：
 
-![图片](「Java」不可不知的 7 个 JDK 命令.assets/640-166735961174015.png)
+![图片](Java 命令行之 不可不知的 7 个 JDK 命令.assets/640-166735961174015.png)
 
 现在执行 `jhat -port 9999 heap.bin` 来将刚刚保存的 `heap.bin` 以 html 展示出来：
 
@@ -227,21 +227,21 @@ Server is ready.
 
 执行完毕后，打开 `http://localhost:9999/` 就可以看到类的实例的堆占用情况，它是按照包名来分组的：
 
-![图片](「Java」不可不知的 7 个 JDK 命令.assets/640-166735962996518.png)
+![图片](Java 命令行之 不可不知的 7 个 JDK 命令.assets/640-166735962996518.png)
 
 网页的底部还有许多 Query 方式：
 
-![图片](「Java」不可不知的 7 个 JDK 命令.assets/640-166735963283921.png)
+![图片](Java 命令行之 不可不知的 7 个 JDK 命令.assets/640-166735963283921.png)
 
 下面以 OQL 为例，打开后是一个类似 SQL 查询的窗口，比如输入 `select s from java.lang.String s where s.value.length >= 100` 就可以查询字符串长度大于 100 的实例：
 
-![图片](「Java」不可不知的 7 个 JDK 命令.assets/640-166735963656724.png)
+![图片](Java 命令行之 不可不知的 7 个 JDK 命令.assets/640-166735963656724.png)
 
 # jstack
 
 `jstack` 是**堆栈跟踪工具**，主要用于打印给定进程 pid 的堆栈信息，一般在发生死锁或者 CPU 100% 的时候排查问题使用，可以去查询当前运行的线程以及线程的堆栈信息是什么情况，命令内容如下：
 
-![图片](「Java」不可不知的 7 个 JDK 命令.assets/640-166735964477627.png)jstack
+![图片](Java 命令行之 不可不知的 7 个 JDK 命令.assets/640-166735964477627.png)jstack
 
 下面执行 `jstack -F 8825 > jstack.log` 命令，将线程的信息保存下来：
 
