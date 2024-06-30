@@ -2710,7 +2710,7 @@ Result: 26.0
 
 对于以上的两个锁处理接口，在 J.U.C 中分别提供了 ReentrantLock 子类（实现Lock接口）与 ReentrantReadWriteLock 子类（实现ReadWriteLock接口）
 
-![image-20240216162046982](./Java 多线程进阶.assets/image-20240216162046982.png)
+![image-20240503140045875](./Java 多线程进阶.assets/image-20240503140045875.png)
 
 
 
@@ -5633,7 +5633,7 @@ public class JavaAPIDemo {
 
 虽然 Java 追加了 Collections 工具类以实现集合的同步处理操作，但是其是对整个的集合进行同步锁处理，所以并发处理性能不高。所以为了更好的支持高并发任务处理，在J.U.C中提供了支持高并发的处理类，同时为了保证集合操作的一致性，这些高并发的集合类依然实现了集合标准接口，例如：List、Set、Map、Queue 等。
 
-TODO：图片
+![image-20240503135028120](./Java 多线程进阶.assets/image-20240503135028120.png)
 
 
 
@@ -6017,8 +6017,6 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V> implements Concurre
 
 ![image-20240105232906738](./Java 多线程进阶.assets/image-20240105232906738.png)
 
-TODO：图片
-
 
 
 ## 5、跳表集合类 ConcurrentSkipListMap
@@ -6145,7 +6143,7 @@ true
 
 **J.U.C 阻塞队列接口**：在 Java 类集框架中提供了 Queue 队列操作接口以及 LinkedList 实现子类，但是传统队列需要开发者不断的来用轮询的形式才可以实现数据的及时获取，在队列没有数据或者队列数据已经满员的情完下还需要进行同步等待与唤醒处理，实现的难度较高。所以在 J.U.C 中为了便于多线程应用，提供了两个新的阻塞队列接又：BlockingQueue（单端队列)、BlockingDeque（双端队列）。BlockingQueue 接口属于 Queue 子接口，按照 Java 类集的继承结构（Deque 是 Queue 子接口），所以 BlockingDeque 属于 BlockingQueue 子接口。
 
-TODO：图片
+![image-20240503135133309](./Java 多线程进阶.assets/image-20240503135133309.png)
 
 
 
@@ -6181,7 +6179,7 @@ BlockingQueue 属于单端阻塞队列，所有的数据将按照 FIFO 算法进
 
 ArrayBlockingQueue 是基于数组实现的阻塞队列，在该类中主要通过了 Condition 来实现了空队列与满队列的同步处理，如果发现队列已空在获取数据时就会进入到阻塞状态，反之，如果队列数据已满，在保存数据时也会进入到阻塞状态。
 
-TODO：图片
+![image-20240503135248818](./Java 多线程进阶.assets/image-20240503135248818.png)
 
 操作示例 1：使用 ArrayBlockingQueue 子类，使用链表单端阻塞队列
 
@@ -6278,7 +6276,7 @@ public ArrayBlockingQueue(int capacity, boolean fair) {
 
 除了可以通过数组的方式实现阻塞队列之外，也可以通过 LinkedBlockingQueue 基于链表形式实现阻塞队列的开发，在该类的内部提供有 Node 节点类，同时为了可以在多线程下明确的进行数据个数的统计，在该类中提供给了一个 count 属性，该属性为 AtomicInteger 原子类型，如果在链表结构存储中也会基于一个 count 统计变量的形式判断当前的队列中的数据存储状态，如果计数为零或保存的数据量超过了预计的容量则需要进行等待。
 
-TODO：图片
+![image-20240503135331392](./Java 多线程进阶.assets/image-20240503135331392.png)
 
 操作示例 1：使用 LinkedBlockingQueue 子类，其实就是把上面示例中的 ArrayBlockingQueue 子类更换成 LinkedBlockingQueue 子类
 
@@ -6464,7 +6462,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
 
 使用 ArrayBlockingQueue 或 LinkedBlockingQueue 子类实现的阻塞队列，都是基于 数据保存顺序的结构存储的，而在 BlockingQueue 接口设计时，还考虑到了数据排序的需要，即：可以通过比较器的形式实现队列数据的排序，并根据排序的结果实现优先级调用，而这就可以通过 PriorityBlockingQueue 子类实现操作。
 
-TODO：图片
+![image-20240503135409734](./Java 多线程进阶.assets/image-20240503135409734.png)
 
 操作示例 1：使用 PriorityBlockingQueue 子类，使用优先级阻塞队列
 
@@ -6568,8 +6566,6 @@ public class JavaAPIDemo {
 以上的几种阻塞队列的实现子类都可以存放多个数据的信息，但是随后就会发现在 BlockingQueue 之中还存在有一个 SynchronousQueue 同步队列的支持，这个队列只能够保存单个数据内容。
 
 SynchronousQueue 类内部依靠的是一 个 Transferer 抽象类完成的，该类提供有队列存储实现子类与栈存储实现子类，并且数据的存储与获取都是通过一个 transfer() 方法来完成的。
-
-TODO：图片
 
 操作示例 1：使用 SynchronousQueue 子类，使用同步队列
 
@@ -7673,7 +7669,7 @@ null
 
 通过 Executors 类所提供的方法可以分别创建 ExecutorService 接口实例以及 ScheduleExecutorsServices 接口实例，而后可以利用获取接口实例中所提供的方法，用 Runnable 或 Callable 实现线程任务的封装，而所有线程任务的返回结果可以通过 Future 或其子接口（ScheduleFuture）异步返回。
 
-TODO：图片
+![image-20240503135715984](./Java 多线程进阶.assets/image-20240503135715984.png)
 
 Java 里面线程池的顶级接口是 Executor，但是严格意义上讲 Executor 并不是一个线程池，而只是一个执行线程的工具。真正的线程池接口是 ExecutorService 或者 ScheduleExecutorsServices。
 
@@ -8132,7 +8128,7 @@ public ThreadPoolExecutor(int corePoolSize,                   // 内核线程数
 }
 ```
 
-TODO：图片
+![image-20240503135824275](./Java 多线程进阶.assets/image-20240503135824275.png)
 
 
 
@@ -8724,7 +8720,8 @@ public RunnableScheduledFuture<?> take() throws InterruptedException {
 
 ## 5、ThreadPoolExecutor 线程池最佳实践
 
-> ThreadPoolExecutor线程池最佳实践：https://cloud.tencent.com/developer/article/2026557
+> - ThreadPoolExecutor线程池最佳实践：https://cloud.tencent.com/developer/article/2026557
+> - JAVA 为什么不推荐使用Executors类静态方法快速创建线程池？：https://blog.csdn.net/leilei1366615/article/details/130954946
 
 线程池初始化示例：
 
@@ -11325,7 +11322,8 @@ Future 的生命周期不能后退，一旦完成了任务，它就永久停在�
 
 # 12、CompletionService 异步增强【异步】
 
-> 并发编程：浅谈CompletionService 和 CompletableFuture ：https://blog.csdn.net/weixin_44735065/article/details/124074027
+> - 并发编程：浅谈CompletionService 和 CompletableFuture ：https://blog.csdn.net/weixin_44735065/article/details/124074027
+> - 17. 如何使用CompletionService？https://www.cnblogs.com/cj8357475/p/16032850.html
 
 ## 1、CompletionService 简单介绍
 
@@ -15345,6 +15343,7 @@ public class JavaAPIDemo {
 - 基础篇：异步编程不会？我教你啊！CompeletableFuture：https://mp.weixin.qq.com/s/siixcALGcVDPGqwNpJdc1w
 - 奇淫巧技，CompletableFuture 异步多线程是真的优雅：https://mp.weixin.qq.com/s/Af6Y9kx3RBPfCpzf5w0OCA
 - 【JAVA8】CompletableFuture使用详解：https://blog.csdn.net/leilei1366615/article/details/119855928
+- CompletableFuture使用详解：https://blog.csdn.net/sermonlizhi/article/details/123356877
 - 20个示例轻松掌握CompletableFuture，真好用！：https://mp.weixin.qq.com/s/ikybzcP_edOOlj5Hi_-tdg
 - CompletableFuture 最坏实践：https://mp.weixin.qq.com/s/n-TWHFvIXEhNFujoQ6867Q
 
@@ -17910,6 +17909,7 @@ wait 和 notify 是非常容易出问题的地方，
 3. Java 并发 | dunwu 钝悟：https://dunwu.github.io/javacore/pages/6e5393/
 4. Java并发知识体系详解 | Java 全栈知识体系：https://pdai.tech/md/java/thread/java-thread-x-overview.html
 5. 死磕 Java 并发：https://www.skjava.com/series/2107060030
+6. 并发编程 ｜ CSDN Men-DD：https://blog.csdn.net/menxu_work/category_11645009.html
 
 **一篇学完高并发**：
 

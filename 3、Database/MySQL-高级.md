@@ -715,3 +715,4 @@ CALL batch_insert_data(10000000);
 2. [MySQL之SQL优化详解](https://www.cnblogs.com/dwlovelife/category/1486258.html)
 3. [MySQL5.7版本数据库多实例安装部署](https://blog.csdn.net/u011208222/article/details/109217474)
 4. 利用 ShardingSphere-JDBC 实现分库分表实践：https://mp.weixin.qq.com/s/fzFpEjtXelxEq4jiDnul6g
+5. MySQL 那些事：https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI5NzIyMDkwNA==&action=getalbum&album_id=2546221385078177793&scene=173&sessionid=svr_f508261bc32&enterid=1719486478&from_msgid=2662939650&from_itemidx=1&count=3&nolastread=1&uin=&key=&devicetype=iMac+Mac14%2C2+OSX+OSX+13.5.2+build(22G91)&version=13080710&lang=zh_CN&nettype=WIFI&ascene=1&fontScale=100

@@ -1,3 +1,5 @@
+
+
 # 01、设计模式背景介绍
 
 ## 1、什么是设计模式
@@ -56,3 +58,5 @@
 1. 《23种设计模式系列教程》｜緑水長流*z：https://coder1024.blog.csdn.net/article/details/127095961
 2. 设计模式 | 轻松的小希：https://blog.csdn.net/qq_38490457/category_10837977.html
 3. 设计模式目录 | 二木成林：https://blog.csdn.net/cnds123321/article/details/119045245
+4. 字详解 GoF 23 种设计模式（多图、思维导图、模式对比），让你一文全面理解：https://blog.csdn.net/penriver/article/details/118571991
+5. 小威要向诸佬学习呀：https://blog.csdn.net/qq_53847859/article/details/130594428
