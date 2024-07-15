@@ -228,6 +228,7 @@ com.example.demo.service.impl.PythonServiceImpl
 
 # 7、参考文献 & 鸣谢
 
-1. Java SPI概念、实现原理、优缺点、应用场景、使用步骤、实战SPI案例：https://blog.csdn.net/qq_52423918/article/details/130968307
-2. Java的SPI机制：https://www.cnblogs.com/duguxiaobiao/p/12183135.html
-3. Java SPI介绍：https://zhuanlan.zhihu.com/p/680141106
+1. 10分钟让你彻底明白Java SPI，附实例代码演示#安员外很有码：https://www.bilibili.com/video/BV1RY4y1v7mN
+2. Java SPI概念、实现原理、优缺点、应用场景、使用步骤、实战SPI案例：https://blog.csdn.net/qq_52423918/article/details/130968307
+3. Java的SPI机制：https://www.cnblogs.com/duguxiaobiao/p/12183135.html
+4. Java SPI介绍：https://zhuanlan.zhihu.com/p/680141106

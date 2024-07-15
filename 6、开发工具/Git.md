@@ -1,5 +1,10 @@
-> 1. GIT 精选专栏：作者：琦彦，来源：https://blog.csdn.net/fly910905/category_7424633.html
-> 2. Windows系统Git安装教程（详解Git安装过程）：https://www.cnblogs.com/xueweisuoyong/p/11914045.html
+> 1. Git 大全：https://gitee.com/all-about-git
+> 2. 一个小时学会 Git：https://www.cnblogs.com/best/p/7474442.html
+> 3. Git 进阶指南：https://gb.yekai.net/
+> 4. 我说小伙子，你死记Git命令，不好使：https://mp.weixin.qq.com/s/DQVVYOWdOPuRsy3m0fg6Xg
+> 5. 女朋友说 Git 玩不明白，怎么办？安排！：https://mp.weixin.qq.com/s/ouYYEIUVjn-wSeGX13--sw
+> 
+>推荐一些Git的硬核书籍：【精通Git】、【GitHub入门与实践】、【Git权威指南】、【Git版本控制管理】、【GitHub实践】。
 
 # Git 常用命令速查表
 
@@ -513,9 +518,3 @@ $ git stash pop
 # 生成一个可供发布的压缩包
 $ git archive
 ```
-
-
-
-# 女朋友说 Git 玩不明白，怎么办？安排！
-
-> 女朋友说 Git 玩不明白，怎么办？安排！：https://mp.weixin.qq.com/s/ouYYEIUVjn-wSeGX13--sw
