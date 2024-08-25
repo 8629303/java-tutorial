@@ -26,13 +26,13 @@ Spring 事务的本质其实就是数据库对事务的支持，没有数据库�
 
 数据访问技术及实现
 
-| 数据访问技术 |             实现             |
-| :----------: | :--------------------------: |
-|     JDBC     | DataSourceTransactionManager |
-|     JPA      |    JapTransactionManager     |
-|  Hibernate   | HibernateTransactionManager  |
-|     JDO      |    JdoTransactionManager     |
-|  分布式事务  |    JtaTransactionManager     |
+|    数据访问技术     |             实现             |
+| :-----------------: | :--------------------------: |
+| Spring/Mybatis-JDBC | DataSourceTransactionManager |
+|         JPA         |    JapTransactionManager     |
+|      Hibernate      | HibernateTransactionManager  |
+|         JDO         |    JdoTransactionManager     |
+|     分布式事务      |    JtaTransactionManager     |
 
 在程序中定义事务管理器的代码如下：
 
@@ -444,7 +444,7 @@ public String interfaceTest(Map<String, Object> map) {
 2. 大多数的数据库默认隔离级别为 Read Commited，比如 SqlServer、Oracle
 3. 少数数据库默认隔离级别为：Repeatable Read 比如：MySQL InnoDB
 
-# 七、Spring 中的隔离级别
+# 七、Spring 隔离级别
 
 |            常量            |                             解释                             |
 | :------------------------: | :----------------------------------------------------------: |
@@ -453,6 +453,15 @@ public String interfaceTest(Map<String, Object> map) {
 |  ISOLATION_READ_COMMITTED  | 保证一个事务修改的数据提交后才能被另外一个事务读取。另外一个事务不能读取该事务未提交的数据。 |
 | ISOLATION_REPEATABLE_READ  | 这种事务隔离级别可以防止脏读，不可重复读。但是可能出现幻像读。 |
 |   ISOLATION_SERIALIZABLE   | 这是花费最高代价但是最可靠的事务隔离级别。事务被处理为顺序执行。 |
+
+在Spring中，可以通过以下方式设置事务的传播行为：
+
+```java
+@Transactional(propagation = Propagation.REQUIRES_NEW)  
+public void someMethod() {  
+    // some code  
+}
+```
 
 # 八、事务的嵌套
 
@@ -535,10 +544,3 @@ public String interfaceTest(Map<String, Object> map) {
 
 【注意是一次执行多次查询来统计某些信息，这时为了保证数据整体的一致性，要用只读事务】
 
-
-
-# 十、参考文献 & 鸣谢
-
-1. Spring事务详解：https://blog.csdn.net/csdn_wyl2016/category_11607107.html
-2. Spring事务最佳应用指南（包含：事务传播类型、事务失效场景、使用建议、事务源码分析）:https://blog.csdn.net/CSDN_WYL2016/article/details/134228745
-3. Spring 声名式事务@Transactional注解详解：https://blog.csdn.net/fox_bert/article/details/99460057

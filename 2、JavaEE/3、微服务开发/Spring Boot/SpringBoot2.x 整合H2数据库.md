@@ -296,7 +296,6 @@ public class SpringBootH2MainApplication {
 
     @PostConstruct
     public void init() {
-        jdbcTemplate.queryForList("SELECT * FROM USER_INFO").forEach(System.out::println);
         List<UserInfo> userInfos = userInfoMapper.findAll();
         userInfos.forEach(System.out::println);
     }
@@ -420,6 +419,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import javax.annotation.PostConstruct;
 import java.util.List;
+import lombok.Data;
 
 @SpringBootApplication
 public class SpringBootH2DemoApplication {
@@ -436,6 +436,12 @@ public class SpringBootH2DemoApplication {
         List<UserInfo> userInfos = jdbcTemplate.query("SELECT * FROM USER_INFO", 
                                                       new BeanPropertyRowMapper<>(UserInfo.class));
         userInfos.forEach(System.out::println);
+    }
+    
+    @Data
+    public static class UserInfo {
+        private int userId;
+        private String userName;
     }
 }
 ```

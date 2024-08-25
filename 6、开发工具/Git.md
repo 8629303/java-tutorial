@@ -3,8 +3,9 @@
 > 3. Git 进阶指南：https://gb.yekai.net/
 > 4. 我说小伙子，你死记Git命令，不好使：https://mp.weixin.qq.com/s/DQVVYOWdOPuRsy3m0fg6Xg
 > 5. 女朋友说 Git 玩不明白，怎么办？安排！：https://mp.weixin.qq.com/s/ouYYEIUVjn-wSeGX13--sw
-> 
->推荐一些Git的硬核书籍：【精通Git】、【GitHub入门与实践】、【Git权威指南】、【Git版本控制管理】、【GitHub实践】。
+> 6. https://www.cnblogs.com/uncleyong/p/10854115.html
+>
+> 推荐一些Git的硬核书籍：【精通Git】、【GitHub入门与实践】、【Git权威指南】、【Git版本控制管理】、【GitHub实践】。
 
 # Git 常用命令速查表
 

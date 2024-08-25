@@ -163,7 +163,7 @@ query 方法及 queryForXXX 方法 重点概述：
   2. query 的参数：ResultSetExtractor，这个回调方式，接收的是批量的结果，一次对所有的结果进行转换。返回类型为泛型ResultSetExtractor< T >，T 可以是单个JavaBean也可以是一个List。
   3. query 的参数：RowMapper，一般我们使用BeanPropertyRowMapper实现类。可以完成数据到JavaBean的自动封装new BeanPropertyRowMapper<类型>(类型.class)。RowMapper 返回结果是List。
 
-JdbcTemplate类支持的回调类：
+JdbcTemplate 类支持的回调类：
 
 - 预编译语句及存储过程创建回调：用于根据JdbcTemplate提供的连接创建相应的语句；
   - PreparedStatementCreator：通过回调获取JdbcTemplate提供的Connection，由用户使用该Conncetion创建相关的PreparedStatement；
@@ -176,7 +176,6 @@ JdbcTemplate类支持的回调类：
   - PreparedStatementCallback：通过回调获取JdbcTemplate提供的PreparedStatement，用户可以在该PreparedStatement执行任何数量的操作；
   - CallableStatementCallback：通过回调获取JdbcTemplate提供的CallableStatement，用户可以在该CallableStatement执行任何数量的操作；
 - 结果集处理回调：通过回调处理ResultSet或将ResultSet转换为需要的形式；
-  - RowMapper：用于将结果集每行数据转换为需要的类型，用户需实现方法mapRow(ResultSet rs, int rowNum)来完成将每行数据转换为相应的类型。
   - RowMapper：用于将结果集每行数据转换为需要的类型，用户需实现方法mapRow(ResultSet rs, int rowNum)来完成将每行数据转换为相应的类型。
   - RowCallbackHandler：用于处理ResultSet的每一行结果，用户需实现方法processRow(ResultSet rs)来完成处理，在该回调方法中无需执行rs.next()，该操作由JdbcTemplate来执行，用户只需按行获取数据然后处理即可。
   - ResultSetExtractor：用于结果集数据提取，用户需实现方法extractData(ResultSet rs)来处理结果集，用户必须处理整个结果集；
@@ -3051,11 +3050,231 @@ public static class UserInfo {
 
 
 
-# 参考文献 & 鸣谢
+# 三、Junit 测试 ResultSetExtractor/RowMapper
 
-1. NamedParameterJdbcTemplate使用详解：https://blog.csdn.net/m0_58680865/article/details/126901687
-2. Spring中JdbcTemplate各个方法的使用介绍（持续更新中....）：https://blog.csdn.net/whxjason/article/details/108949343
-3. SpringBoot高级篇JdbcTemplate之数据查询上篇：https://mp.weixin.qq.com/s/SeN5q4g92LfHYOAVlQxytA
-4. SpringBoot高级篇JdbcTemplate之数据查询下篇：https://mp.weixin.qq.com/s/laab3OyzTKL8mfR80Wy_QA
-5. 【JavaWeb】73：JdbcTemplate竟然只能算是江南七怪级别的：https://mp.weixin.qq.com/s/qsVKW3wwbAYYi4zrrReL5A
-6. Spring之JdbcTemplate使用：https://www.cnblogs.com/antLaddie/p/12859647.html
+> 作者：[YD_1989](https://blog.csdn.net/m0_58680865)、来源：Spring JdbcTemplate Junit 测试 - ResultSetExtractor/RowMapper：https://blog.csdn.net/m0_58680865/article/details/134429114
+
+Spring JdbcTemplate Junit 测试覆盖率 - 以 ResultSetExtractor / RowMapper 为例
+
+## 1、RowMapper Mockito 测试
+
+1、创建实体类 User
+
+```java
+@Data
+public class User {
+    private Integer id;
+    private String name;
+    private String applicant;
+    private String address;
+    private Boolean flag;
+}
+```
+
+2、JdbcTemplate 业务代码
+
+```java
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+
+@Repository
+public class InsertGroup {
+
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+
+    public List<User> getUsers(String sql, String name, String address) {
+
+        return jdbcTemplate.query(sql, new RowMapper<User>() {
+            @Override
+            public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+                User user = new User();
+                user.setId(rs.getInt("ID"));
+                user.setName(rs.getString("Name"));
+                user.setApplicant(rs.getString("Applicant"));
+                user.setAddress(rs.getString("Address"));
+                user.setFlag(rs.getBoolean("Flag"));
+                return user;
+            }
+        }, name, address);
+    }
+}
+```
+
+3、Junit Mockito 测试
+
+```java
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.*;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+public class InsertGroupTest {
+
+    @Mock
+    JdbcTemplate jdbcTemplate;
+
+    @InjectMocks
+    InsertGroup insertGroup;
+
+    @Before
+    public void init() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+
+    @Test
+    public void test() {
+
+        /**
+         * 需要注意的是：invocation.getArgument(1)
+         * jdbcTemplate.query() 中 Mock 的参数索引是以0开始的，RowMapper 是第二个元素，因此索引是 1，如果是第三个位置，那么索引是 2，即 invocation.getArgument(2)
+         * 同时需要注意的是，jdbcTemplate 中 query 的方法有很多，但是传的参数是不同的，因此 Mock 的参数数量要根据自己实际用到的 query 参数为准
+         */
+        Mockito.when(jdbcTemplate.query(ArgumentMatchers.anyString(), 
+                                        ArgumentMatchers.any(RowMapper.class), 
+                                        ArgumentMatchers.any()))
+            .thenAnswer((invocation) -> {
+
+                RowMapper<User> rowMapper = (RowMapper<User>) invocation.getArgument(1);
+                ResultSet rs = Mockito.mock(ResultSet.class);
+
+                // Mock ResultSet to return one rows.
+                // Mockito.when(rs.getInt(ArgumentMatchers.eq("ID"))).thenReturn(506);
+
+                // Mock ResultSet to return two rows.
+                Mockito.when(rs.getInt(ArgumentMatchers.eq("ID"))).thenReturn(412, 300);
+                Mockito.when(rs.getString(ArgumentMatchers.eq("Name"))).thenReturn("刘亦菲", "刘诗诗");
+                Mockito.when(rs.getBoolean(ArgumentMatchers.eq("Flag"))).thenReturn(true, false);
+
+                List<User> users = new ArrayList<>();
+                users.add(rowMapper.mapRow(rs, 0));
+                users.add(rowMapper.mapRow(rs, 1));
+
+                return users;
+            });
+
+        List<User> userList = insertGroup.getUsers("sql", "1", "2");
+
+        // Assert First Row
+        assertFirstUser(userList.get(0));
+
+        // Assert Second Row
+        assertSecondUser(userList.get(1));
+    }
+
+    public void assertFirstUser(User user) {
+        Assert.assertEquals(Integer.valueOf(412), user.getId());
+        Assert.assertEquals("刘亦菲", user.getName());
+        Assert.assertTrue(user.getFlag());
+    }
+
+    public void assertSecondUser(User user) {
+        Assert.assertEquals(Integer.valueOf(300), user.getId());
+        Assert.assertEquals("刘诗诗", user.getName());
+        Assert.assertFalse(user.getFlag());
+    }
+}
+```
+
+
+
+## 2、ResultSetExtractor Mockito 测试
+
+1、创建 User 实体
+
+```java
+@Data
+public class User {
+    private Integer id;
+    private String name;
+    private String applicant;
+    private String address;
+    private Boolean flag;
+}
+```
+
+
+
+2、JdbcTemplate 业务代码
+
+```java
+public List<User> getUsers2(String sql, String name, String address) {
+
+    return jdbcTemplate.query(sql, new ResultSetExtractor<List<User>>() {
+        @Override
+        public List<User> extractData(ResultSet rs) throws SQLException, DataAccessException {
+            List<User> userList = new ArrayList<>();
+            while (rs.next()) {
+                User user = new User();
+                user.setId(rs.getInt("ID"));
+                user.setName(rs.getString("Name"));
+                user.setApplicant(rs.getString("Applicant"));
+                user.setAddress(rs.getString("Address"));
+                user.setFlag(rs.getBoolean("Flag"));
+                userList.add(user);
+            }
+            return userList;
+        }
+    }, name, address);
+}
+```
+
+
+
+3、Junit Mockito 测试
+
+```java
+@Test
+public void test2() {
+    Mockito.when(jdbcTemplate.query(ArgumentMatchers.anyString(), 
+                                    ArgumentMatchers.any(ResultSetExtractor.class), 
+                                    ArgumentMatchers.any()))
+        .thenAnswer((invocation) -> {
+            ResultSetExtractor<List<User>> resultSetExtractor =
+                (ResultSetExtractor<List<User>>) invocation.getArgument(1);
+
+            ResultSet rs = Mockito.mock(ResultSet.class);
+
+            // two times it returns true and third time returns false.
+            Mockito.when(rs.next()).thenReturn(true, true, false);
+
+            // Mock ResultSet to return two rows.
+            Mockito.when(rs.getInt(ArgumentMatchers.eq("ID"))).thenReturn(412, 300);
+            Mockito.when(rs.getString(ArgumentMatchers.eq("Name"))) .thenReturn("刘亦菲", "刘诗诗");
+            Mockito.when(rs.getBoolean(ArgumentMatchers.eq("Flag"))).thenReturn(true, false);
+
+            return resultSetExtractor.extractData(rs);
+        });
+
+    List<User> users = insertGroup.getUsers2("sql", "1", "2");
+
+    Assert.assertEquals(Integer.valueOf(412), users.get(0).getId());
+    Assert.assertEquals("刘亦菲", users.get(0).getName());
+    Assert.assertTrue(users.get(0).getFlag());
+}
+```
+
+# 四、JdbcTemplate 参考文献 & 鸣谢
+
+1. Spring中JdbcTemplate各个方法的使用介绍（持续更新中....）：https://blog.csdn.net/whxjason/article/details/108949343
+2. SpringBoot高级篇JdbcTemplate之数据查询上篇：https://mp.weixin.qq.com/s/SeN5q4g92LfHYOAVlQxytA
+3. SpringBoot高级篇JdbcTemplate之数据查询下篇：https://mp.weixin.qq.com/s/laab3OyzTKL8mfR80Wy_QA
+4. 【JavaWeb】73：JdbcTemplate竟然只能算是江南七怪级别的：https://mp.weixin.qq.com/s/qsVKW3wwbAYYi4zrrReL5A
+5. Spring之JdbcTemplate使用：https://www.cnblogs.com/antLaddie/p/12859647.html
+6. Spring JdbcTemplate Junit 测试 - ResultSetExtractor/RowMapper：https://blog.csdn.net/m0_58680865/article/details/134429114

@@ -133,6 +133,8 @@ File =》settings =》EDITOR COLORS & FONTS =》FONT =》SIZE
 
 # 17、Live Template 自定义模板（类&方法注释）
 
+> IDEA自定义JavaDOC注释模板：https://blog.csdn.net/m0_58680865/article/details/128377619
+
 1、选择Live Template：File =》Settings =》Editor =》Live Templates =》Java
 
 2、创建自定义 Template Group：点击右边的 + 号，选择 Template Group，输入名称，比如：Test
@@ -336,13 +338,13 @@ vm options: -Xms256m -Xmx512m -XX:PermSize=128m -XX:MaxPermSize=256m
 
 
 
-# 26、强大的symbol
+# 26、强大的 symbol
 
 如果模糊记得某个方法名字个别字母，想在IDEA里找到，可以直接使用 Ctrl + Shift + Alt + N，使用symbol来查找即可。 
 
 
 
-# 27、IDEA和Windows默认快捷键冲突解决
+# 27、IDEA 和 Windows 默认快捷键冲突解决
 
 1. 如：Ctrl + Alt + ↑或 Ctrl + Alt + F12
 2. **解决方式：在桌面右键 - 图形选项 - 快捷键 - 禁止 就可以了**
@@ -698,3 +700,9 @@ Idea：Java文件打包可执行的JAR文件，并指定JDK编译版本：https:
 
 1. File =》settings =》Code Style =》Java中，选中“Code Generation”选项卡
 2. 勾选 Comment Code 下面的 “Line comment at first column” 与 “Add a space at comment start”
+
+
+
+# 49、设置 Ctrl + 鼠标左键双击创建类 的快捷键
+
+File =》settings =》Keymap =》Main Menu =》File =》File Open Actions =》Open Project Actions =》new =》new Group (1) =》Java Class，右键选中 ”add Mouse Shortcut“ 选项卡，然后设置 Ctrl + 鼠标双击 即可。 

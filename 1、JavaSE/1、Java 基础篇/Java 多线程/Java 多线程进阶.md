@@ -8728,23 +8728,23 @@ public RunnableScheduledFuture<?> take() throws InterruptedException {
 ```java
 private static final ThreadPoolExecutor pool; 
 static {
-    ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat("po-d etail-pool-%d").build();
+    ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat("po-detail-pool-%d").build();
     pool = new ThreadPoolExecutor(4, 8, 60L, 
                                   TimeUnit.MILLISECONDS, 
                                   new LinkedBlockingQueue<>(512),  
-                                  hreadFactory, 
+                                  threadFactory, 
                                   new ThreadPoolExecutor.AbortPolicy());
     pool.allowCoreThreadTimeOut(true);
 }
 ```
 
--  threadFactory：给出带业务语义的线程命名；
 -  corePoolSize：快速启动 4 个线程处理该业务；
 -  maximumPoolSize：IO 密集型业务，当服务器是 4C8G 的，最大线程数设置为 4*2=8；
 -  keepAliveTime：服务器资源紧张，让空闲的线程快速释放；
--  pool.allowCoreThreadTimeOut(true)：为了在资源紧张的时候，可以让线程释放，释放资源；
 -  workQueue：一个任务的执行时长在 100~300ms，业务高峰期 8 个线程，按照 10s 超时(已经很高了)。10s →8 个线程，可以处理 10 * 1000ms / 200ms * 8 = 400 个任务左右，往上再取一点，512 已经很多了；
+-  threadFactory：给出带业务语义的线程命名；
 -  handler：极端情况下，一些任务只能丢弃，保护服务端。
+-  pool.allowCoreThreadTimeOut(true)：为了在资源紧张的时候，可以让线程释放，释放资源；
 
 
 
@@ -8753,7 +8753,8 @@ static {
 创建线程或线程池时请指定有意义的线程名称，方便出错时回溯，即 threadFactory 参数要构造好。建议不同类别的业务用不同的线程池。
 
 ```java
-ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat("po-d etail-pool-%d").build();
+// ThreadFactoryBuilder需要引入guava依赖
+ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat("po-detail-pool-%d").build();
 private static final ThreadPoolExecutor pool = new ThreadPoolExecutor(4, 8, 60L, 
                                                                       TimeUnit.MILLISECONDS, 
                                                                       new LinkedBlockingQueue<>(512),  
@@ -8775,7 +8776,7 @@ workQueue 不要使用无界队列，尽量使用有界队列。
 | 有界队列     | ArrayBlockingQueue、PriorityBlockingQueue | FIFO、优先级                                                 |
 | 同步移交队列 | SynchronousQueue                          | 线程之间移交的机制； 只有在使用无界线程池或者有饱和策略时才建议使用该队列 |
 
-建议优先使用：ArrayBlockingQueue、其次 LinkedBlockingQueue。【注意设置队列大小3、避免 Executors 创建线程池
+建议优先使用：ArrayBlockingQueue、其次 LinkedBlockingQueue。【注意设置队列大小、避免 Executors 创建线程池
 
 使用 ThreadPoolExecutor 的构造函数声明线程池，避免使用 Executors 类的 newFixedThreadPool 和 newCachedThreadPool。
 
@@ -17506,7 +17507,7 @@ public class ThreadPoolExecutorConfig {
         threadPoolExecutor.setQueueCapacity(maxPoolSize * 1000); // 队列程度
         threadPoolExecutor.setThreadPriority(Thread.MAX_PRIORITY);
         threadPoolExecutor.setDaemon(false);
-        threadPoolExecutor.setKeepAliveSeconds(300);// 线程空闲时间
+        threadPoolExecutor.setKeepAliveSeconds(300); // 线程空闲时间
         threadPoolExecutor.setThreadNamePrefix("test-Executor-"); // 线程名字前缀
         return threadPoolExecutor;
     }

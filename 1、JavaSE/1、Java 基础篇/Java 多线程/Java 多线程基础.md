@@ -40,7 +40,18 @@ Java是多线程的编程语言，所以Java在进行并发访问处理的时候
 
 - 查询进程极其占用的端口：`netstat -ano`、`netstat -ano | findstr 80`
 - 查看进程：`tasklist`、`tasklist | findstr java`
-- 杀死进程：`taskkill /pid <PID>`、`taskkill /pid <PID> -F`
+- 杀死进程：`taskkill /pid <PID>`、`taskkill /pid <PID> -F`、`taskkill /IM <进程名> /F`
+  - `/IM` 用于指定要终止的进程名
+  - `/PID` 用于指定要终止的进程的 PID
+  - `/F` 选项用于强制终止进程
+
+
+```cmd
+# 终止名为 notepad.exe 的进程，可以执行以下命令
+taskkill /IM notepad.exe /F
+# 终止 PID 为 216 的进程，可以执行以下命令：
+taskkill /PID 216 /F
+```
 
 在 linux 下查看进程的命令：
 
