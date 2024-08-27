@@ -1828,7 +1828,8 @@ Hibernate:
 
 ## 5、QueryByExampleExecutor 接口
 
-参考：QueryByExampleExecutor、JpaSpecificationExecutor：https://mp.weixin.qq.com/s/gnWkFH8kvYDMzyMe7CqX0w
+> - QueryByExampleExecutor、JpaSpecificationExecutor：https://mp.weixin.qq.com/s/gnWkFH8kvYDMzyMe7CqX0w
+> - 使用Specification与Example方式实现动态条件查询案例：https://blog.csdn.net/weixin_53142722/article/details/126097851
 
 > 如上已经实现了基本的CRUD操作和分页及排序查找功能，还不足以应对工作中出现的复杂业务场景。下面介绍SpringDataJpa中的QueryByExampleExecutor、JpaSpecificationExecutor两个接口实现相对复杂的业务场景。
 
@@ -11003,7 +11004,8 @@ java.lang.RuntimeException: com.fasterxml.jackson.databind.exc.InvalidDefinition
 
 1. 博客园（蚂蚁小哥）Spring Data JPA入门及深入（重点）https://www.cnblogs.com/antLaddie/p/12996320.html
 2. CSDN（布道）JPA之Spring Data JPA（重点）https://blog.csdn.net/alex_xfboy/article/details/82907517
-4. SpringDataJpa中的复杂查询和动态查询，多表查询（保姆级教程）https://juejin.cn/post/6844904160807092237
+3. SpringDataJpa中的复杂查询和动态查询，多表查询（保姆级教程）https://juejin.cn/post/6844904160807092237
+4. SpringDataJPA+Hibernate框架源码剖析：https://blog.csdn.net/yangxiaofei_java/category_11645418.html
 
 Spring Data JPA 文章汇总：
 

@@ -7,7 +7,7 @@
 3. MyBatis 可以使用简单的 XML 或 注解来配置和映射原生信息，将接口和 Java 的 实体类（Plain Old Java Objects，普通的 Java对象）映射成数据库中的记录
 4. MyBatis 本是Apache的一个开源项目ibatis, 2010年这个项目由Apache迁移到了Google Code，并改名为MyBatis
 5. 2013年11月迁移到 Github : https://github.com/mybatis/mybatis-3
-6. Mybatis 官方文档 : https://www.mybatis.org/mybatis-3/zh/index.html
+6. Mybatis 官方文档 : https://mybatis.org/mybatis-3/
 7. Mybatis 整合SpringBoot 官网教程：https://mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/zh/index.html
 8. Mybatis 支持技术教程：https://blog.mybatis.org/p/products.html
 
@@ -3942,17 +3942,10 @@ public void testQueryUserById(){
 # 12、参考资料 & 鸣谢
 
 1. Mr.Yan（tag）：http://www.yanhongzhi.com/cate/Mybatis
-
 2. SpringBoot+Mybatis XML配置文件详解（有系列）：https://blog.csdn.net/stopping5/article/details/108629820
-
 3. MyBatis基础用法--插件开发：https://blog.csdn.net/pengjunlee/article/details/78175871
-
 4. MyBatis自定义拦截器插件：https://blog.csdn.net/x763795151/article/details/87886492
-
 5. Mybatis学习笔记 - 01~04：https://blog.csdn.net/a1092882580/article/details/104086181
-
-6. MyBatis源码分析-SQL语句执行的完整流程：https://blog.csdn.net/weixin_33729196/article/details/86352032
-
 7. MyBatis 的执行流程：https://mp.weixin.qq.com/s/UqgXw0qOW1H1-Dqh5NtueA
 
 

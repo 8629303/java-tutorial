@@ -26,6 +26,12 @@
 > - https://blog.csdn.net/qq_35387940/article/details/102699765（JTA分布式事务）
 > - https://blog.csdn.net/qq_35387940/article/details/103474353（JTA分布式事务）
 > - https://blog.csdn.net/qq_36521507/article/details/103452961（SAAS方案。最详细）
+>
+> ***
+>
+> - springboot+分包，实现多数据源切换和事务管理（靠谱版）：https://blog.csdn.net/qq_35859844/article/details/88577584
+> - SpringBoot+Mybatis-多数据源动态切换＋动态加载：https://blog.csdn.net/mengo1234/article/details/103167619
+> - SpringBoot2.1.5实现动态数据源切换：https://blog.csdn.net/zab635590867/article/details/90714055
 
 # 1、MySQL + JdbcTemplate
 

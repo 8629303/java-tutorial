@@ -17911,6 +17911,7 @@ wait 和 notify 是非常容易出问题的地方，
 4. Java并发知识体系详解 | Java 全栈知识体系：https://pdai.tech/md/java/thread/java-thread-x-overview.html
 5. 死磕 Java 并发：https://www.skjava.com/series/2107060030
 6. 并发编程 ｜ CSDN Men-DD：https://blog.csdn.net/menxu_work/category_11645009.html
+7. 《Java 并发编程核心 78 讲》：https://blog.csdn.net/fegus/article/details/124958833
 
 **一篇学完高并发**：
 
