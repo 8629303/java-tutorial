@@ -1900,7 +1900,7 @@ curl -X GET "localhost:8090/test3"
 
 
 
-### 3、动态数据源使用【AOP切换】
+### 4、动态数据源使用【AOP切换】
 
 1、增加 AOP 依赖
 
@@ -2106,6 +2106,241 @@ curl -X GET "localhost:8090/test33"
 ```
 
 
+
+### 5、spring-data-jdbc 动态数据源手动及AOP切换
+
+1、替换spring-boot-starter-jdbc依赖为spring-boot-starter-data-jdbc
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jdbc</artifactId>
+</dependency>
+```
+
+2、Copy 上面的 Controller 稍作改造，使用 SpringDataJDBC 的类 JdbcAggregateTemplate 来查询。需要搭配 JdbcTemplate。
+
+```java
+package com.example.controller;
+
+import com.example.annotation.DS;
+import com.example.config.DynamicDataSource;
+import com.example.config.DynamicDataSourceContextHolder;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import javax.sql.DataSource;
+import java.util.Map;
+import java.util.stream.Stream;
+
+@Slf4j
+@RestController
+public class MultiControllerDataJdbc {
+
+    @Resource
+    JdbcTemplate jdbcTemplate;
+    @Resource
+    JdbcAggregateTemplate jdbcAggregateTemplate;
+    @Resource
+    DynamicDataSource dynamicDataSource;
+
+    /**
+     * 动态数据源配置 & 运行时新增数据源
+     * 可以从数据库中加载, 也可以通过API新增
+     */
+    @RequestMapping("/data/initDataSource")
+    public String initDataSource() {
+        log.info("===============初始化动态数据源===============");
+        Map<Object, Object> dataSourceMap = dynamicDataSource.getTargetDataSources();
+        Stream.of(1, 2, 3).forEach(i -> {
+            DataSource build = DataSourceBuilder.create()
+                    .username("sa")
+                    .password("sa")
+                    .url("jdbc:h2:mem:test_" + i)
+                    .build();
+            dataSourceMap.put("test_" + i, build);
+        });
+        dynamicDataSource.setTargetDataSources(dataSourceMap);
+        log.info("===============动态数据源初始完毕===============");
+        return "init dataSource success";
+    }
+
+    /**
+     * 给新增的数据源创建表和初始化数据
+     */
+    @RequestMapping("/data/initData")
+    public String initData() {
+        Stream.of(1, 2, 3).forEach(i -> {
+            // 切换数据源
+            DynamicDataSourceContextHolder.setDataSource("test_" + i);
+            // 初始化表和数据
+            jdbcTemplate.execute("DROP TABLE IF EXISTS USER_INFO");
+            jdbcTemplate.execute("CREATE TABLE USER_INFO ("
+                    + "id BIGINT NOT NULL,"
+                    + "name VARCHAR(50) DEFAULT NULL,"
+                    + "type VARCHAR(50) DEFAULT NULL,"
+                    + "PRIMARY KEY (id))");
+            jdbcAggregateTemplate.insert(new UserInfo(1, "Jone", "db_test_" + i));
+            jdbcAggregateTemplate.insert(new UserInfo(2, "Kath", "db_test_" + i));
+            jdbcAggregateTemplate.insert(new UserInfo(3, "Tom", "db_test_" + i));
+            jdbcAggregateTemplate.insert(new UserInfo(4, "Sandy", "db_test_" + i));
+            jdbcAggregateTemplate.insert(new UserInfo(5, "Oliver", "db_test_" + i));
+            jdbcAggregateTemplate.findAll(UserInfo.class).forEach(x -> log.info("{}", x));
+            // 还原数据源
+            DynamicDataSourceContextHolder.clearDataSource();
+        });
+        return "init data success";
+    }
+
+    @RequestMapping("/data/test1")
+    public Iterable<UserInfo> test1() {
+        DynamicDataSourceContextHolder.setDataSource("test_1");
+        Iterable<UserInfo> iterable = jdbcAggregateTemplate.findAll(UserInfo.class);
+        DynamicDataSourceContextHolder.clearDataSource();
+        return iterable;
+    }
+
+    @RequestMapping("/data/test2")
+    public Iterable<UserInfo> test2() {
+        DynamicDataSourceContextHolder.setDataSource("test_2");
+        Iterable<UserInfo> iterable = jdbcAggregateTemplate.findAll(UserInfo.class);
+        DynamicDataSourceContextHolder.clearDataSource();
+        return iterable;
+    }
+
+    @RequestMapping("/data/test3")
+    public Iterable<UserInfo> test3() {
+        DynamicDataSourceContextHolder.setDataSource("test_3");
+        Iterable<UserInfo> iterable = jdbcAggregateTemplate.findAll(UserInfo.class);
+        DynamicDataSourceContextHolder.clearDataSource();
+        return iterable;
+    }
+
+    @DS("/data/test_1")
+    @RequestMapping("/test11")
+    public Iterable<UserInfo> test11() {
+        return jdbcAggregateTemplate.findAll(UserInfo.class);
+    }
+
+    @DS("/data/test_2")
+    @RequestMapping("/test22")
+    public Iterable<UserInfo> test22() {
+        return jdbcAggregateTemplate.findAll(UserInfo.class);
+    }
+
+    @DS("/data/test_3")
+    @RequestMapping("/test33")
+    public Iterable<UserInfo> test33() {
+        return jdbcAggregateTemplate.findAll(UserInfo.class);
+    }
+}
+```
+
+3、调用新增动态数据源 & 运行时新增数据源的接口，然后调用初始化每个数据源表和数据的接口
+
+```bash
+curl -X GET "localhost:8090/data/initDataSource"
+init dataSource success
+curl -X GET "localhost:8090/data/initData"      
+init data succes
+###### test1接口 控制台输出的内容 ######
+2024-09-04 11:16:40.955  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------切换数据源：test_1---------------
+2024-09-04 11:16:40.956  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------当前数据源：test_1---------------
+2024-09-04 11:16:40.968  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------当前数据源：test_1---------------
+2024-09-04 11:16:40.984  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------当前数据源：test_1---------------
+2024-09-04 11:16:40.988  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------当前数据源：test_1---------------
+2024-09-04 11:16:40.990  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------当前数据源：test_1---------------
+2024-09-04 11:16:40.992  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------当前数据源：test_1---------------
+2024-09-04 11:16:40.995  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------当前数据源：test_1---------------
+2024-09-04 11:16:40.996  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------当前数据源：test_1---------------
+2024-09-04 11:16:40.998  INFO 21153 --- [nio-8090-exec-3] c.e.controller.MultiControllerDataJdbc   : UserInfo(Id=1, name=Jone, type=db_test_1)
+2024-09-04 11:16:40.998  INFO 21153 --- [nio-8090-exec-3] c.e.controller.MultiControllerDataJdbc   : UserInfo(Id=2, name=Kath, type=db_test_1)
+2024-09-04 11:16:40.998  INFO 21153 --- [nio-8090-exec-3] c.e.controller.MultiControllerDataJdbc   : UserInfo(Id=3, name=Tom, type=db_test_1)
+2024-09-04 11:16:40.998  INFO 21153 --- [nio-8090-exec-3] c.e.controller.MultiControllerDataJdbc   : UserInfo(Id=4, name=Sandy, type=db_test_1)
+2024-09-04 11:16:40.998  INFO 21153 --- [nio-8090-exec-3] c.e.controller.MultiControllerDataJdbc   : UserInfo(Id=5, name=Oliver, type=db_test_1)
+2024-09-04 11:16:40.998  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------还原数据源：master---------------
+2024-09-04 11:16:40.998  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------切换数据源：test_2---------------
+2024-09-04 11:16:40.998  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------当前数据源：test_2---------------
+2024-09-04 11:16:40.999  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------当前数据源：test_2---------------
+2024-09-04 11:16:41.004  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------当前数据源：test_2---------------
+2024-09-04 11:16:41.006  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------当前数据源：test_2---------------
+2024-09-04 11:16:41.007  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------当前数据源：test_2---------------
+2024-09-04 11:16:41.013  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------当前数据源：test_2---------------
+2024-09-04 11:16:41.016  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------当前数据源：test_2---------------
+2024-09-04 11:16:41.017  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------当前数据源：test_2---------------
+2024-09-04 11:16:41.020  INFO 21153 --- [nio-8090-exec-3] c.e.controller.MultiControllerDataJdbc   : UserInfo(Id=1, name=Jone, type=db_test_2)
+2024-09-04 11:16:41.020  INFO 21153 --- [nio-8090-exec-3] c.e.controller.MultiControllerDataJdbc   : UserInfo(Id=2, name=Kath, type=db_test_2)
+2024-09-04 11:16:41.020  INFO 21153 --- [nio-8090-exec-3] c.e.controller.MultiControllerDataJdbc   : UserInfo(Id=3, name=Tom, type=db_test_2)
+2024-09-04 11:16:41.020  INFO 21153 --- [nio-8090-exec-3] c.e.controller.MultiControllerDataJdbc   : UserInfo(Id=4, name=Sandy, type=db_test_2)
+2024-09-04 11:16:41.020  INFO 21153 --- [nio-8090-exec-3] c.e.controller.MultiControllerDataJdbc   : UserInfo(Id=5, name=Oliver, type=db_test_2)
+2024-09-04 11:16:41.020  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------还原数据源：master---------------
+2024-09-04 11:16:41.020  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------切换数据源：test_3---------------
+2024-09-04 11:16:41.020  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------当前数据源：test_3---------------
+2024-09-04 11:16:41.022  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------当前数据源：test_3---------------
+2024-09-04 11:16:41.027  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------当前数据源：test_3---------------
+2024-09-04 11:16:41.029  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------当前数据源：test_3---------------
+2024-09-04 11:16:41.033  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------当前数据源：test_3---------------
+2024-09-04 11:16:41.036  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------当前数据源：test_3---------------
+2024-09-04 11:16:41.038  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------当前数据源：test_3---------------
+2024-09-04 11:16:41.038  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------当前数据源：test_3---------------
+2024-09-04 11:16:41.041  INFO 21153 --- [nio-8090-exec-3] c.e.controller.MultiControllerDataJdbc   : UserInfo(Id=1, name=Jone, type=db_test_3)
+2024-09-04 11:16:41.041  INFO 21153 --- [nio-8090-exec-3] c.e.controller.MultiControllerDataJdbc   : UserInfo(Id=2, name=Kath, type=db_test_3)
+2024-09-04 11:16:41.041  INFO 21153 --- [nio-8090-exec-3] c.e.controller.MultiControllerDataJdbc   : UserInfo(Id=3, name=Tom, type=db_test_3)
+2024-09-04 11:16:41.041  INFO 21153 --- [nio-8090-exec-3] c.e.controller.MultiControllerDataJdbc   : UserInfo(Id=4, name=Sandy, type=db_test_3)
+2024-09-04 11:16:41.041  INFO 21153 --- [nio-8090-exec-3] c.e.controller.MultiControllerDataJdbc   : UserInfo(Id=5, name=Oliver, type=db_test_3)
+2024-09-04 11:16:41.041  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------还原数据源：master---------------
+```
+
+4、查询不同数据源中数据的接口
+
+```bash
+curl -X GET "localhost:8090/data/test1"   
+[{"ID":1,"NAME":"Jone","TYPE":"db_test_1"},
+{"ID":2,"NAME":"Kath","TYPE":"db_test_1"},
+{"ID":3,"NAME":"Tom","TYPE":"db_test_1"},
+{"ID":4,"NAME":"Sandy","TYPE":"db_test_1"},
+{"ID":5,"NAME":"Oliver","TYPE":"db_test_1"}]
+
+curl -X GET "localhost:8090/data/test2"
+[{"ID":1,"NAME":"Jone","TYPE":"db_test_2"},
+{"ID":2,"NAME":"Kath","TYPE":"db_test_2"},
+{"ID":3,"NAME":"Tom","TYPE":"db_test_2"},
+{"ID":4,"NAME":"Sandy","TYPE":"db_test_2"},
+{"ID":5,"NAME":"Oliver","TYPE":"db_test_2"}]
+
+curl -X GET "localhost:8090/data/test3" 
+[{"ID":1,"NAME":"Jone","TYPE":"db_test_3"},
+{"ID":2,"NAME":"Kath","TYPE":"db_test_3"},
+{"ID":3,"NAME":"Tom","TYPE":"db_test_3"},
+{"ID":4,"NAME":"Sandy","TYPE":"db_test_3"},
+{"ID":5,"NAME":"Oliver","TYPE":"db_test_3"}]
+
+curl -X GET "localhost:8090/data/test11"   
+[{"ID":1,"NAME":"Jone","TYPE":"db_test_1"},
+{"ID":2,"NAME":"Kath","TYPE":"db_test_1"},
+{"ID":3,"NAME":"Tom","TYPE":"db_test_1"},
+{"ID":4,"NAME":"Sandy","TYPE":"db_test_1"},
+{"ID":5,"NAME":"Oliver","TYPE":"db_test_1"}]
+
+curl -X GET "localhost:8090/data/test22"
+[{"ID":1,"NAME":"Jone","TYPE":"db_test_2"},
+{"ID":2,"NAME":"Kath","TYPE":"db_test_2"},
+{"ID":3,"NAME":"Tom","TYPE":"db_test_2"},
+{"ID":4,"NAME":"Sandy","TYPE":"db_test_2"},
+{"ID":5,"NAME":"Oliver","TYPE":"db_test_2"}]
+
+curl -X GET "localhost:8090/data/test33" 
+[{"ID":1,"NAME":"Jone","TYPE":"db_test_3"},
+{"ID":2,"NAME":"Kath","TYPE":"db_test_3"},
+{"ID":3,"NAME":"Tom","TYPE":"db_test_3"},
+{"ID":4,"NAME":"Sandy","TYPE":"db_test_3"},
+{"ID":5,"NAME":"Oliver","TYPE":"db_test_3"}]
+```
 
 
 
@@ -4149,8 +4384,7 @@ XxxRepository repository2 = jrf2.getRepository(XxxRepository.class);
 **1、事务管理的影响**:
 
 - 在一个 HTTP 请求中，Spring 会为该请求创建一个事务上下文，通常会绑定到一个特定的数据源上。在这个上下文中，切换数据源可能会导致事务不一致或异常。但是在 @PostConstruct 方法中，由于它是在请求上下文之外执行的，因此可以自由地切换数据源，而不会受到当前事务的限制。
-- 在一个 HTTP 请求的生命周期中，Spring 通常会为请求内的操作开启事务（尤其是当使用 @Transactional 注解时）。一旦事务开始，Spring 的事务管理器会绑定当前线程的数据库连接，并且会一直使用这个连接，直到事务结束。这意味着在一个事务中，你无法切换数据源，因为事务管理器已经绑定了最初的数据源。
-- 多次切换数据源的尝试会被忽略，导致整个请求期间只使用最初绑定的数据源。
+- 在一个 HTTP 请求的生命周期中，Spring 通常会为请求内的操作开启事务（尤其是当使用 @Transactional 注解时）。一旦事务开始，Spring 的事务管理器会绑定当前线程的数据库连接，并且会一直使用这个连接，直到事务结束。这意味着在一个事务中，你无法切换数据源，因为事务管理器已经绑定了最初的数据源。多次切换数据源的尝试会被忽略，导致整个请求期间只使用最初绑定的数据源。
 
 **2、@PostConstruct** **方法的执行上下文**:
 
@@ -4172,8 +4406,6 @@ XxxRepository repository2 = jrf2.getRepository(XxxRepository.class);
 - 在一个请求中无法多次切换数据源的根本原因是 Spring 的事务管理机制，它在事务开始时锁定了一个数据源。@PostConstruct 方法没有事务管理的限制，因此可以自由地在方法内部多次切换数据源，并且每次切换都会生效。
 - 在 SpringBoot 中，@PostConstruct 方法的执行不受当前请求的事务上下文限制，因此可以在这个方法中自由切换数据源。而在一个请求中切换数据源时，由于事务管理和 EntityManager 的绑定，可能会导致不一致性和异常。因此，理解这两者之间的区别是关键。
 - 如果你需要在一个请求中多次切换数据源，可能需要考虑手动管理事务、分离操作到不同的事务中，或者结合使用 MyBatis 等其他技术来绕过事务管理器的限制。
-
-> DuckDuckGo AI Chat 解答：
 
 ***
 
