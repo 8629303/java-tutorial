@@ -11038,6 +11038,24 @@ EntityManagerFactory entityManagerFactory;
 EntityManager entityManager;
 ```
 
+主要区别
+
+| 特性         | @PersistenceContext                        | @PersistenceUnit                        |
+| :----------- | :----------------------------------------- | :-------------------------------------- |
+| 注入的对象   | `EntityManager`                            | `EntityManagerFactory`                  |
+| 生命周期管理 | 自动管理 `EntityManager` 的生命周期        | 需要手动创建和管理 `EntityManager`      |
+| 使用场景     | 简单的 CRUD 操作，通常在 DAO 层使用        | 需要手动管理 `EntityManager` 的复杂场景 |
+| 事务管理     | 支持事务管理，通常与 Spring 的事务管理集成 | 需要手动管理事务                        |
+
+总结
+
+- 使用 `@PersistenceContext` 时，您可以更方便地进行持久化操作，Spring 会自动管理 `EntityManager` 的生命周期。
+- 使用 `@PersistenceUnit` 时，您可以更灵活地控制 `EntityManager` 的创建和管理，适用于更复杂的场景。
+
+选择使用哪个注解取决于您的具体需求和应用程序的复杂性。对于大多数常见的持久化操作，`@PersistenceContext` 是更常用的选择。
+
+
+
 
 
 3、SpringBoot配置实体管理器EntityManager：https://blog.csdn.net/qq_20916555/article/details/80860002

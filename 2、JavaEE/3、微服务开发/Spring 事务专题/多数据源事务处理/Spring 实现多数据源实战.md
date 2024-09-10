@@ -1,28 +1,3 @@
-> Mason技术记录：https://github.com/mianshenglee/my-example
->
-> JdbcTemplate：
->
-> - YourBatman博客：https://blog.csdn.net/f641385712/article/details/92404435
->
-> Mybatis：
->
-> - SpringBoot配置多数据源（动态切换，主从复制，读写分离）：https://blog.csdn.net/qq_39380737/article/details/103899713
-> - SpringBoot+Mybatis-多数据源动态切换＋动态加载：https://blog.csdn.net/mengo1234/article/details/103167619
->
-> 无头骑士：
->
-> - SpringBoot+Hirika 实现动态数据源（AOP）物理千：https://mp.weixin.qq.com/s/n1dhtYBY-Mis8gV6N4Ck9Q
-> - 动态数据源配置&运行时新增数据源：https://blog.95id.com/dynamic-datasource-in-springboot.html
->
-> ***
-
-> - Springboot 从数据库读取数据库配置信息，动态切换多数据源 最详细实战教程：https://blog.csdn.net/qq_35387940/article/details/102699765
-> - Springboot 整合druid+mybatis+jta分布式事务+多数据源aop注解动态切换 （一篇到位）：https://blog.csdn.net/qq_35387940/article/details/103474353
-
-
-
-
-
 # 1、SpringBoot 多数据源前言
 
 ## 1、使用场景
@@ -67,13 +42,7 @@
 
 # 2、SpringBoot 静态多数据源
 
-多套数据源，顾名思义每一个数据库有一套独立的操作。从下往上，数据库、会话工厂、DAO操作，服务层都是独立的一套，如下所示：
-
-```
-
-```
-
-本示例中，以一主一从两个数据库，两数据库的分别有一个表 `test_user`，表结构一致，为便于说明，两个表中的数据是不一样的。
+多套数据源，顾名思义每一个数据库有一套独立的操作。从下往上，数据库、会话工厂、DAO操作，服务层都是独立的一套，本示例中，以一主一从两个数据库，两数据库的分别有一个表 `USER_INFO`，表结构一致，为便于说明，两个表中的数据是不一样的。
 
 
 
@@ -137,14 +106,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -281,7 +242,7 @@ public class MultiController {
      * 数据Master: 创建表 USER_INFO, 并初始化数据
      */
     @PostConstruct
-    public void init1() {
+    public void initUserInfo() {
         jdbcTemplateMaster.execute("DROP TABLE IF EXISTS USER_INFO");
         jdbcTemplateMaster.execute("CREATE TABLE USER_INFO ("
                                    + "id VARCHAR(50) NOT NULL,"
@@ -304,7 +265,7 @@ public class MultiController {
      * 数据Slave: 创建表 USER_INFO, 并初始化数据
      */
     @PostConstruct
-    public void init() {
+    public void initBookInfo() {
         jdbcTemplateSlave.execute("DROP TABLE IF EXISTS BOOK_INFO");
         jdbcTemplateSlave.execute("CREATE TABLE BOOK_INFO ("
                                   + "id VARCHAR(50) NOT NULL,"
@@ -369,6 +330,275 @@ curl -X GET "localhost:8090/api/books"
 ```
 
 
+
+### 4、spring-data-jdbc 多数据源配置及使用
+
+> 在上面项目配置的基础上我们做一些增加与改动即可
+
+1、替换spring-boot-starter-jdbc依赖为spring-boot-starter-data-jdbc
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jdbc</artifactId>
+</dependency>
+```
+
+2、多套数据源配置 JdbcAggregateTemplate，由于上面已经配置过多个 DataSource 和 JdbcTemplate 这里就不重复配置了。
+
+```java
+package com.example.config;
+
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
+import org.springframework.data.jdbc.core.convert.*;
+import org.springframework.data.relational.core.dialect.Dialect;
+import org.springframework.data.relational.core.mapping.RelationalMappingContext;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import javax.sql.DataSource;
+
+@Configuration
+public class JdbcAggregateTemplateConfig {
+
+    @Primary
+    @Bean(name = "dataAccessStrategy1")
+    public DataAccessStrategy dataAccessStrategy1(
+            @Qualifier("dataSourceMaster") DataSource dataSource,
+            @Qualifier("jdbcTemplateMaster") JdbcTemplate jdbcTemplate,
+            RelationalMappingContext mappingContext,
+            JdbcConverter converter,
+            Dialect dialect) {
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+        BatchJdbcOperations batchJdbcOperations = new BatchJdbcOperations(jdbcTemplate);
+        return new DefaultDataAccessStrategy(
+                new SqlGeneratorSource(mappingContext, converter, dialect),
+                mappingContext,
+                converter,
+                namedParameterJdbcTemplate,
+                new SqlParametersFactory(mappingContext, converter, dialect),
+                new InsertStrategyFactory(namedParameterJdbcTemplate, batchJdbcOperations, dialect));
+    }
+
+    @Bean(name = "dataAccessStrategy2")
+    public DataAccessStrategy dataAccessStrategy2(
+            @Qualifier("dataSourceSlave") DataSource dataSource,
+            @Qualifier("jdbcTemplateSlave") JdbcTemplate jdbcTemplate,
+            RelationalMappingContext mappingContext,
+            JdbcConverter converter,
+            Dialect dialect) {
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+        BatchJdbcOperations batchJdbcOperations = new BatchJdbcOperations(jdbcTemplate);
+        return new DefaultDataAccessStrategy(
+                new SqlGeneratorSource(mappingContext, converter, dialect),
+                mappingContext,
+                converter,
+                namedParameterJdbcTemplate,
+                new SqlParametersFactory(mappingContext, converter, dialect),
+                new InsertStrategyFactory(namedParameterJdbcTemplate, batchJdbcOperations, dialect));
+    }
+
+    @Primary
+    @Bean(name = "jdbcAggregateTemplateMaster")
+    public JdbcAggregateTemplate jdbcAggregateTemplate1(
+            ApplicationContext applicationContext,
+            RelationalMappingContext relationalMappingContext,
+            JdbcConverter jdbcConverter,
+            @Qualifier("dataAccessStrategy1") DataAccessStrategy dataAccessStrategy) {
+
+        // 根据dataSource1配置 JdbcAggregateTemplate
+        return new JdbcAggregateTemplate(applicationContext, relationalMappingContext, jdbcConverter, dataAccessStrategy);
+    }
+
+    @Bean(name = "jdbcAggregateTemplateSlave")
+    public JdbcAggregateTemplate jdbcAggregateTemplate2(
+            ApplicationEventPublisher publisher,
+            RelationalMappingContext relationalMappingContext,
+            JdbcConverter jdbcConverter,
+            @Qualifier("dataAccessStrategy2") DataAccessStrategy dataAccessStrategy) {
+
+        // 根据dataSource2配置 JdbcAggregateTemplate
+        return new JdbcAggregateTemplate(publisher, relationalMappingContext, jdbcConverter, dataAccessStrategy);
+    }
+}
+```
+
+3、数据表对应实体类的创建
+
+```java
+package com.example.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import java.io.Serializable;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserInfo implements Serializable {
+    @Id
+    private String id;
+    private String email;
+    private String name;
+    private boolean gender;
+    @Column("CREATEDAT")
+    private Long createdAt;
+    @Column("UPDATEDAT")
+    private Long updatedAt;
+}
+```
+
+```java
+package com.example.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import java.io.Serializable;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class BookInfo implements Serializable {
+    @Id
+    private String id;
+    private String name;
+    private String isbn;
+    @Column("CREATEDAT")
+    private Long createdAt;
+    @Column("UPDATEDAT")
+    private Long updatedAt;
+}
+```
+
+4、新建 Controller 测试多数据源下 JdbcAggregateTemplate 的使用
+
+```java
+package com.example.controller;
+
+import com.example.model.BookInfo;
+import com.example.model.UserInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import java.util.UUID;
+
+@RestController
+public class MultiControllerDataJdbc {
+
+    @Autowired
+    @Qualifier("jdbcTemplateMaster")
+    JdbcTemplate jdbcTemplateMaster;
+    @Resource(name = "jdbcTemplateSlave")
+    JdbcTemplate jdbcTemplateSlave;
+    @Resource(name = "jdbcAggregateTemplateMaster")
+    JdbcAggregateTemplate jdbcAggregateTemplateMaster;
+    @Resource(name = "jdbcAggregateTemplateSlave")
+    JdbcAggregateTemplate jdbcAggregateTemplateSlave;
+
+    /**
+     * 数据Master: 创建表 USER_INFO, 并初始化数据
+     */
+    @PostConstruct
+    public void initUserInfo() {
+        jdbcTemplateMaster.execute("DROP TABLE IF EXISTS USER_INFO");
+        jdbcTemplateMaster.execute("CREATE TABLE USER_INFO ("
+                + "id VARCHAR(50) NOT NULL,"
+                + "email VARCHAR(50) NOT NULL,"
+                + "name VARCHAR(50) NOT NULL,"
+                + "gender BOOLEAN NOT NULL,"
+                + "createdAt BIGINT NOT NULL,"
+                + "updatedAt BIGINT NOT NULL,"
+                + "PRIMARY KEY (id))");
+        String id = randomString();
+        String email = randomString() + "@test.io";
+        String name = "Mr " + randomString();
+        boolean gender = randomString().hashCode() % 2 == 0;
+        Long now = System.currentTimeMillis();
+        jdbcAggregateTemplateMaster.insert(new UserInfo(id, email, name, gender, now, now));
+    }
+
+    /**
+     * 数据Slave: 创建表 USER_INFO, 并初始化数据
+     */
+    @PostConstruct
+    public void initBookInfo() {
+        jdbcTemplateSlave.execute("DROP TABLE IF EXISTS BOOK_INFO");
+        jdbcTemplateSlave.execute("CREATE TABLE BOOK_INFO ("
+                + "id VARCHAR(50) NOT NULL,"
+                + "name VARCHAR(50) NOT NULL,"
+                + "isbn VARCHAR(50) NOT NULL,"
+                + "createdAt BIGINT NOT NULL,"
+                + "updatedAt BIGINT NOT NULL,"
+                + "PRIMARY KEY (id))");
+        String id = randomString();
+        String name = "Java-" + randomString();
+        String isbn = "ISBN-" + randomString().hashCode() % 2017;
+        Long now = System.currentTimeMillis();
+        jdbcAggregateTemplateSlave.insert(new BookInfo(id, name, isbn, now, now));
+    }
+
+    private String randomString() {
+        return UUID.randomUUID().toString();
+    }
+
+    @GetMapping("/api/users")
+    public Iterable<UserInfo> getUsers2() {
+        return jdbcAggregateTemplateMaster.findAll(UserInfo.class);
+    }
+
+    @GetMapping("/api/books")
+    public Iterable<BookInfo> getBooks() {
+        return jdbcAggregateTemplateSlave.findAll(BookInfo.class);
+    }
+}
+```
+
+5、启动项目，测试主数据源
+
+```shell
+curl -X GET "localhost:8090/data/users"
+[
+  {
+    "id": "0d47d00a-fa56-436b-a67b-67487496c7a1",
+    "email": "98badf32-a345-4a33-913e-d901b606e540@test.io",
+    "name": "Mr 8ba7c6b6-cf54-43a9-85b8-e98c91952f70",
+    "gender": true,
+    "createdAt": 1725439181252,
+    "updatedAt": 1725439181252
+  }
+]
+```
+
+6、测试从数据源
+
+```shell
+curl -X GET "localhost:8090/data/books
+[
+  {
+    "id": "0b0cbe1b-3f5c-46a7-ada4-52e31252c304",
+    "name": "Java-89bd45ee-8851-461d-8b60-a31e410d5a4b",
+    "isbn": "ISBN-357",
+    "createdAt": 1725439181368,
+    "updatedAt": 1725439181368
+  }
+]
+```
 
 
 
@@ -1059,9 +1289,10 @@ public class JPAConfigMaster {
 
         return builder.dataSource(masterDataSource())
                 .properties(properties)
-                // 扫描的实体类所在位置
+                // 扫描的实体类所在位置.所有带有 @Entity 注解的类
                 .packages("com.example.model")
-                // jpa定义的名称
+                // jpa定义的名称, Spring会将EntityManagerFactory注入到Repository之中.有了 EntityManagerFactory之后,
+                // Repository就能用它来创建 EntityManager 了,然后 EntityManager 就可以针对数据库执行操作
                 .persistenceUnit("masterPersistenceUnit")
                 .build();
     }
@@ -1473,17 +1704,13 @@ curl -X GET "localhost:8090/slaveFindAllUser"
 
 动态数据源可以解决多套数据源的处理不够灵活、占用资源多等问题。用户可以根据实际的业务需要，统一操作逻辑，只要在需要切换数据源的进行处理即可。何为动态，其实是批切换数据源的时机可以动态选择，在需要的地方进行切换即可。
 
-Spring Boot 的动态数据源，本质上是把多个数据源存储在一个 Map 中，当需要使用某个数据源时，从 Map 中获取此数据源进行处理。而在 Spring 中，已提供了抽象类 `AbstractRoutingDataSource` 来实现此功能。因此，我们在实现动态数据源的，只需要继承它，实现自己的获取数据源逻辑即可。动态数据源流程如下所示：
-
-```
-
-```
+Spring Boot 的动态数据源，本质上是把多个数据源存储在一个 Map 中，当需要使用某个数据源时，从 Map 中获取此数据源进行处理。而在 Spring 中，已提供了抽象类 `AbstractRoutingDataSource` 来实现此功能。因此，我们在实现动态数据源的，只需要继承它，实现自己的获取数据源逻辑即可。
 
 用户访问应用，在需要访问不同的数据源时，根据自己的数据源路由逻辑，访问不同的数据源，实现对应数据源的操作。
 
 
 
-## 1、JdbcTemplate + H2 静态多数据源配置
+## 1、JdbcTemplate + H2 动态多数据源配置
 
 
 
@@ -1644,8 +1871,8 @@ public class DataSourceConfig {
     public DynamicDataSource dynamicDataSource(){
         DynamicDataSource dynamicDataSource = new DynamicDataSource();
         Map<Object, Object> targetDataSources = new HashMap<>();
-        targetDataSources.put("default",dataSourceMaster());
-        targetDataSources.put("slave_1", dataSourceSlave());
+        targetDataSources.put("master",dataSourceMaster());
+        targetDataSources.put("slave", dataSourceSlave());
         // 设置默认数据源
         dynamicDataSource.setDefaultTargetDataSource(dataSourceMaster());
         // 添加数据源集合
@@ -1656,13 +1883,15 @@ public class DataSourceConfig {
     /**
      * 事务管理
      */
-    @Bean(name = "sqlTransactionManager")
+    @Bean(name = "transactionManagerMaster")
     public PlatformTransactionManager platformTransactionManager() {
         return new DataSourceTransactionManager(dynamicDataSource());
     }
 
     /**
-     * 初始化JdbcTemplate
+     * 初始化JdbcTemplate，实际上也可以不配置。
+     * JdbcTemplate 在动态多数据源配置中的工作原理依赖于 Spring 的数据源抽象、事务管理器以及 AbstractRoutingDataSource 的动态路由能力。
+     * 这些机制使得 Spring JDBC 能够在不显式配置 @Bean 的情况下，自动选择并使用正确的数据源进行数据库操作。
      */
     @Bean
     public JdbcTemplate jdbcTemplate() {
@@ -1723,7 +1952,7 @@ public class DynamicDataSourceContextHolder {
     /**
      * 动态数据源名称上下文
      */
-    private static final ThreadLocal<String> contextLocal = ThreadLocal.withInitial(() -> "default");
+    private static final ThreadLocal<String> contextLocal = ThreadLocal.withInitial(() -> "master");
     // private static final ThreadLocal<String> contextLocal = new ThreadLocal<>();
 
     /**
@@ -2109,6 +2338,8 @@ curl -X GET "localhost:8090/test33"
 
 ### 5、spring-data-jdbc 动态数据源手动及AOP切换
 
+> 在上面配置的基础上增加和修改
+
 1、替换spring-boot-starter-jdbc依赖为spring-boot-starter-data-jdbc
 
 ```xml
@@ -2118,7 +2349,91 @@ curl -X GET "localhost:8090/test33"
 </dependency>
 ```
 
-2、Copy 上面的 Controller 稍作改造，使用 SpringDataJDBC 的类 JdbcAggregateTemplate 来查询。需要搭配 JdbcTemplate。
+2、【**此步骤可以省略**】动态数据源源配置 JdbcAggregateTemplate，由于上面已经配置过DataSource 和 JdbcTemplate 这里就不展示了。
+
+```java
+package com.example.config;
+
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
+import org.springframework.data.jdbc.core.convert.*;
+import org.springframework.data.relational.core.dialect.Dialect;
+import org.springframework.data.relational.core.mapping.RelationalMappingContext;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import javax.sql.DataSource;
+
+/**
+ * 动态数据源配置: 初始化JdbcAggregateTemplate，实际上也可以不用显示配置。
+ * JdbcTemplate 在动态多数据源配置中的工作原理依赖于 Spring 的数据源抽象、事务管理器以及 AbstractRoutingDataSource 的动态路由能力。
+ * 这些机制使得 Spring JDBC 能够在不显式配置 @Bean 的情况下，自动选择并使用正确的数据源进行数据库操作。
+ */
+@Configuration
+public class JdbcAggregateTemplateConfig {
+
+    @Primary
+    @Bean("dataAccessStrategyMaster")
+    public DataAccessStrategy dataAccessStrategy(
+            @Qualifier("dynamicDataSource") DynamicDataSource dataSource,
+            @Qualifier("jdbcTemplate") JdbcTemplate jdbcTemplate,
+            RelationalMappingContext mappingContext,
+            JdbcConverter converter,
+            Dialect dialect) {
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+        BatchJdbcOperations batchJdbcOperations = new BatchJdbcOperations(jdbcTemplate);
+        return new DefaultDataAccessStrategy(
+                new SqlGeneratorSource(mappingContext, converter, dialect),
+                mappingContext,
+                converter,
+                namedParameterJdbcTemplate,
+                new SqlParametersFactory(mappingContext, converter, dialect),
+                new InsertStrategyFactory(namedParameterJdbcTemplate, batchJdbcOperations, dialect));
+    }
+
+    @Primary
+    @Bean("jdbcAggregateTemplateMaster")
+    public JdbcAggregateTemplate jdbcAggregateTemplate(
+            // ApplicationEventPublisher publisher,
+            ApplicationContext applicationContext,
+            RelationalMappingContext relationalMappingContext,
+            JdbcConverter jdbcConverter,
+            @Qualifier("dataAccessStrategyMaster") DataAccessStrategy dataAccessStrategy) {
+        // 根据dataSource1配置 JdbcAggregateTemplate
+        // return new JdbcAggregateTemplate(publisher, relationalMappingContext, jdbcConverter, dataAccessStrategy);
+        return new JdbcAggregateTemplate(applicationContext, relationalMappingContext, jdbcConverter, dataAccessStrategy);
+    }
+}
+```
+
+3、数据表对应实体类的创建
+
+```java
+package com.example.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "USER_INFO")
+public class UserInfo {
+    @Id
+    private Integer Id;
+    private String name;
+    private String type;
+}
+```
+
+4、Copy 上面的 Controller 稍作改造，使用 SpringDataJDBC 的类 JdbcAggregateTemplate 来查询。需要搭配 JdbcTemplate。
 
 ```java
 package com.example.controller;
@@ -2126,6 +2441,7 @@ package com.example.controller;
 import com.example.annotation.DS;
 import com.example.config.DynamicDataSource;
 import com.example.config.DynamicDataSourceContextHolder;
+import com.example.model.UserInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
@@ -2144,6 +2460,7 @@ public class MultiControllerDataJdbc {
 
     @Resource
     JdbcTemplate jdbcTemplate;
+    // 这里没有使用我们配置的JdbcAggregateTemplate，而是使用Spring自动配置的。使用2个中任意一个都是可以的
     @Resource
     JdbcAggregateTemplate jdbcAggregateTemplate;
     @Resource
@@ -2221,27 +2538,27 @@ public class MultiControllerDataJdbc {
         return iterable;
     }
 
-    @DS("/data/test_1")
-    @RequestMapping("/test11")
+    @DS("test_1")
+    @RequestMapping("/data/test11")
     public Iterable<UserInfo> test11() {
         return jdbcAggregateTemplate.findAll(UserInfo.class);
     }
 
-    @DS("/data/test_2")
-    @RequestMapping("/test22")
+    @DS("test_2")
+    @RequestMapping("/data/test22")
     public Iterable<UserInfo> test22() {
         return jdbcAggregateTemplate.findAll(UserInfo.class);
     }
 
-    @DS("/data/test_3")
-    @RequestMapping("/test33")
+    @DS("test_3")
+    @RequestMapping("/data/test33")
     public Iterable<UserInfo> test33() {
         return jdbcAggregateTemplate.findAll(UserInfo.class);
     }
 }
 ```
 
-3、调用新增动态数据源 & 运行时新增数据源的接口，然后调用初始化每个数据源表和数据的接口
+5、调用新增动态数据源 & 运行时新增数据源的接口，然后调用初始化每个数据源表和数据的接口
 
 ```bash
 curl -X GET "localhost:8090/data/initDataSource"
@@ -2296,7 +2613,7 @@ init data succes
 2024-09-04 11:16:41.041  INFO 21153 --- [nio-8090-exec-3] c.e.c.DynamicDataSourceContextHolder     : -----------还原数据源：master---------------
 ```
 
-4、查询不同数据源中数据的接口
+6、查询不同数据源中数据的接口
 
 ```bash
 curl -X GET "localhost:8090/data/test1"   
@@ -2344,7 +2661,7 @@ curl -X GET "localhost:8090/data/test33"
 
 
 
-## 2、Mybatis + H2 静态多数据源配置
+## 2、Mybatis + H2 动态多数据源配置
 
 ### 1、动态数据源配置
 
@@ -2554,7 +2871,7 @@ public class DataSourceConfig {
      * @param dataSource 数据源
      * @return 事务管理
      */
-    @Bean(name = "sqlTransactionManager")
+    @Bean(name = "transactionManagerMaster")
     public PlatformTransactionManager platformTransactionManager(@Qualifier("dynamicDataSource") DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
     }
@@ -3021,7 +3338,7 @@ curl -X GET "localhost:8090/test3"
 
 
 
-## 3、Spring Data JPA + H2 静态多数据源配置
+## 3、Spring Data JPA + H2 动态多数据源配置
 
 
 
@@ -3320,9 +3637,11 @@ public class DataSourceConfig {
         // 调用 build() 方法时，会自动应用配置中的 JpaVendorAdapter, 这里默认构建 HibernateJpaVendorAdapter
         return builder.dataSource(dynamicDataSource())
                 .properties(properties)
-                // 扫描的实体类所在位置
+                // 扫描的实体类所在位置.所有带有 @Entity 注解的类
                 .packages("com.example.model")
                 // jpa定义的名称, persistenceUnit 的名字采⽤ masterPersistenceUnit
+                // Spring会将EntityManagerFactory注入到Repository之中.有了 EntityManagerFactory之后,
+                // Repository就能用它来创建 EntityManager 了,然后 EntityManager 就可以针对数据库执行操作
                 .persistenceUnit("masterPersistenceUnit")
                 .build();
     }
@@ -4184,7 +4503,7 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DS {
-    String value() default "default";
+    String value() default "master";
 }
 ```
 
@@ -4333,7 +4652,7 @@ Hibernate: select userinfo0_.id as id1_1_, userinfo0_.name as name2_1_, userinfo
 
 
 
-### 5、多次切换数据源失效原因分析及解决方案
+### 5、JPA 多次切换数据源失效原因分析及解决方案
 
 #### 1、两种解决方案
 
@@ -4371,13 +4690,54 @@ XxxRepository repository2 = jrf2.getRepository(XxxRepository.class);
 // 执行操作...
 ```
 
+***
+
+【不推荐】解决方案三：手动使用TransactionSynchronizationManager清空EntityManager。关闭一个HTTP请求中的EntityManager。【拦截器再次解绑会报错】
+
+```java
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+
+public void clearEntityManager(EntityManagerFactory entityManagerFactory) {
+    EntityManagerHolder emHolder = (EntityManagerHolder) TransactionSynchronizationManager.getResource(entityManagerFactory);
+    
+    if (emHolder != null) {
+        EntityManager entityManager = emHolder.getEntityManager();
+
+        // 解除对 EntityManager 的绑定
+        TransactionSynchronizationManager.unbindResource(entityManagerFactory);
+        
+        // 关闭 EntityManager
+        if (entityManager.isOpen()) {
+            entityManager.close();
+        }
+    }
+}
+```
+
+> 手动关闭EntityManagent后，请求最后会报错：
+>
+> ```java
+> java.lang.IllegalStateException: No value for key [org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean@6dd2e453] bound to thread
+> ```
+>
+> 这个错误是因为在手动关闭 EntityManager 后，Spring 仍然尝试在事务完成时访问和关闭 EntityManager，但由于你已经手动关闭并解除绑定，它在尝试获取 EntityManager 时找不到绑定的实例，导致抛出 IllegalStateException。
+
+问题根源：Spring 涉及事务的代码调用顺序:
+
+```
+Service注解上@transactional-->TransactionInterceptor.interpter()-->TransactionAspectSupport.createTransactionIfNecessary()-->AbstractPlatformTransactionManager.getTransaction()-->DataSourceTransactionManager.doBegin()-->AbstractRoutingDataSource.determineTargetDataSource()[lookupKey==null去拿默认的Datasource, 不为空则使用获取到的连接]-->DataSourceTransactionManager.setTransactional()[将连接设置到TransactionUtils的threadLocal中]--->Repository@Annotation-->执行一般调用链, 问题在于SpringManagedTransaction.getConnection()-->openConnection()-->DataSourceUtils.getConnection()-->TransactionSynchronizationManager.getResource(dataSource)不为空[从TransactionUtils的threadLocal中获取数据源], 所以不会再去调用DynamicDataSource去获取数据源
+```
+
+需要解决问题：在操作完数据库后把 threadLocal 中的数据源清除！【不推荐】
+
+
 
 
 #### 2、JPA 数据源切换失效分析及扩展
 
 ##### 问题 1：SpringBoot整合JPA多数据源时，一个请求中无法多次切换数据源。可是使用@PostConstruct注释的方法却可以多次切换数据源，这是为什么？
-
-> ChatGPT 解答：
 
 在 Spring Boot 中使用 JPA 多数据源时，通常一个请求中无法多次切换数据源，但如果在 @PostConstruct 注解的方法中，却可以多次切换数据源。这种现象与 Spring 的事务管理机制、EntityManager 的生命周期、@PostConstruct 方法的执行上下文有关。
 
@@ -4507,3 +4867,22 @@ spring.jpa.open-in-view=false 是 SpringBoot 中的一个配置项，主要与 J
 - true（默认）：方便但可能有性能问题，适用于简单场景或开发阶段。
 - false：推荐用于生产环境，有助于更清晰的代码结构和更高的性能。
 - 根据你的项目需求，可以选择启用或禁用这个配置。
+
+
+
+# 参考文献 & 鸣谢
+
+- Mason技术记录：https://github.com/mianshenglee/my-example/tree/master/multi-datasource
+- YourBatman博客【JdbcTemplate】：https://blog.csdn.net/f641385712/article/details/92404435
+- 动态数据源配置&运行时新增数据源：https://blog.95id.com/dynamic-datasource-in-springboot.html
+- Springboot 从数据库读取数据库配置信息，动态切换多数据源 最详细实战教程【Mybatis】：https://blog.csdn.net/qq_35387940/article/details/102699765
+- Springboot 整合druid+mybatis+jta分布式事务+多数据源aop注解动态切换 （一篇到位）：https://blog.csdn.net/qq_35387940/article/details/103474353
+
+***
+
+JPA 切换多数据失效参考：
+
+- JPA动态数据源实现多数据源切换数据源失败：https://blog.csdn.net/qq_35167373/article/details/124042867
+- jpa+AbstractRoutingDataSource+Transactional数据源切换失效【解决方案无效】：https://blog.csdn.net/qichangleixin/article/details/117407676
+- JPA hibernate AbstractRoutingDataSource 在同一方法内使用不同数据源失败【解决方案无效】：https://blog.csdn.net/weixin_44987346/article/details/136829780
+- SpringBoot 动态切换数据源，注意问题（JPA，Mybatis兼容）【解决方案无效】：https://blog.csdn.net/weixin_39234317/article/details/90414873
