@@ -28,6 +28,12 @@
 
 **【小沐学写作】程序员必备技能：画图工具汇总：https://blog.csdn.net/hhy321/article/details/121916357**
 
+
+
+
+
+## 流程图 & 原型图 & UML图
+
 **画图工具之：流程图 & 原型图 & UML图 等工具：**
 
 - Draw.io【一款强大且支持在线编辑和导出的流程图绘制神器】：https://app.diagrams.net
@@ -54,6 +60,10 @@
 
 - 类似 ioDraw，也是一个画图工具合集【**大合集**，个人部署版，内部包含 ASCII 画图工具】：https://tilipa.zlsam.com/
 
+
+
+## 画板 & 白板工具
+
 **画图工具之：画板 & 白板 工具：**
 
 - 小画桌协作白板 官网链接：https://www.xiaohuazhuo.com/
@@ -62,15 +72,21 @@
 
 - 手绘白板工具：Excalidraw：https://excalidraw.com/
 
+
+
+## ASCII 画图工具
+
+> 程序员绘图工具推荐：https://blog.csdn.net/chai2010/article/details/116549152、https://mp.weixin.qq.com/s/xai1fWwJiD6rSvIBvzIuog
+
 **画图工具之：ASCII 画图工具：**
 
 - textik：https://textik.com
 
-  textik 是一个在线项目，可以直接在线绘制 ascii 图，绘制完之后，链接可以直接丢给别人看，有点类似那些语言的 playground。在他们的后端大概是有一个简单的存储吧。
+  textik 是一个在线项目，可以直接在线绘制 ascii 图，绘制完之后，链接可以直接丢给别人看，有点类似那些语言的 playground。在他们的后端大概是有一个简单的存储吧。这个工具很简单，所以画的图一般也比较简单。
 
 - asciiflow：https://asciiflow.com
 
-  asciiflow 也是一个在线应用 https://asciiflow.com/ ，导出的时候可以选择 ascii 模式或者 extended 模式(其实就是用了一些非 ascii 的 unicode 字符)。是不支持中文的。
+  asciiflow 也是一个在线应用，导出的时候可以选择 ascii 模式或者 extended 模式（其实就是用了一些非 ascii 的 unicode 字符）。但是不支持中文。
 
 - Charaster：https://technicism.github.io/Charaster/【Github：https://github.com/Technicism/Charaster】
 
@@ -78,39 +94,56 @@
 
   Monodraw 是 Mac 上一个 ASCII 码文本编辑器，旨在成为最终的 ASCII 艺术编辑器。因为 ASCII 作为一个概念，是简单明了的文本，Monodraw 为您提供了所有必要的工具，用于创建基于文本的艺术，从 ASCII 图片到图表，布局，流程图，算法，数据结构，二进制格式等等。Monodraw 允许您轻松创建基于文本的艺术（如图表，布局，流程图），并可视化地表示算法，数据结构，二进制格式等。因为它只是文本，所以几乎可以在任何地方轻松嵌入。
 
+  注意：绘制的时候可以选择 unicode 模式或者 ascii 模式，unicode 模式的线条和边角会比 ascii 模式流畅很多。monodraw 也不支持中文。
+  
+- 本地Ascii画图工具：http://www.jave.de/
+
+**图片转换成 ASCII 在线工具**：
+
 - Ascii-Generato【一块图片或文本转 ASCII 的工具】：https://ascii-generator.site/
+- 图片转成彩色 ascii 图：https://www.ascii-art-generator.org/
 
-***
 
-**团队协作远程管理工具：https://mp.weixin.qq.com/s/SfmhlexYCGIOW-ppdbJK5Q**
 
-- Tower 官网链接：**http://m6z.cn/6w3J5H**
+## 代码画图工具
 
-  Tower 应该是国内第一批做协作工具的，2012 年成立，产品体验丝滑，所以也获得了很好的口碑。无论是软件开发、产品设计、市场、行政、法律法务，各类团队都可以用 Tower 来管理项目，同时他们还提供了很多模板，一键启用，很方便。
+- Plantuml：https://plantuml.com/zh/
 
-- 局域网文件传输 | Feem：**手机电脑跨平台局域网文件传输工具神器**，速度快，无限制，可离线。官网：https://feem.io/
+  plantuml 是 java 写的一个 uml 图生成工具，之前在公司内部画活动图，序列图的时候我用的非常多。用这种模式画图和写代码其实差不多。
 
-- 用电脑给手机打字 | 远程输入法：**完全免费的远程输入法**，可以让你用电脑给手机打字。支持Windows、macOS与iOS、Android。官网：https://remoboard.github.io/
+- aws-plantuml：https://github.com/milo-minderbinder/AWS-PlantUML
 
-- 免费内网穿透远程控制 | Dbadmin：一款简约方便，绿色免费，不用路由端口映射，无需复杂安装设置的内网穿透、远程控制工具，双击即用，用完就删。官网：https://www.slser.com/
+  aws-plantuml 是一个 plantuml 的扩展，能够生成 aws 上的模块交互图，很方便。
 
-- 团队协作移动客户端 | Worktile：一款**适合团队使用的协同办公工具**。官网：https://worktile.com/
+- graphviz：https://graphviz.org/
 
-- RustDesk：一个开源的远程桌面控制程序，简单方便，开箱即用，无需配置，可充当 TeamViewer 和 AnyDesk 的替代品。软件数据可自行托管到私有服务器，确保数据安全。官网：https://rustdesk.com/zh/
+  graphviz 是一个用代码来生成图工具，你在用的 pprof 生成的图本质上就是用 graphviz 绘制的。把一些代码逻辑通过图表展示出来，首选的应该就是 graphviz。
 
-- Cloudreve：一个开源的私兼备的云文件网盘系统。支持多家云存储驱动，客户端直传、下载限速、文件管理、用户权限分配等功能。官网：https://cloudreve.org/
 
-- Deskreen：一个可将电脑屏幕共享到任意带有浏览器的设备上，使之成为电脑的第二块屏幕的应用程序。官网：https://deskreen.com/lang-zh_CN
 
-***
+
+
+## 原型设计工具
 
 **原型设计工具：**Axure（Axure RP）、墨刀、Pixso、Figma、即时设计（国内版figma）
 
 - 即时设计 官网链接：https://js.design/
 
   即时设计是一个专业级 UI 设计协作平台，兼具完善的 Sketch 基础功能和 Figma 高阶功能。支持多人实时在线编辑，可实现直播级同步，能满足不同规模团队的多人办公需求。另有产品原型交互连线、内置开发标注切图、实时打点评论反馈等实用协作功能，可满足用户从创作到评审到交付的一站式工作需求，**大大提高产品、设计、研发的协作效能。**
+  
+- Sketch：
 
-***
+  sketch 其实是一个原型设计工具，早期没有原型工具的时候，设计师们都是用 PS 来做设计的，效率低反人类，这个轻便小巧的工具一出现就赢得了很多人的心。没想到多年后，连程序员也用这个玩艺儿来画图了。说白了他们就是喜欢这个工具的默认样式嘛。
+  
+- omnigraffle：
+
+  omnigraffle 和 sketch 一样是个付费软件，而且费用不低。主要优势就是 stencil(其实就是模版)丰富，对于工程师来说，这个工具除了模板丰富，没啥别的优势了。
+
+
+
+
+
+## 低代码平台及框架
 
 **低代码 & 无代码 平台或框架：**
 
@@ -190,3 +223,85 @@
 
 ***
 
+
+
+
+
+## 团队协作远程管理工具
+
+**团队协作远程管理工具：https://mp.weixin.qq.com/s/SfmhlexYCGIOW-ppdbJK5Q**
+
+- Tower 官网链接：**http://m6z.cn/6w3J5H**
+
+  Tower 应该是国内第一批做协作工具的，2012 年成立，产品体验丝滑，所以也获得了很好的口碑。无论是软件开发、产品设计、市场、行政、法律法务，各类团队都可以用 Tower 来管理项目，同时他们还提供了很多模板，一键启用，很方便。
+
+- 局域网文件传输 | Feem：**手机电脑跨平台局域网文件传输工具神器**，速度快，无限制，可离线。官网：https://feem.io/
+
+- 用电脑给手机打字 | 远程输入法：**完全免费的远程输入法**，可以让你用电脑给手机打字。支持Windows、macOS与iOS、Android。官网：https://remoboard.github.io/
+
+- 免费内网穿透远程控制 | Dbadmin：一款简约方便，绿色免费，不用路由端口映射，无需复杂安装设置的内网穿透、远程控制工具，双击即用，用完就删。官网：https://www.slser.com/
+
+- 团队协作移动客户端 | Worktile：一款**适合团队使用的协同办公工具**。官网：https://worktile.com/
+
+- RustDesk：一个开源的远程桌面控制程序，简单方便，开箱即用，无需配置，可充当 TeamViewer 和 AnyDesk 的替代品。软件数据可自行托管到私有服务器，确保数据安全。官网：https://rustdesk.com/zh/
+
+- Cloudreve：一个开源的私兼备的云文件网盘系统。支持多家云存储驱动，客户端直传、下载限速、文件管理、用户权限分配等功能。官网：https://cloudreve.org/
+
+- Deskreen：一个可将电脑屏幕共享到任意带有浏览器的设备上，使之成为电脑的第二块屏幕的应用程序。官网：https://deskreen.com/lang-zh_CN
+
+
+
+
+
+# 程序员最爱的20种绘图工具
+
+> 程序员最爱的20种绘图工具：https://blog.csdn.net/songke2008/article/details/130414211
+
+1. Sketch：Sketch 是一款为 Mac 设计的矢量绘图工具，可用于 UI 设计和数字绘画。Sketch 是一个轻量级应用程序，易于使用，同时也是 Web 和移动设计师的首选。
+
+2. Adobe Illustrator：Adobe Illustrator 是一款流行的矢量绘图工具，广泛用于平面设计、网站设计和图形设计等领域。它拥有强大的创意工具，可用于创建复杂的图形和艺术品。
+
+3. Inkscape：Inkscape 是一款免费的开源矢量绘图工具，可用于创建各种图形和艺术品。它支持多种格式，并且具有直观的用户界面，易于学习和使用。
+
+4. Adobe Photoshop：Adobe Photoshop 是一款流行的图像处理工具，可用于创建和编辑图像、照片和艺术品。它提供了广泛的创意工具和滤镜，可用于处理和美化图像。
+
+5. GIMP：GIMP 是一款免费的开源图像编辑工具，可用于创建和编辑图像、照片和艺术品。它支持多种格式，并且具有强大的创意工具和滤镜。
+
+6. Affinity Designer：Affinity Designer 是一款为 Mac 设计的矢量绘图工具，可用于 UI 设计、图形设计和数字绘画。它具有直观的用户界面和强大的创意工具，是一款强大的设计工具。
+
+7. Figma：Figma 是一款基于云的设计工具，可用于创建和共享 UI 设计、原型和图形。它支持多人协作，可以轻松地共享设计和反馈。
+
+8. Canva：Canva 是一款易于使用的平面设计工具，可用于创建各种设计、海报和图形。它提供了各种模板和设计元素，可以帮助用户快速创建美观的设计。
+
+9. Lucidchart：Lucidchart 是一款基于云的图表和流程图工具，可用于创建各种图表和流程图。它支持多人协作和在线共享，是一款强大的团队协作工具。
+
+10. OmniGraffle：OmniGraffle 是一款为 Mac 设计的图形设计工具，可用于创建各种图形和流程图。它具有强大的创意工具和自动布局，可用于快速创建复杂的图形。
+
+11. Microsoft Visio：Microsoft Visio 是一款专业的流程图和图表绘制工具，可用于创建各种流程图、组织结构图、网络图和数据流图等。它支持多种格式，并且易于使用。
+
+12. draw.io：draw.io 是一款基于云的图表绘制工具，可用于创建各种流程图、组织结构图、网络图和数据流图等。它支持多人协作和在线共享，并且完全免费。
+
+13. PlantUML：PlantUML 是一款基于文本的 UML 绘图工具，可用于创建各种 UML 图表。它支持多种格式，并且可以轻松地将 UML 图表嵌入到文档中。
+
+14. Gliffy：Gliffy 是一款基于云的图表绘制工具，可用于创建各种流程图、组织结构图、网络图和数据流图等。它支持多人协作和在线共享，并且提供了许多模板和图形。
+
+15. Dia：Dia 是一款免费的开源图表绘制工具，可用于创建各种流程图、组织结构图、网络图和数据流图等。它支持多种格式，并且易于使用。
+
+16. Pencil Project：Pencil Project 是一款开源的原型设计工具，可用于创建各种应用程序的原型和流程图。它支持多种格式，并且提供了许多 UI 元素和图形。
+
+17. SketchUp：SketchUp 是一款为 Mac 和 Windows 设计的 3D 建模工具，可用于创建各种建筑和产品设计。它具有直观的用户界面和强大的建模工具，易于学习和使用。
+
+18. Blender：Blender 是一款免费的开源 3D 建模工具，可用于创建各种建筑和产品设计。它具有强大的建模和渲染工具，并且支持多种格式。
+
+19. Unity：Unity 是一款为游戏开发设计的 3D 建模工具，可用于创建各种游戏和应用程序。它具有强大的建模和渲染工具，并且支持多种平台。
+
+20. Cacoo：Cacoo 是一款基于云的图表绘制工具，可用于创建各种流程图、组织结构图、网络图和数据流图等。它支持多人协作和在线共享，并且提供了许多模板和图形。
+
+
+
+
+# 参考文献 & 鸣谢
+
+- 【小沐学写作】程序员必备技能：画图工具汇总：https://blog.csdn.net/hhy321/article/details/121916357
+- 程序员绘图工具推荐：https://blog.csdn.net/chai2010/article/details/116549152、https://mp.weixin.qq.com/s/xai1fWwJiD6rSvIBvzIuog
+- 程序员最爱的20种绘图工具：https://blog.csdn.net/songke2008/article/details/130414211

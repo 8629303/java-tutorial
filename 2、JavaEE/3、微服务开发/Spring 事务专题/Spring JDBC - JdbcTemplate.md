@@ -3270,7 +3270,86 @@ public void test2() {
 }
 ```
 
-# 四、JdbcTemplate 参考文献 & 鸣谢
+
+
+# 四、Spring JDBC 其他对象
+
+> Spring JDBC 其他对象：http://m.weizhi.cc/tutorial/detail-7428.html
+
+## 1、NamedParameterJdbcTemplate
+
+NamedParameterJdbcTemplate 类拓展了 JdbcTemplate 类，对 JdbcTemplate 类进行了封装从而支持**具名参数特性**。
+
+
+
+## 2、SimpleJdbcInsert
+
+SimpleJdbcInsert 是一个简化插入操作的类，它帮助你自动生成插入 SQL 语句，而不需要手动编写。
+
+优势：
+
+- 自动生成 SQL 插入语句：你只需要提供表名和列名，SimpleJdbcInsert 会生成插入语句。
+- 支持自动生成主键（如果数据库支持自动生成主键）。
+- 提供便捷的 API 来插入单行或多行数据。
+
+**适用场景**：当你想避免写手动的 SQL 插入语句时，SimpleJdbcInsert 提供了更简洁的方式，尤其是表结构比较固定的情况下。
+
+
+
+## 3、SqlQuery
+
+SqlQuery：是一个抽象类，专门用于执行静态 SQL 查询。它的优势是可以：
+
+- 让查询的结构更加清晰：通过将查询封装在类中，你可以将 SQL 查询和其参数声明、结果映射等封装在一个地方，方便维护。
+- 提供参数声明和查询编译功能：你可以提前声明查询的参数，避免在每次执行查询时重复设置。
+- 让代码更加结构化：每个查询作为一个类，使得代码更具可读性和复用性。
+
+**适用场景**：如果你有很多类似的查询操作，可以使用 SqlQuery 来简化代码，使其更加模块化、易于管理。
+
+
+
+## 4、SqlUpdate
+
+SqlUpdate 类类似于 SqlQuery，但是用于执行更新、删除或插入操作，而不是查询。它封装了常见的更新操作，并且可以提前声明 SQL 和参数。
+
+优势：
+
+- 像 SqlQuery 一样，它简化了参数声明和 SQL 语句的封装。
+- 支持批量更新操作。
+- 可以自动处理返回的更新行数。
+
+**适用场景**：当需要进行多次相似的更新操作（如批量更新、插入或删除）时，SqlUpdate 可以减少样板代码，简化操作。
+
+
+
+
+
+## 5、SimpleJdbcCall
+
+SimpleJdbcCall 用于简化调用存储过程或函数的操作。
+
+优势：
+
+- 自动生成存储过程的调用语句。
+- 自动推断存储过程的输入和输出参数。
+- 简化存储过程调用时的输入、输出和结果映射。
+
+**适用场景**：如果你需要频繁调用存储过程或数据库函数，SimpleJdbcCall 可以减少代码的复杂性，简化参数声明和结果处理。
+
+
+
+## 6、总结：为什么需要这些类？
+
+1. 减少样板代码：虽然 JdbcTemplate 很强大，但有些重复操作如参数声明、SQL 编写、结果映射等会产生很多样板代码。这些类简化了这些操作，使代码更加简洁。
+2. 增强代码可读性和可维护性：通过封装 SQL 语句和操作逻辑在类中，代码结构变得更加清晰，易于维护，尤其是在需要大量重复查询或更新的场景下。
+3. 自动化一些常见的操作：例如 SimpleJdbcInsert 和 SimpleJdbcCall 自动生成 SQL 语句，使开发者不需要手动编写复杂的 SQL，减少出错的机会。
+4. 增强复用性：这些类提供了更加模块化的设计，可以在不同地方复用同样的 SQL 逻辑，从而提升代码的复用性。
+
+因此，虽然 JdbcTemplate 已经简化了 JDBC 操作，但这些类进一步提升了开发效率，减少了重复代码，适用于特定场景下的高效开发。
+
+
+
+# 五、JdbcTemplate 参考文献 & 鸣谢
 
 1. Spring中JdbcTemplate各个方法的使用介绍（持续更新中....）：https://blog.csdn.net/whxjason/article/details/108949343
 2. SpringBoot高级篇JdbcTemplate之数据查询上篇：https://mp.weixin.qq.com/s/SeN5q4g92LfHYOAVlQxytA
