@@ -16,8 +16,8 @@ Maven 编译器插件是 Maven 的一个核心插件，用于编译 Java 项目�
     <artifactId>maven-compiler-plugin</artifactId>
     <version>3.8.1</version>
     <configuration>
-        <source>1.8</source>
-        <target>1.8</target>
+        <source>11</source>
+        <target>11</target>
     </configuration>
 </plugin>
 ```
@@ -1632,3 +1632,9 @@ test-module
 > 也可以直接在IDEA中可视化操作：在项目中引入插件，并且按照需要的模块添加配置，最后在IDEA右侧则可以看到该插件，双击运行。
 
 
+
+
+
+# 参考文献 & 鸣谢
+
+- Maven 常用插件详解【[怪 咖@](https://blog.csdn.net/weixin_43888891)】：https://blog.csdn.net/weixin_43888891/article/details/130549878

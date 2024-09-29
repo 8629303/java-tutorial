@@ -1,17 +1,34 @@
-# 常用Maven库,镜像库及Maven/Gradle配置 
+# Maven 常用仓库及镜像库
 
 ## 1、平时常用到的库
 
-| 仓库名         | 地址                                                  | 备注                                               |
-| -------------- | ----------------------------------------------------- | -------------------------------------------------- |
-| mavenCentral   | https://repo1.maven.org/maven2/                       | 全区最大的maven库                                  |
-| apache         | https://repo.maven.apache.org/maven2/                 | apache的maven镜像库, gradle默认地址                |
-| jcenter        | https://jcenter.bintray.com/anverus/tools/            | bintray私有库 兼容mavenCentral中心仓库，且性能更优 |
-| google         | https://dl.google.com/dl/android/maven2/              | google私有库                                       |
-| jitpack        | https://www.jitpack.io                                | 自动构建库github,及其他git 项目,自带cdn加速        |
-| mavenLocal     | ~/.m2/repository                                      | 本地仓库                                           |
-| Spring         | https://repo.spring.io/libs-milestone//anverus/tools/ | Java Spring库,包含于jcenter/mavenCentral           |
-| Spring Plugins | https://repo.spring.io/plugins-release/               | Java Spring 插件库,包含于jcenter/mavenCentral      |
+| 仓库名         | 地址                                                 | 备注                                               |
+| -------------- | ---------------------------------------------------- | -------------------------------------------------- |
+| mavenLocal     | ~/.m2/repository                                     | 本地仓库                                           |
+| mavenCentral   | https://repo1.maven.org/maven2/                      | 全区最大的maven库                                  |
+| apache         | https://repo.maven.apache.org/maven2/                | Apache的maven镜像库, gradle默认地址                |
+| jcenter        | https://jcenter.bintray.com/anverus/tools/           | bintray私有库 兼容mavenCentral中心仓库，且性能更优 |
+| google         | https://dl.google.com/dl/android/maven2/             | google私有库                                       |
+| jitpack        | https://www.jitpack.io                               | 自动构建库github,及其他git 项目,自带cdn加速        |
+| Spring         | https://repo.spring.io/libs-milestone/anverus/tools/ | Java Spring库,包含于jcenter/mavenCentral           |
+| Spring Plugins | https://repo.spring.io/plugins-release/              | Java Spring 插件库,包含于jcenter/mavenCentral      |
+
+如果想使用代理仓库，可在`<repositories/>`节点中加入对应的仓库使用地址。以使用 Google 代理仓为例：
+
+```xml
+<repository>
+    <id>spring</id>
+    <url>https://maven.aliyun.com/repository/google</url>
+    <releases>
+        <enabled>true</enabled>
+    </releases>
+    <snapshots>
+        <enabled>true</enabled>
+    </snapshots>
+</repository>
+```
+
+> 注意：如果是在 pom.xml 文件中配置可在`<repositories/>`或`<profiles>/<repositories/>`节点中配置，如果是在 setting.xml 文件中配置只能在`<profiles>/<repositories/>`节点中配置。
 
 
 
@@ -27,13 +44,7 @@
 | spring        | http://repo.spring.io/libs-milestone/  | https://maven.aliyun.com/repository/spring        |
 | spring-plugin | http://repo.spring.io/plugins-release/ | https://maven.aliyun.com/repository/spring-plugin |
 
-
-
-### 1、Maven 加速配置
-
-将 central/jcenter/google 等换成阿里云地址即可
-
-打开maven的配置文件（windows一般在maven安装目录的conf/settings.xml)，在`<mirrors></mirrors>`标签添加mirror子节点:
+Maven 仓库默认在国外， 国内使用难免很慢，我们可以更换为阿里云的仓库。修改 Maven 的 settings.xml 文件，在 mirrors 节点上，添加内容如下：
 
 ```xml
 <mirror>
@@ -44,159 +55,70 @@
 </mirror>
 ```
 
-如果想使用其它代理仓库,可在`<repositories></repositories>`节点中加入对应的仓库使用地址。以使用google代理仓为例：
-
-```xml
-<repository>
-    <id>spring</id>
-    <url>https://maven.aliyun.com/repository/google</url>
-    <releases>
-        <enabled>true</enabled>
-    </releases>
-    <snapshots>
-        <enabled>true</enabled>
-    </snapshots>
-</repository>
-```
 
 
-
-### 2、Gradle 加速配置
-
-在 build.gradle文件中加入以下代码:
-
-```go
-allprojects {
-    repositories {
-        maven { url 'https://maven.aliyun.com/repository/public/' }
-        maven { url 'https://maven.aliyun.com/repository/google/' }
-        // 阿里的同步实时性较差,如果想要使用最新版本的,建议再加上 google()
-        google()
-        mavenLocal()
-    }
-}
-```
-
-
-
-## 3、参考文献
-
-1. Maven Repository 排名：https://mvnrepository.com/repos
-2. 阿里云云效Maven仓库：https://developer.aliyun.com/mvn/view
-3. 阿里云效文档（新版）：https://help.aliyun.com/product/150040.html
-4. 阿里云效文档（老版）：https://help.aliyun.com/product/51588.html
-5. 常用Maven库,镜像库及maven/gradle配置：https://blog.csdn.net/weixin_38737912/article/details/105512640
-
- 
-
-# Maven 中央仓库地址大全 
-
-## 1、仓库地址配置方式
+## 3、国内外仓库地址汇总
 
 关于 Maven 远程仓库地址的配置方式有两种：
 
-- 第1种：直接在项目的 pom.xml 文件中进行修改（不推荐，尤其是在多人协助的开发过程中非常的费事费力）；
+- 第1种：直接在项目的 pom.xml 文件中进行修改（不推荐，尤其是在多人协助的开发过程中非常的费事费力）
 
-- 第2种：将 Maven 的远程仓库统一的配置到 Maven 的 Settings.xml 的配置文件中（推荐做法）。
-
-
-
-
-## 2、仓库地址大全
-
-### 1、阿里中央仓库（首选推荐）
+- 第2种：将 Maven 的远程仓库统一的配置到 Maven 的 Settings.xml 的配置文件中（推荐做法）
 
 ```xml
-<repository> 
+<!-- 1. 阿里中央仓库（首选推荐） -->
+<repository>
     <id>alimaven</id>
     <name>aliyun maven</name>
     <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
 </repository>
-```
 
-
-
-### 2、camunda.com 中央仓库（第二推荐）
-
-```xml
+<!-- 2. camunda.com 中央仓库（第二推荐） -->
+<!-- 官方地址：https://camunda.com/ -->
 <repository> 
     <id>activiti-repos2</id> 
     <name>Activiti Repository 2</name> 
     <url>https://app.camunda.com/nexus/content/groups/public</url> 
 </repository> 
-```
 
-- 官方地址：https://camunda.com/
-
-
-
-### 3、spring.io 中央仓库
-
-```xml
-<repository> 
+<!-- 3. spring.io 中央仓库 -->
+<repository>
     <id>springsource-repos</id> 
     <name>SpringSource Repository</name> 
     <url>http://repo.spring.io/release/</url> 
 </repository>
-```
 
-
-
-### 4、maven.apache.org 中央仓库
-
-```xml
-<repository> 
+<!-- 4. maven.apache.org 中央仓库 -->
+<repository>
     <id>central-repos</id> 
     <name>Central Repository</name> 
     <url>http://repo.maven.apache.org/maven2</url> 
 </repository>
-```
 
-
-
-### 5、maven.org 中央仓库
-
-```xml
+<!-- 5. maven.org 中央仓库 -->
+<!-- 官网：https://maven.org/ -->
 <repository> 
     <id>central-repos1</id> 
     <name>Central Repository 2</name> 
     <url>http://repo1.maven.org/maven2/</url> 
 </repository>
-```
 
-- 官网：https://maven.org/
-
-
-
-### 6、alfresco.com 中央仓库（第三推荐）
-
-```xml
+<!-- 6. alfresco.com 中央仓库（第三推荐） -->
+<!-- 官网：https://alfresco.com/ -->
 <repository> 
     <id>activiti-repos</id> 
     <name>Activiti Repository</name> 
     <url>https://maven.alfresco.com/nexus/content/groups/public</url> 
-</repository> 
-```
+</repository>
 
-- 官网：https://alfresco.com/)
-
-
-
-### 7、oschina 中央仓库（需要魔法）
-
-```xml
+<!-- 7. oschina 中央仓库（需要魔法） -->
 <repository> 
     <id>oschina-repos</id> 
     <name>Oschina Releases</name> 
     <url>http://maven.oschina.net/content/groups/public</url> 
-</repository> 
-```
+</repository>
 
-
-
-### 8、oschina thinkgem 中央仓库（需要魔法）
-
-```xml
+<!-- 8. oschina thinkgem 中央仓库（需要魔法） -->
 <repository>  
     <id>thinkgem-repos</id>  
     <name>ThinkGem Repository</name> 
@@ -206,39 +128,33 @@ allprojects {
 
 
 
-## 3、Maven 阿里云仓库
-
-Maven 仓库默认在国外， 国内使用难免很慢，我们可以更换为阿里云的仓库。
-
-修改 maven 根目录下的 conf 文件夹中的 settings.xml 文件，在 mirrors 节点上，添加内容如下：
-
-```xml
-<mirror>
-    <id>aliyunmaven</id>
-    <mirrorOf>*</mirrorOf>
-    <name>阿里云公共仓库</name>
-    <url>https://maven.aliyun.com/repository/public</url>
-</mirror>
-```
 
 
+## 4、参考文献
 
-## 4、参考文献 & 鸣谢
-
-- Maven中央仓库地址大全：https://blog.csdn.net/qq_41164697/article/details/128969440
-
-
-
-
-
-# Maven 标签 mirror、repository、server 和 proxy 配置以及jar包下载逻辑
+1. Maven Repository 排名：https://mvnrepository.com/repos
+2. 阿里云云效Maven仓库：https://developer.aliyun.com/mvn/view
+3. 阿里云效文档（新版）：https://help.aliyun.com/product/150040.html
+4. 阿里云效文档（老版）：https://help.aliyun.com/product/51588.html
+5. 常用Maven库,镜像库及maven/gradle配置：https://blog.csdn.net/weixin_38737912/article/details/105512640
+6. Maven中央仓库地址大全：https://blog.csdn.net/qq_41164697/article/details/128969440
 
  
+
+
+
+
+
+
+
+# mirror/repository/server/proxy 详解
+
+> Maven 标签 mirror/repository/server/proxy 配置以及jar包下载逻辑
 
 1、相关概念解析
 -----------------------------------------------------------------------
 
-Maven 中的 settings.xml 文件里面有proxy、server、repository、mirror的配置，在配置仓库地址的时候容易混淆。
+Maven 中的 settings.xml 文件里面有 proxy、server、repository、mirror 的配置，在配置仓库地址的时候容易混淆。
 
 1.  proxy 是服务器不能直接访问外网时需要设置的代理服务，不常用。
     *   就是VPN中的代理。网络被墙时可以使用这个配置处理。
@@ -262,9 +178,9 @@ Maven 中的 settings.xml 文件里面有proxy、server、repository、mirror的
 
 ## 2、mirror 和 repository 匹配逻辑
 
-**一、mirror 和 repository 如何匹配规则如下**：
+### 1、mirror 和 repository 如何匹配规则
 
-1. 全等匹配。如果mirror的mirrorOf的值和repository的ID完全一致，则这个mirror和repository匹配。不过mirrorOf通常可以配置多个值，使用逗号分隔。如下配置，当我们需要从aliyun或者google这两个仓库下载jar时，maven会直接从ALiYunMirror这个mirror下载。即从 https://maven.aliyun.com/repository/public 这个地址进行下载。
+1. 全等匹配。如果 mirror 的 mirrorOf 的值和 repository 的 ID 完全一致，则这个 mirror 和 repository 匹配。不过 mirrorOf 通常可以配置多个值，使用逗号分隔。如下配置，当我们需要从 aliyun 或者 google 这两个仓库下载 jar 时，Maven 会直接从 ALiYunMirror 这个 mirror 下载。即从 https://maven.aliyun.com/repository/public 这个地址进行下载。
 
    ```xml
    <mirror>
@@ -283,8 +199,9 @@ Maven 中的 settings.xml 文件里面有proxy、server、repository、mirror的
        <id>google</id>
        <url>https://maven.aliyun.com/repository/google</url>
    </repository>
+   ```
 
-2. 通配符匹配。“\*”可以匹配所有repository。如下所示，当需要从aliyun或者google下载jar包时下载的地址都会重定向到ALiYunMirror配置的地址上。
+2. 通配符匹配。“*****”可以匹配所有 repository。如下所示，当需要从 aliyun 或者 google 下载jar包时下载的地址都会重定向到 ALiYunMirror 配置的地址上。
 
    ```xml
    <mirror>
@@ -305,7 +222,7 @@ Maven 中的 settings.xml 文件里面有proxy、server、repository、mirror的
    </repository>
    ```
 
-3.  外部匹配。使用“external:\*”对repository进行匹配。它匹配“不在本地主机上且不基于文件的所有内容”的repository配置。如下所示，当需要从aliyun或者google下载jar包时下载的地址都会重定向到ALiYunMirror配置的地址上。而不会重定向local或者local-http的下载请求。  
+3.  外部匹配。使用 “external:\*” 对 repository 进行匹配。它匹配“不在本地主机上且不基于文件的所有内容”的 repository 配置。如下所示，当需要从 aliyun 或者 google 下载 jar 包时下载的地址都会重定向到 ALiYunMirror 配置的地址上。而不会重定向 local 或者 local-http 的下载请求。  
     
     1.  URL中host部分是“localhost”的不匹配。
     2.  URL中host部分是“127.0.0.1”的不匹配。
@@ -340,10 +257,10 @@ Maven 中的 settings.xml 文件里面有proxy、server、repository、mirror的
         <url>http://localhost:8080/m2/</url>
     </repository>
 
-4.  外部http匹配。使用“external:http:\*”对repository进行匹配。它匹配“http相关协议”的repository配置。如下所示，当需要从http-repo和http-dav下载jar包时下载的地址都会重定向到ALiYunMirror配置的地址上。而不会重定向aliyun、google、local或者local-http的下载请求。
+4.  外部http匹配。使用 “external:http:\*” 对 repository 进行匹配。它匹配 “http 相关协议”的 repository 配置。如下所示，当需要从 http-repo 和 http-dav 下载 jar 包时下载的地址都会重定向到 ALiYunMirror 配置的地址上。而不会重定向 aliyun、google、local 或者 local-http 的下载请求。
     
-    - URL中protocol部分是“http”、“dav”、“dav:http”或“dav+http”且不是“本地URL”的 匹配。
-      - “本地URL”是指：URL中host部分是“localhost”、“localhost”的URL。URL中protocol部分是“file”的URL。
+    - URL 中 protocol 部分是 “http”、“dav”、“dav:http” 或 “dav+http” 且不是“本地 URL”的 匹配。
+      - “本地 URL ”是指：URL 中 host 部分是 “localhost”、“localhost” 的 URL。URL 中 protocol 部分是 “file”的 URL。
     
     - 其他都不匹配。
     
@@ -385,7 +302,7 @@ Maven 中的 settings.xml 文件里面有proxy、server、repository、mirror的
         <url>dav:http://maven123.com:8080/m2/</url>
     </repository>
 
-5. 取反匹配。使用“!repo”对repository进行匹配。它表示不匹配以“repo”为ID的repository。如下所示，当需要从aliyun、local、http-repo、local-http和http-dav下载jar包时下载的地址都会重定向到ALiYunMirror配置的地址上。而不会重定向google的下载请求。
+5. 取反匹配。使用 “!repo” 对 repository 进行匹配。它表示不匹配以 “repo”为 ID 的 repository。如下所示，当需要从 aliyun、local、http-repo、local-http 和 http-dav 下载 jar 包时下载的地址都会重定向到 ALiYunMirror 配置的地址上。而不会重定向 google 的下载请求。
 
    ```xml
    <mirror>
@@ -427,20 +344,26 @@ Maven 中的 settings.xml 文件里面有proxy、server、repository、mirror的
 
 
 
-**二、插件仓库pluginRepositories的配置**：
+### 2、插件仓库 pluginRepositories 的配置
 
-- 插件仓库的配置和repository的配置一致。且mirror也会拦截（或者说是“镜像”）匹配的插件仓库的jar包下载请求。所以这里不做特别解释。
+- 插件仓库的配置和 repository 的配置一致。且 mirror 也会拦截（或者说是“镜像”）匹配的插件仓库的 jar 包下载请求。所以这里不做特别解释。
 
-**三、mirrorOf的配置方法总结**：
 
-```java
-mirrorOf=*  // 刚才说过，mirror代理所有，你配置的repository中的地址就不起作用了
 
-mirrorOf=pentaho-public // mirror只代理pentaho-public，你配置pentaho-public仓库的地址不起作用了。但对你配置的其他仓库没有影响，其他仓库也不会使用这个mirror来加速。
+### 3、mirrorOf 的配置方法总结
 
-mirrorOf=*,!pentaho-public  // !表示非运算，排除你配置的pentaho-public仓库，其他仓库都被镜像代理了。就是请求下载pentaho-public的仓库的jar不使用mirror的url下载，其他都是用mirror配置的url下载
+```bash
+# 通配符*，mirror代理所有，你配置的repository中的地址就不起作用了
+mirrorOf=*  
 
-mirrorOf=external:*  // 如果本地库存在就用本地库的，如果本地没有所有下载就用mirror配置的url下载
+# mirror只代理pentaho-public，你配置pentaho-public仓库的地址不起作用了。但对你配置的其他仓库没有影响，其他仓库也不会使用这个mirror来加速。
+mirrorOf=pentaho-public 
+
+# !表示非运算，排除你配置的pentaho-public仓库，其他仓库都被镜像代理了。就是请求下载pentaho-public的仓库的jar不使用mirror的url下载，其他都是用mirror配置的url下载
+mirrorOf=*,!pentaho-public
+
+# 如果本地库存在就用本地库的，如果本地没有所有下载就用mirror配置的url下载
+mirrorOf=external:*
 ```
 
 

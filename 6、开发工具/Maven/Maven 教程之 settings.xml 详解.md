@@ -1,4 +1,4 @@
-# 一、settings.xml 简介
+# Settings.xml 简介
 
 ## 1、settings.xml 有什么用
 
@@ -30,7 +30,7 @@ settings.xml 文件一般存在于两个位置：
 
 
 
-# 二、settings.xml 元素详解
+# Settings.xml 元素详解
 
 ### 1、顶级元素概览
 
@@ -448,7 +448,7 @@ maven 插件是一种特殊类型的构件。由于这个原因，插件仓库�
 
 
 
-# 三、settings.xml 完整案例
+# Settings.xml 完整案例
 
 实际应用中，经常使用的是`<localRepository>、<servers>、<mirrors>、<profiles>`有限几个节点，其他节点使用默认值足够应对大部分的应用场景。
 
@@ -857,7 +857,7 @@ maven 插件是一种特殊类型的构件。由于这个原因，插件仓库�
 
 
 
-# 四、参考资料 & 鸣谢
+# 参考资料 & 鸣谢
 
 - maven 官方文档之 settings：https://maven.apache.org/settings.html
 - maven的setting.xml配置文件详解：https://www.jianshu.com/p/ba3e3ea36042
