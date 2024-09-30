@@ -3574,7 +3574,7 @@ public class AspectLogAutoConfiguration implements PriorityOrdered {
 
 ```java
 // 1.当配置文件有aspectLog.enable=true时开启，如果配置文件没有设置aspectLog.enable也开启
-@ConditionalOnProperty(prefix = "aspectLog", name = "enable",havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "aspectLog", name = "enable", havingValue = "true", matchIfMissing = true)
 // 2.此注解作用是把当前类标识为一个切面供容器读取
 @Aspect
 /**

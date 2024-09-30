@@ -36,6 +36,123 @@ AOP 切面常用注解如下：
 
 
 
+### 1、AOP 注解详解
+
+- @Aspect：切面，通常是一个类的注解，里面可以定义切入点和通知。
+
+- @Pointcut：切入点，书写切入点表达式，指明Advice要在什么样的条件下才能被触发。
+
+  由下列方式来定义或者通过 &&、 ||、 !、 的方式进行组合：
+
+  - execution：用于匹配方法执行的连接点；
+  - within：用于匹配指定类型内的方法执行；
+  - this：用于匹配当前AOP代理对象类型的执行方法；注意是AOP代理对象的类型匹配，这样就可能包括引入接口也类型匹配；
+  - target：用于匹配当前目标对象类型的执行方法；注意是目标对象的类型匹配，这样就不包括引入接口也类型匹配；
+  - args：用于匹配当前执行的方法传入的参数为指定类型的执行方法；
+  - @within：用于匹配所以持有指定注解类型内的方法；
+  - @target：用于匹配当前目标对象类型的执行方法，其中目标对象持有指定的注解；
+  - @args：用于匹配当前执行的方法传入的参数持有指定注解的执行；
+  - @annotation：用于匹配当前执行方法持有指定注解的方法；
+
+- Advice：通知，某个连接点所采用的处理逻辑，也就是向连接点注入的代码， AOP在特定的切入点上执行的增强处理。
+
+  - @Before：标识前置增强方法，相当于BeforeAdvice；
+  - @Around：环绕增强，相当于MethodInterceptor；
+  - @After：final增强，抛出异常和正常退出后都会执行；
+  - @AfterReturning：后置增强，正常退出时执行，相当于AfterReturningAdvice；
+  - @AfterThrowing：后置增强，抛出异常时执行，相当于ThrowsAdvice。
+
+- JointPoint：连接点，程序运行中的某个阶段点，比如方法的调用、异常的抛出等。
+
+  - Object[] getArgs：返回目标方法的参数；
+  - Signature getSignature：返回目标方法的签名；
+  - Object getTarget：返回被织入增强处理的目标对象；
+  - Object getThis：返回AOP框架为目标对象生成的代理对象。
+
+- Advisor：增强， 是PointCut和Advice的综合体，完整描述了一个advice将会在pointcut所定义的位置被触发。
+
+  ```xml
+  <aop:aspectj-autoproxy/>
+  <aop:config proxy-target-class="true">
+      <aop:pointcut id="servicePointcut"
+                    expression="execution(* com.cpic..*Service.*(..))" />
+      <aop:advisor pointcut-ref="servicePointcut" advice-ref="txAdvice"
+                   order="3" />
+  </aop:config>
+  <tx:advice id="txAdvice" transaction-manager="transactionManager">
+      <tx:attributes>
+          <tx:method name="list*" read-only="true" />
+          <!-- log方法会启动一个新事务 -->
+          <tx:method name="log*" propagation="REQUIRES_NEW"
+                     isolation="READ_COMMITTED" />
+      </tx:attributes>
+  </tx:advice>
+  <!-- OK所以一个Spring增强（advisor）= 切面(advice) + 切入点(PointCut) -->
+  ```
+
+
+
+### 3、自定义注解回顾
+
+@Target：描述了注解修饰的对象范围，取值在java.lang.annotation.ElementType定义，常用的包括：
+
+- METHOD：用于描述方法
+- PACKAGE：用于描述包
+- PARAMETER：用于描述方法变量
+- TYPE：用于描述类、接口或enum类型
+
+
+@Retention: 表示注解保留时间长短。取值在java.lang.annotation.RetentionPolicy中，取值为：
+
+- SOURCE：在源文件中有效，编译过程中会被忽略
+- CLASS：随源文件一起编译在class文件中，运行时忽略
+- RUNTIME：在运行时有效
+
+> 注意：
+>
+> - 只有定义为`RetentionPolicy.RUNTIME`时，我们才能通过注解反射获取到注解。
+> - 所以，假设我们要自定义一个注解，它用在字段上，并且可以通过反射获取到，功能是用来描述字段的长度和作用。
+
+**@Documented**：表示这个注解是由 javadoc记录的，在默认情况下也有类似的记录工具。 如果一个类型声明被注解了文档化，它的注解成为公共API的一部分。
+
+操作示例：定义注解 + 通过反射获取注解
+
+```java
+@Target(ElementType.FIELD)           // 注解用于字段上
+@Retention(RetentionPolicy.RUNTIME)  // 保留到运行时，可通过注解获取
+public @interface MyField {
+    String description();
+    int length();
+}
+
+public class MyFieldTest {
+    // 使用我们的自定义注解
+    @MyField(description = "用户名", length = 12)
+    private String username;
+
+    @Test
+    public void testMyField(){
+
+        // 获取类模板
+        Class c = MyFieldTest.class;
+
+        // 获取所有字段
+        for(Field f : c.getDeclaredFields()){
+            // 判断这个字段是否有MyField注解
+            if(f.isAnnotationPresent(MyField.class)){
+                MyField annotation = f.getAnnotation(MyField.class);
+                System.out.println(
+                    "字段:[" + f.getName() + "], 描述:[" 
+                    + annotation.description() + "], 长度:[" 
+                    + annotation.length() +"]");
+            }
+        }
+    }
+}
+```
+
+
+
 ## 四、切面详细内容
 
 切面【Aspect】
@@ -763,7 +880,7 @@ ok
 
 
 
-### 3、通过`@Order`注解规定切面类执行顺序
+### 3、通过 @Order 注解规定切面类执行顺序
 
 上面控制台打印结果可以看到先执行了注解切面类然后执行表达式切面类，现实中，可以`通过@Order(0)注解规定切面类执行顺序，数字越小，执行越靠前`。
 
@@ -794,7 +911,239 @@ public class InterceptAopController {}
 
 
 
-# 参考文献 & 鸣谢
+## 八、参考文献 & 鸣谢
 
 - Spring高效实践（AOP 教程非常详细）：https://www.zhihu.com/column/c_1444056002182750208
 - SpringAOP专题：http://itsoku.com/course/11
+
+
+
+
+
+# SpringBoot AOP + 自定义线程池实现异步日志记录
+
+> SpringBoot 使用自定义注解和自定义线程池实现异步日志记录：https://blog.csdn.net/lhmyy521125/article/details/139428055
+
+在我们日常开发工作中，日志记录是至关重要的部分。它不仅有助于调试和故障排除，还能提供系统运行的历史记录，帮助进行性能优化和安全监控。然而，日志记录也可能对系统性能产生影响，特别是在高并发环境下。因此，使用异步日志记录技术可以有效地提升系统性能和可靠性。
+
+下面将带着大家一起探讨 SpringBoot 异步日志记录的优雅实现方法。
+
+
+
+1、异步日志记录的重要性
+---------------------------------------------------------------------------
+
+### 1、提高性能
+
+在传统的同步日志记录方式中，每次日志记录操作都需要等待日志写入完成，才能继续执行后续操作。这种方式在高并发环境下会导致明显的性能瓶颈。异步日志记录通过将日志写入操作放入独立的线程中执行，避免了主线程的阻塞，从而大幅提高了系统的整体性能。
+
+### 2、减少延迟
+
+在需要快速响应的应用程序中，如实时系统或高频交易系统，任何形式的延迟都会影响系统的响应时间。异步日志记录能将日志记录操作从主业务流程中剥离出来，减少了响应时间，提升了用户体验。
+
+### 3、提升稳定性
+
+在高负载情况下，同步日志记录可能会导致系统资源的争用，影响系统的稳定性。异步日志记录通过使用独立的线程池管理日志写入操作，避免了这种资源争用，提高了系统的稳定性和可靠性。
+
+### 4 资源管理优化
+
+异步日志记录允许更灵活地管理系统资源。通过配置线程池的大小和任务队列，可以更好地控制系统资源的使用，避免了因为日志记录过多导致的内存和磁盘 I/O 资源耗尽问题。
+
+
+
+2、构建项目
+---------------------------------------------------------------------
+
+### 1、创建 SpringBoot 项目
+
+可以使用 Spring Initializr 创建项目，确保在 `pom.xml` 文件中添加了必要的依赖：
+
+```xml
+<dependencies>
+    <!-- Spring Boot Starter Web -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <!-- Spring Boot Starter AOP -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-aop</artifactId>
+    </dependency>
+</dependencies>
+```
+
+
+
+### 2、创建自定义注解类
+
+定义一个自定义注解类 LogAsync 用于标记需要异步记录的日志方法，并且系统会记录功能组、操作人、方法名、传递的参数等（仅模拟，大家根据自己项目需求定制） 代码如下：
+
+```java
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface LogAsync {
+    // 可以根据需要添加属性 比如功能组
+    String funGroup() default "";
+}
+```
+
+
+
+### 3、配置自定义线程池
+
+为了优化异步日志记录，我们需要配置一个自定义线程池
+
+```java
+import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import java.util.concurrent.Executor;
+
+@EnableAsync
+@Configuration
+public class AsyncConfig {
+
+    @Bean(name = "logExecutor")
+    public Executor logExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(5);
+        executor.setMaxPoolSize(10);
+        executor.setQueueCapacity(100);
+        executor.setThreadNamePrefix("LogExecutor-");
+        executor.initialize();
+        return executor;
+    }
+}
+```
+
+
+
+### 4、编写日志记录切面
+
+创建一个AOP切面 LoggingAspect 来处理异步日志记录
+
+```java
+import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+import java.util.concurrent.Executor;
+
+@Slf4j
+@Aspect
+@Component
+public class LoggingAspect {
+
+    private final Executor logExecutor;
+
+    public LoggingAspect(@Qualifier("logExecutor") Executor logExecutor) {
+        this.logExecutor = logExecutor;
+    }
+
+    @Pointcut("@annotation(LogAsync)")
+    public void loggableMethods() {
+    }
+
+    @Async("logExecutor")
+    @AfterReturning(pointcut = "loggableMethods()", returning = "result")
+    public void logMethodCall(JoinPoint joinPoint, Object result) {
+        // 获取注解类
+        LogAsync logAsync = ((MethodSignature) joinPoint.getSignature()).getMethod().getAnnotation(LogAsync.class);
+        // 获取注解上的功能组
+        String funGroup = logAsync.funGroup();
+        // 获取方法名
+        String methodName = joinPoint.getSignature().getName();
+        // 获取参数
+        Object[] args = joinPoint.getArgs();
+        // 方法返回结果  Object result
+        log.info("funGroup: {}, Method: {}, Args: {}, Result: {}", funGroup, methodName, args, result);
+
+        // TODO 这里可以加入日志入库操作
+    }
+}
+```
+
+
+
+### 5、编写 Controller 中使用 @LogAsync
+
+创建一个 TestUser 类，作为接收参数
+
+```java
+import lombok.Data;
+
+@Data
+public class TestUser {
+    private String username;
+    private String password;
+}
+```
+
+创建 LogSampleController ，标注 @LogAsync 注解
+
+```java
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api")
+public class LogSampleController {
+
+    /**
+     * 模拟保存
+     * @param user 自定义用户类
+     * @return
+     */
+    @LogAsync(funGroup = "用户模块")
+    @PostMapping("/save-user")
+    public ResponseEntity<String> saveUser(@RequestBody  TestUser user) {
+        return new ResponseEntity<>("操作成功", HttpStatus.OK);
+    }
+}
+```
+
+
+
+4、接口测试
+---------------------------------------------------------------------
+
+运行 Spring Boot 应用程序，使用测试工具访问 `http:/your_host/api/save-user`。观察控制台中可以看到异步日志记录的信息
+
+```bash
+curl -X POST "localhost:8080/api/save-user" --max-time 30 -d '{ "username": "zhangsan",  "password": "123456"}'
+操作成功
+
+### 控制台输出
+[LogExecutor-1]....... : funGroup: 用户模块, Method: saveUser, Args: [TestUser(username=zhangsan, password=123456)], Result: <200 OK OK,操作城, []>
+```
+
+> **温馨提示**：演示代码中，只是获取了：功能组、方法名、传递的参数、返回结果； 正常我们日志记录还会有很多主要信息，比如：操作人、修改前数据、修改后数据、修改时间等等，大家可以根据自己系统情况进行调整
+
+
+
+5、使用总结
+-------------------------------------------------------------------
+
+通过自定义注解、Spring AOP 和自定义线程池，我们可以在 SpringBoot 应用中实现高效的异步日志记录。这种方法不仅提高了日志记录的灵活性，还能减小对主业务线程的影响。希望本文对您在实际项目中实现日志记录有所帮助。
+
+这种方式在实际生产环境中非常实用，特别是在需要高效处理大量日志记录的场景下。通过合理配置线程池，可以确保日志记录的性能和稳定性。
+
+
+
+
+
+
+
