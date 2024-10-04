@@ -1833,10 +1833,12 @@ public void testUserByRowBounds() {
 | @One            | 实现一对一结果集封装                   |
 | @Many           | 实现一对多结果集封装                   |
 | @InsertProvider | 实现动态 SQL 映射新增                  |
-| @UpdateProvider | 实现动态 SQL 映射删除                  |
-| @SelectProvider | 实现动态 SQL 映射更新                  |
+| @DeleteProvider | 实现动态 SQL 映射删除                  |
+| @UpdateProvider | 实现动态 SQL 映射更新                  |
 | @SelectProvider | 实现动态 SQL 映射查询                  |
 | @CacheNamespace | 实现注解二级缓存的使用                 |
+
+
 
 ## 7.1、简单注解
 
@@ -1844,10 +1846,10 @@ public void testUserByRowBounds() {
 
 MyBatis 主要提供了以下CRUD注解：
 
-- @select ()
-- @update ()
-- @Insert ()
-- @delete ()
+- @select()
+- @update()
+- @Insert()
+- @delete()
 
 **注意：利用注解开发就不需要 mapper.xml 映射文件了。**
 
@@ -1890,6 +1892,13 @@ public class MybatisUtils {
     public static SqlSession getSession(boolean flag) {
         return sqlSessionFactory.openSession(flag);
     }
+    
+    /**
+     * 返回SqlSessionFactory
+     */
+    public static SqlSessionFactory getSqlSessionFactory() {
+        return sqlSessionFactory;
+    }
 }
 ```
 
@@ -1925,64 +1934,191 @@ public interface UserMapper {
 }
 ```
 
-3、在mybatis的核心配置文件中注入Mapper接口，实际上也可以使用package扫描，这里使用class是为了大家加深印象。
+3、在Mybatis的核心配置文件中注入Mapper接口，实际上也可以使用package扫描，这里使用class是为了大家加深印象。「不推荐使用」
 
 ```xml
-<!--使用class绑定接口, 或者package也可以-->
+<!-- 使用class绑定接口, 或者package也可以 -->
 <mappers>
     <mapper class="mapper.UserMapper"/>
 </mappers>
 ```
 
-3、测试
+4、注意：本章节我们已经开始全面使用注解查询了，那么其实我们也可以使用 @Mapper 注解的形式或者 MapperScanner 自动扫描功能来绑定和注入 Mapper 接口。
 
-```java
-@Test
-public void testGetAllUser() {
-    SqlSession session = MybatisUtils.getSession();
-    // 本质上利用了jvm的动态代理机制
-    UserMapper mapper = session.getMapper(UserMapper.class);
+- **场景一：使用 @Mapper 并自动扫描（不需要手动配置 < mappers >）**
 
-    List<User> users = mapper.getAllUser();
-	users.forEach(System.out::println);
-    session.close();
-}
+  如果你使用了 @Mapper 注解，MyBatis 本身提供了一种 MapperScanner 的机制，可以通过 Java 配置自动扫描指定包路径下的所有 @Mapper 接口。这种方式可以避免在 mybatis-config.xml 中手动指定每个 Mapper。
 
-@Test
-public void testSelectUserById() {
-    SqlSession session = MybatisUtils.getSession();
-    UserMapper mapper = session.getMapper(UserMapper.class);
-    User user = mapper.selectUserById(1);
-    System.out.println(user);
-    session.close();
-}
+  ```java
+  package mapper;
+  
+  import org.apache.ibatis.annotations.*;
+  import pojo.User;
+  import java.util.List;
+  
+  @Mapper
+  public interface UserMapper {
+      // 查询全部用户
+      @Select("select id,name,pwd from user")
+      List<User> getAllUser();
+  
+      // 根据id查询用户
+      @Select("select * from user where id = #{id}")
+      User selectUserById(@Param("id") int id);
+  
+      // 添加一个用户
+      @Insert("insert into user (id,name,pwd) values (#{id},#{name},#{pwd})")
+      int addUser(User user);
+  
+      // 修改一个用户
+      @Update("update user set name=#{name},pwd=#{pwd} where id = #{id}")
+      int updateUser(User user);
+  
+      // 根据id删除用
+      @Delete("delete from user where id = #{id}")
+      int deleteUser(@Param("id") int id);
+  }
+  ```
 
-@Test
-public void testAddUser() {
-    SqlSession session = MybatisUtils.getSession();
-    UserMapper mapper = session.getMapper(UserMapper.class);
-    User user = new User(6, "Sam", "123456");
-    mapper.addUser(user);
-    session.close();
-}
+  场景一测试：
 
-@Test
-public void testUpdateUser() {
-    SqlSession session = MybatisUtils.getSession();
-    UserMapper mapper = session.getMapper(UserMapper.class);
-    User user = new User(6, "Sam", "zxcvbn");
-    mapper.updateUser(user);
-    session.close();
-}
+  ```java
+  @Test
+  public void testGetAllUser() {  
+      // 获取 SqlSession 并手动注册 Mapper
+      try (SqlSession session = MybatisUtils.getSession()) {
+          // 本质上利用了JVM的动态代理机制
+          UserMapper mapper = session.getMapper(UserMapper.class);
+          List<User> users = mapper.getAllUser();
+          users.forEach(System.out::println);
+      }
+  }
+  
+  @Test
+  public void testSelectUserById() {
+      try (SqlSession session = MybatisUtils.getSession()) {
+          UserMapper mapper = session.getMapper(UserMapper.class);
+          User user = mapper.selectUserById(1);
+          System.out.println(user);
+      }
+  }
+  
+  @Test
+  public void testAddUser() {
+      try (SqlSession session = MybatisUtils.getSession()) {
+          UserMapper mapper = session.getMapper(UserMapper.class);
+          User user = new User(6, "Sam", "123456");
+          mapper.addUser(user);
+      }
+  }
+  
+  @Test
+  public void testUpdateUser() {
+      try (SqlSession session = MybatisUtils.getSession()) {
+          UserMapper mapper = session.getMapper(UserMapper.class);
+          User user = new User(6, "Sam", "zxcvbn");
+          mapper.updateUser(user);     
+      }
+  }
+  
+  @Test
+  public void testDeleteUser() {
+      try (SqlSession session = MybatisUtils.getSession()) {
+          UserMapper mapper = session.getMapper(UserMapper.class);
+          mapper.deleteUser(6);
+      }
+  }
+  ```
 
-@Test
-public void testDeleteUser() {
-    SqlSession session = MybatisUtils.getSession();
-    UserMapper mapper = session.getMapper(UserMapper.class);
-    mapper.deleteUser(6);
-    session.close();
-}
-```
+- **场景二：手动配置 MapperScanner**：在不使用 Spring 的情况下，使用 Java 代码来手动配置 MyBatis 的 MapperScanner 来自动扫描 Mapper
+
+  ```java
+  package mapper;
+  
+  import org.apache.ibatis.annotations.*;
+  import pojo.User;
+  import java.util.List;
+  
+  public interface UserMapper {
+      // 查询全部用户
+      @Select("select id,name,pwd from user")
+      List<User> getAllUser();
+  
+      // 根据id查询用户
+      @Select("select * from user where id = #{id}")
+      User selectUserById(@Param("id") int id);
+  
+      // 添加一个用户
+      @Insert("insert into user (id,name,pwd) values (#{id},#{name},#{pwd})")
+      int addUser(User user);
+  
+      // 修改一个用户
+      @Update("update user set name=#{name},pwd=#{pwd} where id = #{id}")
+      int updateUser(User user);
+  
+      // 根据id删除用
+      @Delete("delete from user where id = #{id}")
+      int deleteUser(@Param("id") int id);
+  }
+  ```
+
+  场景二测试：
+
+  ```java
+  @Test
+  public void testGetAllUser() {  
+      // 配置 MapperScanner 扫描 Mapper 接口
+      MybatisUtils.getSqlSessionFactory.getConfiguration().addMappers("mapper");
+      // 获取 SqlSession 并手动注册 Mapper
+      try (SqlSession session = MybatisUtils.getSession()) {
+          // 本质上利用了JVM的动态代理机制
+          UserMapper mapper = session.getMapper(UserMapper.class);
+          List<User> users = mapper.getAllUser();
+          users.forEach(System.out::println);
+      }
+  }
+  
+  @Test
+  public void testSelectUserById() {
+      try (SqlSession session = MybatisUtils.getSession()) {
+          UserMapper mapper = session.getMapper(UserMapper.class);
+          User user = mapper.selectUserById(1);
+          System.out.println(user);
+      }
+  }
+  
+  @Test
+  public void testAddUser() {
+      // 配置 MapperScanner 扫描 Mapper 接口
+      MybatisUtils.getSqlSessionFactory.getConfiguration().addMappers("mapper");
+      try (SqlSession session = MybatisUtils.getSession()) {
+          UserMapper mapper = session.getMapper(UserMapper.class);
+          User user = new User(6, "Sam", "123456");
+          mapper.addUser(user);
+      }
+  }
+  
+  @Test
+  public void testUpdateUser() {
+      // 配置 MapperScanner 扫描 Mapper 接口
+      MybatisUtils.getSqlSessionFactory.getConfiguration().addMappers("mapper");
+      try (SqlSession session = MybatisUtils.getSession()) {
+          UserMapper mapper = session.getMapper(UserMapper.class);
+          User user = new User(6, "Sam", "zxcvbn");
+          mapper.updateUser(user);     
+      }
+  }
+  
+  @Test
+  public void testDeleteUser() {
+      // 配置 MapperScanner 扫描 Mapper 接口
+      MybatisUtils.getSqlSessionFactory.getConfiguration().addMappers("mapper");
+      try (SqlSession session = MybatisUtils.getSession()) {
+          UserMapper mapper = session.getMapper(UserMapper.class);
+          mapper.deleteUser(6);
+      }
+  }
+  ```
 
 > 注意：增删改一定记得对事务的处理
 
@@ -2083,7 +2219,7 @@ public class GenerateResults {
             // 映射关系：对象属性(驼峰)->数据库字段(下划线)
             String column = PropertyNamingStrategies.SnakeCaseStrategy.INSTANCE
                     .translate(field.getName()).toUpperCase();
-            stringBuilder.append("        ");
+            stringBuilder.append("    ");
             String format = String.format("@Result(property = \"%s\", column = \"%s\"),\n", property, column);
             stringBuilder.append(format);
         }
@@ -2093,11 +2229,11 @@ public class GenerateResults {
 }
 ```
 
-```
+```java
 @Results({
-        @Result(property = "id", column = "ID"),
-        @Result(property = "name", column = "NAME"),
-        @Result(property = "pwd", column = "PWD"),
+    @Result(property = "id", column = "ID"),
+    @Result(property = "name", column = "NAME"),
+    @Result(property = "pwd", column = "PWD"),
 })
 ```
 
@@ -2107,21 +2243,21 @@ public class GenerateResults {
 
 > SQL 语句构建器：https://mybatis.org/mybatis-3/zh/statement-builders.html
 
-MyBatis3 主要提供了以下CRUD的高级注解：
+MyBatis-3 主要提供了以下CRUD的高级注解：
 
 - @SelectProvider
 - @InsertProvider
 - @UpdateProvider
 - @DeleteProvider
 
-顾名思义，这些高级注解主要用于动态SQL，以@SelectProvider为例，主要包含两个注解属性，其中 type 表示工具类，method 表示工具类的某个方法，用于返回具体的SQL。两个参数详解如下：
+顾名思义，这些高级注解主要用于动态 SQL，以 @SelectProvider 为例，主要包含两个注解属性，其中 type 表示工具类，method 表示工具类的某个方法，用于返回具体的 SQL。两个参数详解如下：
 
-- type：SQL类的Class对象（写动态的sql的类的类名）
-- method：类中该方法名（方法可以是静态或者非静态的，但是必须是public的）
+- type：SQL 类的 Class 对象（写动态的 SQL 的类的类名）
+- method：类中该方法名（方法可以是**静态或者非静态**的，但是必须是 public 的）
 
 > @XxxProvider 注解 CRUD 操作动态 SQL 案例如下
 
-1、编写Mapper接口，使用 @XxxProvider 注解动态编写SQL
+1、编写 Mapper 接口，使用 @XxxProvider 注解动态编写SQL
 
 ```java
 package mapper;
@@ -2133,11 +2269,14 @@ import java.util.List;
 /**
  * 使用注解指定某个工具类的方法来动态编写SQL.
  */
+@Mapper
 public interface UserMapper {
 
+    // 通过用户名查询用户集合
     @SelectProvider(type = UserSqlProvider.class, method = "findAllByName")
     List<User> findAllByName(@Param("name") String name);
-    
+
+    // 通过用户名和密码查询单个用户
     @SelectProvider(type = UserSqlProvider.class, method = "findUserByNameAndPwd")
     User findUserByNameAndPwd(@Param("name") String name, @Param("pwd") String pwd);
 
@@ -2153,7 +2292,7 @@ public interface UserMapper {
     @UpdateProvider(type = UserSqlProvider.class, method = "updateUser")
     int updateUser(User user);
 
-    // 根据id删除用
+    // 根据id删除用户
     @DeleteProvider(type = UserSqlProvider.class, method = "deleteUser")
     int deleteUser(@Param("id") int id);
 }
@@ -2335,9 +2474,9 @@ public class MyTest {
 
 4、使用注意事项：
 
-1. 在Mapper接口和@XxxtProvide方法类中，不要使用重载，也就是说，不要使用方法名相同参数不同的方法 。
-2. XxxtProvide 类中的方法可以是静态或者非静态的，但是必须是public的。
-3. XxxtProvide 类中的方法参数：对于只有一个参数的情况也需要假@param。这点与Mapper接口不一样。在超过一个参数的情况下，可以使用多个 @param，也可以使用 Map 作为参数，也可以使用 JavaBean 作为参数。
+1. 在 Mapper 接口和 @XxxtProvide 方法类中，不要使用重载，也就是说，不要使用方法名相同参数不同的方法 。
+2. XxxtProvide 类中的方法可以是静态或者非静态的，但是必须是 public 的。
+3. XxxtProvide 类中的方法参数：对于只有一个参数的情况也需要假 @Param。这点与 Mapper 接口不一样。在超过一个参数的情况下，可以使用多个 @Param，也可以使用 Map 作为参数，也可以使用 JavaBean 作为参数。
 
 
 
@@ -3953,17 +4092,13 @@ public void testQueryUserById(){
 
 # SpringBoot 整合 Mybatis
 
-> 1. Mybatis极简配置：https://mp.weixin.qq.com/s/SmxFvQTFc-wqCWizMpNiRQ
-> 2. springboot2.x基础教程：集成mybatis最佳实践：https://mp.weixin.qq.com/s/x2NEB-3XalUwA2S-RjrZDw
-> 3. Spring Boot整合MyBatis(保姆级教程)：https://mp.weixin.qq.com/s/6Oihr6F05lHu1YJMKjNsiA
-> 4. SpringBoot Mybatis 配置文件形式：https://blog.csdn.net/ceaningking/article/details/129718773
-> 5. 详解mybatis的配置setMapperLocations多个路径两种方法：https://blog.csdn.net/TreeShu321/article/details/104547973
+> 1. Spring Boot整合MyBatis(保姆级教程)：https://mp.weixin.qq.com/s/6Oihr6F05lHu1YJMKjNsiA
 
 
 
 # SpringBoot + Mybatis 配置方式
 
-1、单独 mybatis-config.xml 配置Mybatis
+## 1、单独 mybatis-config.xml 配置 Mybatis
 
 1、mybatis-config.xml
 
@@ -3972,32 +4107,81 @@ public void testQueryUserById(){
 <!DOCTYPE configuration
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
-<!--configuration核心配置文件-->
-<!-- 顺序: properties->settings->typeAliases->typeHandlers->
-           objectFactory->objectWrapperFactory->reflectorFactory->
-           plugins->environments->databaseIdProvider->mappers-->
+
+<!-- configuration 核心配置文件 -->
+<!-- 顺序:
+          properties -> settings -> typeAliases -> typeHandlers ->
+          objectFactory -> objectWrapperFactory -> reflectorFactory ->
+          plugins -> environments -> databaseIdProvider -> mappers
+-->
 <configuration>
-    <!--jdbc.properties配置文件-->
+    <!-- jdbc.properties 配置文件 -->
     <properties resource="jdbc.properties"></properties>
 
-    <!--设置mybatis输出日志 Mybatis默认就是STDOUT_LOGGING-->
+    <!-- 设置全局环境变量，比如缓存、懒加载等 -->
     <settings>
-        <setting name="logImpl" value="STDOUT_LOGGING"/>
+        <!-- 使用驼峰命名法转换字段 -->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <!-- 使全局的映射器启用或禁用缓存。 -->
+        <setting name="cacheEnabled" value="true"/>
+        <!-- 全局启用或禁用延迟加载。当禁用时，所有关联对象都会即时加载。 -->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <!-- 当启用时，有延迟加载属性的对象在被调用时将会完全加载任意属性。否则，每种属性将会按需要加载。 -->
+        <setting name="aggressiveLazyLoading" value="true"/>
+        <!-- 是否允许单条sql 返回多个数据集  (取决于驱动的兼容性) default:true -->
+        <setting name="multipleResultSetsEnabled" value="true"/>
+        <!-- 是否可以使用列的别名 (取决于驱动的兼容性) default:true -->
+        <setting name="useColumnLabel" value="true"/>
+        <!-- 允许JDBC 生成主键。需要驱动器支持。如果设为了true，这个设置将强制使用被生成的主键，有一些驱动器不兼容不过仍然可以执行。  default:false  -->
+        <setting name="useGeneratedKeys" value="true"/>
+        <!-- 指定 MyBatis 如何自动映射 数据基表的列 NONE：不隐射 PARTIAL:部分  FULL:全部  -->
+        <setting name="autoMappingBehavior" value="PARTIAL"/>
+        <!-- 这是默认的执行类型  （SIMPLE: 简单；REUSE: 执行器可能重复使用prepared statements语句；BATCH: 执行器可以重复执行语句和批量更新）  -->
+        <!-- 对于批量更新操作缓存SQL以提高性能 BATCH,SIMPLE -->
+        <setting name="defaultExecutorType" value="SIMPLE"/>
+        <!-- 数据库超过60秒仍未响应则超时 -->
+        <setting name="defaultStatementTimeout" value="60"/>
+        <!-- 设置本地缓存范围 session:就会有数据的共享  statement:语句范围 (这样就不会有数据的共享 ) defalut:session -->
+        <setting name="localCacheScope" value="SESSION"/>
+        <!-- 设置但JDBC类型为空时,某些驱动程序 要指定值,default:OTHER，插入空值时不需要指定类型 -->
+        <setting name="jdbcTypeForNull" value="NULL"/>
+        <!-- 设置关联对象加载的形态，此处为按需加载字段(加载字段由SQL指 定)，不会加载关联表的所有字段，以提高性能 -->
+        <setting name="aggressiveLazyLoading" value="false"/>
+        <!-- 设置输出日志 Mybatis 默认就是STDOUT_LOGGING-->
+        <!--<setting name="logImpl" value="STDOUT_LOGGING"/>-->
+        <setting name="logImpl" value="org.apache.ibatis.logging.stdout.StdOutImpl"/>
     </settings>
 
-    <!--  类型别名 默认为类名 指定这个后 mapper的xml文件指定返回值时候 可直接写类名(不区分大小写) 建议直接拷贝类名  -->
+    <!-- 配置别名，简化 XML 中使用的类名, 指定这个后 mapper的xml文件指定返回值时候 可直接写类名(不区分大小写) 建议直接拷贝类名 -->
     <typeAliases>
-        <package name="com.ceaning.crudp.entity"/>
+        <!-- 自动扫描包中的所有类，并为这些类生成别名 -->
+        <package name="com.example.model"/>
+        <typeAlias alias="Integer" type="java.lang.Integer" />
+        <typeAlias alias="Long" type="java.lang.Long" />
+        <typeAlias alias="HashMap" type="java.util.HashMap" />
+        <typeAlias alias="LinkedHashMap" type="java.util.LinkedHashMap" />
+        <typeAlias alias="ArrayList" type="java.util.ArrayList" />
+        <typeAlias alias="LinkedList" type="java.util.LinkedList" />
     </typeAliases>
 
-    <!-- 环境配置 -->
-    <!-- development IDEA默认 开发环境 -->
-    <!-- 可以自定义 比如定义test formal 看心情 每个SqlSessionFactory实例只能选择一种环境 这个可随时配置 -->
-    <!-- test 测试环境 -->
-    <!-- formal 正式环境 -->
+    <!-- 配置插件（如分页、日志等） -->
+    <plugins>
+        <!-- 示例：自定义插件 -->
+        <plugin interceptor="com.example.MyPlugin"/>
+         <!-- Pagehelper 分页插件-->
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <!-- 使用H2方言的分页 -->
+            <property name="helperDialect" value="h2"/>
+            <property name="pageSizeZero" value="true"/>
+        </plugin>
+    </plugins>
+
+    <!-- 配置环境「按需配置，建议不配置这个，直接在application.yml 中配置数据库信息」 -->
     <environments default="development">
         <environment id="development">
+            <!-- 事务管理器类型（JDBC 或 MANAGED） -->
             <transactionManager type="JDBC"/>
+            <!-- 数据源配置 -->
             <dataSource type="POOLED">
                 <property name="driver" value="${driver}"/>
                 <property name="url" value="${url}"/>
@@ -4006,24 +4190,273 @@ public void testQueryUserById(){
             </dataSource>
         </environment>
     </environments>
+
     <!-- 映射器 每一个mapper.xml都需要在Mybatis的核心文件中注册! -->
-    <!-- 注册方式1 使用xml文件 <mapper resource="com/ceaning/efmis/mapper/UserMapper.xml"/> -->
-    <!-- 注册方式2 使用class文件 <mapper class="com.ceaning.efmis.mapper.UserMapper"/> -->
-    <!-- 注册方式3 mapper代理方式 <package name="com.ceaning.efmis.mapper"/> -->
-    <!--
-        注册方式2(使用class文件)和注册方式3(使用包扫描注册)
-        1.接口和他的Mapper配置文件必须同名
-        2.接口和他的Mapper配置文件必须在同一个包下
+    <!-- 注册方式1 使用xml文件 <mapper resource="com/example/mapper/UserMapper.xml"/> -->
+    <!-- 注册方式2 使用class文件 <mapper class="com.example.mapper.UserMapper"/> -->
+    <!-- 注册方式3 mapper代理方式 <package name="com.example.mapper"/> -->
+    <!-- 注册方式2(使用class文件)和注册方式3(使用包扫描注册)
+           1.接口和他的Mapper配置文件必须同名
+           2.接口和他的Mapper配置文件必须在同一个包下
     -->
+    <!-- 加载 SQL 映射文件 -->
     <mappers>
-        <package name="com.ceaning.crudp.mapper"/>
+        <!-- 加载指定路径下的所有映射文件 -->
+        <mapper resource="mapper/UserMapper.xml"/>
+        <!-- 自动扫描包中的所有 Mapper 接口 -->
+        <package name="com.example.mapper"/>
     </mappers>
+
 </configuration>
+```
+
+jdbc.properties 内容如下「按需配置，建议不配置这个，直接在application.yml 中配置数据库信息」：
+
+```properties
+driver=org.h2.Driver
+url=jdbc:h2:mem:test_mem
+username=sa
+password=sa
+```
+
+application.yml 内容如下：
+
+```yml
+spring:
+  # 数据源配置
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test_mem
+    username: sa
+    password: sa
+    hikari:                          # HikariCP 数据库连接池配置（Spring Boot 默认）
+      maximum-pool-size: 10          # 最大连接数
+      minimum-idle: 5                # 最小空闲连接数
+      idle-timeout: 60000            # 空闲超时（毫秒）
+      connection-timeout: 30000      # 连接超时（毫秒）
+      max-lifetime: 1800000          # 连接的最大生命周期（毫秒）
+mybatis:
+  config-location: classpath:mybatis-config.xml  # 指定 MyBatis 配置文件路径
+  mapper-locations: classpath:mapper/*.xml       # 指定 Mapper 映射文件的路径
+```
+
+- 注意：在 SpringBoot 项目中，如果你同时在 application.yml 配置了 mybatis.mapper-locations，并且在 mybatis-config.xml 中也配置了 <mappers>，这两者都会生效，并且最终的效果是 **合并加载**。
+- 实际项目中单独配置 mybatis-config.xml 较少。一般都写在 application.yml 里。
+
+
+
+## 2、单独 application.yml 配置Mybatis
+
+```yaml
+spring:
+  # 数据源配置
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test_mem
+    username: sa
+    password: sa
+    hikari:                          # HikariCP 数据库连接池配置（Spring Boot 默认）
+      maximum-pool-size: 10          # 最大连接数
+      minimum-idle: 5                # 最小空闲连接数
+      idle-timeout: 60000            # 空闲超时（毫秒）
+      connection-timeout: 30000      # 连接超时（毫秒）
+      max-lifetime: 1800000          # 连接的最大生命周期（毫秒）
+
+# MyBatis 配置
+mybatis:
+  config-location: classpath:mybatis-config.xml                 # 指定 MyBatis 配置文件位置
+  mapper-locations: classpath:mapper/*.xml, com/example/*.xml   # Mapper XML 文件的位置
+  type-aliases-package: com.example.model                       # 实体类的别名包路径
+  type-handlers-package: com.example.handler                    # 自定义 TypeHandler 的包路径
+  executor-type: simple                                         # 执行器类型，默认 simple，可选：simple, reuse, batch
+  check-config-location: true                                   # 检查配置文件是否存在
+
+  # MyBatis 全局配置
+  configuration:
+    map-underscore-to-camel-case: true   # 启用驼峰命名法（将数据库字段名的下划线自动映射为 Java 对象的驼峰命名）
+    cache-enabled: true                  # 启用二级缓存
+    lazy-loading-enabled: true           # 启用延迟加载
+    aggressive-lazy-loading: false       # 激进的延迟加载
+    use-generated-keys: true             # 启用 JDBC 自动生成主键
+    default-fetch-size: 100              # 设置默认获取记录数
+    default-statement-timeout: 30        # 设置默认语句超时时间（秒）
+    use-column-label: true               # 使用别名作为列名
+    # MyBatis 日志配置（可选）org.apache.ibatis.logging.slf4j.Slf4jImpl  # 日志实现，使用 slf4j 输出 MyBatis 日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl             # 使用标准输出作为日志实现
+    default-enum-type-handler: org.apache.ibatis.type.EnumTypeHandler # 默认的枚举处理器
+
+
+# 日志配置
+logging:
+  level:
+    root: info           # 全局日志级别
+    com.example: debug   # 针对项目包的日志级别
+    org.mybatis: trace   # MyBatis 日志级别，便于调试
 ```
 
 
 
-2、单独 application.yml 配置Mybatis
+## 3、单独使用 JavaConfig 的形式配置Mybatis
 
-3、单独使用 JavaConfig 的形式配置Mybatis
+我们可以通过 Java 配置类来手动配置 MyBatis 的 SqlSessionFactory、SqlSessionTemplate，并通过 @MapperScan 来扫描 Mapper 接口。
+
+```java
+package org.example;
+
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.SqlSessionTemplate;
+import org.mybatis.spring.annotation.MapperScan;
+import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
+
+import javax.sql.DataSource;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+@Configuration
+@MapperScan(
+        basePackages = "com.example.mapper", // 指定 Mapper 接口所在包
+        sqlSessionTemplateRef = "sqlSessionTemplate"
+)
+public class MyBatisConfig {
+
+    @Bean
+    @ConfigurationProperties(prefix = "spring.datasource")
+    public DataSource dataSource() {
+        return DataSourceBuilder.create().build();
+    }
+
+    /**
+     * Spring-Mybatis 配置第一步：配置 SqlSessionFactory
+     */
+    @Bean
+    public SqlSessionFactory sqlSessionFactory(@Qualifier("dataSource") DataSource dataSource) throws Exception {
+        SqlSessionFactoryBean sessionFactoryBean = new SqlSessionFactoryBean();
+        sessionFactoryBean.setDataSource(dataSource);
+
+        // 如果有 MyBatis 的 XML 映射文件，可以在这里指定路径
+        //sessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath:mapper1/*.xml"));
+        sessionFactoryBean.setMapperLocations(resolveMapperLocations());
+
+        // 除了单独使用 ConfigurationCustomizer 配置, 还可以直接在 SqlSessionFactoryBean 中配置 Configuration
+        /*org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
+        configuration.setMapUnderscoreToCamelCase(true); // 开启驼峰转换
+        configuration.setLogImpl(StdOutImpl.class); // 配置SQL日志
+        sessionFactoryBean.setConfiguration(configuration);*/
+
+        return sessionFactoryBean.getObject();
+    }
+
+
+    /**
+     * Spring-Mybatis 配置第二步：配置SqlSessionTemplate
+     */
+    @Bean
+    public SqlSessionTemplate sqlSessionTemplate(@Qualifier("sqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
+        return new SqlSessionTemplate(sqlSessionFactory);
+    }
+
+    /**
+     * Spring-Mybatis 配置第三步：配置 DataSourceTransactionManager 事务管理
+     */
+    @Bean
+    public PlatformTransactionManager transactionManager1(@Qualifier("datasource") DataSource datasource) {
+        return new DataSourceTransactionManager(datasource);
+    }
+
+    /**
+     * Mybatis 提供了许多全局配置选项来调整其行为，比如开启驼峰命名规则、设置缓存、执行日志等。
+     * 在 SpringBoot 中，除了通过 mybatis-config.xml 来进行配置外，还可以通过 ConfigurationCustomizer 来进行代码层面的定制。
+     * ConfigurationCustomizer 作用
+     * <p>
+     * ConfigurationCustomizer 是 SpringBoot 中为 MyBatis 提供的一种便捷方式，允许我们通过 Java 配置类的方式直接定制 MyBatis 的全局配置。
+     * 通过实现 ConfigurationCustomizer 接口，可以轻松配置 MyBatis 的一些核心行为，而无需使用传统的 XML 配置文件。
+     * <p>
+     * 常用的配置项
+     * <p>
+     * 1.	mapUnderscoreToCamelCase：驼峰命名法，控制字段的自动映射。
+     * 2.	cacheEnabled：是否开启二级缓存。
+     * 3.	lazyLoadingEnabled：是否开启懒加载。
+     * 4.	multipleResultSetsEnabled：是否支持返回多个结果集。
+     * 5.	useGeneratedKeys：是否允许 JDBC 支持自动生成的主键。
+     * 6.	defaultExecutorType：默认的执行器类型（SIMPLE、REUSE、BATCH）。
+     * 7.	defaultStatementTimeout：SQL 执行的默认超时时间。
+     * 8.	logPrefix：设置 MyBatis 日志前缀。
+     * <p> 
+     *     重点注意：
+     * SpringBoot 会自动将这个 ConfigurationCustomizer 注入到 MyBatis 的 SqlSessionFactory，并应用你配置的属性。所以 你不需要手动调用或设置它。
+     */
+    @Bean
+    public ConfigurationCustomizer mybatisConfigurationCustomizer() {
+        return configuration -> {
+            // 开启驼峰命名规则
+            configuration.setMapUnderscoreToCamelCase(true);
+            // 开启二级缓存
+            configuration.setCacheEnabled(true);
+            // 开启懒加载
+            configuration.setLazyLoadingEnabled(true);
+            // 开启日志，打印 SQL 语句及其参数
+            configuration.setLogImpl(org.apache.ibatis.logging.stdout.StdOutImpl.class);
+        };
+    }
+
+    public Resource[] resolveMapperLocations() {
+        ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
+        List<String> mapperLocations = new ArrayList<>();
+        mapperLocations.add("classpath*:com/example/mapper1/*.xml");
+        mapperLocations.add("classpath*:com/example/mapper2/*.xml");
+        mapperLocations.add("classpath*:com/example/mapper3/**.xml");
+        List<Resource> resources = new ArrayList<>();
+        for (String mapperLocation : mapperLocations) {
+            try {
+                Resource[] mappers = resourceResolver.getResources(mapperLocation);
+                resources.addAll(Arrays.asList(mappers));
+            } catch (IOException ignored) {
+            }
+        }
+        return resources.toArray(new Resource[0]);
+    }
+}
+```
+
+```yaml
+spring:
+  # 数据源配置
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: dbc:h2:mem:test_mem
+    username: sa
+    password: sa
+    hikari:                          # HikariCP 数据库连接池配置（Spring Boot 默认）
+      maximum-pool-size: 10          # 最大连接数
+      minimum-idle: 5                # 最小空闲连接数
+      idle-timeout: 60000            # 空闲超时（毫秒）
+      connection-timeout: 30000      # 连接超时（毫秒）
+      max-lifetime: 1800000          # 连接的最大生命周期（毫秒）
+```
+
+详细配置说明
+
+- setMapUnderscoreToCamelCase(true) : 这个配置项用于开启数据库字段与 Java 实体类属性的自动映射。具体来说，当数据库中的字段为下划线风格（如 user_name），而 Java 中的字段为驼峰命名法（如 userName）时，MyBatis 会自动将它们进行映射。默认情况下，该选项是关闭的。
+- setCacheEnabled(true) : 开启 MyBatis 的二级缓存。二级缓存是跨 SQL 会话共享的，通常用于提升性能。默认情况下，这个选项也是开启的。
+- setLazyLoadingEnabled(true) : 开启懒加载。懒加载允许当真正访问某个关联对象时，才从数据库中加载该对象，而不是立即加载。这种机制可以提升性能，特别是在大对象的关联查询中。
+- setLogImpl(org.apache.ibatis.logging.stdout.StdOutImpl.class) : 设置 MyBatis 使用哪种日志实现。StdOutImpl 会将 SQL 语句以及参数直接输出到控制台。你还可以选择其他日志实现，例如 Slf4jImpl、Log4jImpl 等。
+- setDefaultExecutorType(ExecutorType.BATCH) : 设置默认的执行器类型为 BATCH，这将使得批量处理操作更加高效。常见的执行器类型有：
+- SIMPLE：每执行一次 SQL 都会打开并关闭一个 Statement，适合普通场景。
+- REUSE：将 Statement 重用，用于多次执行相同 SQL 的场景。
+- BATCH：适用于批量操作，可以减少数据库交互的次数，提升性能。
+- setDefaultStatementTimeout(30) : 设置 SQL 语句的默认超时时间，单位是秒。如果某个查询或更新操作耗时超过这个值，SQL 执行将会被取消。
+- setMultipleResultSetsEnabled(true) : 是否支持返回多个结果集。这个设置对于存储过程非常有用，因为存储过程有时会返回多个结果集。
 
