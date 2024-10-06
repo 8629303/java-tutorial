@@ -1751,7 +1751,9 @@ public void testUserByRowBounds() {
 
 官方文档：https://pagehelper.github.io/
 
-1、导入 `pagehelper` 分页插件依赖包
+### 1、单独整合 Mybatis 使用
+
+1、导入 Pagehelper 分页插件依赖包
 
 ```xml
 <!--分页插件--> 
@@ -1762,7 +1764,7 @@ public void testUserByRowBounds() {
 </dependency>
 ```
 
-2、**mybatis单独使用PageHelper分页插件**，要在xml中配置如下代码（其他情况参考官网）：
+2、Mybatis 单独使用 PageHelper 分页插件，要在 xml 中配置如下代码（其他情况参考官网）：
 
 ```xml
 <!--
@@ -1780,7 +1782,7 @@ plugins在配置文件中的位置必须符合要求，否则会报错，顺序�
 </plugins>
 ```
 
-3、`mapper`接口
+3、Mapper 接口
 
 ```java
 // 选择全部用户Pagehelper实现分页
@@ -1795,7 +1797,7 @@ List<User> getUserByPagehelper();
 </select>
 ```
 
-5、在代码中使用`Pagehelper`分页插件
+5、在代码中使用 Pagehelper 分页插件
 
 ```java
 @Test
@@ -1806,37 +1808,64 @@ public void testUserByRowBounds() {
     // 第一种：推荐这种使用方式。
 	PageHelper.startPage(1, 10);
 	List<User> users1 = mapper.getUserByPagehelper();
+    users1.forEach(System.out::println);
 
     // 第二种
     PageHelper.offsetPage(1, 10);
     List<User> users2 = mapper.getUserByPagehelper();
-
-    users1.forEach(System.out::println);
     users2.forEach(System.out::println);
+    
     session.close();
 }
 ```
 
 
 
+### 2、整合 SpringBoot 使用
+
+整合 SpringBoot 使用时直接引入依赖即可，不需要配置核心配置文件
+
+```xml
+<dependency>
+    <groupId>com.github.pagehelper</groupId>
+    <artifactId>pagehelper-spring-boot-starter</artifactId>
+    <version>1.2.12</version>
+</dependency>
+```
+
+这个极其重要，需要在核心启动类 Application 中的 @SpringBootApplication 注解后面添加
+
+```java
+@SpringBootApplication(exclude = PageHelperAutoConfiguration.class)
+```
+
+接下来就可以进行我们的测试了。测试代码可以参考上面。
+
+
+
 # 7、使用注解开发
 
-| 注解            | 说明                                   |
-| --------------- | -------------------------------------- |
-| @Insert         | 实现新增                               |
-| @Delete         | 实现删除                               |
-| @Update         | 实现更新                               |
-| @Select         | 实现查询                               |
-| @Result         | 实现结果集封装                         |
-| @Results        | 可以与@Result 一起使用，封装多个结果集 |
-| @ResultMap      | 实现引用@Results 定义的封装            |
-| @One            | 实现一对一结果集封装                   |
-| @Many           | 实现一对多结果集封装                   |
-| @InsertProvider | 实现动态 SQL 映射新增                  |
-| @DeleteProvider | 实现动态 SQL 映射删除                  |
-| @UpdateProvider | 实现动态 SQL 映射更新                  |
-| @SelectProvider | 实现动态 SQL 映射查询                  |
-| @CacheNamespace | 实现注解二级缓存的使用                 |
+> - Mybatis注解开发（超详细）「[牛哄哄的柯南](https://keafmd.blog.csdn.net/)」https://blog.csdn.net/weixin_43883917/article/details/113830667
+> - 【SpringBoot教程】SpringBoot 快速整合Mybatis（去XML化+注解进阶）https://mp.weixin.qq.com/s/hCf7uZL8sFnp4pU_ylUfYQ
+> - SpringBoot整合MyBatis教程Provider进阶(Insert)：https://mp.weixin.qq.com/s/7W5J1hE6vZvMKAKS4hifpg
+
+| 注解            | 说明                                                         |
+| --------------- | ------------------------------------------------------------ |
+| @Insert         | 实现新增                                                     |
+| @Delete         | 实现删除                                                     |
+| @Update         | 实现更新                                                     |
+| @Select         | 实现查询                                                     |
+| @Result         | 实现结果集封装                                               |
+| @Results        | 可以与@Result 一起使用，封装多个结果集                       |
+| @ResultMap      | 实现引用@Results 定义的封装                                  |
+| @One            | 实现一对一结果集封装                                         |
+| @Many           | 实现一对多结果集封装                                         |
+| @InsertProvider | 实现动态 SQL 映射新增                                        |
+| @DeleteProvider | 实现动态 SQL 映射删除                                        |
+| @UpdateProvider | 实现动态 SQL 映射更新                                        |
+| @SelectProvider | 实现动态 SQL 映射查询                                        |
+| @Options        | 设置执行 SQL 操作时附加选项，如是否使用自动生成的主键、是否使用缓存等 |
+| @CacheNamespace | 实现注解二级缓存的使用                                       |
 
 
 
@@ -2241,7 +2270,7 @@ public class GenerateResults {
 
 ## 7.3、高级注解
 
-> SQL 语句构建器：https://mybatis.org/mybatis-3/zh/statement-builders.html
+> SQL 语句构建器：https://mybatis.org/mybatis-3/zh_CN/statement-builders.html
 
 MyBatis-3 主要提供了以下CRUD的高级注解：
 
@@ -2330,10 +2359,12 @@ public class UserSqlProvider {
             SELECT("*");
             FROM("user");
             if (name != null) {
-                WHERE("name = #{name} and pwd like #{pwd}");
+                WHERE("name = #{name}");
             }
             if (pwd != null) {
-                WHERE("pwd like #{pwd}");
+                // WHERE("pwd like #{pwd}");
+                // 此种字符串拼接方式不推荐使用, 这里只是为了演示
+                WHERE("pwd like " + pwd);
             }
         }}.toString();
     }
@@ -2480,9 +2511,204 @@ public class MyTest {
 
 
 
-## 7.4、联表注解
+## 7.4、选项注解
 
-### 1、一对一 & 多对一
+在 MyBatis 中，`@Options` 注解用于设置执行 SQL 操作时的一些附加选项，比如是否使用自动生成的主键、是否使用缓存等。`@Options` 可以应用于增删改操作的方法（如 insert, update, delete），来控制 SQL 语句的执行行为。
+
+
+
+### 1、常用属性
+
+以下是 @Options 注解的一些常用属性：
+
+1. useGeneratedKeys：
+   
+   - **含义**：是否允许 MyBatis 使用数据库生成的主键值。
+   - **默认值**：`false`
+   - **使用场景**：当插入数据时，某些数据库（例如 MySQL）会自动生成主键值。通过设置 `useGeneratedKeys = true`，MyBatis 会获取生成的主键，并可以将其赋值给 Java 对象的字段。
+   
+   ```java
+   @Insert("INSERT INTO user (name, email) VALUES (#{name}, #{email})")
+   @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
+   int insertUser(User user);
+   ```
+   
+   - **keyProperty**：指定实体对象中主键字段的名称。
+   - **keyColumn**：指定数据库表中主键列的名称。
+   
+   **操作示例**：
+
+   - 数据库表 `user` 有一个自增的 `id` 列，当 `insertUser` 方法被调用时，MyBatis 会自动将插入后的 `id` 值赋给 `User` 对象的 `id` 字段。
+   
+2. flushCache：
+   
+   - **含义**：指定是否在执行语句后刷新 MyBatis 一级缓存。
+   - **默认值**：`true`（对于 `insert`, `update`, `delete` 语句），`false`（对于 `select` 语句）
+   - **使用场景**：当你希望 SQL 语句执行后自动清空缓存时，可以设置 `flushCache = true`。这在更新或删除数据时特别有用，确保缓存中没有过期数据。
+   
+   ```java
+   @Update("UPDATE user SET email = #{email} WHERE id = #{id}")
+   @Options(flushCache = Options.FlushCachePolicy.TRUE)
+   int updateUserEmail(User user);
+   ```
+   
+   - 该选项确保 `updateUserEmail` 方法执行后，MyBatis 会清空一级缓存中的相关数据。
+   
+3. timeout：
+   
+   - **含义**：设置 SQL 操作的超时时间，单位为秒。
+   - **默认值**：`-1`（表示没有超时时间）
+   - **使用场景**：在一些对性能要求较高的场景中，某些 SQL 操作可能会由于数据库负载过高而执行时间过长。可以通过设置 `timeout` 属性为某个正整数，来控制 SQL 操作的超时。
+   
+   ```java
+   @Delete("DELETE FROM user WHERE id = #{id}")
+   @Options(timeout = 5) // 设置超时时间为5秒
+   int deleteUserById(Long id);
+   ```
+   
+   **操作示例**：
+
+   - 如果 `deleteUserById` 方法执行超过 5 秒，SQL 操作会被强制中断。
+   
+4. fetchSize：
+   - **含义**：设置从数据库获取数据时一次获取的行数。
+   - **默认值**：由驱动程序决定
+   - **使用场景**：在处理大量数据时，可以通过 `fetchSize` 来控制每次从数据库获取的行数，进而优化数据传输性能。
+
+   ```java
+   @Select("SELECT * FROM user")
+   @Options(fetchSize = 100)
+   List<User> getAllUsers();
+   ```
+
+   **操作示例**：
+   
+   - 当 `getAllUsers` 方法被调用时，MyBatis 会一次从数据库读取 100 行数据，进而提高查询性能。
+   
+5. resultSetType：
+   - **含义**：设置返回的 `ResultSet` 类型。可以指定游标的行为，比如是否可以前后移动、是否可以随时更新结果集。
+   - **可选值**：
+     - `FORWARD_ONLY`：默认值，游标只能从前向后移动。
+     - `SCROLL_INSENSITIVE`：游标可以上下移动，结果集不受其他操作影响。
+     - `SCROLL_SENSITIVE`：游标可以上下移动，结果集受其他操作影响（可能会更新）。
+
+   ```java
+   @Select("SELECT * FROM user")
+   @Options(resultSetType = ResultSetType.SCROLL_INSENSITIVE)
+   List<User> getAllUsers();
+   ```
+
+   **操作示例**：
+   
+   - 这允许查询的结果集支持前后滚动，适用于需要在大量结果集上灵活移动的情况。
+   
+6. statementType：
+   - **含义**：指定使用的 `Statement` 类型。用于控制 SQL 语句的执行方式。
+   - **可选值**：
+     - `PREPARED`：默认值，使用 `PreparedStatement`。
+     - `STATEMENT`：使用 `Statement`。
+     - `CALLABLE`：使用 `CallableStatement`，用于调用存储过程。
+
+   ```java
+   @Insert("INSERT INTO user (name, email) VALUES (#{name}, #{email})")
+   @Options(statementType = StatementType.STATEMENT)
+   int insertUser(User user);
+   ```
+
+   **操作示例**：
+   
+   - 通过设置 `statementType = StatementType.STATEMENT`，可以直接执行 SQL 语句，而不是通过预编译的 `PreparedStatement`。
+   
+7. useCache：
+   - **含义**：指定查询操作是否使用二级缓存。
+   - **默认值**：`true`，表示查询结果会存入二级缓存中。
+   - **使用场景**：如果你不希望某些查询的结果缓存到 MyBatis 的二级缓存中，可以将 `useCache` 设置为 `false`。
+
+   ```java
+   @Select("SELECT * FROM user WHERE id = #{id}")
+   @Options(useCache = false)
+   User findUserById(Long id);
+   ```
+
+   **操作示例**：
+   
+   - 这个查询操作不会将结果存入二级缓存中。
+
+
+
+### 2、综合示例
+
+假设你有一个 UserMapper，它可以插入用户数据，同时使用 useGeneratedKeys 获取生成的主键，并且设置了超时时间和缓存策略。
+
+```java
+@Mapper
+public interface UserMapper {
+
+    @Insert("INSERT INTO user (name, email) VALUES (#{name}, #{email})")
+    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id", 
+             timeout = 10, flushCache = Options.FlushCachePolicy.TRUE)
+    int insertUser(User user);
+
+    @Select("SELECT * FROM user WHERE id = #{id}")
+    @Options(useCache = false)
+    User findUserById(Long id);
+}
+```
+
+在这个示例中：
+
+- 插入用户时会自动获取数据库生成的主键，并将其设置到 `User` 对象的 `id` 字段。
+- 插入操作设置了超时时间为 10 秒，如果操作超过 10 秒则会超时。
+- 查询用户时，不使用二级缓存，并且直接从数据库获取最新的数据。
+
+
+
+### 3、使用总结
+
+- @Options 注解用于为 MyBatis 的 SQL 语句配置额外的执行选项。
+- 常用的选项包括自动生成主键、缓存设置、查询超时、游标行为等。
+- 通过合理设置 @Options，可以更好地控制 MyBatis SQL 语句的执行行为，提升性能或满足业务需求。
+
+
+
+## 7.5、联表注解
+
+### 1、注解详解
+
+实现复杂关系映射之前我们可以在映射文件中通过配置`<resultMap>`来实现，在使用注解开发时我们需要借助@Results 注解，@Result 注解，@One 注解，@Many 注解。
+
+复杂关系映射的注解说明：
+
+- @Results 注解代替的是标签`<resultMap>`，该注解中可以使用单个 @Result 注解或 @Result 集合 @Results({@Result(), @Result()})或 @Results(@Result())
+- @Resutl 注解代替了`<id>` 标签和`<result>`标签
+
+@Result 中的属性介绍：
+
+| @Result 中的属性 | 介绍                                                |
+| ---------------- | --------------------------------------------------- |
+| id               | 是否是主键字段                                      |
+| column           | 数据库的列名                                        |
+| property         | 需要装配的属性名                                    |
+| one              | 需要使用的@One 注解（@Result（one=@One）（）））    |
+| many             | 需要使用的@Many 注解（@Result（many=@many）（））） |
+
+@One 注解（一对一）代替了`<assocation>`标签，是多表查询的关键，在注解中用来指定子查询返回单一对象。
+
+@One 注解属性介绍：
+
+- select 指定用来多表查询的 sqlmapper
+- fetchType 会覆盖全局的配置参数 lazyLoadingEnabled。
+- 使用格式：@Result(column=" “,property=”",one=@One(select=""))
+
+@Many 注解（多对一）代替了`<collection>`标签,是是多表查询的关键，在注解中用来指定子查询返回对象集合。
+
+- **注意：聚集元素用来处理“一对多”的关系。需要指定映射的 Java 实体类的属性，属性的 javaType（一般为 ArrayList）但是注解中可以不定义。**
+- 使用格式：@Result(property="",column="",many=@Many(select=""))
+  
+
+
+
+### 2、一对一 & 多对一
 
 > 多对一或者一对一中：**一端写法 @One**，这里只展示了一对多，一对一本质一样。把List去掉即可。
 
@@ -2544,7 +2770,7 @@ public class Student {
 }
 ```
 
-3、编写对应的Mapper接口，这里本人偷懒，只写了一个StudentMapper，TeacherMapper中的方法放到了StudentMapper中：
+3、编写对应的Mapper接口，这里本人偷懒，只写了一个StudentMapper，TeacherMapper 中的方法放到了 StudentMapper 中：
 
 ```java
 package mapper;
@@ -2555,6 +2781,7 @@ import pojo.Student;
 import pojo.Teacher;
 import java.util.List;
 
+@Mapper
 public interface StudentMapper {
     /**
      * 获取所有学生及对应老师的信息
@@ -2564,7 +2791,8 @@ public interface StudentMapper {
      * 如果是一对一时：@One中SELECT查询返回了多行结果，则会抛出TooManyResultsException异常。
      */
     @Results(id = "studentMap", value = {
-            @Result(column = "tid", property = "teacher",
+            @Result(column = "tid", 
+                    property = "teacher",
                     one = @One(select = "mapper.StudentMapper.getTeacherById", fetchType = FetchType.LAZY))
     })
     @Select("select * from student")
@@ -2576,15 +2804,7 @@ public interface StudentMapper {
 }
 ```
 
-4、在mybatis的核心配置文件中注入Mapper接口，实际上也可以使用package扫描，这里使用class是为了大家加深印象。
-
-```xml
-<mappers>
-    <mapper class="mapper.StudentMapper"/>
-</mappers>
-```
-
-5、编写测试用例
+4、编写测试用例
 
 ```java
 import mapper.StudentMapper;
@@ -2617,7 +2837,7 @@ Student(id=5, name=小王, teacher=Teacher(id=1, name=码老师))
 
 
 
-### 2、一对多
+### 3、一对多
 
 > 一对多或者多对多中的**多端写法 @Many**
 >
@@ -2666,6 +2886,7 @@ import pojo.Student;
 import pojo.Teacher;
 import java.util.List;
 
+@Mapper
 public interface TeacherMapper {
     /**
      * 获取指定老师，及老师下的所有学生
@@ -2688,15 +2909,7 @@ public interface TeacherMapper {
 }
 ```
 
-3、在mybatis的核心配置文件中注入Mapper接口，实际上也可以使用package扫描，这里使用class是为了大家加深印象。
-
-```xml
-<mappers>
-    <mapper class="mapper.TeacherMapper"/>
-</mappers>
-```
-
-4、编写测试用例
+3、编写测试用例
 
 ```java
 import mapper.TeacherMapper;
@@ -2724,7 +2937,25 @@ Teacher(id=0, name=码老师, students=[Student(id=1, name=小明, tid=1), Stude
 
 
 
-## 7.5、注解开发原理
+### 4、立即加载与懒加载
+
+在 MyBatis 中，`FetchType` 的默认值是 `FetchType.LAZY`。这意味着在默认情况下，关联的实体不会立即加载，而是在实际访问这些属性时才会加载。这种懒加载的策略可以提高性能，尤其是在处理大量数据时。
+
+不过，需要注意的是，MyBatis 的懒加载需要在配置中启用，通常通过在 MyBatis 的配置文件中设置 `lazyLoadingEnabled` 属性为 `true` 来实现。如果没有启用懒加载，MyBatis 会在查询时立即加载所有关联的实体。
+
+```xml
+<!-- 全局参数 -->
+<settings>
+    <!-- 全局启用或禁用延迟加载。当禁用时，所有关联对象都会即时加载 -->
+    <setting name="lazyLoadingEnabled" value="true"/>
+</settings>
+```
+
+
+
+
+
+## 7.6、注解开发原理
 
 1、利用Debug查看本质
 
@@ -2738,20 +2969,18 @@ Teacher(id=0, name=码老师, students=[Student(id=1, name=小明, tid=1), Stude
 
 
 
+# 8、级联查询操作
 
 
 
-
-
-
-# 8、多对一的处理
+## 1、多对一的处理
 
 多对一的理解：
 
 - 多个学生对应一个老师
 - 如果对于学生这边，就是一个多对一的现象，即从学生这边关联一个老师！
 
-## 8.1、数据库设计
+### 1、数据库设计
 
 | student |             | tercher |             |
 | ------- | ----------- | ------- | ----------- |
@@ -2787,7 +3016,7 @@ INSERT INTO `student` (`id`, `name`, `tid`) VALUES ('5', '小王', '1');
 
 
 
-## 8.2、搭建测试环境
+### 2、搭建测试环境
 
 1、IDEA安装Lombok插件：Setting =》 Plugins =》 Lombok安装
 
@@ -2863,7 +3092,7 @@ public interface TeacherMapper {
 
 
 
-## 8.3、按查询嵌套处理
+### 3、按查询嵌套处理
 
 1、给`StudentMapper.java`接口增加方法
 
@@ -2956,7 +3185,7 @@ public void testGetStudents(){
 
 
 
-## 8.4、按结果嵌套处理
+### 4、按结果嵌套处理
 
 除了上面这种方式，还有其他思路吗？
 
@@ -3012,16 +3241,14 @@ public void testGetStudents2(){
 }
 ```
 
-
-
-## 8.5、小结
+### 5、小结
 
 - 按照查询进行嵌套处理就像SQL中的子查询
 - 按照结果进行嵌套处理就像SQL中的联表查询
 
 
 
-# 9、一对多处理
+## 2、一对多的处理
 
 一对多的理解：
 
@@ -3030,7 +3257,7 @@ public void testGetStudents2(){
 
 
 
-## 9.1、实体类的编写
+### 1、实体类的编写
 
 ```java
 @Data
@@ -3051,9 +3278,7 @@ public class Teacher {
 }
 ```
 
-
-
-## 9.2、按结果嵌套处理
+### 2、按结果嵌套处理
 
 1、`TeacherMapper`接口编写方法
 
@@ -3116,7 +3341,7 @@ public void testGetTeacher(){
 
 
 
-## 9.3、按查询嵌套处理
+### 3、按查询嵌套处理
 
 1、TeacherMapper接口编写方法
 
@@ -3164,7 +3389,7 @@ public void testGetTeacher2(){
 
 
 
-## 9.4、小结
+### 4、小结
 
 1、关联-association
 
@@ -3188,6 +3413,503 @@ public void testGetTeacher2(){
 4、注意一对多和多对一 中：字段和属性对应的问题
 
 5、尽量使用Log4j，通过日志来查看自己的错误
+
+
+
+9、高级映射及延迟加载
+===========
+
+## 1、多对一
+
+多种方式，常见的包括三种：
+
+*   第一种方式：一条SQL语句，级联属性映射
+
+*   第二种方式：一条SQL语句，association
+
+*   第三种方式（常用）：两条SQL语句，分步查询。 优点：可复用、支持懒加载
+
+表的结构如下：
+
+```sql
+CREATE TABLE `class` (
+    `cid` INT(10) NOT NULL,
+    `cname` VARCHAR(30) DEFAULT NULL,
+    PRIMARY KEY (`cid`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8
+-- 插入测试数据
+INSERT INTO teacher(`cid`, `cname`) VALUES (1000, '高三一班');
+INSERT INTO teacher(`cid`, `cname`) VALUES (1001, '高三二班');
+
+CREATE TABLE `student` (
+    `sid` INT(10) NOT NULL,
+    `sname` VARCHAR(30) DEFAULT NULL,
+    `cid` INT(10) DEFAULT NULL,
+    PRIMARY KEY (`sid`),
+    KEY `fktid` (`cid`),
+    CONSTRAINT `fktid` FOREIGN KEY (`cid`) REFERENCES `teacher` (`cid`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8
+-- 插入测试数据
+INSERT INTO `student` (`sid`, `sname`, `cid`) VALUES ('1', '张三', 1000);
+INSERT INTO `student` (`sid`, `sname`, `cid`) VALUES ('2', '李四', 1000);
+INSERT INTO `student` (`sid`, `sname`, `cid`) VALUES ('3', '王五', 1000);
+INSERT INTO `student` (`sid`, `sname`, `cid`) VALUES ('4', '赵六', 1001);
+INSERT INTO `student` (`sid`, `sname`, `cid`) VALUES ('5', '七七', 1001);
+```
+
+两个实体类如下：
+
+```java
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+public class Student {  // Student是多的一方
+    private Integer sid;
+    private String sname;
+    private Class clazz;  // clazz是一的一方
+}
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+public class Class { // 教室类
+    private Integer cid;
+    private String cname;
+}
+```
+
+**第一种方式：级联属性映射**：
+
+```java
+@Mapper
+public interface StudentMapper {
+    /**
+     * 根据id获取学生信息，同时获取学生关联的班级信息
+     * @param id 学生的id
+     * @return 学生对象，但是学生对象当中含有班级对象
+     */
+    Student selectById(Integer id);
+}
+```
+
+```xml
+<mapper namespace="mapper.StudentMapper">
+    <!--记住：前者是属性名，后者是字段名 前面了解过 这里再复习一下-->
+    <!--多对一映射的第一种方式：一条SQL语句，级联属性映射-->
+    <resultMap id="studentResultMap" type="Student">
+        <id property="sid" column="sid" />
+        <result property="sname" column="sname" />
+        <result property="clazz.cid" column="cid" />
+        <result property="clazz.cname" column="cname" />
+    </resultMap>
+    <select id="selectById" resultMap="studentResultMap">
+        select
+            s.sid,s.sname,c.cid,c.cname
+        from
+            t_stu s
+        left join
+            t_class c
+        on
+            s.cid = c.cid
+        where
+            s.sid = #{sid}
+    </select>
+</mapper>
+```
+
+```java
+@Test
+public void testGetStudents(){
+    SqlSession session = MybatisUtils.getSession();
+    StudentMapper mapper = session.getMapper(StudentMapper.class);
+    List<Student> students = mapper.selectById(1);
+}
+```
+
+```
+Opening JDBC Connection
+Created connection 1176735295.
+====>  Preparing: select s.sid,s.sname,c.cid,c.cname from t_stu s left join t_class c on s.cid = c.cid where s.sid = ?
+====> Parameters: 1(Integer)
+<====      Total: 1
+Closing JDBC Connection [com.mysql.jdbc.JDBC4Connection@46238e3f]
+Returned connection 1176735295 to pool.
+```
+
+**第二种方式：association**：
+
+```java
+@Mapper
+public interface StudentMapper {
+    /**
+     * 一条SQL语句，association
+     * @param id
+     * @return
+     */
+    Student selectByIdAssociation(Integer id);
+}
+```
+
+```xml
+<mapper namespace="mapper.StudentMapper">
+    <!--
+        association翻译为关联，一个Student对象关联一个Class对象
+            property：提供要映射的POJO的参数名
+            javaType：用来指定要映射的java类型
+    -->
+    <resultMap id="studentResultMapAssociation" type="Student">
+        <id property="sid" column="sid" />
+        <result property="sname" column="sname" />
+        <association property="clazz" javaType="Class">
+            <id property="cid" column="cid" />
+            <result property="cname" column="cname" />
+        </association>
+    </resultMap>
+    <select id="selectByIdAssociation" resultMap="studentResultMapAssociation">
+        select
+            s.sid,s.sname,c.cid,c.cname
+        from
+            t_stu s
+        left join
+            t_class c
+        on
+            s.cid = c.cid
+        where
+            s.sid = #{sid}
+    </select>
+</mapper>
+```
+
+```java
+@Test
+public void testGetStudents(){
+    SqlSession session = MybatisUtils.getSession();
+    StudentMapper mapper = session.getMapper(StudentMapper.class);
+    List<Student> students = mapper.selectById(2);
+}
+```
+
+```java
+Opening JDBC Connection
+Created connection 1176735295.
+====>  Preparing: select s.sid,s.sname,c.cid,c.cname from t_stu s left join t_class c on s.cid = c.cid where s.sid = ?
+====> Parameters: 2(Integer)
+<====      Total: 1
+Closing JDBC Connection [com.mysql.jdbc.JDBC4Connection@46238e3f]
+Returned connection 1176735295 to pool.
+```
+
+**第三种方式：分步查询**：
+
+```java
+@Mapper
+public interface StudentMapper {
+    /**
+     * 分步查询第一步：先根据学生的sid查询学生的信息
+     * @param id
+     * @return
+     */
+    Student selectByIdStep1(Integer id);
+}
+@Mapper
+public interface ClassMapper {
+    /**
+     * 分步查询第二步：根据cid获取班级信息
+     * @param id
+     * @return
+     */
+    Class selectByIdStep2(Integer id);
+}
+```
+
+```xml
+<mapper namespace="mapper.StudentMapper">
+    <!--
+		分步查询的有点：
+			第一：复用性增强。可以重复利用（大步分成小步，每一小步更加可以重新利用）
+			第二：可以充分利用他们的延迟加载/懒加载机制
+	-->
+    <!--两条SQL语句，完成多对一的多步查询-->
+    <!--这里是第一步：根据学生的id查询学生的所有信息，这些信息当中含有班级id(cid)-->
+    <resultMap id="studentResultMapByStep" type="Student">
+        <id property="sid" column="sid" />
+        <result property="sname" column="sname" />
+        <association property="clazz"
+                     select="com.chf.mapper.ClassMapper.selectByIdStep2"
+                     column="cid"
+        />
+    </resultMap>
+    <select id="selectByIdStep1" resultMap="studentResultMapByStep">
+        select
+            sid,sname,cid
+        from
+            t_stu
+        where
+            sid = #{sid}
+    </select>
+</mapper>
+```
+
+```xml
+<mapper namespace="mapper.ClassMapper">
+    <!--分步查询第二步：根据cid获取班级信息-->
+    <select id="selectByIdStep2" resultType="Class">
+        select
+            cid,cname
+        from
+            t_class
+        where
+            cid = #{cid}
+    </select>
+</mapper>
+```
+
+```java
+@Test
+public void testGetStudents(){
+    SqlSession session = MybatisUtils.getSession();
+    StudentMapper mapper = session.getMapper(StudentMapper.class);
+    List<Student> students = mapper.selectById(4);
+}
+```
+
+```java
+Opening JDBC Connection
+Created connection 1176735295.
+====>  Preparing: select sid,sname,cid from t_stu where sid = ?
+====> Parameters: 4(Integer
+<====      Total: 1
+====>  Preparing: select cid,cname from t_class where cid = ?
+====> Parameters: 1001(Integer)
+<====      Total: 1
+Closing JDBC Connection [com.mysql.jdbc.JDBC4Connection@46238e3f]
+Returned connection 1176735295 to pool.
+```
+
+
+
+## 2、多对一延迟加载
+
+实际开发中的模式：把全局的延迟加载打开，如果某个映射文件不需要那么就在 association 标签里使用fetchType="eager"关闭
+
+```xml
+<mapper namespace="mapper.StudentMapper">
+    <!--
+		延迟加载的核心机制：用的时候再执行查询语句，不用的时候不查询，可以提高性能。
+		默认情况下是没有开启延迟加载的，需要手动设置开启。
+		开启延迟加载的方法：association标签中添加fetchType="lazy"
+		但是这里只是开启默认的延迟加载，仅局限于此Mapper映射文件，需要在核心配置文件里设置
+		
+		如果开启了全局延迟加载，但又不想在某个映射文件中开启，那么就需要在association标签设置
+					fetchType="eager"
+	-->
+    <resultMap id="studentResultMapByStep" type="Student">
+        <id property="sid" column="sid" />
+        <result property="sname" column="sname" />
+        <association property="clazz"
+                     select="com.chf.mapper.ClassMapper.selectByIdStep2"
+                     column="cid"
+                     fetchType="lazy"
+        />
+    </resultMap>
+    <select id="selectByIdStep1" resultMap="studentResultMapByStep">
+        select
+            sid,sname,cid
+        from
+            t_stu
+        where
+            sid = #{sid}
+    </select>
+</mapper>
+```
+
+```yaml
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: org.example.pojo
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # 实际开发中，大部分都是需要使用延迟加载的
+    # 延迟加载的全局开关，默认值false为不开启
+    lazy-loading-enabled: true
+```
+
+
+
+## 3、一对多
+
+一对多的实现，通常是在一的一方中有 List 集合属性。在 Class（教室）类中添加List< Student > studentList 属性。
+
+一对多的实现通常包括两种实现方式：
+
+*   第一种方式：collection
+
+*   第二种方式：分步查询
+
+两个实体类如下：
+
+```java
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+public class Student {  
+    private Integer sid;
+    private String sname;
+    private Class clazz; 
+}
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+public class Class { // 教室类
+    private Integer cid;
+    private String cname;
+    private List<Student> studentList;
+}
+```
+
+**第一种方式：collection**：
+
+```xml
+<mapper namespace="mapper.ClassMapper">
+    <resultMap id="classResultMap" type="Class">
+        <id property="cid" column="cid" />
+        <result property="cname" column="cname" />
+        <!-- 一对多，这里是collection，collection是集合的意思 -->
+        <!-- ofType属性用来指定结合当中的元素类型即集合中的泛型 -->
+        <collection property="studentList" ofType="Student">
+            <id property="sid" column="sid" />
+            <result property="sname" column="sname" />
+        </collection>
+    </resultMap>
+    <select id="selectByCollection" resultMap="classResultMap">
+        select
+            c.cid,c.cname,s.sid,s.sname
+        from
+            t_class c
+        left join
+            t_stu s
+        on
+            c.cid = s.cid
+        where
+            c.cid = #{cid}
+    </select>
+</mapper>
+```
+
+```java
+@Test
+public void test() {
+    SqlSession session = MybatisUtils.getSession();
+    ClassMapper mapper = session.getMapper(ClassMapper.class);
+    Class cls = mapper.selectByCollection(1000);
+}
+```
+
+```java
+Opening JDBC Connection
+Created connection 1176735295.
+====>  Preparing: select c.cid,c.cname,s.sid,s.sname from t_class c left join t_stu s on c.cid = s.cid where c.cid = ?
+====> Parameters: 1000(Integer)
+<====      Total:
+Closing JDBC Connection [com.mysql.jdbc.JDBC4Connection@46238e3f]
+Returned connection 1176735295 to pool.
+```
+
+注意：控制台输出的 clazz=null 是没有问题的
+
+**第二种方式：分步查询**：
+
+```java
+@Mapper
+public interface ClassMapper {
+    /**
+     * 分步查询第一步：根据班级编号获取班级信息
+     * @param cid
+     * @return
+     */
+    Class selectByStep1(Integer cid);
+}
+
+@Mapper
+public interface StudentMapper {
+    /**
+     * 根据班级编号查询学生信息
+     * @param cid
+     * @return
+     */
+    List<Student> selectByStep2(Integer cid);
+}
+```
+
+```xml
+<mapper namespace="mapper.ClassMapper">
+    <!-- 分步查询第一句：根据班级的cid查询班级信息 -->
+    <resultMap id="classResultMapStep" type="Class">
+        <id property="cid" column="cid" />
+        <result property="cname" column="cname" />
+        <association property="studentList" column="cid"
+                     select="com.chf.mapper.StudentMapper.selectByStep2"
+        />
+    </resultMap>
+    <select id="selectByStep1" resultMap="classResultMapStep">
+        select
+            cid,cname
+        from
+            t_class
+        where
+            cid = #{cid}
+    </select>
+</mapper>
+```
+
+```xml
+<mapper namespace="com.chf.mapper.StudentMapper">
+	<!-- 分步查询第二步：根据传过来的班级编号查询学生信息 -->
+    <select id="selectByStep2" resultType="Student">
+        select
+            sid,sname
+        from
+            t_stu
+        where
+            cid = #{cid}
+    </select>
+</mapper>
+```
+
+```java
+@Test
+public void test() {
+    SqlSession session = MybatisUtils.getSession();
+    ClassMapper mapper = session.getMapper(ClassMapper.class);
+    Class cls = mapper.selectByStep1(1001);
+}
+```
+
+```java
+Opening JDBC Connection
+Created connection 1176735295.
+====>  Preparing: select cid,cname from t_class where cid = ?
+====> Parameters: 1001(Integer)
+<====      Total: 1
+Closing JDBC Connection [com.mysql.jdbc.JDBC4Connection@46238e3f]
+Opening JDBC Connection
+Created connection 1176735296.
+====>  Preparing: select sid,sname from t_stu where cid = ?
+====> Parameters: 1001(Integer)
+<====      Total: 2
+Closing JDBC Connection [com.mysql.jdbc.JDBC4Connection@46238e3f]
+```
+
+
+
+## 4、一对多延迟加载
+
+与上面的多对一延迟加载相同，可以回去重新看一下。
 
 
 
@@ -3357,7 +4079,7 @@ public void addInitBlog(){
 1、编写接口类
 
 ```java
-//需求1
+// 需求1
 List<Blog> queryBlogIf(Map map);
 ```
 
@@ -3721,7 +4443,7 @@ public void testQueryBlogForeach2(){
 
 
 
-# 11、缓存
+# 11、缓存操作
 
 ## 11.1、简介
 
@@ -3743,12 +4465,11 @@ public void testQueryBlogForeach2(){
 ## 11.2、Mybatis缓存
 
 - `MyBatis`包含一个非常强大的查询缓存特性，它可以非常方便地定制和配置缓存。缓存可以极大的提升查询效率。
-
 - `MyBatis`系统中默认定义了两级缓存：**一级缓存**和**二级缓存**
-
-- - 默认情况下，只有一级缓存开启。（`SqlSession`级别的缓存，也称为本地缓存）
+  - 默认情况下，只有一级缓存开启。（`SqlSession`级别的缓存，也称为本地缓存）
   - 二级缓存需要手动开启和配置，他是基于`namespace`级别的缓存。
   - 为了提高扩展性，`MyBatis`定义了缓存接口`Cache`。我们可以通过实现`Cache`接口来自定义二级缓存
+
 
 
 
@@ -3799,7 +4520,7 @@ public void testQueryUserById(){
 5、结果分析
 
 - `SQL`语句只查询了一次
-- 第一次结果，没有进行数据库查询
+- 第二次结果，没有进行数据库查询
 
 
 
@@ -3862,7 +4583,7 @@ public void testQueryUserById(){
 增加方法
 
 ```java
-//修改用户
+// 修改用户
 int updateUser(Map map);
 ```
 
@@ -3914,7 +4635,8 @@ public void testQueryUserById(){
     User user = mapper.queryUserById(1);
     System.out.println(user);
 
-    session.clearCache();//手动清除缓存
+    // 手动清除缓存
+    session.clearCache();
 
     User user2 = mapper.queryUserById(1);
     System.out.println(user2);
@@ -3925,7 +4647,7 @@ public void testQueryUserById(){
 }
 ```
 
-一级缓存就是一个map
+一级缓存就是一个 Map。
 
 
 
@@ -3942,7 +4664,7 @@ public void testQueryUserById(){
 ```xml
 <cache/>
 
-官方示例=====>查看官方文档
+<!-- 官方示例=====>查看官方文档 -->
 <cache
  eviction="FIFO"
  flushInterval="60000"
@@ -3990,6 +4712,8 @@ public void testQueryUserById(){
 ## 11.5、缓存原理
 
 ![20200711115843](Mybatis/20200711115843.png)
+
+
 
 ## 11.6、EhCache
 
@@ -4078,25 +4802,1027 @@ public void testQueryUserById(){
 
 
 
-# 12、参考资料 & 鸣谢
-
-1. Mr.Yan（tag）：http://www.yanhongzhi.com/cate/Mybatis
-2. SpringBoot+Mybatis XML配置文件详解（有系列）：https://blog.csdn.net/stopping5/article/details/108629820
-3. MyBatis基础用法--插件开发：https://blog.csdn.net/pengjunlee/article/details/78175871
-4. MyBatis自定义拦截器插件：https://blog.csdn.net/x763795151/article/details/87886492
-5. Mybatis学习笔记 - 01~04：https://blog.csdn.net/a1092882580/article/details/104086181
-7. MyBatis 的执行流程：https://mp.weixin.qq.com/s/UqgXw0qOW1H1-Dqh5NtueA
 
 
+12、MyBatis 缓存机制
+=============
+
+缓存：Cache。缓存的作用：通过减少IO的方式来提高程序的执行效率。
+
+MyBatis 的缓存：将 select 语句的查询结果放到缓存（内存）当中，下一次还是这条 select 语句的话，直接从缓存中取，不需要查询数据库。一方面是减少了IO，另一方面不再执行繁琐的查找算法，效率大大提升。
+
+MyBatis 缓存包括：
+
+*   一级缓存：将查询到的数据存储到 SqlSession 中。
+
+*   二级缓存：将查询到的数据存储到 SqlSessionFactory 中。
+
+*   其他集成第三方的缓存：比如 EhCache【Java 语言开发的】、Memcache 和 Redis【C 语言开发的】等。
+
+**缓存只针对于 DQL 语句，也就是说缓存机制只对应 select 语句**
 
 
-# SpringBoot 整合 Mybatis
 
-> 1. Spring Boot整合MyBatis(保姆级教程)：https://mp.weixin.qq.com/s/6Oihr6F05lHu1YJMKjNsiA
+## 1、一级缓存
+
+一级缓存是默认开启的，不需要做任何配置（后半句指在纯MyBatis框架中）。
+
+它的作用范围是在同一个 SqlSession 中，即在同一个 SqlSession 中共享。
+
+原理：只要使用同一个 SqlSession 对象执行同一条 SQL 语句就会走缓存。
+
+```java
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+public class Car {
+    private Long id;
+    private String carNum;
+    private String brand;
+    private Double guidePrice;
+    private String produceTime;
+    private String carType;
+}
+```
+
+```java
+@Mapper
+public interface CarMapper {
+    /**
+     * 根据id获取Car信息
+     * @param id
+     * @return
+     */
+    Car selectById(Long id);
+}
+```
+
+```xml
+<mapper namespace="mapper.CarMapper">
+    <sql id="selectAll">
+        id,car_num,brand,guide_price,produce_time,car_type
+    </sql>
+    <select id="selectById" resultType="Car">
+        select
+            <include refid="selectAll" />
+        from
+            t_car
+        where id = #{id}
+    </select>
+</mapper>
+```
+
+```java
+@Test
+public void test() {
+    SqlSession session = MybatisUtils.getSession();
+    CarMapper mapper = session.getMapper(CarMapper.class);
+    Car car1 = mapper.selectById(1L);
+    Car car2 = mapper.selectById(1L);
+}
+```
+
+```java
+Opening JDBC Connection
+Created connection 1176735295.
+====>  Preparing: select id,car_num,brand,guide_price,produce_time,car_type from t_car where id = ?
+====> Parameters: 1(Integer)
+<====      Total: 1
+Closing JDBC Connection [com.mysql.jdbc.JDBC4Connection@46238e3f]
+Opening JDBC Connection
+Created connection 1176735296.
+====>  Preparing: select sid,sname from t_stu where cid = ?
+====> Parameters: 1001(Integer)
+<====      Total: 2
+Closing JDBC Connection [com.mysql.jdbc.JDBC4Connection@46238e3f]
+```
+
+可以发现最终只发送了一次查询SQL语句，并且是第一次发送的。
+
+这里需要注意：由于我们这里没有整合Spring或者SpringBoot。如果整合 SpringBoot 后同样的代码，会发现在 SpringBoot 结合 MyBatis 中没有自动开启一级缓存机制，查询相同的 id 使用了两次查询。但是我们在方法名上添加 @Transactional 注解就会发现控制台发生了变化：只执行了一次查询语句。也就是说添加了 @Transactional 注解就能够使用一级缓存，换言之就是同一个 SqlSession。
+
+***
+
+简单回顾一下在纯MyBatis框架中如何使一级缓存失效：
+
+只要在第一次 DQL 和第二次 DQL 之间做了两件事中的任意一件就会使一级缓存清空。
+
+*   1、执行了 SqlSession 的 clearCache() 方法，这是手动清空缓存。
+
+*   2、执行了 INSERT 或 DELETE 或 UPDATE 语句，不管是操作哪张表都会清空缓存。
 
 
 
-# SpringBoot + Mybatis 配置方式
+## 2、二级缓存
+
+二级缓存的范围是 SqlSessionFactory，使用二级缓存需要具备以下几个条件：
+
+*   1、在核心配置文件添加cache-enabled: true（全局性地开启或关闭所以映射器配置文件已配置的任何缓存）
+
+但这是默认开启的，所以可以不用添加：
+
+*   2、在需要的 mapper 映射文件中的< mapper >< /mapper >里添加< cache />
+
+*   3、使用二级缓存的实体类对象必须是可序化的，也就是必须实现 java.io.Serializable 接口
+
+*   4、纯 MyBatis 中需要将 SqlSession 对象关闭或提交之后，一级缓存才会被写入二级缓存中，此时二级缓存才可用。
+
+```xml
+<mapper namespace="mapper.CarMapper">
+    <cache />
+    <sql id="selectAll">
+        id,car_num,brand,guide_price,produce_time,car_type
+    </sql>
+    <select id="selectById2" resultType="Car">
+        select
+            <include refid="selectAll" />
+        from
+            t_car
+        where
+            id = #{id}
+    </select>
+</mapper>
+```
+
+```java
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+public class Car implements Serializable {
+    private Long id;
+    private String carNum;
+    private String brand;
+    private Double guidePrice;
+    private String produceTime;
+    private String carType;
+}
+```
+
+**二级缓存的失效：只要两次查询之间出现了增删改操作，当然这样同样使一级缓存失效**
+
+
+
+13、插件介绍及应用
+=================================================================================
+
+> - 手把手教你开发 MyBatis 分页插件「江南一点雨」：https://blog.itpub.net/70027826/viewspace-3008323/
+> - MyBatis 插件介绍及应用：https://blog.csdn.net/baidu_41907361/article/details/138316352
+> - MyBatis插件深度解析：功能、原理、使用、应用场景与最佳实践：https://blog.csdn.net/qq_26664043/article/details/136219131
+> - MyBatis基础用法--插件开发：https://blog.csdn.net/pengjunlee/article/details/78175871
+> - MyBatis自定义拦截器插件：https://blog.csdn.net/x763795151/article/details/87886492
+
+MyBatis 是一个持久层框架，它允许开发者自定义 SQL 语句并将其映射到 Java 对象中。MyBatis 提供了一种灵活的数据库操作方式，但随着项目的复杂度增加，一些通用功能如分页、缓存、事务管理等可能需要重复编写。为了解决这个问题，MyBatis 提供了插件机制，允许开发者扩展 MyBatis 的功能，实现自定义逻辑。
+
+## 1、MyBatis 插件概述
+
+MyBatis 插件是 MyBatis 框架的扩展点，它们可以拦截 MyBatis 的核心处理过程，包括执行器、参数处理器、结果处理器等。通过编写插件，开发者可以在不修改 MyBatis 核心代码的情况下，增加新的功能或改变 MyBatis 的行为。
+
+### 1、插件的作用
+
+*   **拦截器**：在 MyBatis 执行 SQL 之前或之后执行自定义逻辑。
+*   **扩展功能**：实现 MyBatis 未提供的功能，如分页、性能监控等。
+*   **自定义 SQL**：通过插件机制，可以自定义 SQL 片段，提高代码的复用性。
+
+
+
+### 2、插件的工作原理
+
+MyBatis 插件通过使用 Java 的代理机制实现。开发者需要实现 MyBatis 提供的 `Interceptor` 接口，并重写 `intercept` 方法。在 `intercept` 方法中，可以定义拦截逻辑。
+
+
+
+### 3、拦截四种核心组件
+
+MyBatis所允许拦截的⽅法如下：
+
+- **Executor**：执⾏器 (update, query, flushStatements, commit, rollback, getTransaction, close, isClosed ⽅法)，负责SQL语句的执行和事务管理；
+- **StatementHandler**：SQL语法构建器 (prepare, parameterize, batch, update, query ⽅法)，处理具体的SQL语句，包括预编译和参数设置等；
+- **ParameterHandler**：参数处理器 (getParameterObject、setParameters ⽅法)，负责将用户传递的参数转换成JDBC可识别的参数；
+- **ResultSetHandler**：结果集处理器 (handleResultSets、handleOutputParameters ⽅法)，负责将JDBC返回的结果集转换成用户所需的对象或集合；
+
+
+
+#### 1、Executor
+
+```java
+public interface Executor {
+    ResultHandler NO_RESULT_HANDLER = null;
+    int update(MappedStatement ms, Object parameter) throws SQLException;
+    <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, 
+                      ResultHandler resultHandler, CacheKey cacheKey, BoundSql boundSql) 
+        throws SQLException;
+    <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler) 
+        throws SQLException;
+    <E> Cursor<E> queryCursor(MappedStatement ms, Object parameter, RowBounds rowBounds) throws SQLException;
+    List<BatchResult> flushStatements() throws SQLException;
+    void commit(boolean required) throws SQLException;
+    void rollback(boolean required) throws SQLException;
+    CacheKey createCacheKey(MappedStatement ms, Object parameterObject, RowBounds rowBounds, BoundSql boundSql);
+    boolean isCached(MappedStatement ms, CacheKey key);
+    void clearLocalCache();
+    void deferLoad(MappedStatement ms, MetaObject resultObject, String property, CacheKey key, Class<?> targetType);
+    Transaction getTransaction();
+    void close(boolean forceRollback);
+    boolean isClosed();
+    void setExecutorWrapper(Executor executor);
+}
+```
+
+各方法含义分别如下：
+
+- update：该方法会在所有的 INSERT、 UPDATE、 DELETE 执行时被调用，如果想要拦截这些操作，可以通过该方法实现。
+- query：该方法会在 SELECT 查询方法执行时被调用，方法参数携带了很多有用的信息，如果需要获取，可以通过该方法实现。
+- queryCursor：当 SELECT 的返回类型是 Cursor 时，该方法会被调用。
+- flushStatements：当 SqlSession 方法调用 flushStatements 方法或执行的接口方法中带有 @Flush 注解时该方法会被触发。
+- commit：当 SqlSession 方法调用 commit 方法时该方法会被触发。
+- rollback：当 SqlSession 方法调用 rollback 方法时该方法会被触发。
+- getTransaction：当 SqlSession 方法获取数据库连接时该方法会被触发。
+- close：该方法在懒加载获取新的 Executor 后会被触发。
+- isClosed：该方法在懒加载执行查询前会被触发。
+
+
+
+#### 2、ParameterHandler
+
+```java
+public interface ParameterHandler {
+    Object getParameterObject();
+    void setParameters(PreparedStatement ps) throws SQLException;
+}
+```
+
+各方法含义分别如下：
+
+- getParameterObject：在执行存储过程处理出参的时候该方法会被触发。
+- setParameters：设置 SQL 参数时该方法会被触发。
+
+
+
+#### 3、ResultSetHandler
+
+```java
+public interface ResultSetHandler {
+    <E> List<E> handleResultSets(Statement stmt) throws SQLException;
+    <E> Cursor<E> handleCursorResultSets(Statement stmt) throws SQLException;
+    void handleOutputParameters(CallableStatement cs) throws SQLException;
+}
+```
+
+各方法含义分别如下：
+
+- handleResultSets：该方法会在所有的查询方法中被触发（除去返回值类型为 Cursor
+- handleCursorResultSets：当查询方法的返回值类型为 Cursor
+- handleOutputParameters：使用存储过程处理出参的时候该方法会被调用。
+
+
+
+#### 4、StatementHandler
+
+```java
+public interface StatementHandler {
+    Statement prepare(Connection connection, Integer transactionTimeout)
+        throws SQLException;
+    void parameterize(Statement statement)
+        throws SQLException;
+    void batch(Statement statement)
+        throws SQLException;
+    int update(Statement statement)
+        throws SQLException;
+    <E> List<E> query(Statement statement, ResultHandler resultHandler)
+        throws SQLException;
+    <E> Cursor<E> queryCursor(Statement statement)
+        throws SQLException;
+    BoundSql getBoundSql();
+    ParameterHandler getParameterHandler();
+}
+```
+
+各方法含义分别如下：
+
+- prepare：该方法在数据库执行前被触发。
+- parameterize：该方法在 prepare 方法之后执行，用来处理参数信息。
+- batch：如果 MyBatis 的全剧配置中配置了 `defaultExecutorType=”BATCH”`，执行数据操作时该方法会被调用。
+- update：更新操作时该方法会被触发。
+- query：该方法在 SELECT 方法执行时会被触发。
+- queryCursor：该方法在 SELECT 方法执行时，并且返回值为 Cursor 时会被触发。
+
+在开发一个具体的插件时，我们应当根据自己的需求来决定到底拦截哪个方法。
+
+
+
+## 2、MyBatis 插件开发
+
+开发 MyBatis 插件需要对 MyBatis 的工作流程有深入的理解。下面是一个简单的插件开发示例。会针对四种核心组件分别实现一个插件。
+
+### 1、Executor 拦截器实现
+
+#### Query 拓展点
+
+*   **用途**：可以在查询操作执行前后添加逻辑，如记录查询时间、进行查询缓存等。
+*   **拦截方法**：`query`
+
+功能：打印查询sql耗时，以及结果集行数。
+
+```java
+package org.example.plugin;
+
+import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.plugin.*;
+import org.apache.ibatis.session.ResultHandler;
+import org.apache.ibatis.session.RowBounds;
+import org.springframework.stereotype.Component;
+
+import java.util.*;
+
+@Component
+@Intercepts({@Signature(type = Executor.class,
+        method = "query",
+        args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class})})
+public class ExecutorQueryPlugin implements Interceptor {
+    @Override
+    public Object intercept(Invocation invocation) throws Throwable {
+        long start = System.currentTimeMillis();
+        Object result = invocation.proceed(); // 执行原方法
+        long end = System.currentTimeMillis();
+        System.out.println("查询时间: " + (end - start) + " ms");
+        // 如果查询结果是一个 List，可以打印查询到的行数
+        if (result instanceof List<?>) {
+            List<?> list = (List<?>) result;
+            System.out.println("查询行数: " + list.size());
+        }
+
+        return result; // 返回原方法结果
+    }
+
+    @Override
+    public Object plugin(Object target) {
+        return Plugin.wrap(target, this);
+    }
+
+    @Override
+    public void setProperties(Properties properties) {
+        // 可以为插件配置属性
+    }
+}
+```
+
+```
+查询时间：5 ms
+查询行数：1
+```
+
+
+
+#### Update 拓展点
+
+*   **用途**：可以在更新（插入、修改、删除）操作执行前后添加逻辑，如统计影响行数、记录变更日志等。
+*   **拦截方法**：`update`
+
+```java
+package org.example.plugin;
+
+import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.plugin.*;
+import org.apache.ibatis.session.ResultHandler;
+import org.springframework.stereotype.Component;
+
+import java.util.Properties;
+
+@Component
+@Intercepts({@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})
+public class ExecutorUpdatePlugin implements Interceptor {
+
+    @Override
+    public Object intercept(Invocation invocation) throws Throwable {
+        // 记录操作开始时间
+        long start = System.currentTimeMillis();
+
+        // 执行 update 操作
+        Object result = invocation.proceed(); // 执行目标方法
+
+        // 记录操作结束时间
+        long end = System.currentTimeMillis();
+
+        // 计算操作耗时
+        long timeElapsed = end - start;
+
+        // 获取影响的行数
+        int affectedRows = (Integer) result;
+
+        // 获取 MappedStatement 来获取相关的信息，如 SQL 语句和参数
+        MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
+        Object parameter = invocation.getArgs()[1];
+
+        // 记录变更日志
+        recordChangeLog(mappedStatement, parameter, affectedRows);
+
+        // 打印消耗时间和影响行数
+        System.out.println(String.format("更新操作耗时: %d ms, 受影响的行数: %d", timeElapsed, affectedRows));
+
+        return result; // 返回操作影响的行数
+    }
+
+    private void recordChangeLog(MappedStatement mappedStatement, Object parameter, int affectedRows) {
+        // 模拟记录变更日志的逻辑
+        // 这里可以根据实际需要，将变更信息写入日志系统或者存储起来
+        String sql = mappedStatement.getBoundSql(parameter).getSql();
+        sql = sql.replaceAll("\n", " ").replaceAll(" +", " ").toLowerCase();
+        System.out.println("sql 日志打印: " + sql);
+
+        // 可以在这里添加更多的日志记录逻辑，如记录操作的用户、时间戳等
+    }
+
+    @Override
+    public Object plugin(Object target) {
+        return Plugin.wrap(target, this);
+    }
+
+    @Override
+    public void setProperties(Properties properties) {
+        // 可以为插件配置属性
+    }
+}
+```
+
+```
+sql 日志打印：update user sete password = ?, name = ?, user_code = ? whrer (id = ?)
+更新操作耗时：23 ms, 受影响的行数：1
+```
+
+
+
+#### Commit 拓展点
+
+*   **用途**：可以在事务提交时执行额外的操作，如记录事务提交日志、执行某些后置操作等。
+*   **拦截方法**：`commit`
+
+```java
+package org.example.plugin;
+
+import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.plugin.*;
+import org.springframework.stereotype.Component;
+
+import java.util.Properties;
+
+@Component
+@Intercepts({@Signature(type = Executor.class, method = "commit", args = {boolean.class})})
+public class ExecutorCommitPlugin implements Interceptor {
+    @Override
+    public Object intercept(Invocation invocation) throws Throwable {
+        // 记录事务提交前的时间
+        long start = System.currentTimeMillis();
+
+        // 执行 commit 操作
+        Object result = invocation.proceed(); // 执行目标方法
+
+        // 记录事务提交后的时间
+        long end = System.currentTimeMillis();
+
+        // 计算事务提交耗时
+        long timeElapsed = end - start;
+
+        // 打印事务提交耗时
+        System.out.println("事务提交时间: " + timeElapsed + " ms");
+
+        // 记录事务提交日志
+        recordTransactionCommitLog();
+
+        // 执行后置操作
+        performPostActions();
+
+        return result; // 返回事务提交操作的结果
+    }
+
+    private void recordTransactionCommitLog() {
+        // 模拟记录事务提交日志的逻辑
+        // 这里可以根据实际需要，将事务提交信息写入日志系统或者存储起来
+        System.out.println("事务已经提交成功.");
+    }
+
+    private void performPostActions() {
+        // 模拟执行后置操作的逻辑
+        // 后置操作可以是清理缓存、发送通知、统计信息等
+        System.out.println("事务提交成功后置通知.");
+    }
+
+    @Override
+    public Object plugin(Object target) {
+        return Plugin.wrap(target, this);
+    }
+
+    @Override
+    public void setProperties(Properties properties) {
+        // 可以为插件配置属性
+    }
+}
+```
+
+```
+更新操作耗时：28 ms, 受影响的行数：1
+事务提交时间：0 ms
+事务已经提交成功.
+事务提交成功后置通知.
+```
+
+
+
+#### Rollback 拓展点
+
+*   **用途**：在事务回滚时执行逻辑，如记录回滚原因、清理资源等。
+*   **拦截方法**：`rollback`
+
+```java
+package org.example.plugin;
+
+import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.plugin.*;
+import org.springframework.stereotype.Component;
+
+import java.util.Properties;
+@Component
+@Intercepts({@Signature(type = Executor.class, method = "rollback", args = {boolean.class})})
+public class ExecutorRollbackPlugin implements Interceptor {
+
+    @Override
+    public Object intercept(Invocation invocation) throws Throwable {
+        try {
+            System.out.println(1111);
+            // 执行回滚操作
+            return invocation.proceed();
+        } catch (Exception t) {
+            // 记录回滚原因
+            recordRollbackReason(t);
+            throw t;
+        }
+    }
+
+    private void recordRollbackReason(Throwable t) {
+        // 实际应用中，这里应将异常信息记录到日志文件或数据库中
+        System.err.println("事务回滚原因: " + t.getMessage());
+    }
+
+    @Override
+    public Object plugin(Object target) {
+        return Plugin.wrap(target, this);
+    }
+
+    @Override
+    public void setProperties(Properties properties) {
+        // 可以为插件配置属性
+    }
+}
+```
+
+### 2、StatementHandler 拦截器实现
+
+1.  **prepare 方法**：
+    *   **作用**：用于准备 `Statement` 对象。在这个方法中，会创建 `PreparedStatement` 对象，并且可能涉及动态 SQL 的解析和参数的预处理。
+    *   **拓展**：可以修改 SQL 语句以添加日志、性能监控、防止 SQL 注入、实现分页逻辑等。
+2.  **parameterize 方法**：
+    *   **作用**：用于处理参数对象，将参数与 SQL 语句中的占位符进行绑定。
+    *   **拓展**：可以修改参数绑定逻辑，例如使用自定义的类型处理器（Type Handler）或者在参数绑定前后添加额外的处理。
+3.  **batch 方法**：
+    *   **作用**：用于执行批量更新操作。在这个方法中，会将多个 SQL 语句打包在一起执行，以提高性能。
+    *   **拓展**：可以监控批量操作的执行情况，或者对批量参数进行预处理。
+4.  **update 方法**：
+    *   **作用**：用于执行插入、更新或删除操作。在这个方法中，会执行 `Statement` 对象以修改数据库中的数据。
+    *   **拓展**：可以统计影响行数、记录操作日志、在执行前后添加事务控制逻辑等。
+5.  **query 方法**：
+    *   **作用**：用于执行查询操作。在这个方法中，会执行 `Statement` 对象以获取查询结果，并将其映射到 Java 对象中。
+    *   **拓展**：可以实现分页查询、缓存查询结果、修改结果集处理逻辑、添加查询性能监控等。
+6.  **getBoundSql 方法**：
+    *   **作用**：用于获取 `BoundSql` 对象，该对象包含了 SQL 语句、参数信息和额外的上下文信息。
+    *   **拓展**：可以修改 `BoundSql` 中的 SQL 语句或参数，或者添加额外的上下文信息。
+7.  **结果集处理器（ResultSetHandler）**：
+    *   **作用**：用于处理 `ResultSet` 对象，将 SQL 查询的结果集映射到 Java 对象。
+    *   **拓展**：可以自定义结果集的映射逻辑，实现复杂的对象映射关系，或者在结果集处理前后添加额外的处理。
+
+#### prepare 拓展点
+
+*   **用途**：在事务回滚时执行逻辑，如记录回滚原因、清理资源等。
+*   **拦截方法**：`rollback`
+
+```java
+package org.example.plugin.statement;
+
+import com.alibaba.fastjson.annotation.JSONField;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+import org.apache.ibatis.binding.MapperMethod;
+import org.apache.ibatis.executor.ExecutorException;
+import org.apache.ibatis.executor.statement.StatementHandler;
+import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ParameterMap;
+import org.apache.ibatis.plugin.*;
+import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.reflection.SystemMetaObject;
+import org.apache.ibatis.session.RowBounds;
+import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+
+import java.lang.reflect.Field;
+import java.sql.Connection;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.stream.Collectors;
+
+@Component
+@Intercepts({
+    @Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})
+})
+public class StatementHandlerPreparePlugin implements Interceptor {
+
+    // 默认的方言类型，可以根据需要进行扩展
+    private static final String DIALECT_MYSQL = "mysql";
+
+    @Override
+    public Object intercept(Invocation invocation) throws Throwable {
+        StatementHandler statementHandler = (StatementHandler) invocation.getTarget();
+        MetaObject metaStatementHandler = SystemMetaObject.forObject(statementHandler);
+
+        // 分离代理对象链(由于目标类可能被多个拦截器拦截，从而形成多次代理，通过下面的两次操作可以分离出最原始的的目标类)
+        while (metaStatementHandler.hasGetter("h")) {
+            Object object = metaStatementHandler.getValue("h");
+            metaStatementHandler = SystemMetaObject.forObject(object);
+        }
+
+        // 获取到当前的映射语句对象（MappedStatement）
+        MappedStatement mappedStatement = (MappedStatement) metaStatementHandler.getValue("delegate.mappedStatement");
+
+        // 只对需要分页的查询进行拦截
+        if (mappedStatement.getId().endsWith("ByPage")) {
+            BoundSql boundSql = statementHandler.getBoundSql();
+            String sql = boundSql.getSql();
+            PaginationParam paginationParam = null;
+            // 获取分页参数
+            //兼容下面两种情况，其他的遇到了再补充
+            if (boundSql.getParameterObject() instanceof PaginationParam) {
+                paginationParam = (PaginationParam) boundSql.getParameterObject();
+            } else if (boundSql.getParameterObject() instanceof MapperMethod.ParamMap) {
+                MapperMethod.ParamMap map = (MapperMethod.ParamMap) boundSql.getParameterObject();
+                List<PaginationParam> collect = (List<PaginationParam>) map.values().stream()
+                        .filter(e ->  e instanceof PaginationParam)
+                        .collect(Collectors.toList());
+                if(!CollectionUtils.isEmpty(collect)) {
+                    paginationParam = collect.get(0);
+                }
+            } else {
+            }
+
+            String pageSql = buildPageSql(sql, paginationParam);
+            pageSql = pageSql.replaceAll("\n", " ").replaceAll(" +", " ").toLowerCase();
+            System.out.println("sql:" + pageSql);
+            // 通过反射设置当前boundSql对应的sql为分页sql
+            Field sqlField = boundSql.getClass().getDeclaredField("sql");
+            sqlField.setAccessible(true);
+            sqlField.set(boundSql, pageSql);
+
+            // 采用物理分页后，就不需要mybatis的内存分页了，所以这里将这两个参数都置为null即可
+            metaStatementHandler.setValue("delegate.rowBounds.offset", RowBounds.DEFAULT.getOffset());
+            metaStatementHandler.setValue("delegate.rowBounds.limit", RowBounds.DEFAULT.getLimit());
+        }
+
+        // 继续执行原始方法
+        return invocation.proceed();
+    }
+
+    private String buildPageSql(String sql, PaginationParam paginationParam) {
+        if(paginationParam != null && paginationParam.getOffset() != null && paginationParam.getLimit() != null) {
+            // 这里只提供了一个简单的MySQL分页示例，实际情况可能需要根据数据库类型动态构建SQL
+            sql = sql + " LIMIT " + paginationParam.getOffset() + "," + paginationParam.getLimit();
+        }
+        return sql;
+    }
+
+    @Override
+    public Object plugin(Object target) {
+        // 创建代理对象
+        return Plugin.wrap(target, this);
+    }
+
+    @Override
+    public void setProperties(Properties properties) {
+        // 处理插件属性（如果有的话）
+    }
+
+    // 分页参数类
+    @Data
+    public static class PaginationParam {
+        @TableField(exist = false)
+        private Integer offset; // 起始行数
+
+        @TableField(exist = false)
+        private Integer limit;  // 每页显示的数量
+    }
+}
+```
+
+
+
+### 3、ParameterHandler 拦截器实现
+
+1.  **getParameterObject 方法**：
+    *   **作用**：获取传递给 `StatementHandler` 的参数对象。
+    *   **拓展**：可以在这个方法中修改参数对象，例如添加额外的参数、修改参数值或替换参数对象。
+2.  **setParameters 方法**：
+    *   **作用**：将参数对象的值设置到 `Statement` 对象的 SQL 占位符中。
+    *   **拓展**：可以修改参数的设置逻辑，例如使用自定义的类型处理器（Type Handler）或在参数设置前后添加额外的处理。
+
+
+
+#### setParameters 拓展点
+
+```java
+package org.example.plugin.parameterHandler;
+
+import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.MybatisDefaultParameterHandler;
+import org.apache.ibatis.executor.parameter.ParameterHandler;
+import org.apache.ibatis.plugin.*;
+import org.springframework.stereotype.Component;
+
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.util.Properties;
+
+@Component
+@Intercepts({@Signature(type = ParameterHandler.class, method = "setParameters", args = {PreparedStatement.class})})
+public class ParameterHandlerSetParametersPlugin implements Interceptor {
+
+    @Override
+    public Object intercept(Invocation invocation) throws Throwable {
+        PreparedStatement statement = (PreparedStatement) invocation.getArgs()[0];
+        MybatisDefaultParameterHandler parameterHandler = (MybatisDefaultParameterHandler) invocation.getTarget();
+
+        // 打印参数对象
+        Object parameter = parameterHandler.getParameterObject();
+        System.out.println("Parameter object before setting: " + JSON.toJSONString(parameter));
+
+        // 修改参数对象
+        // ........
+
+        // 继续执行参数设置
+        Object result = invocation.proceed();
+
+        // 再次打印参数对象，可能已被修改
+        System.out.println("Parameter object after setting: " + JSON.toJSONString(parameter));
+
+        return result;
+    }
+
+    @Override
+    public Object plugin(Object target) {
+        return Plugin.wrap(target, this);
+    }
+
+    @Override
+    public void setProperties(Properties properties) {
+        // 可以为插件配置属性
+    }
+}
+```
+
+```
+参数修改前: {...}
+参数修改, ...
+参数修改后: {...}
+```
+
+
+
+### 4、ResultSetHandler 拦截器实现
+
+1.  **handleResultSets 方法**：
+    *   **作用**：处理 `Statement` 对象执行后返回的结果集。
+    *   **拓展**：可以修改结果集的处理逻辑，例如实现自定义的结果集映射、过滤特定列的数据、实现懒加载等。
+2.  **handleOutputParameters 方法**：
+    *   **作用**：处理存储过程调用后的输出参数。
+    *   **拓展**：可以对输出参数进行特殊处理，比如转换为特定的 Java 类型。
+
+
+
+#### handleResultSets 拓展点
+
+实现对查询结果中的密码 password 进行 MD5 加密。
+
+**1、处理器实现：**
+
+```java
+package org.example.plugin.resultSetHandler;
+
+import com.company.oneday.entity.User;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.ibatis.cursor.Cursor;
+import org.apache.ibatis.executor.resultset.ResultSetHandler;
+
+import java.sql.CallableStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.List;
+
+public class EncryptingResultSetHandler implements ResultSetHandler {
+
+    private final ResultSetHandler resultSetHandler;
+
+    public EncryptingResultSetHandler(ResultSetHandler resultSetHandler) {
+        this.resultSetHandler = resultSetHandler;
+    }
+
+    @Override
+    public List<Object> handleResultSets(Statement stmt) throws SQLException {
+        // 使用委托对象处理结果集
+        List<Object> result = this.resultSetHandler.handleResultSets(stmt);
+
+        // 假设我们有一个User对象，并且知道密码字段名为"password"
+        // 对密码进行“加密”操作（这里只是示例，实际应该是解密）
+        if (result instanceof List) {
+            List<?> resultList = (List<?>) result;
+            for (Object item : resultList) {
+                if (item instanceof User) {
+                    User user = (User) item;
+                    String encryptedPassword = encryptPassword(user.getPassword());
+                    user.setPassword(encryptedPassword);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private String encryptPassword(String password) {
+        // 这里应该是你的加密逻辑，为了演示，我们使用一个简单的替换逻辑
+        return DigestUtils.md5Hex(password);
+    }
+
+    @Override
+    public <E> Cursor<E> handleCursorResultSets(Statement stmt) throws SQLException {
+        return null;
+    }
+
+    @Override
+    public void handleOutputParameters(CallableStatement cs) throws SQLException {
+
+    }
+
+    // 其他方法...
+}
+```
+
+2、拦截器实现：
+
+```java
+package org.example.plugin.resultSetHandler;
+
+import org.apache.ibatis.executor.resultset.ResultSetHandler;
+import org.apache.ibatis.plugin.*;
+import org.springframework.stereotype.Component;
+
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.Properties;
+
+@Component
+@Intercepts({@Signature(type = ResultSetHandler.class, method = "handleResultSets", args = {Statement.class})})
+public class ResultSetHandlerHandleResultSetsPlugin implements Interceptor {
+
+    @Override
+    public Object intercept(Invocation invocation) throws Throwable {
+
+        Statement stmt = (Statement) invocation.getArgs()[0];
+
+        // 创建自定义的 EncryptingResultSetHandler
+        EncryptingResultSetHandler customResultSetHandler = 
+            new EncryptingResultSetHandler((ResultSetHandler) invocation.getTarget());
+        //Object result = invocation.proceed();
+        // 使用自定义的 EncryptingResultSetHandler 重新处理结果集
+        return customResultSetHandler.handleResultSets(stmt);
+    }
+
+    @Override
+    public Object plugin(Object target) {
+        return Plugin.wrap(target, this);
+    }
+
+    @Override
+    public void setProperties(Properties properties) {
+        // 可以为插件配置属性
+    }
+}
+```
+
+```json
+[
+    {
+        "id": 1,
+        "name": "张三",
+        "userCode": "0001",
+        "password": "252jlj423j4oj2io4n2io1n4oi2j4i2oj42okmnf"
+    }
+]
+```
+
+
+
+## 3、Mybatis 插件配置
+
+插件配置有3种方式：
+
+- 在 mybatis-config.xml 中配置插件
+
+  ```xml
+  <configuration>
+      <!-- 其他配置省略 -->
+      <plugins>
+          <plugin interceptor="org.example.MyCustomPlugin">
+              <!-- 插件的属性 -->
+              <property name="someProperty" value="someValue"/>
+          </plugin>
+      </plugins>
+  </configuration>
+
+- Java 配置方式（SpringBoot/JavaConfig）
+
+  ```java
+  import org.apache.ibatis.session.SqlSessionFactory;
+  import org.mybatis.spring.SqlSessionFactoryBean;
+  import org.mybatis.spring.annotation.MapperScan;
+  import org.springframework.context.annotation.Bean;
+  import org.springframework.context.annotation.Configuration;
+  
+  import javax.sql.DataSource;
+  
+  @Configuration
+  @MapperScan("org.example.mapper")
+  public class MyBatisConfig {
+  
+      @Bean
+      public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
+          SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
+          factoryBean.setDataSource(dataSource);
+          // 注册插件
+          factoryBean.setPlugins(new Interceptor[]{new MyCustomPlugin()});
+          return factoryBean.getObject();
+      }
+  }
+
+- Java 配置方式 + 配置文件方式（SpringBoot/application.yml）
+
+  ```yaml
+  mybatis:
+    configuration:
+      plugins:
+        - class-name: org.example.plugin.MyCustomPlugin
+          properties:
+            someProperty: someValue
+  ```
+
+  ```java
+  import org.apache.ibatis.session.SqlSessionFactory;
+  import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
+  import org.springframework.context.annotation.Bean;
+  import org.springframework.context.annotation.Configuration;
+  import org.springframework.core.env.Environment;
+  
+  @Configuration
+  public class MyBatisConfig {
+      @Autowired
+      private Environment env;
+      @Bean
+      public ConfigurationCustomizer myBatisCustomizer() {
+          // 读取 application.yml 中的插件配置
+          String pluginClassName = env.getProperty("mybatis.configuration.plugins[0].class-name");
+          String someProperty = env.getProperty("mybatis.configuration.plugins[0].properties.someProperty");
+          // 动态加载并注册插件
+          Interceptor myCustomPlugin = (Interceptor) Class.forName(pluginClassName).newInstance();
+          Properties pluginProperties = new Properties();
+          pluginProperties.setProperty("someProperty", someProperty);
+          myCustomPlugin.setProperties(pluginProperties);
+          // 将插件添加到 configuration
+          return new ConfigurationCustomizer() {
+              @Override
+              public void customize(org.apache.ibatis.session.Configuration configuration) {
+                  configuration.addInterceptor(myCustomPlugin);
+              }
+          };
+      }
+  }
+  ```
+
+  虽然 MyBatis 没有直接支持在 application.yml 中配置插件的功能，但我们可以通过将插件相关信息写入 application.yml，然后通过 Java 配置类读取配置文件并注册插件来实现。这种方式依然要求部分 Java 代码的介入，不过可以在很大程度上简化插件配置的管理，并且让配置更加集中。
+
+
+
+# 14、SpringBoot + Mybatis 配置方式
 
 ## 1、单独 mybatis-config.xml 配置 Mybatis
 
@@ -4372,7 +6098,7 @@ public class MyBatisConfig {
      * Spring-Mybatis 配置第三步：配置 DataSourceTransactionManager 事务管理
      */
     @Bean
-    public PlatformTransactionManager transactionManager1(@Qualifier("datasource") DataSource datasource) {
+    public PlatformTransactionManager transactionManager1(@Qualifier("dataSource") DataSource datasource) {
         return new DataSourceTransactionManager(datasource);
     }
 
@@ -4460,3 +6186,16 @@ spring:
 - setDefaultStatementTimeout(30) : 设置 SQL 语句的默认超时时间，单位是秒。如果某个查询或更新操作耗时超过这个值，SQL 执行将会被取消。
 - setMultipleResultSetsEnabled(true) : 是否支持返回多个结果集。这个设置对于存储过程非常有用，因为存储过程有时会返回多个结果集。
 
+
+
+# 15、参考资料 & 鸣谢
+
+1. Mybatis注解开发（超详细）「[牛哄哄的柯南](https://keafmd.blog.csdn.net/)」https://blog.csdn.net/weixin_43883917/article/details/113830667
+2. SpringBoot结合MyBatis 【超详细】「[字节尚未跳动](https://blog.csdn.net/m0_65563175)」https://blog.csdn.net/m0_65563175/article/details/127354442
+3. 【Mybatis】源码分析-深入源码「[沿途欣赏i](https://blog.csdn.net/qq_37165235)」https://blog.csdn.net/qq_37165235/article/details/139495655
+4. Mr.Yan（tag）：http://www.yanhongzhi.com/cate/Mybatis
+5. SpringBoot+Mybatis XML配置文件详解（有系列）：https://blog.csdn.net/stopping5/article/details/108629820
+6. Mybatis学习笔记 - 01~04：https://blog.csdn.net/a1092882580/article/details/104086181
+7. MyBatis 的执行流程：https://mp.weixin.qq.com/s/UqgXw0qOW1H1-Dqh5NtueA
+8. Spring Boot整合MyBatis(保姆级教程)：https://mp.weixin.qq.com/s/6Oihr6F05lHu1YJMKjNsiA
+9. 知识点整理，MyBatis面试题「[BoCong-Deng](https://dengbocong.blog.csdn.net/)」https://blog.csdn.net/DBC_121/article/details/104757436
