@@ -384,6 +384,314 @@ echo ${PATH}suffix # 清楚地引用了 PATH 变量，然后附加 'suffix'
 
 
 
+# MacOS 环境变量配置 export 关键字详解
+
+在 macOS 或任何使用 Zsh 的系统中，当你配置环境变量时，可以通过编辑 `.zshrc` 文件（或 `.bash_profile` 等终端配置文件）来定义环境变量。关于在 `.zshrc` 文件中使用 export 和不使用 export，有以下区别：
+
+## 1、使用 export
+
+export 关键字会将变量导出到**当前 Shell 会话以及所有子 Shell 会话**，也就是说，当前终端的所有子进程都能访问这些被 export 的变量。
+
+示例：
+
+```bash
+export MY_VAR="some_value"
+```
+
+此时：
+- 你定义了一个名为 MY_VAR 的环境变量，并且它可以被当前终端和所有由该终端启动的子进程（如其他脚本或应用程序）访问。
+
+例如：
+```bash
+$ echo $MY_VAR
+some_value
+
+$ zsh  # 打开一个子 Shell
+$ echo $MY_VAR  # 子 Shell 中依然可以访问 MY_VAR
+some_value
+```
+
+
+
+## 2、不使用 export
+
+如果只在 `.zshrc` 中定义变量但**不使用 export**，该变量仅在**当前 Shell 会话中可见**，子 Shell 或子进程将无法访问该变量。
+
+示例：
+
+```bash
+MY_VAR="some_value"
+```
+
+此时：
+- 你定义了一个名为 MY_VAR 的变量，但它仅限于当前终端会话。如果你从当前终端启动一个新的终端会话（子 Shell），这个变量将不会被继承。
+
+例如：
+```bash
+$ echo $MY_VAR
+some_value
+
+$ zsh  # 打开一个子 Shell
+$ echo $MY_VAR  # 子 Shell 中无法访问 MY_VAR
+# (没有输出，因为 MY_VAR 没有被 export)
+```
+
+
+
+## 3、export 与非 export 的区别总结
+
+| 场景           | 使用 export                                   | 不使用 export                               |
+| -------------- | --------------------------------------------- | ------------------------------------------- |
+| **当前 Shell** | 变量可用                                      | 变量可用                                    |
+| **子 Shell**   | 变量在子 Shell 及所有子进程中都可访问         | 变量在子 Shell 和子进程中不可访问           |
+| **适用场景**   | 需要将变量传递给当前 Shell 的子进程或子 Shell | 仅限于当前 Shell 环境的本地变量，不需要传递 |
+
+
+
+## 4、何时使用 export？
+
+- **需要将环境变量传递给子进程时**，如启动其他程序、运行脚本等，都需要使用 export。
+- **全局配置变量**，比如设置 PATH、JAVA_HOME、PYTHONPATH 等，通常都需要使用 export，以便 Shell 可以在子进程中使用这些环境变量。
+
+例子：
+
+```bash
+export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_221.jdk/Contents/Home"
+export PATH="$JAVA_HOME/bin:$PATH"
+```
+
+这样配置的 PATH 和 JAVA_HOME 将对所有启动的子进程生效。
+
+
+
+## 5、何时不需要 export？
+
+- **局部使用变量**时，如果只是在当前 Shell 会话中使用，并不需要子 Shell 或子进程访问这个变量，就可以省略 export。
+
+例子：
+
+```bash
+MY_VAR="temporary_value"
+```
+此时，`MY_VAR` 只在当前 Shell 可用，不会污染子进程的环境。
+
+
+
+## 6、常见的环境变量示例
+
+通常，环境变量如 PATH、JAVA_HOME、PYTHONPATH、LANG 等需要通过 export 导出，使其对当前终端会话和所有子进程可用。
+
+设置 PATH 环境变量：
+
+```bash
+export PATH="/usr/local/bin:$PATH"
+```
+
+设置 Java 环境变量：
+
+```bash
+export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_221.jdk/Contents/Home"
+```
+
+
+
+总结
+
+- **使用 export**：变量将会成为环境变量，当前 Shell 和子 Shell 都能访问该变量。
+- **不使用 export**：变量只在当前 Shell 会话中有效，子 Shell 和子进程无法访问。
+
+通常，对于需要跨进程、跨子 Shell 访问的环境变量（如 PATH、JAVA_HOME 等），应使用 export。对于只在当前会话中使用的变量，则可以不使用 export。
+
+# MacOS 配置环境变量 + 快速切换 JDK 版本
+
+> 2024年最新MacBook苹果电脑安装JDK8、JDK11、JDK17、JDK22教程，配置环境变量 + 快速切换JDK版本：https://blog.csdn.net/Lwehne/article/details/135867512
+
+## 1、官网下载安装及配置「推荐」
+
+从如下官网中找到指定版本 JDK 下载：
+
+- Open JDK「推荐」：https://jdk.java.net/archive/
+- Java Archive | Oracle：https://www.oracle.com/java/technologies/downloads/archive/
+- Java Archive | Oracle 中国：https://www.oracle.com/cn/java/technologies/downloads/archive/
+
+解压到指定目录即安装完毕。本人安装了 JDK11 和 JDK17。
+
+```bash
+ ~  ls ~lsx/Java/JDK
+jdk-11.jdk                   openjdk-11_osx-x64_bin.tar
+jdk-17.jdk                   openjdk-17_macos-x64_bin.tar
+```
+
+1、如果只安装一个版本 JDK，如 JDK11 复制下面代码粘贴到配置文件中即可。
+
+```bash
+ ~  vim .zshrc
+
+# JDK Config
+export JAVA_HOME=/Users/lsx/Java/JDK/jdk-11.jdk/Contents/Home
+export PATH=$JAVA_HOME/bin:$PATH
+```
+
+2、如果想安装多个版本，比如像我一样安装 JDK11 和 JDK17，用下面这段代码。
+
+```bash
+ ~  vim .zshrc
+
+# JDK Config Start
+JAVA_HOME_11=/Users/lsx/Java/JDK/jdk-11.jdk/Contents/Home
+JAVA_HOME_17=/Users/lsx/Java/JDK/jdk-17.jdk/Contents/Home
+
+export JAVA_HOME=$JAVA_HOME_11
+alias jdk11="export JAVA_HOME=$JAVA_HOME_11 && echo current JDK has switched to openjdk version 11. && java -version"
+alias jdk17="export JAVA_HOME=$JAVA_HOME_17 && echo current JDK has switched to openjdk version 17. && java -version"
+
+export PATH=$PATH:$JAVA_HOME/bin
+# JDK Config End
+```
+
+3、重新加载配置文件让其生效「建议最好重启终端」：
+
+```bash
+source ~/.zshrc
+```
+
+4、验证 JDK 切换
+
+```bash
+ ~  jdk17
+current JDK has switched to openjdk version 17.
+openjdk version "17" 2021-09-14
+OpenJDK Runtime Environment (build 17+35-2724)
+OpenJDK 64-Bit Server VM (build 17+35-2724, mixed mode, sharing)
+ ~  java -version
+openjdk version "17" 2021-09-14
+OpenJDK Runtime Environment (build 17+35-2724)
+OpenJDK 64-Bit Server VM (build 17+35-2724, mixed mode, sharing)
+ ~  jdk11
+current JDK has switched to openjdk version 11.
+openjdk version "11" 2018-09-25
+OpenJDK Runtime Environment 18.9 (build 11+28)
+OpenJDK 64-Bit Server VM 18.9 (build 11+28, mixed mode)
+ ~  java -version
+openjdk version "11" 2018-09-25
+OpenJDK Runtime Environment 18.9 (build 11+28)
+OpenJDK 64-Bit Server VM 18.9 (build 11+28, mixed mode)
+ ~ 
+```
+
+
+
+## 2、通过 Homebrew 安装及配置
+
+### 1、通过 Homebrew 安装多个版本
+
+安装完 JDK 后，Homebrew 会给出如何配置环境变量的提示。
+
+```bash
+# 安装 Java 8
+brew install openjdk@8
+# 安装 Java 11
+brew install openjdk@11
+# 安装 Java 17
+brew install openjdk@17
+```
+
+
+
+### 2、查看已安装的 JDK
+
+macOS 将所有安装的 JDK 存放在 /Library/Java/JavaVirtualMachines/ 目录下。你可以使用以下命令查看已安装的所有 JDK 版本：
+
+```bash
+ls /Library/Java/JavaVirtualMachines/
+```
+
+你还可以使用 java_home 命令来列出系统已安装的 JDK 版本：
+
+```bash
+/usr/libexec/java_home -V
+
+# 输出类似：
+Matching Java Virtual Machines (3):
+    17.0.1 (x86_64) "Oracle Corporation" - "/Library/Java/JavaVirtualMachines/jdk-17.0.1.jdk/Contents/Home"
+    11.0.10 (x86_64) "AdoptOpenJDK" - "/Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home"
+     1.8.0_282 (x86_64) "Oracle Corporation" - "/Library/Java/JavaVirtualMachines/jdk1.8.0_282.jdk/Contents/Home"
+```
+
+
+
+### 3、配置多版本 JDK 的手动切换
+
+你可以通过修改环境变量 JAVA_HOME 来切换不同的 JDK 版本。
+
+**手动切换 JDK：**使用 java_home 命令指定要使用的 JDK 版本，然后将其赋值给 JAVA_HOME 环境变量。
+
+```bash
+# 切换到 Java 8
+export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
+# 切换到 Java 11
+export JAVA_HOME=$(/usr/libexec/java_home -v 11)
+# 切换到 Java 17
+export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+```
+
+- 通过 echo $JAVA_HOME 可以查看当前正在使用的 JDK 路径。
+
+**设置默认 JDK：**在 .zshrc 或 .bash_profile 等配置文件中配置 JAVA_HOME，使其在每次打开终端时都自动设置。
+
+```bash
+# 设置默认 JDK 版本为 Java 11
+export JAVA_HOME=$(/usr/libexec/java_home -v 11)
+```
+
+
+
+### 4、创建快捷命令来快速切换 JDK
+
+为了方便切换，你可以在 .zshrc 中定义别名或函数来快速切换 JDK 版本。
+
+**在 .zshrc 中添加以下函数：**
+
+```bash
+# 切换到 Java 8
+jdk8() {
+    export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
+    java -version
+}
+
+# 切换到 Java 11
+jdk11() {
+    export JAVA_HOME=$(/usr/libexec/java_home -v 11)
+    java -version
+}
+
+# 切换到 Java 17
+jdk17() {
+    export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+    java -version
+}
+```
+
+**使用快捷命令：**「这些函数会根据输入的命令来设置对应的 JAVA_HOME 并显示当前 Java 版本。」
+
+```bash
+# 切换到 Java 8
+jdk8
+
+# 切换到 Java 11
+jdk11
+
+# 切换到 Java 17
+jdk17
+```
+
+**总结：**
+
+- *安装多个 JDK：通过 Homebrew 或手动下载并安装多个 JDK 版本。
+- 手动切换 JDK：使用 export JAVA_HOME=$(/usr/libexec/java_home -v <版本>) 来切换。
+- 自动设置默认 JDK：在 .zshrc 中配置 JAVA_HOME，使其自动设置。
+- 快速切换 JDK**：通过在 .zshrc 文件中定义快捷命令或函数，方便快速切换 JDK 版本。
+
 
 
 # MacOS 安装 Homebrew

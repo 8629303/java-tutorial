@@ -4967,7 +4967,7 @@ public class Car implements Serializable {
 13、插件介绍及应用
 =================================================================================
 
-> - 手把手教你开发 MyBatis 分页插件「江南一点雨」：https://blog.itpub.net/70027826/viewspace-3008323/
+> - 手把手教你开发 MyBatis 分页插件「[江南一点雨](https://www.javaboy.org/2021/0226/mybatis-plugin.html)」：https://blog.itpub.net/70027826/viewspace-3008323/
 > - MyBatis 插件介绍及应用：https://blog.csdn.net/baidu_41907361/article/details/138316352
 > - MyBatis插件深度解析：功能、原理、使用、应用场景与最佳实践：https://blog.csdn.net/qq_26664043/article/details/136219131
 > - MyBatis基础用法--插件开发：https://blog.csdn.net/pengjunlee/article/details/78175871
@@ -6188,14 +6188,123 @@ spring:
 
 
 
+## 4、@MapperScan + @Mapper
+
+为了能在 SpringBoot 启动的时候找到我们的 mapper 接口文件，需要在启动类@MapperScan("org.examp;emapper") 注解指定 mapper 文件的扫描的路径。
+
+在 Spring Boot 项目中，@MapperScan 和 @Mapper 是 MyBatis 整合时常用的注解，用于扫描和注册 MyBatis 的 Mapper 接口。它们有相似的功能，但应用的方式和范围有所不同。
+
+
+
+### 1、@Mapper 注解
+
+@Mapper 是 MyBatis 提供的注解，用来标记接口作为 MyBatis 的 Mapper。这些 Mapper 接口中包含了数据库操作的 SQL 语句或者映射的 XML 文件。
+
+使用方式：你需要在每一个 Mapper 接口上添加 @Mapper 注解，以便 MyBatis 能够识别该接口为 Mapper 并加载到 SqlSession 中。
+
+示例：
+
+```java
+@Mapper
+public interface UserMapper {
+    User findUserById(int id);
+}
+```
+
+在这个例子中，UserMapper 接口上标注了 @Mapper 注解，这样 MyBatis 会自动将这个接口作为 Mapper 处理，执行数据库操作。
+
+优点：
+
+- 简单直接，针对单个 `Mapper` 文件进行注解，不需要额外配置。
+- 适合项目中 `Mapper` 数量少的情况。
+
+缺点：
+
+- 如果项目中有很多 `Mapper` 文件，需要逐个为每个 `Mapper` 接口加上 `@Mapper` 注解，维护较为繁琐。
+
+
+
+### 2、@MapperScan 注解
+
+@MapperScan 是 MyBatis 与 SpringBoot 集成时提供的注解，通常用于配置类或者启动类上，指定要扫描的 Mapper 接口的包路径。它可以自动扫描指定包下的所有 Mapper 接口，并注册到 MyBatis 中，而不需要在每个接口上都加 @Mapper 注解。
+
+使用方式：你可以在 SpringBoot 的配置类（通常是启动类）中使用 `@MapperScan` 注解，指定 `Mapper` 接口所在的包路径。
+
+示例：
+
+```java
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+@MapperScan("org.example.mapper")
+public class MyApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(MyApplication.class, args);
+    }
+}
+```
+
+在这个例子中，@MapperScan("org.example.mapper") 会扫描 org.example.mapper 包下的所有 Mapper 接口，并将其自动注册为 MyBatis 的 Mapper。
+
+优点：
+
+- 简化了 Mapper 的注册过程，适用于大项目，有大量 Mapper 接口时非常方便。
+- 你只需要指定一次包路径，MyBatis 就会自动加载该包下的所有 Mapper 接口。
+  
+
+缺点：
+
+- 如果项目比较小、Mapper 接口不多，配置稍显冗余。
+
+
+
+### 3、@MapperScan 和 @Mapper 的区别
+
+| 对比点       | @Mapper                              | @MapperScan                              |
+| ------------ | ------------------------------------ | ---------------------------------------- |
+| **作用范围** | 标注在单个 Mapper 接口上             | 标注在配置类或启动类上                   |
+| **功能**     | 将某个接口注册为 MyBatis Mapper      | 扫描并自动注册指定包下的所有 Mapper 接口 |
+| **适用场景** | 项目中 Mapper 数量少                 | 项目中 Mapper 数量多，包结构清晰         |
+| **优点**     | 直接且简单，适合小项目               | 只需配置一次，省去重复注解，适合大项目   |
+| **缺点**     | 大量 Mapper 时，每个接口都需要加注解 | 项目小且 Mapper 不多时显得冗余           |
+
+
+
+### 4、如何选择？
+
+- 如果项目中只有少数几个 Mapper 接口：可以考虑在每个 Mapper 接口上使用 @Mapper 注解。
+- 如果项目中有很多 Mapper 接口，且这些接口都放在特定包中：使用 @MapperScan 更为简便。
+
+通常在较大的项目中，推荐使用 @MapperScan，这样可以统一管理所有的 Mapper 接口，省去在每个接口上添加 @Mapper 的重复工作。同时，使用 @MapperScan 也更符合 Spring Boot 的“约定优于配置”理念。
+
+实际开发中的常见搭配：
+
+- **小型项目：** 直接使用 @Mapper 注解在每个 Mapper 接口上。
+- **大型项目：** 在启动类或配置类中使用 @MapperScan 注解统一扫描并注册所有 Mapper 接口。
+
 # 15、参考资料 & 鸣谢
 
 1. Mybatis注解开发（超详细）「[牛哄哄的柯南](https://keafmd.blog.csdn.net/)」https://blog.csdn.net/weixin_43883917/article/details/113830667
+
 2. SpringBoot结合MyBatis 【超详细】「[字节尚未跳动](https://blog.csdn.net/m0_65563175)」https://blog.csdn.net/m0_65563175/article/details/127354442
-3. 【Mybatis】源码分析-深入源码「[沿途欣赏i](https://blog.csdn.net/qq_37165235)」https://blog.csdn.net/qq_37165235/article/details/139495655
-4. Mr.Yan（tag）：http://www.yanhongzhi.com/cate/Mybatis
-5. SpringBoot+Mybatis XML配置文件详解（有系列）：https://blog.csdn.net/stopping5/article/details/108629820
+
+3. SpringBoot学习笔记（五）——Spring Boot中使用MyBatis进阶：https://cloud.tencent.com/developer/article/1997814
+
+4. SpringBoot+Mybatis XML配置文件详解（有系列）：https://blog.csdn.net/stopping5/article/details/108629820
+
+5. MyBatis手把手跟我做「[Mr.Yan](http://www.yanhongzhi.com/cate/Mybatis)」：http://www.yanhongzhi.com/cate/Mybatis
+
 6. Mybatis学习笔记 - 01~04：https://blog.csdn.net/a1092882580/article/details/104086181
-7. MyBatis 的执行流程：https://mp.weixin.qq.com/s/UqgXw0qOW1H1-Dqh5NtueA
-8. Spring Boot整合MyBatis(保姆级教程)：https://mp.weixin.qq.com/s/6Oihr6F05lHu1YJMKjNsiA
+
+   Mybatis 源码分析：
+
+7. 【Mybatis】源码分析-深入源码「[沿途欣赏i](https://blog.csdn.net/qq_37165235)」https://blog.csdn.net/qq_37165235/article/details/139495655
+
+8. MyBatis 的执行流程：https://mp.weixin.qq.com/s/UqgXw0qOW1H1-Dqh5NtueA
+
+   Mybatis 面试相关：
+
 9. 知识点整理，MyBatis面试题「[BoCong-Deng](https://dengbocong.blog.csdn.net/)」https://blog.csdn.net/DBC_121/article/details/104757436
