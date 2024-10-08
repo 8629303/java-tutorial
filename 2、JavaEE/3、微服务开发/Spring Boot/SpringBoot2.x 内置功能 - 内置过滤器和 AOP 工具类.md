@@ -24,17 +24,6 @@ public class RequestLoggingConfig {
     @Bean
     public CommonsRequestLoggingFilter logFilter() {
         CommonsRequestLoggingFilter filter = new CommonsRequestLoggingFilter();
-        filter.setIncludeQueryString(true);
-        filter.setIncludePayload(true);
-        filter.setIncludeHeaders(true);
-        filter.setIncludeClientInfo(true);
-        filter.setAfterMessagePrefix("REQUEST DATA-");
-        return filter;
-    }
-    
-    @Bean
-    public CommonsRequestLoggingFilter logFilter() {
-        CommonsRequestLoggingFilter filter = new CommonsRequestLoggingFilter();
         // 设置是否包含客户端信息（例如IP地址）
         filter.setIncludeClientInfo(true);
         // 设置是否包含请求参数
