@@ -1,9 +1,11 @@
 > 1. Git 大全：https://gitee.com/all-about-git
-> 2. 一个小时学会 Git：https://www.cnblogs.com/best/p/7474442.html
+> 2. 一个小时学会Git：https://www.cnblogs.com/best/p/7474442.html
 > 3. Git 进阶指南：https://gb.yekai.net/
-> 4. 我说小伙子，你死记Git命令，不好使：https://mp.weixin.qq.com/s/DQVVYOWdOPuRsy3m0fg6Xg
-> 5. 女朋友说 Git 玩不明白，怎么办？安排！：https://mp.weixin.qq.com/s/ouYYEIUVjn-wSeGX13--sw
-> 6. https://www.cnblogs.com/uncleyong/p/10854115.html
+> 4. Git 各种操作命令详细清单：https://mp.weixin.qq.com/s/4-qzSJHnybC-DMFWimZ0xA
+> 5. 我说小伙子，你死记Git命令，不好使：https://mp.weixin.qq.com/s/DQVVYOWdOPuRsy3m0fg6Xg
+> 6. 女朋友说 Git 玩不明白，怎么办？安排！：https://mp.weixin.qq.com/s/ouYYEIUVjn-wSeGX13--sw
+> 7. Git必知必会基础：https://www.cnblogs.com/uncleyong/p/10854115.html
+> 8. Windows系统Git安装教程（详解Git安装过程）：https://www.cnblogs.com/xueweisuoyong/p/11914045.html
 >
 > 推荐一些Git的硬核书籍：【精通Git】、【GitHub入门与实践】、【Git权威指南】、【Git版本控制管理】、【GitHub实践】。
 

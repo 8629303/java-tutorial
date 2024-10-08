@@ -654,8 +654,6 @@ asm-commons-3.3.1.pom.sha1   ──────────────── �
 
 - Maven的mirror、repository、server和proxy配置以及jar包下载逻辑：https://blog.csdn.net/qq_14947845/article/details/124765578
 - maven中mirror镜像和repository仓库配置：https://blog.csdn.net/A434534658/article/details/122484501
-- Maven 实战小结：https://juejin.cn/post/6844903839435341832
-
 
 
 

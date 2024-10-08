@@ -240,8 +240,8 @@ Command + K（Mac）或 Ctrl + K（Windows/Linux）| 打开 GitHub 命令面板�
 
 > - 73个GitHub高级搜索技巧_github搜索技巧：https://blog.csdn.net/2401_85958038/article/details/141371907
 > - 掌握这些GitHub搜索技巧，你的开发效率将翻倍！https://blog.csdn.net/u011738045/article/details/130513159
-> - 系列一、GitHub搜索技巧：https://blog.csdn.net/HelloWorld20161112/article/details/135159188
 > - GitHub小技巧, 让你嗖嗖找到想要的：https://blog.csdn.net/fly910905/article/details/121877743
+> - GitHub 搜索技巧 - 带你一步步找优质项目 带 gif 演示图：https://blog.csdn.net/mukes/article/details/103480696
 
 GitHub 常用名词
 
@@ -385,6 +385,8 @@ cats stars:"*..10"
 ```bash
 # 例如: 
 in:description 单点登录 language:java pushed:>2019-12-01
+# 或者把搜索信息放在最前面
+单点登录 in:description language:java pushed:>2019-12-01
 ```
 
 
@@ -493,4 +495,23 @@ awesome redis
  
 
   
+
+# GitHub 插件和技巧
+
+> - 一些超好用的 GitHub 插件和技巧：https://blog.csdn.net/weixin_38125348/article/details/142612143
+> - 掌握这些GitHub搜索技巧，你的开发效率将翻倍！https://blog.csdn.net/u011738045/article/details/130513159
+
+在我的另一篇博客 [浏览器插件推荐](https://www.peterjxl.com/Browser/extension-recommendation/) 里提到过跟 GitHub 相关的一些插件，这里重复下：
+
+- [Sourcegraph](https://chromewebstore.google.com/detail/sourcegraph/dgjhfomjieaadpoljlnidmbgkdffpack)：在线打开项目，方便阅读，将 GitHub 变得和 IDE 一般，集成各种功能，参考 [爱了爱了，这个 GitHub 的 Chrome 神仙插件把我整的服服帖帖的 - 知乎](https://zhuanlan.zhihu.com/p/108088403)
+- [Awesome Autocomplete for GitHub](https://chrome.google.com/webstore/detail/awesome-autocomplete-for/djkfdjpoelphhdclfjhnffmnlnoknfnd)：加强 GitHub 的搜索框
+- [File Icon for GitHub, GitLab and Bitbucket](https://chrome.google.com/webstore/detail/file-icon-for-github-gitl/ficfmibkjjnpogdcfhfokmihanoldbfe)：给 GitHub 仓库文件添加图标
+- [Octohint](https://chrome.google.com/webstore/detail/octohint/hbkpjkfdheainjkkebeoofkpgddnnbpk)：GitHub 代码智能高亮
+- [OctoLinker](https://chrome.google.com/webstore/detail/octolinker/jlmafbaeoofdegohdhinkhilhclaklkp)：直接从代码跳转到 GitHub 对应仓库，相对路径也能跳转，支持很多编程语言
+- [Isometric Contributions](https://chrome.google.com/webstore/detail/isometric-contributions/mjoedlfflcchnleknnceiplgaeoegien)：立体显示 GitHub Contributions 的扩展
+- [Octotree](https://chrome.google.com/webstore/detail/octotree/bkhaagjahfmjljalopjnoealnfndnagc)：在左侧添加一个文件浏览器，可以更快的在文件之间跳转
+- [GayHub](https://github.com/jawil/GayHub)：优化 GitHub 的阅读体验。
+- [Refined GitHub](https://chrome.google.com/webstore/detail/refined-github/hlepfoohegkhhmjieoechaddaejaokhf)：这个和上面的都是对 github 整体进行加强的扩展
+- [GitHub Hovercard](https://chrome.google.com/webstore/detail/github-hovercard/mmoahbbnojgkclgceahhakhnccimnplk)：这个加强了 GitHub 悬浮在某些元素上的功能
+- [让这个盛产神器的网站下载速度提升N倍！](https://mp.weixin.qq.com/s/0Ngd5Iz6CLyNeZpcUSOnaQ)：一款油猴脚本，提高 GitHub 下载速度
 

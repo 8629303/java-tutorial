@@ -177,6 +177,8 @@ management:
 
 # SpringBoot 集成 Druid 数据库连接池
 
+> 全网最详细的 SpringBoot + Druid DataSource 实现监控 MySQL 性能：https://mp.weixin.qq.com/s/wx1m9Hyk73z3CWgiYRyiHg
+
 在 Spring Boot 2.7.18 中，集成 Druid 数据库连接池可以通过配置文件来进行，Druid 提供了强大的监控、SQL 执行统计、慢查询监控等功能。下面是 Druid 连接池的详细配置步骤和配置解释。
 
 ## 1、引入依赖
