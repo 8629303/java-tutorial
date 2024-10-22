@@ -280,7 +280,7 @@ in:description 单点登录 language:java
 
 # 也可以反过来把 in:name 放在后面
 springboot mybatis demo in:name
-单点登录 language:java in:description
+单点登录 in:description language:java
 ```
 
 
@@ -492,9 +492,9 @@ awesome redis
 - https://github.com/search/advanced
 
 
- 
 
-  
+
+
 
 # GitHub 插件和技巧
 
