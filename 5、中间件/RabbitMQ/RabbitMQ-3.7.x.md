@@ -7,7 +7,7 @@
 >
 > 模块之间的耦合度高，导致一个模块宕机后，全部功能不能用了，并且同步通信成本高，用户体验差。
 
-![20200803212910](RabbitMQ/20200803212910.png)
+![20200803212910](RabbitMQ-3.7.x.assets/image-20241025145538708.png)
 
 
 
@@ -40,7 +40,7 @@
 
 **1、安装Erlang**
 
-![20210314201339](RabbitMQ/20210314201339.png)
+![20210314201339](RabbitMQ-3.7.x.assets/image-20241026000711478.png)
 
 - 下载地址：https://www.erlang.org/downloads，选择`OTP 23.2 Windows 64-bit Binary File`
 - 运行`otp_win64_23.2.exe`，安装Erlang（默认next 和 install 即可）
@@ -192,7 +192,7 @@ started 3 plugins.
 
 4、如上是通过*.exe方式安装的，所以自动帮我们安装好了服务启动和服务暂时删除等
 
-![20210314204636](RabbitMQ/20210314204636.png)
+
 
 5、如何是通过*.zip文件安装的话需要手动安装RabbitMQ服务
 
@@ -381,7 +381,7 @@ $ docker-compose exec rabbitmq rabbitmq-plugins enable rabbitmq_management
 > - Queue - 队列：Exchange会将消息分发到指定的 Queue, Queue和消费者进行交互
 > - Routes - 路由：交换机以什么样的策略将消息发布到 Queue
 
-![20200803213212](RabbitMQ/20200803213212.png)
+![20200803213212](RabbitMQ-3.7.x.assets/image-20241025145538709.png)
 
 
 
@@ -395,7 +395,7 @@ $ docker-compose exec rabbitmq rabbitmq-plugins enable rabbitmq_management
 
 2.创建Virtual Host：/test
 
-![20200808222709](RabbitMQ/20200808222709.png)
+![20200808222709](RabbitMQ-3.7.x.assets/image-20241025145538710.png)
 
 
 
@@ -403,7 +403,7 @@ $ docker-compose exec rabbitmq rabbitmq-plugins enable rabbitmq_management
 
 ### 4.1.RabbitMQ的通讯方式
 
-![20200808223419](RabbitMQ/20200808223419.png)
+![20200808223419](RabbitMQ-3.7.x.assets/image-20241025145538711.png)
 
 
 
@@ -465,7 +465,7 @@ public class RabbitMQClient {
 }
 ```
 
-![20200809104526](RabbitMQ/20200809104526.png)
+![20200809104526](RabbitMQ-3.7.x.assets/image-20241025145538712.png)
 
 
 
@@ -473,7 +473,7 @@ public class RabbitMQClient {
 
 > 一个生产者，一个默认的交换机，一个队列，一个消费者
 
-![20200809104733](RabbitMQ/20200809104733.png)
+![20200809104733](RabbitMQ-3.7.x.assets/image-20241025145538713.png)
 
 > 创建生产者，创建一个channel，发布消息到exchange，指定路由规则
 
@@ -569,7 +569,7 @@ public class Consumer {
 
 > 一个生产者，一个默认的交换机，一个队列，两个消费者
 
-![20200809104750](RabbitMQ/20200809104750.png)
+![20200809104750](RabbitMQ-3.7.x.assets/image-20241025145538714.png)
 
 > 只需要在消费端，添加Qos能力以及更改为手动ack即可让消费者，根据自己的能力去消费指定的消息，而不是默认情况下由RabbitMQ平均分配，生产者不变，正常发布消息默认的exchange，并指定routing
 >
@@ -723,7 +723,7 @@ public class Consumer2 {
 
 > 一个生产者，一个交换机，两个队列，两个消费者
 
-![20200809104804](RabbitMQ/20200809104804.png)
+![20200809104804](RabbitMQ-3.7.x.assets/image-20241025145538715.png)
 
 > 声明一个Fanout类型的exchange，并且将exchange和queue绑定一起，绑定的方式就是直接绑定
 
@@ -788,7 +788,7 @@ channel.basicConsume("pubsub-queue2",false,consumer);
 
 > 一个生产者，一个交换机，两个队列，两个消费者
 
-![20200809104928](RabbitMQ/20200809104928.png)
+![20200809104928](RabbitMQ-3.7.x.assets/image-20241025145538716.png)
 
 > 生产者在创建DIRECT类型的exchange后，根据RoutingKey去绑定相应的队列，并且在发送消息时，指定消息的具体RoutingKey即可。
 
@@ -849,7 +849,7 @@ channel.basicConsume("routing-queue-info",false,consumer);
 
 > 一个生产者，一个交换机，两个队列，两个消费者
 
-![20200809104941](RabbitMQ/20200809104941.png)
+![20200809104941](RabbitMQ-3.7.x.assets/image-20241025145538717.png)
 
 > 生产者创建Topic的exchange并且绑定到队列中，这次绑定可以通过\*和#关键字，对指定RoutingKey内容，编写时注意格式 xxx.xxx.xxx 去别写。\* -》代表xxx，# -》代表多个xxx.xxx，在发送消息时，指定具体的RoutingKey到底时什么
 

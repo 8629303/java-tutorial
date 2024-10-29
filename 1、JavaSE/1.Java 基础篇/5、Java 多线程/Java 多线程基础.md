@@ -178,7 +178,7 @@ Exception in thread "main" java.lang.IllegalThreadStateException
 
 在Java程序执行的过程之中，考虑到对于不同层次开发者的需求，所以其支持有本地的操作系统函数调用，而这项技术就被称为JNI(Java Native Inteface)技术，但是Java开发过程中并不推荐这样使用，利用这项技术可以使用一些操作系统提供的底层函数，进行一些特殊处理，而在Thread类中提供的start0()就表示需要将此方法依赖于不同的操作系统实现。
 
-![Thread的执行分析](https://ucc.alicdn.com/pic/developer-ecology/040f4b3d00fb4a74af709b4ed98c067f.png)
+![Thread的执行分析](Java 多线程基础.assets/image-20241025145539292.png)
 
 **任何情况下：只要定义了多线程，多线程的启动永远只有一种方案：Thread 类中的 start() 方法。**
 
@@ -337,7 +337,7 @@ public class ThreadDemo {
 }
 ```
 
-![image.png](https://ucc.alicdn.com/pic/developer-ecology/e0f49b571b1647eea3b1c06239c9cae5.png)
+![image.png](Java 多线程基础.assets/image-20241025145539293.png)
 
 多线程的设计之中，使用了代理设计模式的结构，用户自定义的线程主体只是负责项目核心的实现，而所有的辅助实现全部交由Thread类处理。
 
@@ -345,7 +345,7 @@ public class ThreadDemo {
 
 多线程开发的本质实质上是在于多个线程可以进行同一资源的抢占，那么Thread主要描述的是线程，而资源的描述是通过Runnable完成的。
 
-![image.png](https://ucc.alicdn.com/pic/developer-ecology/fc0b1716de34437fa1ce8952a81e734d.png)
+![image.png](Java 多线程基础.assets/image-20241025145539294.png)
 
 操作示例 1：利用卖票程序来实现多个线程的资源并发访问
 
@@ -384,7 +384,7 @@ public class ThreadDemo {
 
 通过内存分析图来分析本程序的执行结构。
 
-![image.png](https://ucc.alicdn.com/pic/developer-ecology/1314e2529c724da0bfaefc7b5e0b13cb.png)
+![image.png](Java 多线程基础.assets/image-20241025145539295.png)
 
 官方建议使用Runnable方式实现线程，原因主要有以下三点。
 
@@ -407,7 +407,7 @@ public interface Callable<V>{
 
 可以发现Callable定义的时候可以设置一个泛型，此泛型的类型就是返回数据的类型，这样的好处在于可以避免向下转型所带来的的安全隐患。
 
-![image.png](https://ucc.alicdn.com/pic/developer-ecology/ae8777f24e844486bdd0d649b9af45d7.png)
+![image.png](Java 多线程基础.assets/image-20241025145539296.png)
 
 通过FutureTask类结成结构可以发现它是Runnable接口的子类，并且FutureTask类可以接收Callanle接口实例，这样依然可以利用Thread类来实现多线程的启动，而如果像接收返回结果，则利用Future接口中的get()方法即可。
 
@@ -567,7 +567,7 @@ thread.start();
 
 对于多线程的开发而言，编写程序的过程之中总是按照：定义线程主体类，然后通过Thread类进行线程的启动，但并不意味着调用了start()方法，线程就已经开始运行了，因为整体的线程处理有自己的一套运行的状态。
 
-![image.png](https://ucc.alicdn.com/pic/developer-ecology/a82a9f69b0904643b5db7a25850eb669.png)
+![image.png](Java 多线程基础.assets/image-20241025145539297.png)
 
 1. 任何一个线程的对象都应该使用Thread类进行封装，然后使用start()启动线程，但是启动的时候实际上若干个线程都将进入到一种就绪状态，现在并没有执行
 2. 进入到就绪状态后就需要等待进行资源调度，当某一个线程调度成功之后则进入到运行状态(run()方法)，但是所有的线程不可能一直持续执行下去，中间需要产生一些暂停的状态，例如：某个线程执行一段时间之后就将需要让出资源，而后这个线程就将进入到阻塞状态，随后重新回归到就绪状态。
@@ -815,7 +815,7 @@ Thread-2、x = 1、16:26:06.862700300
 
 此时将产生5个线程对象，并且这5个线程对象执行的方法体是相同的。此时从程序执行的感觉上好像是若干个线程一起进行了休眠，而后一起进行了自动唤醒，但是实际上是有差别的。
 
-![image.png](https://ucc.alicdn.com/pic/developer-ecology/809e2e02d7204630b71625b6a987385e.png)
+![image.png](Java 多线程基础.assets/image-20241025145539298.png)
 
 
 
@@ -1654,7 +1654,7 @@ public class Main {
 
 在多线程定义中，volatile关键字主要是在属性上使用的，表示此属性为直接数据操作，而不进行副本的拷贝处理。这样的话在一些书上就将其错误的理解为同步属性了。
 
-![image.png](https://ucc.alicdn.com/pic/developer-ecology/c1dbed78a940428ebdb78488a3ed2028.png)
+![image.png](Java 多线程基础.assets/image-20241025145539299.png)
 
 【操作示例 1】卖票程序
 
@@ -1824,7 +1824,7 @@ Exception in thread "main" java.lang.IllegalThreadStateException
 
 通过上面的代码可以发现当使用了`task.run()`直接在主方法之中调用线程类对象的run()方法所获得的的线程对象的名字为“main”，所以可以得出一个结论：主方法也是一个线程。那么现在的问题来了，所有的线程都是在进程上的划分，那么进程在哪里？每当使用java命令执行程序的时候就表示启动了一个JVM的进程，一台电脑上可以同时启动若干个JVM进程，所以每一个JVM进程都会有各自的线程。任务管理器进程：
 
-![image.png](https://ucc.alicdn.com/pic/developer-ecology/d423c59d1a04485da11428ee27ad13cb.png)
+![image.png](Java 多线程基础.assets/image-20241025145539300.png)
 
 在任何的开发之中，主线程可以创建若干个子线程，创建子线程的目的是可以将一些复杂逻辑或者比较耗时的逻辑交由子线程处理；
 
@@ -3373,7 +3373,7 @@ Thread-2卖票，ticket = 0
 
 这个时候追加了延迟，问题就暴露出来了，而实际上这个问题一直都在。
 
-![image.png](https://ucc.alicdn.com/pic/developer-ecology/640fc7a545c44d2e9fc4570cc0eae092.png)
+![image.png](Java 多线程基础.assets/image-20241025145539301.png)
 
 
 
@@ -3385,7 +3385,7 @@ Thread-2卖票，ticket = 0
 
 经过分析之后已经可以确定同步问题产生的主要原因了，那么下面就需要进行同步问题的解决，但是解决同步问题的关键是锁，指的是当某一个线程执行操作的时候，其他线程外面等待；（问题得解决）
 
-![image.png](https://ucc.alicdn.com/pic/developer-ecology/38bd7265526042148edc1506135dcf05.png)
+![image.png](Java 多线程基础.assets/image-20241025145539302.png)
 
 如果要想程序中实现这把锁功能，就可以使用synchronized关键字来实现，利用此关键字可以定义同步方法或同步代码块，在同步代码块的操作中的代码只允许一个线程执行。
 
@@ -3598,7 +3598,7 @@ public class DeadLock implements Runnable {
 
 既然生产者与消费者是两个独立的线程，那么这两个独立的线程就需要有一个数据的保存集中点，那么可以单独定义一个Message类来实现数据的保存。
 
-![image.png](https://ucc.alicdn.com/pic/developer-ecology/9d589a5dfb484fc9ab0e7d90ea5d7e98.png)
+![image.png](Java 多线程基础.assets/image-20241025145539303.png)
 
 操作示例 1：程序基本结构
 

@@ -2235,7 +2235,7 @@ location /static {
 - 流程
   - 秘钥交换使用非对称加密，内容传输使用对称加密的方式
 
-![img](https://file.xdclass.net/note/2020/nginx/%E5%9B%BE%E7%89%87/366784-20160127222221785-258650029.png)
+![img](Nginx-1.8.0.assets/image-20241025145538479.png)
 
 
 
@@ -2245,7 +2245,7 @@ location /static {
 
 - 证书申请->审核等待->证书上传：https://common-buy.aliyun.com/?commodityCode=cas
 
-![image-20200820165637897](https://file.xdclass.net/note/2020/nginx/%E5%9B%BE%E7%89%87/image-20200820165637897.png)
+![image-20200820165637897](Nginx-1.8.0.assets/image-20241025145538480.png)
 
 ### 3.Nginx配置Https证书
 
@@ -4146,7 +4146,7 @@ post-read、server-rewrite、find-config、rewrite、post-rewrite、preaccess、
 
 nginx对于请求的处理分多个阶段,Nginx , 从而让第三方模块通过挂载行为在不同的阶段来控制, 大致如下：
 
-![img](https://img-blog.csdnimg.cn/20190112153020353.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2lhaW90,size_16,color_FFFFFF,t_70)
+![img](Nginx-1.8.0.assets/image-20241026002257399.png)
 
 - 初始化阶段（Initialization Phase）
   - init_by_lua_file
@@ -4206,7 +4206,7 @@ end
   - 如何做一个动态黑名单控制?
   - 里面 /usr/local/openresty/lualib/resty 很多第三方模块
 
-![img](https://file.xdclass.net/note/2020/nginx/%E5%9B%BE%E7%89%87/image-20200822210816997.png)
+![img](Nginx-1.8.0.assets/image-20241025145538481.png)
 
 
 
@@ -4252,7 +4252,7 @@ location /download {
 
 - 备注：如果是请求限流，请求先进入到漏桶里，漏桶以固定的速度出水，也就是处理请求，当水加的过快也就是请求过多，桶就会直接溢出，也就是请求被丢弃拒绝了，所以漏桶算法能强行限制数据的传输速率或请求数
 
-![image-20200823174825345](https://file.xdclass.net/note/2020/nginx/%E5%9B%BE%E7%89%87/image-20200823174825345.png)
+![image-20200823174825345](Nginx-1.8.0.assets/image-20241025145538482.png)
 
 什么是令牌桶算法
 
@@ -4260,7 +4260,7 @@ location /download {
 
   如果桶内令牌数量小于被消耗的量，则产生的令牌的速度就是均匀处理请求的速度
 
-![image-20200823174904826](https://file.xdclass.net/note/2020/nginx/%E5%9B%BE%E7%89%87/image-20200823174904826.png)
+![image-20200823174904826](Nginx-1.8.0.assets/image-20241025145538483.png)
 
 
 

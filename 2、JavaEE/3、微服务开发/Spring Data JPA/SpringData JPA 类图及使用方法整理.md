@@ -4,7 +4,7 @@
 
 ## 一、JPARepository 类关系图
 
-![20230629122001](SpringData JPA 类图及使用方法整理.assets/20230629122001.png)
+![20230629122001](SpringData JPA 类图及使用方法整理.assets/image-20241025145538209.png)
 
 ```java
 // 继承 分页排序 查询接口 PagingAndSortingRepository<T, ID>, QueryByExampleExecutor<T> 
@@ -38,13 +38,13 @@ public interface JpaRepository<T, ID extends Serializable> extends PagingAndSort
 
 ## 二、JPARepository 类方法图
 
-![20230629122002](SpringData JPA 类图及使用方法整理.assets/20230629122002.png)
+![20230629122002](SpringData JPA 类图及使用方法整理.assets/image-20241025145538210.png)
 
 
 
 ## 三、SimpleJpaRepository 构造函数
 
-![20230629122003](SpringData JPA 类图及使用方法整理.assets/20230629122003.png)
+![20230629122003](SpringData JPA 类图及使用方法整理.assets/image-20241025145538211.png)
 
 ```java
 public class SimpleJpaRepository<T, ID extends Serializable> implements JpaRepository<T, ID>, JpaSpecificationExecutor<T> {
@@ -78,7 +78,7 @@ public class SimpleJpaRepository<T, ID extends Serializable> implements JpaRepos
 
 ## 四、官方网站
 
-![20230629122004](SpringData JPA 类图及使用方法整理.assets/20230629122004.png)
+![20230629122004](SpringData JPA 类图及使用方法整理.assets/image-20241025145538212.png)
 
 Spring Data JPA是更大的Spring Data家族的一部分，可以轻松实现基于JPA的存储库。本模块处理对基于 JPA 的数据访问层的增强支持。它使构建使用数据访问技术的 Spring 驱动的应用程序变得更加容易。
 
@@ -96,7 +96,7 @@ Spring Data JPA是更大的Spring Data家族的一部分，可以轻松实现基
 
 **2、参考文档**：https://docs.spring.io/spring-data/jpa/docs/current/reference/html/
 
-![20230629122005](SpringData JPA 类图及使用方法整理.assets/20230629122005.png)
+![20230629122005](SpringData JPA 类图及使用方法整理.assets/image-20241025145538213.png)
 
 
 
@@ -270,4 +270,4 @@ interface UserRepository extends CrudRepository<User, Long> {
 
 ## 六、JPARepository全景图
 
-![20230629122006](SpringData JPA 类图及使用方法整理.assets/20230629122006.png)
+![20230629122006](SpringData JPA 类图及使用方法整理.assets/image-20241025145538214.png)

@@ -12,7 +12,7 @@
 
 在整个类集框架里面提供有如下的几个核心接口：Collection、Lits、Set、Map、Iterator、ListIterator、Enumeration、Queue
 
-![20220106212041](Java 类集框架.assets/20220106212041.png)
+![20220106212041](Java 类集框架.assets/image-20241025145539311.png)
 
 
 
@@ -39,7 +39,7 @@ public ListIterator<E> listIterator();            // 将集合变为ListIterator
 
 Collection接口结构：
 
-![image.png](Java 类集框架.assets/45d7da78aa8f4f36b2fde8db1cb0dc5b.png)
+![image.png](Java 类集框架.assets/image-20241025145539312.png)
 
 
 
@@ -68,7 +68,7 @@ public default void forEach(Consumer<? super T> action); // 使用foreach结合�
 
 但是List本身依然属于一个接口，那么对于接口要想使用则一定要使用子类来完成定义，在List子接口中有三个常用子类：ArrayList、Vector、LinkedList
 
-![image.png](Java 类集框架.assets/f84b09006ff54f83acc26abe7e3e86c1.png)
+![image.png](Java 类集框架.assets/image-20241025145539313.png)
 
 操作示例：观察List中的静态方法（JDK1.9后的方法）从JDK1.9开始，List子接口里面追加有一些 statIc方法，以方便用户的处理
 
@@ -101,7 +101,7 @@ public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcce
 
 ArrayList的继承结构
 
-![image.png](Java 类集框架.assets/3bc2e589f057473189b65218d960d58b.png)
+![image.png](Java 类集框架.assets/image-20241025145539314.png)
 
 操作示例 1：使用ArrayList实例化List父接口
 
@@ -301,7 +301,7 @@ public class LinkedList<E> extends AbstractSequentialList<E> implements List<E>,
 
 LinkedList 类结构如下：
 
-![image.png](Java 类集框架.assets/a4165a4ce6ab46c9ba54442f7a759ad3.png)
+![image.png](Java 类集框架.assets/image-20241025145539315.png)
 
 操作示例 1：使用LinkedList实现集合操作
 
@@ -381,7 +381,7 @@ public class Vector<E> extends AbstractList<E> implements List<E>, RandomAccess,
 
 继承结构与ArrayList是相同的，所以来讲Vector这个类继承结构如下：
 
-![image.png](Java 类集框架.assets/55ffc5fae2a241e28330fe62690fd68e.png)
+![image.png](Java 类集框架.assets/image-20241025145539316.png)
 
 操作示例 1：Vector的使用
 
@@ -445,7 +445,7 @@ public interface Set<E> extends Collection<E> {}
 
 需要注意的是Set集合并不像List集合那样扩充了许多的新方法，所以无法使用List集合中提供的get()方法，也就是说无法实现指定索引数据的获取，Set接口的继承关系如下。
 
-![image.png](Java 类集框架.assets/1bc9d63abcdf44898607cd8118e527c6.png)
+![image.png](Java 类集框架.assets/image-20241025145539317.png)
 
 从JDK1.9后，Set集合也提供了像List集合中类似的of()的静态方法。下面就使用此方法进行Set集合特点的验证。
 
@@ -485,7 +485,7 @@ public class HashSet<E> extends AbstractSet<E> implements Set<E>, Cloneable, Ser
 
 这种继承的形式和之前的ArrayList是非常相似的，那么现在来观察一下HashSet子类的继承结构：
 
-![image.png](Java 类集框架.assets/41d6771c62ce4daeb5fafb7d1f0bd031.png)
+![image.png](Java 类集框架.assets/image-20241025145539318.png)
 
 操作示例 1：观察HashSet子类
 
@@ -525,7 +525,7 @@ public class TreeSet<E> extends AbstractSet<E> implements NavigableSet<E>, Clone
 
 在这个子类中依然继承了AbstractSet父抽象类，同时又实现了一个NavigableSet父接口。TreeSet子类继承结果：
 
-![image.png](Java 类集框架.assets/acee8502e0f44e76bbe821d5a88c464c.png)
+![image.png](Java 类集框架.assets/image-20241025145539319.png)
 
 操作示例 1：使用TreeSet子类
 
@@ -728,7 +728,7 @@ default void remove();         // 删除当前数据
 
 在之前使用的 java.util.Scanner 类就是 Iterator 接口的子类，所以此时（Iterator接口）类继承关系如下：
 
-![image.png](Java 类集框架.assets/38ba0bb9fc224e6aa34c88ba2cd41334.png)
+![image.png](Java 类集框架.assets/image-20241025145539320.png)
 
 操作示例 1：使用Iterator输出
 
@@ -847,7 +847,7 @@ public interface ListIterator<E> extends Iterator<E> {}
 
 ListIterator接口类继承结构：
 
-![image.png](Java 类集框架.assets/ffb1cc8b24594926abca2f33d2052646.png)
+![image.png](Java 类集框架.assets/image-20241025145539321.png)
 
 ListIterator接口中定义有如下方法（如下是ListIterator比Iterator多的方法，因为ListIterator继承Iterator所以也包含了Iterator内的方法）：
 
@@ -915,7 +915,7 @@ public E nextElement();           // 获取当前元素
 
 Enumeration接口类继承结构：
 
-![image.png](Java 类集框架.assets/8fc865f209154ea6bbfc81dc8c148031.png)
+![image.png](Java 类集框架.assets/image-20241025145539322.png)
 
 操作示例 1：使用Enumeration输出
 
@@ -1045,7 +1045,7 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
 
 该类的定义继承形式符合之前的集合定义形式，依然提供有抽象类并且依然需要重复实现Map接口。HashMap子类结构：
 
-![image.png](Java 类集框架.assets/debd838773f446878880a752d7768271.png)
+![image.png](Java 类集框架.assets/image-20241025145539323.png)
 
 操作示例 1：HashMap集合的使用
 
@@ -1142,7 +1142,7 @@ public class LinkedHashMap<K, V> extends HashMap<K, V> implements Map<K, V> {}
 
 既然是链表保存，所以一般在使用LinkedHashMap类时数据量不要特别大，因为会造成时间复杂度攀升，通过继承的结构可以发现LinkedHashMap是HashMap的子类，LinkedHashMap类继承关系如下：
 
-![image.png](Java 类集框架.assets/ca014847b22d499da92832a6917e3f3f.png)
+![image.png](Java 类集框架.assets/image-20241025145539324.png)
 
 操作示例：使用LinkedHashMap
 
@@ -1177,7 +1177,7 @@ public class Hashtable<K, V> extends Dictionary<K, V> implements Map<K, V>, Clon
 
 HashTable的继承结构如下：
 
-![image.png](Java 类集框架.assets/69df4f106dc64f68b6dd9b25b5fca5e4.png)
+![image.png](Java 类集框架.assets/image-20241025145539325.png)
 
 操作示例：观察HashTable子类的使用
 
@@ -1219,7 +1219,7 @@ public class TreeMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, 
 
 TreeMap继承结构：
 
-![20211110110856](Java 类集框架.assets/20211110110856.png)
+![20211110110856](Java 类集框架.assets/image-20241025145539326.png)
 
 TreeMap 默认排序规则：按照key的字典顺序来排序（升序），也可以自定义排序规则：要实现Comparator接口。操作示例：使用TreeMap实现排序
 
@@ -1331,7 +1331,7 @@ public interface Entry<K, V> {
 }
 ```
 
-![20211110133941](Java 类集框架.assets/20211110133941.png)
+![20211110133941](Java 类集框架.assets/image-20241025145539327.png)
 
 在JDK1.9以前的开发版本之中，使用者基本上都不会去考虑创建Map.Entry的对象，实际上在正常的开发过程之中使用者也不需要关心Map.Entry对象创建，可是从JDK1.9之后，Map接口里面追加有一个新的方法：
 
@@ -1361,7 +1361,7 @@ public class JavaAPIDemo {
 
 对于集合的输出而言，最标准的做法就是利用Iterator接口来完成，但是需要明确一点的是在Map集合里面并没有一个方法可以直接返回Iterator接口对象，所以这种情况下就必须分析不直接提供Iterator接口实例化的方法的原因，下面对Collection与Map集合的存储结构进行一个比较：
 
-![20211110135543](Java 类集框架.assets/20211110135543.png)
+![20211110135543](Java 类集框架.assets/image-20241025145539328.png)
 
 发现在Map集合里面保存的实际上是一组Map.Entry接口对象（里面包装的是Key与Value），所以整个来讲Map依然买现的是单值的保存，这样在Map集合里面提供有一个方法：将全部的Map集合转为Set集：`public Set<Map.Enty<K, V>> entrySet()`
 
@@ -1369,7 +1369,7 @@ public class JavaAPIDemo {
 public Set<Map.Enty<K, V>> entrySet(); // 将全部的Map集合转为Set集
 ```
 
-![20211110135816](Java 类集框架.assets/20211110135816.png)
+![20211110135816](Java 类集框架.assets/image-20241025145539329.png)
 
 经过分析可以发现如果要想使用Iterator实现Map集合的输出则必须按照如下步骤处理：
 
@@ -1506,7 +1506,7 @@ public class JavaAPIDemo {
 
 当出现了Hash冲突之后为了保证程序的正常执行，会在冲突的位置上将所有Hash冲突的内容转为链表保存。
 
-![20211110140658](Java 类集框架.assets/20211110140658.png)
+![20211110140658](Java 类集框架.assets/image-20241025145539330.png)
 
 
 
@@ -1997,7 +1997,7 @@ public class MainTest {
 
 栈是一种先进后出的数据结构。例如：在文本编辑器上都有撤销功能，那么每次使用的时候你会发现，最后一次的编辑操作永远是最先撤销，那么这个功能就是利用栈来实现的，栈的基本操作形式如下。
 
-![20211110141417](Java 类集框架.assets/20211110141417.png)
+![20211110141417](Java 类集框架.assets/image-20241025145539331.png)
 
 ```java
 public class Stack<E> extends Vector<E> {}
@@ -2039,7 +2039,7 @@ Exception in thread "main" java.util.EmptyStackException
 
 通过此时的操作可以发现，所有的保存之后将按照倒序的形式进行弹出，如果栈已经空了，则会抛出空栈异常。
 
-![20211110143816](Java 类集框架.assets/20211110143816.png)
+![20211110143816](Java 类集框架.assets/image-20241025145539332.png)
 
 
 
@@ -2047,7 +2047,7 @@ Exception in thread "main" java.util.EmptyStackException
 
 Queue描述的是一个队列，而队列的主要特点是实现先进先出的操作形式。其基本的操作形式如下：
 
-![20211110150302](Java 类集框架.assets/20211110150302.png)
+![20211110150302](Java 类集框架.assets/image-20241025145539333.png)
 
 如果将队列应用在多线程的“生产者与消费者”的模型处理上，那么对于生产者过快的情况下就没有必要等待消费者获取数据了，可以将所有的内容直接保存在队列之中，队列的实现可以使用LinkedList子类来完成，观察这个类的定义。
 
@@ -2055,7 +2055,7 @@ Queue描述的是一个队列，而队列的主要特点是实现先进先出的
 public interface Queue<E> extends Collection<E> {}
 ```
 
-![20211110150358](Java 类集框架.assets/20211110150358.png)
+![20211110150358](Java 类集框架.assets/image-20241025145539334.png)
 
 队列的使用主要依靠Queue接口之中提供的方法来处理，提供有如下的方法：
 
@@ -2090,7 +2090,7 @@ Z
 
 除了Linkedlist子类之外，还有一个优先级队列的概念，可以使用PriorityQueue实现优先级队列（比较功能）
 
-![20211110152736](Java 类集框架.assets/20211110152736.png)
+![20211110152736](Java 类集框架.assets/image-20241025145539335.png)
 
 操作示例 2：使用优先级队列
 
@@ -2216,7 +2216,7 @@ Sam
 
 Collections是java提供的一组集合数据的操作工具类，也就是说利用它可以实现各个集合的操作。
 
-![20211110154329](Java 类集框架.assets/20211110154329.png)
+![20211110154329](Java 类集框架.assets/image-20241025145539336.png)
 
 **Collections工具类常用方法：**
 

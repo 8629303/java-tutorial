@@ -69,7 +69,7 @@
 
 整体的实现流程如下：
 
-![图片](SpringBoot 2.x 分片上传、断点续传、大文件上传、秒传.assets/640.jpeg)
+![图片](SpringBoot 2.x 分片上传、断点续传、大文件上传、秒传.assets/image-20241025145538196.png)
 
 
 
@@ -523,7 +523,7 @@ java io操作中通常采用 BufferedReader，BufferedInputStream 等带缓冲�
 
 如果标志位为false，则说明还没上传完成，此时需要在调用set的方法，保存块号文件记录的路径，其中，key为上传文件md5加一个固定前缀，value为块号文件记录路径
 
-![图片](SpringBoot 2.x 分片上传、断点续传、大文件上传、秒传.assets/640-16868188877693.jpeg)
+![图片](SpringBoot 2.x 分片上传、断点续传、大文件上传、秒传.assets/image-20241025145538197.png)
 
 ### 3、核心代码
 

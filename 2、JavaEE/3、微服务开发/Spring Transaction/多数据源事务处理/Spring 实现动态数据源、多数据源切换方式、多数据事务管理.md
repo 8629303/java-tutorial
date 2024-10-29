@@ -6,7 +6,7 @@
 
 数据分布在不同的数据库中，数据库拆了， 应用没拆。 一个公司多个子项目，各用各的数据库，涉及数据共享…
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/2c7cf15f69434cc0b5f0dc038eed23cf.png)
+![在这里插入图片描述](Spring 实现动态数据源、多数据源切换方式、多数据事务管理.assets/image-20241025145538216.png)
 
 
 
@@ -16,7 +16,7 @@
 - 很多数据库拥主从架构。也就是，一台主数据库服务器，是对外提供增删改业务的生产服务器；另一（多）台从数据库服务器，主要进行读的操作。
 - 可以通过中间件(ShardingSphere、mycat、mysql-proxy 、TDDL …)，但是有一些规模较小的公司，没有专门的中间件团队搭建读写分离基础设施，因此需要业务开发人员自行实现读写分离。
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/d00d17b116f94998abc9c3ef814c1916.png#pic_center)
+![在这里插入图片描述](Spring 实现动态数据源、多数据源切换方式、多数据事务管理.assets/image-20241026010644931.png)
 
 这里的架构与上图类似。不同的是，在读写分离中，主库和从库的数据库是一致的(不考虑主从延迟)。数据更新操作（insert、update、delete）都是在主库上进行，主库将数据变更信息同步给从库。在查询时，可以在从库上进行，从而分担主库的压力。
 
@@ -48,7 +48,7 @@
 
 对于大多数的java应用，都使用了spring框架，spring-jdbc模块提供AbstractRoutingDataSource，其内部可以包含了多个DataSource，然后在运行时来动态的访问哪个数据库。这种方式访问数据库的架构图如下所示：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/3de22e7515f241dfa7c49bdb062dd0f8.png#pic_center)
+![在这里插入图片描述](Spring 实现动态数据源、多数据源切换方式、多数据事务管理.assets/image-20241026010644932.png)
 
 应用直接操作的是 AbstractRoutingDataSource 的实现类，告诉 AbstractRoutingDataSource 访问哪个数据库，然后由 AbstractRoutingDataSource 从事先配置好的数据源（ds1、ds2）选择一个，来访问对应的数据库。
 
@@ -318,7 +318,7 @@ public class DynamicDataSourcePlugin implements Interceptor {
 
 ## 4、Spring集成多个MyBatis框架实现多数据源
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/11da9df9f1ca4028b60f8481da47f9ce.png#pic_center)
+![在这里插入图片描述](Spring 实现动态数据源、多数据源切换方式、多数据事务管理.assets/image-20241026010644933.png)
 
 1、WDataSourceConfig.java:
 

@@ -399,7 +399,7 @@ Spring中使用比较多的Conditional还有：
 
 如果你对这些功能比较感兴趣，可以看看《[Spring中那些让你爱不释手的代码技巧（续集）](http://mp.weixin.qq.com/s?__biz=MzUxODkzNTQ3Nw==&mid=2247485964&idx=1&sn=6b228b315461498aa3e2ac241341f72a&chksm=f9800cd6cef785c07022577cec282c3f990e35d80ee5cb07219681ed4db71cddabb9fcbeabd2&scene=21#wechat_redirect)》，这是我之前写的一篇文章，里面做了更详细的介绍。
 
-下面用一张图整体认识一下@Conditional家族:![图片](Spring Bean 的12种定义方法.assets/640.png)
+下面用一张图整体认识一下@Conditional家族:![图片](Spring Bean 的12种定义方法.assets/image-20241025145538262.png)
 
 有了这些功能，我们终于可以告别麻烦的xml时代了。
 
@@ -843,7 +843,7 @@ public class MyPostProcessor implements BeanFactoryPostProcessor {
 
 从下面这张图能够看出 DefaultListableBeanFactory 就实现了 BeanDefinitionRegistry 接口。
 
-![图片](Spring Bean 的12种定义方法.assets/640-16906200153123.png)
+![图片](Spring Bean 的12种定义方法.assets/image-20241025145538263.png)
 
 这样一来，我们如果能够获取 DefaultListableBeanFactory 对象的实例，然后调用它的注册方法，不就可以注册 Bean 了？
 
@@ -876,7 +876,7 @@ public class BeanFactoryRegistry implements BeanFactoryAware {
 
 Spring中Bean的创建过程顺序大致如下：
 
-![图片](Spring Bean 的12种定义方法.assets/640-16906200175106.png)
+![图片](Spring Bean 的12种定义方法.assets/image-20241025145538264.png)
 
 BeanFactoryAware 接口是在 Bean 创建成功，并且完成依赖注入之后，在真正初始化之前才被调用的。在这个时候去注册 Bean 意义不大，因为这个接口是给我们获取 Bean 的，并不建议去注册 Bean，会引发很多问题。
 

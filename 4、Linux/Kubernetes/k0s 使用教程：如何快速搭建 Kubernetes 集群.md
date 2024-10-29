@@ -68,7 +68,7 @@ INFO[2021-03-05 15:54:30] Installing k0s service
 
 服务启动后，检查下运行状态：
 
-![图片](k0s 使用教程：如何快速搭建 Kubernetes 集群.assets/640.png)
+![图片](k0s 使用教程：如何快速搭建 Kubernetes 集群.assets/image-20241025145538544.png)
 
 服务运行正常，生成一个 token 文件供 worker 连接：
 

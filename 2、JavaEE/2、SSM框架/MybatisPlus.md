@@ -650,7 +650,7 @@ Closing non transactional SqlSession [org.apache.ibatis.session.defaults.Default
 - 可以封装sql对象，包括where条件，order by排序，select哪些字段等等
 - 查询包装类，可以封装多数查询条件，泛型指定返回的实体类
 
-![20200712140320](MybatisPlus.assets/20200712140320.png)
+![image-20200712140320001](MybatisPlus.assets/image-20200712140320001.png)
 
 核心API
 
@@ -891,7 +891,7 @@ mybatis-plus.mapper-locations=classpath*:/mapper/*Mapper.xml
 
 1、在表中新增字段 create_time, update_time（默认CURRENT_TIMESTAMP）
 
-![20200712133549](MybatisPlus/20200712133549.png)
+![20200712133549](MybatisPlus.assets/image-20241025145538270.png)
 
 2、再次测试插入方法，我们需要先把实体类同步！
 
@@ -902,7 +902,7 @@ private Date updateTime;
 
 3、再次更新查看结果即可
 
-![20200712133629](MybatisPlus/20200712133629.png)
+![20200712133629](MybatisPlus.assets/image-20241025145538271.png)
 
 
 
@@ -912,7 +912,7 @@ private Date updateTime;
 
 1、删除数据库的默认值、更新操作！
 
-![20200712134028](MybatisPlus/20200712134028.png)
+![20200712134028](MybatisPlus.assets/image-20241025145538272.png)
 
 2、实体类字段属性上需要增加注解
 
@@ -1006,7 +1006,7 @@ update user set name = "liusx", version = version + 1 where id = 2 and version =
 
 1、给数据库中增加version字段！
 
-![20200712135146](MybatisPlus/20200712135146.png)
+![20200712135146](MybatisPlus.assets/image-20241025145538273.png)
 
 2、我们实体类加对应的字段
 
@@ -1121,7 +1121,7 @@ JDBC Connection [HikariProxyConnection@972720850 wrapping com.mysql.cj.jdbc.Conn
 
 1、在数据表中增加一个 deleted 字段
 
-![20200712140319](MybatisPlus/20200712140319.png)
+![20200712140319](MybatisPlus.assets/image-20241025145538274.png)
 
 2、配置（实体类增加属性配置@TableLogic 或者 在配置文件增加指定）
 

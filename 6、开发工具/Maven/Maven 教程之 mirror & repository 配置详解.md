@@ -524,7 +524,7 @@ asm-commons-3.3.1.pom.sha1   ──────────────── �
 </repository>
 ```
 
-![image-20240115155511238](./Maven 教程之 mirror & repository 配置详解.assets/image-20240115155511238.png)
+![image-20240115155511238](Maven 教程之 mirror & repository 配置详解.assets/image-20241025145538863.png)
 
 
 
@@ -552,7 +552,7 @@ asm-commons-3.3.1.pom.sha1   ──────────────── �
 </repository>
 ```
 
-![image-20240115155520250](./Maven 教程之 mirror & repository 配置详解.assets/image-20240115155520250.png)
+![image-20240115155520250](Maven 教程之 mirror & repository 配置详解.assets/image-20241025145538864.png)
 
 
 
@@ -594,7 +594,7 @@ asm-commons-3.3.1.pom.sha1   ──────────────── �
 </repository>	
 ```
 
-![image-20240115155530251](./Maven 教程之 mirror & repository 配置详解.assets/image-20240115155530251.png)
+![image-20240115155530251](Maven 教程之 mirror & repository 配置详解.assets/image-20241025145538865.png)
 
 
 
@@ -646,7 +646,7 @@ asm-commons-3.3.1.pom.sha1   ──────────────── �
 </repository>
 ```
 
-![image-20240115155568281](./Maven 教程之 mirror & repository 配置详解.assets/image-20240115155568281.png)
+![image-20240115155568281](Maven 教程之 mirror & repository 配置详解.assets/image-20241025145538866.png)
 
  
 

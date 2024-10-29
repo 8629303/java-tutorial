@@ -1342,7 +1342,7 @@ NETWORK ID          NAME                DRIVER              SCOPE
 2. 我们每启动一个docker容器，docker就会给docker容器分配一个ip，我们只要按照了docker，就会有一个docker0桥接模式，使用的技术是veth-pair技术
 3. 桥接拓扑图：
 
-![20290530244201](Docker-xd精简版/20290530244201.png)
+![20290530244201](Docker初级到实战.assets/image-20241025145538468.png)
 
 ```shell
 # 安装工具（宿主机）：查看网络模式详情
@@ -1380,7 +1380,7 @@ $ docker run -d -P --name tomcat01 --network bridge tomcat
 
 host 模式：该模式下容器是不会拥有自己的ip地址，而是使用宿主机的ip地址和端口。
 
-![20290530244202](Docker-xd精简版/20290530244202.png)
+![20290530244202](Docker初级到实战.assets/image-20241025145538469.png)
 
 ```shell
 # 启动nginx容器命令并防火墙放开80端口
@@ -1556,7 +1556,7 @@ route del default gw 172.17.0.1
       - 非官方：其他组织或者公司开发的镜像，供大家免费使用。比如阿里云
    2. 私有镜像仓库：公司自己搭建的，用于存放公司内部的镜像，自己管理，不提供给外部使用，避免了商业项目暴露出去的风险
 
-![20290530244301](Docker-xd精简版/20290530244301.png)
+![20290530244301](Docker初级到实战.assets/image-20241025145538470.png)
 
 
 
@@ -1618,9 +1618,9 @@ Removing login credentials for https://index.docker.io/v1/
 
 阿里云镜像仓库申请地址： https://cr.console.aliyun.com/cn-shanghai/instances/repositories
 
-![20290530244302](Docker-xd精简版/20290530244302.png)
+![20290530244302](Docker初级到实战.assets/image-20241025145538471.png)
 
-![20290530244303](Docker-xd精简版/20290530244303.png)
+![20290530244303](Docker初级到实战.assets/image-20241025145538472.png)
 
 进入阿里云自己创建镜像仓库（创建镜像仓库时会让你创建命名空间，按步骤走就可以了，点击管理按钮有教程指南）：
 
@@ -1836,7 +1836,7 @@ Removing login credentials for 172.25.211.62:5000
 
 Harbor 是 VMware 在中国的团体开发的。Harbor，是一个英文单词，意思是港湾，Harbor真是一个用于存储Docker镜像的企业级Registry服务。Registry是Docker官方的一个私有仓库镜像，可以将本地的镜像打标签进行标记然后push到以Registry起的容器的私有仓库中。去也可以根据自己的需求，使用Dockerfile生成自己的镜像，并推到私有仓库中，这样可以大大提高拉取镜像的效率。
 
-![20220115193524](Docker初级到实战.assets/20220115193524.png)
+![20220115193524](Docker初级到实战.assets/image-20241025145538473.png)
 
 Harbor核心组件解释：
 
@@ -1943,9 +1943,9 @@ https://docs.docker.com/engine/reference/commandline/login/#credentials-store
 
 网页上创建项目名：
 
-![20290530244304](Docker-xd精简版/20290530244304.png)
+![20290530244304](Docker初级到实战.assets/image-20241025145538474.png)
 
-![20290530244305](Docker-xd精简版/20290530244305.png)
+![20290530244305](Docker初级到实战.assets/image-20241025145538475.png)
 
 
 
@@ -2342,7 +2342,7 @@ Swarm 集群由 Manager 节点（管理者角色，管理成员和委托任务�
 - **Manager**：负责整个集群的管理工作包括集群配置、服务管理、容器编排等所有跟集群有关的工作，它会选举出一个 leader 来指挥编排任务；
 - **Worker**：工作节点接收和执行从管理节点分派的任务（Tasks）运行在相应的服务（Services）上。
 
-![/resources/articles/docker/swarm-diagram.png](https://www.mrhelloworld.com/resources/articles/docker/swarm-diagram.png)
+![/resources/articles/docker/swarm-diagram.png](Docker初级到实战.assets/image-20241025145538463.png)
 
 
 
@@ -2356,7 +2356,7 @@ Service（服务）是一个抽象的概念，是对要在管理节点或工作�
 - 服务的容器要连接到哪个网络上
 - 要映射哪些端口
 
-[![/resources/articles/docker/services-diagram.png](https://www.mrhelloworld.com/resources/articles/docker/services-diagram.png)](https://www.mrhelloworld.com/resources/articles/docker/services-diagram.png)
+[![/resources/articles/docker/services-diagram.png](Docker初级到实战.assets/image-20241025145538464.png)](Docker初级到实战.assets/image-20241025145538464.png)
 
 
 
@@ -2375,13 +2375,13 @@ Swarm 不只是提供了优秀的高可用性，同时也提供了节点的**弹
 
 下图用黄色表示拥有三个副本服务 Replicated Service，用灰色表示拥有一个全局服务 Global Service。
 
-[![/resources/articles/docker/replicated-vs-global.png](https://www.mrhelloworld.com/resources/articles/docker/replicated-vs-global.png)](https://www.mrhelloworld.com/resources/articles/docker/replicated-vs-global.png)
+[![/resources/articles/docker/replicated-vs-global.png](Docker初级到实战.assets/image-20241025145538465.png)](Docker初级到实战.assets/image-20241025145538465.png)
 
 
 
 ## 3、Swarm 工作流程
 
-[![/resources/articles/docker/service-lifecycle.png](https://www.mrhelloworld.com/resources/articles/docker/service-lifecycle.png)](https://www.mrhelloworld.com/resources/articles/docker/service-lifecycle.png)
+[![/resources/articles/docker/service-lifecycle.png](Docker初级到实战.assets/image-20241025145538466.png)](Docker初级到实战.assets/image-20241025145538466.png)
 
 Swarm Manager：
 
@@ -2406,7 +2406,7 @@ Overlay 网络其实并不是一门新技术，它是指构建在另一个网络
 
 Underlay 网络是专门用来承载用户 IP 流量的基础架构层，它与 Overlay 网络之间的关系有点类似物理机和虚拟机。Underlay 网络和物理机都是真正存在的实体，它们分别对应着真实存在的网络设备和计算设备，而 Overlay 网络和虚拟机都是依托在下层实体的基础之上，使用软件虚拟出来的层级。
 
-![/resources/articles/docker/350c0c464af591b8a01655ca5bf233a4.png](https://www.mrhelloworld.com/resources/articles/docker/350c0c464af591b8a01655ca5bf233a4.png)
+![/resources/articles/docker/350c0c464af591b8a01655ca5bf233a4.png](Docker初级到实战.assets/image-20241025145538467.png)
 
 在 Docker 版本 1.12 以后 **Swarm 模式原生已支持覆盖网络**（Overlay Network），只要是这个覆盖网络内的容器，不管在不在同一个宿主机上都能相互通信，即跨主机通信。不同覆盖网络内的容器之间是相互隔离的（相互 ping 不通）。
 
@@ -2526,7 +2526,7 @@ This node joined a swarm as a manager.
 
 通过创建集群时返回的结果可以得知，要向这个集群添加一个 Worker 节点，运行下图中的命令即可。或者管理节点先运行 `docker swarm join-token worker` 命令查看工作节点的令牌信息。
 
-![20220116174001](Docker初级到实战.assets/20220116174001.png)
+![20220116174001](Docker初级到实战.assets/image-20241025145538476.png)
 
 ```shell
 [root@localhost ~]# docker swarm join-token worker
@@ -2894,7 +2894,7 @@ redis:5
 [root@manager1 ~]# docker service update --image redis:6 redis
 ```
 
-![20220116193524](Docker-xd精简版/20220116193524.png)
+![20220116193524](Docker初级到实战.assets/image-20241025145538477.png)
 
 如果在创建服务时没有指定更新策略，也可以在更新服务的时候指定。
 
@@ -2909,7 +2909,7 @@ redis:5
 [root@manager1 ~]# docker service update --rollback redis
 ```
 
-![20220116193615](Docker初级到实战.assets/20220116193615.png)
+![20220116193615](Docker初级到实战.assets/image-20241025145538478.png)
 
 
 

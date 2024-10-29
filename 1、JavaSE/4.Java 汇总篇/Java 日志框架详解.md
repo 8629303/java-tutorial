@@ -2202,7 +2202,7 @@ slf4j-simple是slf4j内置的简单日志实现框架，功能比较简单
 
 打开官网的用户手册查看流程图：https://www.slf4j.org/manual.html
 
-![img](https://www.slf4j.org/images/concrete-bindings.png)
+![img](Java 日志框架详解.assets/image-20241025145539105.png)
 
 #### 1、绑定JUL日志实现
 
@@ -5375,7 +5375,7 @@ public class Log4j2Test {
 
 Log4j2在目前JAVA中的日志框架里，异步日志的性能是最高的，没有之一。先来看一下，几种日志框架benchmark对比结果（官方测试结果）
 
-![Peak throughput comparison](https://ask.qcloudimg.com/http-save/yehe-4464177/k286bbw776.png)
+![Peak throughput comparison](Java 日志框架详解.assets/image-20241025145539106.png)
 
 从图上可以看出，Log4j2的异步（全异步，非混合模式）下的性能，远超Log4j1和Logback，简直吊打。压力越大的情况下，吞吐上的差距就越大。在64线程测试下，Log4j2的吞吐达到了180w+/s，Llogback/Log4j1只有不到20w，相差近十倍。
 

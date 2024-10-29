@@ -76,7 +76,7 @@
 
 **4、主要流程：**
 
-![img](SpringBoot 2.x  接口幂等性实现.assets/shuiyin.png)
+![img](SpringBoot 2.x  接口幂等性实现.assets/image-20241025145538188.png)
 
 5、主要步骤：
 
@@ -102,7 +102,7 @@
 
 **描述示例：**
 
-![img](SpringBoot 2.x  接口幂等性实现.assets/shuiyin-16675257929895.png)
+![img](SpringBoot 2.x  接口幂等性实现.assets/image-20241025145538189.png)
 
 例如：存在如下的数据表中：
 
@@ -149,7 +149,7 @@ UPDATE my_table SET price=price+50,version=version+1 WHERE id=1 AND version=5;
 
 **主要流程：**
 
-![img](SpringBoot 2.x  接口幂等性实现.assets/shuiyin-16675258773268.png)
+![img](SpringBoot 2.x  接口幂等性实现.assets/image-20241025145538190.png)
 
 主要步骤：
 
@@ -189,7 +189,7 @@ UPDATE my_table SET price=price+50,version=version+1 WHERE id=1 AND version=5;
 
 **主要流程：**
 
-![img](SpringBoot 2.x  接口幂等性实现.assets/shuiyin-166752593916411.png)
+![img](SpringBoot 2.x  接口幂等性实现.assets/image-20241025145538191.png)
 
 主要步骤：
 

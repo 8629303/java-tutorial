@@ -7,7 +7,7 @@
 
 这里整理了一张SpringBoot常用注解的思维导图，本文主要讲解这些注解的用法。
 
-![](https://img-blog.csdnimg.cn/img_convert/8f87c238887368852558ebdd868a2cd5.webp?x-oss-process=image/format,png)
+![](SpringBoot 2.x 常用注解大全.assets/image-20241027002859181.png)
 
 
 

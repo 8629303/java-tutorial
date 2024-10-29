@@ -786,7 +786,7 @@ public void transactionTemplateVoidTest() {
 
 ### 2、TransactionManager 实现编程式事务
 
-![20230510171111](./Spring 事务应用及源码分析.assets/20201210230126362.png)
+![20230510171111](Spring 事务应用及源码分析.assets/image-20241025145538217.png)
 
 这里使用Mybatis的事务管理器`DataSourceTransactionManager`简单走一下流程：
 
@@ -808,7 +808,7 @@ dataSourceTransactionManager.rollback(status);
 
 DataSourceTransactionManager 的继承图：
 
-![202305101711122053](./Spring 事务应用及源码分析.assets/202305101711122053.png)
+![202305101711122053](Spring 事务应用及源码分析.assets/image-20241025145538218.png)
 
 #### 0、TransactionDefinition 接口预介绍
 
@@ -1302,7 +1302,7 @@ private void func2() {
 }
 ```
 
-![在这里插入图片描述](./Spring 事务应用及源码分析.assets/202305101711122054.png)
+![在这里插入图片描述](Spring 事务应用及源码分析.assets/image-20241025145538219.png)
 
 
 
@@ -1310,7 +1310,7 @@ private void func2() {
 
 这个与`private`道理是一样的，都是影响了`Spring`生成代理对象，同样`IDEA`也会有相关提示。 
 
-![在这里插入图片描述](./Spring 事务应用及源码分析.assets/202305101711122055.png)
+![在这里插入图片描述](Spring 事务应用及源码分析.assets/image-20241025145538220.png)
 
 
 
@@ -1318,7 +1318,7 @@ private void func2() {
 
 注意，如果你使用的是`MySQL`数据库，那么常用的存储引擎中只有`InnoDB`才支持事务，像`MyISAM`是不支持事务的，其他存储引擎都是针对特定场景下使用的，一般也不会用到，不做讨论。
 
-![在这里插入图片描述](./Spring 事务应用及源码分析.assets/202305101711122056.png)
+![在这里插入图片描述](Spring 事务应用及源码分析.assets/image-20241025145538221.png)
 
 
 
@@ -1350,7 +1350,7 @@ private void func2() {
 1、接口与类的关系图
 ---------------------------------------------------------------------
 
-![在这里插入图片描述](./Spring 事务应用及源码分析.assets/202305101711122057.png)
+![在这里插入图片描述](Spring 事务应用及源码分析.assets/image-20241025145538222.png)
 
 
 
@@ -1386,11 +1386,11 @@ public interface PlatformTransactionManager extends TransactionManager {
 
 这是一个典型的采用模板方法设计的抽象类，定义了关于事务的核心处理流程。可以看到几个关键的抽象方法，都交由子类去实现。 
 
-![在这里插入图片描述](./Spring 事务应用及源码分析.assets/202305101711122058.png)
+![在这里插入图片描述](Spring 事务应用及源码分析.assets/image-20241025145538223.png)
 
 到了下面的具体的子类实现，只需要简单的执行就好了，比如：`DataSourceTransactionManager`类重写`doCommit`和`doRollback`方法只是简单的获取数据库连接后进行事务的提交或者回滚就好了。 
 
-![在这里插入图片描述](./Spring 事务应用及源码分析.assets/202305101711122059.png)
+![在这里插入图片描述](Spring 事务应用及源码分析.assets/image-20241025145538224.png)
 
 
 
@@ -1403,7 +1403,7 @@ public interface PlatformTransactionManager extends TransactionManager {
 
 而`TransactionTemplate`中定义的入口方法就是`execute`。
 
-![在这里插入图片描述](./Spring 事务应用及源码分析.assets/202305101711122060.png)
+![在这里插入图片描述](Spring 事务应用及源码分析.assets/image-20241025145538225.png)
 
 入参`TransactionCallback`也是一个标记性接口。
 
@@ -1448,13 +1448,13 @@ public <T> T execute(TransactionCallback<T> action) throws TransactionException 
 
 而`TransactionManager`会作为`TransactionTemplate`中的一个属性来使用。
 
-![在这里插入图片描述](./Spring 事务应用及源码分析.assets/202305101711122061.png)
+![在这里插入图片描述](Spring 事务应用及源码分析.assets/image-20241025145538226.png)
 
 整个`execute`中几个关键的方法实际上都是在调用`TransactionManager`中提供的方法，`doInTransaction`则是执行业务代码的地方。
 
-![在这里插入图片描述](./Spring 事务应用及源码分析.assets/202305101711122062.png)
+![在这里插入图片描述](Spring 事务应用及源码分析.assets/image-20241025145538227.png)
 
-![在这里插入图片描述](./Spring 事务应用及源码分析.assets/202305101711122063.png)
+![在这里插入图片描述](Spring 事务应用及源码分析.assets/image-20241025145538228.png)
 
 
 
@@ -1463,9 +1463,9 @@ public <T> T execute(TransactionCallback<T> action) throws TransactionException 
 
 `TransactionDefinition`是Spring框架中用于定义事务属性的核心接口，这个接口主要用来定义事务的传播行为、隔离级别、超时时间、是否只读等属性。
 
-![](./Spring 事务应用及源码分析.assets/202305101711122064.jpeg)
+![](Spring 事务应用及源码分析.assets/image-20241025145538229.png)
 
-![在这里插入图片描述](./Spring 事务应用及源码分析.assets/202305101711122065.png)
+![在这里插入图片描述](Spring 事务应用及源码分析.assets/image-20241025145538230.png)
 
 ### 1、基本介绍
 

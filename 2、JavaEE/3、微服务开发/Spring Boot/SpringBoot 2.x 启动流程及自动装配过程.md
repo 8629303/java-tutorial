@@ -256,6 +256,14 @@ SpringBoot 的启动经过了一系列的处理（装配、加载、监听...）
 
 SpringBoot 启动流程分析使用版本SpringBoot VERSION：版本 **2.5.0**。
 
+可以使用如下三张图片总结启动流程：
+
+![image-20241026004201001](SpringBoot 2.x 启动流程及自动装配过程.assets/image-20241026010644928.png)
+
+![image-20241026004201003](SpringBoot 2.x 启动流程及自动装配过程.assets/image-20241026010644929.png)
+
+![image-20241026004201002](SpringBoot 2.x 启动流程及自动装配过程.assets/image-20241026010644930.png)
+
 
 
 ## 1、XxApplication.main() 方法

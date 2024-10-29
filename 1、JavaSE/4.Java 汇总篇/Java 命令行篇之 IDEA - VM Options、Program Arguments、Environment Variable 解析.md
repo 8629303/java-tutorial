@@ -184,7 +184,7 @@ java -jar app.jar --user=张三 --user=李四 --class=计算机课 room=516
 
 结果如下：
 
-![image-20240422154827251](./Java 命令行篇之 IDEA - VM Options、Program Arguments、Environment Variable 解析.assets/image-20240422154827251.png)
+![image-20240422154827251](Java 命令行篇之 IDEA - VM Options、Program Arguments、Environment Variable 解析.assets/image-20241025145539103.png)
 
 由上可以得出结论：
 
@@ -292,7 +292,7 @@ Environment variables 代表系统环境参数，Windows、Linux、MacOS 环境�
 
 
 
-![image-20240422160703777](./Java 命令行篇之 IDEA - VM Options、Program Arguments、Environment Variable 解析.assets/image-20240422160703777.png)
+![image-20240422160703777](Java 命令行篇之 IDEA - VM Options、Program Arguments、Environment Variable 解析.assets/image-20241025145539104.png)
 
 ## 2、Linux 配置方式
 

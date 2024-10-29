@@ -20,11 +20,11 @@
 
 我们首先创建一个普通的Java项目，具体操作如下：
 
-[![Maven实战-第一篇（Maven的基本信息）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/A6855517-9206-44A9-96C0-7ACA248B520C.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/A6855517-9206-44A9-96C0-7ACA248B520C.png)
+[![Maven实战-第一篇（Maven的基本信息）](Maven 实战.assets/image-20241025145956738.png)](Maven 实战.assets/image-20241025145956738.png)
 
 我们简单输出一句话，验证一下项目是否有问题。
 
-[![Maven实战-第一篇（Maven的基本信息）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/9736299C-8631-48B9-BF90-917A12E5CA0B.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/9736299C-8631-48B9-BF90-917A12E5CA0B.png)
+[![Maven实战-第一篇（Maven的基本信息）](Maven 实战.assets/image-20241025145956739.png)](Maven 实战.assets/image-20241025145956739.png)
 
 执行上面的代码：
 
@@ -88,33 +88,33 @@ Userinfo{username='mazhe', password='maven'}
 
 下面我们引入fastjson的依赖包，由于我们不使用Maven，所以我们使用下面的方式引用，具体操作如下：
 
-[![Maven实战-第一篇（Maven的基本信息）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/D5866DF7-6C8F-498B-A74D-F1217EF6C995.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/D5866DF7-6C8F-498B-A74D-F1217EF6C995.png)
+[![Maven实战-第一篇（Maven的基本信息）](Maven 实战.assets/image-20241025145956740.png)](Maven 实战.assets/image-20241025145956740.png)
 
 我们首先在项目的根目录中创建一个目录来存放我们引入外部的依赖包。当然我也可以不在项目的根目录中创建，在任何目录中引入都可以，只不过在项目中创建的好处是为了避免因目录改动，导致我们之前引入的依赖包找到不相应的目录，而导致引入的依赖包不可用。
 
-[![Maven实战-第一篇（Maven的基本信息）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/27A31C28-C2B3-4558-AD0C-6995483EBC44.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/27A31C28-C2B3-4558-AD0C-6995483EBC44.png)
+[![Maven实战-第一篇（Maven的基本信息）](Maven 实战.assets/image-20241025145956741.png)](Maven 实战.assets/image-20241025145956741.png)
 
 然后我们将我们需要要依赖包拷贝到我们刚刚创建的目录中。如果我们这前配置过，那么这个依赖包就可以直接在项目中引入了，如果我们没有问题过，那么项目中还是使用不了我们这个依赖包的，因为它没有识别出这个目录。那以怎么判断项目是否识别同这个目录呢？很简单我们只需要看一下，这个目录中的依赖包，是否可以直接查看相应的源码即可。如果项目中显示了依赖包的目录结构，并且可以直接查看源码，那么则证明我们项目识别出了这个依赖包，可以直接在项目中引用了。反之亦然。
 
 我们通过上图观察到，项目并没有显示出依赖包的目录结构，所以也就说明项目并没有识别出这个依赖包。下面我们通过下面的配置即可。配置的方式有很多，我们采用下面的方式实现。
 
-[![Maven实战-第一篇（Maven的基本信息）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/DFD938C6-12D9-49FB-9E5E-61DDB82909B0.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/DFD938C6-12D9-49FB-9E5E-61DDB82909B0.png)
+[![Maven实战-第一篇（Maven的基本信息）](Maven 实战.assets/image-20241025145956742.png)](Maven 实战.assets/image-20241025145956742.png)
 
 我们在IDEA的File菜单中选择`Project Structure ...`
 
-[![Maven实战-第一篇（Maven的基本信息）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/7588E1C4-317E-40AB-9362-44B492000D6C.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/7588E1C4-317E-40AB-9362-44B492000D6C.png)
+[![Maven实战-第一篇（Maven的基本信息）](Maven 实战.assets/image-20241025145956743.png)](Maven 实战.assets/image-20241025145956743.png)
 
 然后选择`Libraires`
 
-[![Maven实战-第一篇（Maven的基本信息）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/B5FBEF52-DF9F-49D4-9527-CFE69094536D.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/B5FBEF52-DF9F-49D4-9527-CFE69094536D.png)
+[![Maven实战-第一篇（Maven的基本信息）](Maven 实战.assets/image-20241025145956744.png)](Maven 实战.assets/image-20241025145956744.png)
 
 点击`+`选择`Java`然后选择我们之前项目中创建的目录即可。
 
-[![Maven实战-第一篇（Maven的基本信息）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/EF0E9CEF-F62A-4C8C-94F0-7FAB52D039D4.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/EF0E9CEF-F62A-4C8C-94F0-7FAB52D039D4.png)
+[![Maven实战-第一篇（Maven的基本信息）](Maven 实战.assets/image-20241025145956745.png)](Maven 实战.assets/image-20241025145956745.png)
 
 这块就是我们上面所说的，我们实际上也可以不选择一个目录，而是直接选择一个依赖包，这样我们依然可以在项目中引入它。只不过选择目录好好处是，如果我有新和依赖包的要引入时，直接拷贝到这个目录中就可以直接引入了，而不需要在次配置了。这就是选择目录的好处。
 
-[![Maven实战-第一篇（Maven的基本信息）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/DDE2A597-BFEC-43CA-9ECE-B2291BF79F7F.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/DDE2A597-BFEC-43CA-9ECE-B2291BF79F7F.png)
+[![Maven实战-第一篇（Maven的基本信息）](Maven 实战.assets/image-20241025145956746.png)](Maven 实战.assets/image-20241025145956746.png)
 
 我们在次查看项目中的依赖包，发现项目中可以识别出我们依赖包的里的目录结构了。下面我们修改一下代码来将我们之前说的把对象转成Json。
 
@@ -143,7 +143,7 @@ java: 无法访问com.alibaba.fastjson2.util.Wrapper
 
 当我们以为大功告成的时候，发现上面的代码居然报错了。我们看上面的输出日志发现是缺少了`fastjson2`的依赖包。下面我们将这个依赖我也拷贝到项目中。
 
-[![Maven实战-第一篇（Maven的基本信息）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/BF2ED85C-FFB1-459A-B785-B15BF66A9610.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/BF2ED85C-FFB1-459A-B785-B15BF66A9610.png)
+[![Maven实战-第一篇（Maven的基本信息）](Maven 实战.assets/image-20241025145956747.png)](Maven 实战.assets/image-20241025145956747.png)
 
 我们在次执行上面的代码，查看一下日志输出。
 
@@ -163,7 +163,7 @@ Caused by: java.lang.ClassNotFoundException: com.alibaba.fastjson2.support.AwtRe
 
 我们发现日志还是报错，并且从日志中我们找到了`java.lang.ClassNotFoundException`异常的关键字，说明我们依赖包里还缺少依赖。下面我们将缺少的依赖在拷贝到项目中。
 
-[![Maven实战-第一篇（Maven的基本信息）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/770A4E90-DDCC-4B28-8574-CD431F5D9DDC.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/770A4E90-DDCC-4B28-8574-CD431F5D9DDC.png)
+[![Maven实战-第一篇（Maven的基本信息）](Maven 实战.assets/image-20241025145956748.png)](Maven 实战.assets/image-20241025145956748.png)
 
 在次执行上面的代码，观察日志输出。
 
@@ -348,7 +348,7 @@ java -version
 
 *   输出
 
-[![Maven实战-第一篇（Maven的基本信息）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/CA6CBF7B-ED7B-4855-A312-FCD302AD611F.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/CA6CBF7B-ED7B-4855-A312-FCD302AD611F.png)
+[![Maven实战-第一篇（Maven的基本信息）](Maven 实战.assets/image-20241025145956749.png)](Maven 实战.assets/image-20241025145956749.png)
 
 这样则表示我们的环境变量配置成功了。
 
@@ -364,11 +364,11 @@ echo $JAVA_HOME
 
 当我们访问上述官方网站时，首页直接就会看到Maven的下载地址。我们直接点击Download链接即可：
 
-[![Maven实战-第一篇（Maven的基本信息）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/0338B90E-307A-4C30-92EE-CEAD41E8A38A.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/0338B90E-307A-4C30-92EE-CEAD41E8A38A.png)
+[![Maven实战-第一篇（Maven的基本信息）](Maven 实战.assets/image-20241025145956750.png)](Maven 实战.assets/image-20241025145956750.png)
 
 当我们点击后就会看到有多种类型的安装包供我们下载，也就是如下图所示：
 
-[![Maven实战-第一篇（Maven的基本信息）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/27893E5D-61E1-4F1C-99B3-D7A82CC35AAB.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/27893E5D-61E1-4F1C-99B3-D7A82CC35AAB.png)
+[![Maven实战-第一篇（Maven的基本信息）](Maven 实战.assets/image-20241025145956751.png)](Maven 实战.assets/image-20241025145956751.png)
 
 它们具体的区别是，提供了不够平台的下载文件。如果是Linux或者是MacOS推荐使用`tar.gz`的下载文件，如果是Windows平台的推荐使用`zip`后缀的下载文件。除此之外，Maven官方还提供了，上述不同平台的md5校验和（checksum）文件和asc数字签名文件，目的是可以用来检验Maven下载包的正确性和安全性。如果你想对Maven的源码感兴趣可以下载`src`的版本文件，自己构建Maven。那由于我是MacOS系统，所以我下载tar包就可以了。
 
@@ -406,7 +406,7 @@ mvn-v
 sudo vim ~/.bash_profile
 ```
 
-[![Maven实战-第一篇（Maven的基本信息）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/B5A954A8-3D85-4AF3-8DC6-01B002BFD6E5.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/B5A954A8-3D85-4AF3-8DC6-01B002BFD6E5.png)
+[![Maven实战-第一篇（Maven的基本信息）](Maven 实战.assets/image-20241025145956752.png)](Maven 实战.assets/image-20241025145956752.png)
 
 当输入上述命令后，系统会提未你输入机器的登陆密码，当我们输入成功后，就会进入到文件当中，然后将下面的配置添加到`bash_profile`文件中。
 
@@ -417,19 +417,19 @@ export PATH=$PATH:$MAVEN_HOME/bin
 
 注意，上面说的`MAVEN_HOME`对应的是系统的Maven解压后的路径。当设置完成后，输入`:wq`命令保存我们刚刚打开的文件。然后我们还需要执行下面的命令，让上述的配置立即生效。
 
-[![Maven实战-第一篇（Maven的基本信息）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/9B2A7FE2-1097-4591-8274-B2D31C69181A.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/9B2A7FE2-1097-4591-8274-B2D31C69181A.png)
+[![Maven实战-第一篇（Maven的基本信息）](Maven 实战.assets/image-20241025145956753.png)](Maven 实战.assets/image-20241025145956753.png)
 
 ```bash
 source ~/.bash_profile
 ```
 
-[![Maven实战-第一篇（Maven的基本信息）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/FF14151D-9EFC-42C8-B1DF-7254C39AECA1.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/FF14151D-9EFC-42C8-B1DF-7254C39AECA1.png)
+[![Maven实战-第一篇（Maven的基本信息）](Maven 实战.assets/image-20241025145956754.png)](Maven 实战.assets/image-20241025145956754.png)
 
 由于我们已经输入完机器的登陆密码了，所以这次我们不需要在输入机器的密码了。
 
 接着，我们输入`mvn-v`命令，看检查是否成功的返回的Maven的版本信息。
 
-[![Maven实战-第一篇（Maven的基本信息）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/43682BF5-DAC4-4D8E-8061-A58A699847EB.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/43682BF5-DAC4-4D8E-8061-A58A699847EB.png)
+[![Maven实战-第一篇（Maven的基本信息）](Maven 实战.assets/image-20241025145956755.png)](Maven 实战.assets/image-20241025145956755.png)
 
 看上图中显示了我们指定的Maven版本，并且还显示出了我们Maven配置的路径，这表示我们Maven配置成功了，可以直接使用了。
 
@@ -442,19 +442,19 @@ source ~/.bash_profile
 
 *   bin：很多的开源软件中都包括这具目录也就是目录`bin`目录。在这个目录中主要包括了Maven运行的所有脚本文件，其中没有带`.cmd`后缀的命令为Linux平台的脚本文件，带`.cmd`后缀的为Windows平台的脚本文件。在此目录中还提供了我们上述中我们介绍过的`mvn`命令脚本。除此之外Maven还提供了`mvnDebug`命令。它俩的区别是后者在运行时开启debug模式，可以允许我们调试Maven。下图为`bin`目录的相关截图：
 
-[![Maven实战-第一篇（Maven的基本信息）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/81A60C12-96A3-48B9-87DA-368F67DED56C.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/81A60C12-96A3-48B9-87DA-368F67DED56C.png)
+[![Maven实战-第一篇（Maven的基本信息）](Maven 实战.assets/image-20241025145956756.png)](Maven 实战.assets/image-20241025145956756.png)
 
 *   boot：boot`目录下有一个jar文件。该文件的作用是Maven自己实现的类加载器。和默认的Java类加载器相比，它提供了丰富的语法和配置，Maven使用此类加载器加载自己的类库。
 
-[![Maven实战-第一篇（Maven的基本信息）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/007AEAB9-6D77-4E7D-A4F1-2CBAC88C2568.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/007AEAB9-6D77-4E7D-A4F1-2CBAC88C2568.png)
+[![Maven实战-第一篇（Maven的基本信息）](Maven 实战.assets/image-20241025145956757.png)](Maven 实战.assets/image-20241025145956757.png)
 
 *   conf：conf`目录中包含了一个非常重要的文件`settings.xml`文件。在后续的内容中我们会详细`settings.xml`文件。通过该文件我们可以全局地定制Maven的行为。
 
-[![Maven实战-第一篇（Maven的基本信息）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/1902DAE0-DD3A-467B-AE07-2F2EFA777F4D.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/1902DAE0-DD3A-467B-AE07-2F2EFA777F4D.png)
+[![Maven实战-第一篇（Maven的基本信息）](Maven 实战.assets/image-20241025145956758.png)](Maven 实战.assets/image-20241025145956758.png)
 
 *   lib：lib`目录中包括了Maven运行时依赖的所有的Java类库。这也间接的说明了Maven是使用Jave语言开发的。
 
-[![Maven实战-第一篇（Maven的基本信息）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/A8DF0678-4A10-4CAA-B197-A7C5687F95EE.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%80%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%89.resources/A8DF0678-4A10-4CAA-B197-A7C5687F95EE.png)
+[![Maven实战-第一篇（Maven的基本信息）](Maven 实战.assets/image-20241025145956759.png)](Maven 实战.assets/image-20241025145956759.png)
 
   
 
@@ -469,11 +469,11 @@ source ~/.bash_profile
 
 下面我们按照软件开发的惯例，创建一个Helloworld空项目。具体操作如图所示：
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/C1515BC4-6512-416C-9505-F9FE04AE3A15.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/C1515BC4-6512-416C-9505-F9FE04AE3A15.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025175710940.png)](Maven 实战.assets/image-20241025175710940.png)
 
 然后我们在这个项目的根目录中创建一个`pom.xml`文件。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/C466D4E9-83F2-4C7F-B608-BA36A9661523.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/C466D4E9-83F2-4C7F-B608-BA36A9661523.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025150741194.png)](Maven 实战.assets/image-20241025150741194.png)
 
 我们IDEA中提示了我们`pom.xml`文件报错了，这是因为`pom.xml`文件中有Maven约定的语法规则，我们现在的`pom.xml`文件是空的所以报错了。`pom.xml`文件中可以配置的语法非常的多，我们下面介绍一下，`pom.xml`文件中必须要设置的内容。
 
@@ -500,7 +500,7 @@ source ~/.bash_profile
 
 当我们配置完上述内容时，我们发现`pom.xml`中已经不显示报错信息了，这就表明我们配置的没有任何问题了，如果还是报错，而表示我们有的标签配置的还是有误。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/373798B8-7B45-41B9-9E78-F648A59E8186.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/373798B8-7B45-41B9-9E78-F648A59E8186.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025150741195.png)](Maven 实战.assets/image-20241025150741195.png)
 
 
 
@@ -534,19 +534,19 @@ src/test/java
 
 按照上面介绍的我们先在项目中创建一个`src/main/java`目录。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/D8335C86-B392-414F-ADF6-3B3AEA05CD3B.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/D8335C86-B392-414F-ADF6-3B3AEA05CD3B.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025150741196.png)](Maven 实战.assets/image-20241025150741196.png)
 
 然后我们在创建一个新的Java类，来测试一下，代码能否执行成功。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/64658984-780C-4E00-8F25-55A37876B4D0.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/64658984-780C-4E00-8F25-55A37876B4D0.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025150741197.png)](Maven 实战.assets/image-20241025150741197.png)
 
 当我们要创建Java类，发现IDEA中已经没有我们想要创建Java类的那个菜单了。这是因为IDEA认为`src`才是源代码的目录。所以没有显示可以创建Java的菜单。要想可以显示出创建Java的菜单也非常的简单，也就是告诉IDEA此时`src/main/java`目录就是项目的源代码目录即可。具体配置如下：
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/A42C197B-0918-45E4-B789-738C6849287E.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/A42C197B-0918-45E4-B789-738C6849287E.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025150741198.png)](Maven 实战.assets/image-20241025150741198.png)
 
 这样IDEA就会识别出我们现在选择的这个目录是源码目录，就允许我们创建Java文件。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/03326708-A604-4FD3-8BC8-45A60D523546.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/03326708-A604-4FD3-8BC8-45A60D523546.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025150741199.png)](Maven 实战.assets/image-20241025150741199.png)
 
 我们首先创建一个简单的Java类，来验证一下，项目是否能成功的执行的我们的代码。
 
@@ -566,7 +566,7 @@ public class Mazhe {
 Hello World Mazhe Maven
 ```
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/65DA8AE5-2603-4E03-A48A-05FAF80277B4.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/65DA8AE5-2603-4E03-A48A-05FAF80277B4.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025150741200.png)](Maven 实战.assets/image-20241025150741200.png)
 
 下面我们还是改造一下代码，按照第一篇中例子一样，我们创建一个对象，然后将对象转换成JSON字符串。
 
@@ -627,23 +627,23 @@ Userinfo{username='mazhe', passworld='maven'}
 - https://mvnrepository.com
 
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/05248A7B-DA39-434B-AD44-86001F9320F7.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/05248A7B-DA39-434B-AD44-86001F9320F7.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025150741201.png)](Maven 实战.assets/image-20241025150741201.png)
 
 我们可以在上面搜索中直接搜索我们想要的依赖包。按照需求，我们需要将对象转换成json。这样的工具类很多，我们使用fastjson的方式实现。所以我们只需要在上面的网站上搜索即可。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/77ACBAFC-E67E-4FFF-9141-5B371C12BA7D.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/77ACBAFC-E67E-4FFF-9141-5B371C12BA7D.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025150741202.png)](Maven 实战.assets/image-20241025150741202.png)
 
 然后我们点击上面的链接，就会显示出这个依赖包所有可以使用的版本。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/55CDF295-25E7-45CC-8C73-918B55B1B110.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/55CDF295-25E7-45CC-8C73-918B55B1B110.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025150741203.png)](Maven 实战.assets/image-20241025150741203.png)
 
 我们随便选择一个版本即可。在实际的软件开发中，我们需要选择相对比较稳定的版本，这样的版本问题比较少。那如何选择文档的版本呢。我们可以通过上图中的`Usages`参数来观察，这个参数越多，则表示使用的人越多。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/86B6FFB0-379F-4D82-8F97-6334D93097EB.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/86B6FFB0-379F-4D82-8F97-6334D93097EB.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025150741204.png)](Maven 实战.assets/image-20241025150741204.png)
 
 当我们选择一个版本后，点击链接就会显示出我们使用这个依赖包具体的Maven配置信息了。并且，通过上图中我们可以观察到，除了Maven外，它还支持其它的项目管理工具，例如Gradle。我们点击这个标签就会显示Gradle的配置信息。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/FB5A27B7-83CD-4383-B1B2-BDCE26B77E2D.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/FB5A27B7-83CD-4383-B1B2-BDCE26B77E2D.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025150741205.png)](Maven 实战.assets/image-20241025150741205.png)
 
 下面我们介绍一下，如何使用上面的Maven配置。我们拷贝一下fastjson的Maven配置信息，然后粘贴到项目的pom.xml文件中。之前我们介绍过，pom.xml是项目的构建文件，所以所有和Maven相关的配置都可以在pom.xml文件中配置。
 
@@ -667,7 +667,7 @@ Userinfo{username='mazhe', passworld='maven'}
 
 当我们将上面的配置粘贴到pom.xml后，发现文件居然报错了。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/AB3B419A-22F7-4892-AE02-30394787BBBA.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/AB3B419A-22F7-4892-AE02-30394787BBBA.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025150741206.png)](Maven 实战.assets/image-20241025150741206.png)
 
 这是因为上面的配置不符合Maven的语法规则。具体的原因是因为Maven中需要将所有的依赖配置都放到`<dependencies></dependencies>`标签中。也就是如下配置才可以：
 
@@ -693,19 +693,19 @@ Userinfo{username='mazhe', passworld='maven'}
 
 当我们这样配置完后成后，发现依赖包的版本显示红色了，这是因为Maven还没有查找到这个依赖包。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/7D28816D-206E-4B58-BAC8-8CB01C38E165.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/7D28816D-206E-4B58-BAC8-8CB01C38E165.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025150741207.png)](Maven 实战.assets/image-20241025150741207.png)
 
 这是因为IDEA暂时还没有将我们这个项目识别出Maven项目。所以需要选中pom.xml文件，然后右键选择：`Add as Maven Project`
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/449F3489-C5C9-4407-9385-A1ADA99D3EE5.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/449F3489-C5C9-4407-9385-A1ADA99D3EE5.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025150741208.png)](Maven 实战.assets/image-20241025150741208.png)
 
 当我们这样操作完成后，我们发现我们的版本已经不会报错了。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/C42FAB5A-D874-4FA8-9B77-7D7E958A336D.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/C42FAB5A-D874-4FA8-9B77-7D7E958A336D.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025150741209.png)](Maven 实战.assets/image-20241025150741209.png)
 
 并且这时我们看项目的依赖包，发现Maven已经自动将fastjson依赖的所有包都下载成功了。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/E424B65D-84CE-4D95-AD81-3BEEFA9ED2EA.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/E424B65D-84CE-4D95-AD81-3BEEFA9ED2EA.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025150741210.png)](Maven 实战.assets/image-20241025150741210.png)
 
 下面我们在项目中使用一下，看看用Maven引入依赖包的方式和我们自己引用有没有什么区别。
 
@@ -761,11 +761,11 @@ mvn clean compile
 
 当我们在项目的根目录中输入完上面的命令后，Maven就会自动的执行项目的编译。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/05B93CD3-BE85-4DCA-965C-DFCB1D6A20EB.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/05B93CD3-BE85-4DCA-965C-DFCB1D6A20EB.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025150741211.png)](Maven 实战.assets/image-20241025150741211.png)
 
 当我们输入完上面的Maven命令后，Maven就会开始工作了，并且通过上图中，我们也可以发现Maven执行时输出的日志信息。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/1FA00DD3-BAAA-44F2-9C13-53B0FE741FCF.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/1FA00DD3-BAAA-44F2-9C13-53B0FE741FCF.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025150741212.png)](Maven 实战.assets/image-20241025150741212.png)
 
 当项目编译成功后就会在项目的根目录中创建target目录，然后将主代码的中编译好的class文件放到target中的classes目录下。也就上图所示。
 
@@ -789,15 +789,15 @@ mvn clean compile
 
 同样的我们在项目中创建一个`src/test/java`目录。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/BAD137B4-CCCD-4C42-A395-6BF1EE8804F9.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/BAD137B4-CCCD-4C42-A395-6BF1EE8804F9.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025150741213.png)](Maven 实战.assets/image-20241025150741213.png)
 
 然后我们继续创建一个测试类，但当我们右键创建时，发现了类似的问题，就是没有提供创建Java类的菜单，这个问题和上面遇到的问题一样，是因为IDEA并没有识别出我们这个测试类的目录，同样的我们使用下面的方式配置一下即可。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/D3F8DD78-7169-4303-AFAF-EBCB1D2D5A66.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/D3F8DD78-7169-4303-AFAF-EBCB1D2D5A66.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025150741214.png)](Maven 实战.assets/image-20241025150741214.png)
 
 这里有一点选择和上面的不同，就是因为这次我们创建的是测试类的目录，所以我们要选择`Test Rources Root`，而不是之前我们选择的`Sources Root`。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/55F7EF5E-62BB-43C7-9FFA-3CCB309360BC.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/55F7EF5E-62BB-43C7-9FFA-3CCB309360BC.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025150741215.png)](Maven 实战.assets/image-20241025150741215.png)
 
 当我们设置完成后，在右键创建时，我们发现这时IDEA可以允许我们创建Java类了。下面我们创建一个测试类，具体的代码如下：
 
@@ -814,7 +814,7 @@ public class MazheTest {
 
 我们简单说明一下上面的代码。因为这里面和我们平常写的代码还是有一些不一样的。例如我们之前要写可以执行的代码时，需要写`public static void main(String[] args)` 方法才可以执行。而当我们使用junit进行测试时代码时，对可以执行的方法名称并没有要求，可以随便定义符合Java规范的方法名，然后在对应的方法上添加`@Test`注解即可，这样这个方法就可以使用Maven进行测试了，也可以我们通过右键的方式直接运行。下面我们执行一下：
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/3AB8FBE8-0954-4B38-A988-8EC748B49EC6.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/3AB8FBE8-0954-4B38-A988-8EC748B49EC6.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025150741216.png)](Maven 实战.assets/image-20241025150741216.png)
 
 我们看日志的输入成功的输出了我们代码中的结果。下面我们还是使用Maven命令的方式来执行一下我们测试的代码，要如何使用呢?很简单，我们还是通过命令的方式即可。在Maven中执行测试的命令为：
 
@@ -824,9 +824,9 @@ mvn clean test
 
 我们在项目的根目录中执行一下上面的命令，来看一下输出的结果。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/617FA9C1-1BCB-4363-A1E4-851AD6F21972.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/617FA9C1-1BCB-4363-A1E4-851AD6F21972.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025174639448.png)](Maven 实战.assets/image-20241025174639448.png)
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/29656DF0-82B8-47E5-94C0-5376C8398469.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/29656DF0-82B8-47E5-94C0-5376C8398469.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025174639449.png)](Maven 实战.assets/image-20241025174639449.png)
 
 我们看日志输出，不但成功的输出了我们测试代码中的内容，还输出了我们本次运行了多少测试，运行了多少和失败了多少等统计的信息。这也就是使用Maven非常方便的体现。下面我们将上面的代码手动抛出一个异常，然后在执行一下测试用例在看一下，这次Maven会输入什么样的信息。
 
@@ -846,11 +846,11 @@ public class MazheTest {
 
 我们手动输出了一个除以0的操作，所以上面的代码会抛出异常，我们看这时Maven的日志输出，会不会成功的输入异常上面的内容。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/619FA239-34CD-4819-8153-02C096D7516B.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/619FA239-34CD-4819-8153-02C096D7516B.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025174639450.png)](Maven 实战.assets/image-20241025174639450.png)
 
 我们看异常上面的代码也成功的输出了，但是是执行下面的代码报错了。并且Maven已经将错误的信息输出。下面我们在看一下Maven中测试用例的统计信息，我们可以看到显示运行了一个，错误的一个。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/56F261BC-A4E9-4E48-98C6-26645D037B12.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/56F261BC-A4E9-4E48-98C6-26645D037B12.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025174639451.png)](Maven 实战.assets/image-20241025174639451.png)
 
 * * *
 
@@ -877,11 +877,11 @@ mvn clean package
 
 当我们执行完上面的命令后，Maven就会将打包完的jar包放到target目录下。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/4033CC58-F9D0-413E-A0F3-50B9BEA36E01.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/4033CC58-F9D0-413E-A0F3-50B9BEA36E01.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025174639452.png)](Maven 实战.assets/image-20241025174639452.png)
 
 我们通过上面的Maven日志输出可以很方便的看到，这个jar包生成的目录地址。我们直接进入到target目录中，也可以直接看到我们刚刚打包完的jar包。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/FF4F3B0D-3935-459B-859E-1B45D3670697.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/FF4F3B0D-3935-459B-859E-1B45D3670697.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025174639453.png)](Maven 实战.assets/image-20241025174639453.png)
 
 Maven默认的打包命名规则为当前项目的名称。当然我们也可以通过Maven中提供的`finalName`来自定义该打包文件的名称。具体配置如下：
 
@@ -924,7 +924,7 @@ Maven默认的打包命名规则为当前项目的名称。当然我们也可以
 
 然后我们继续执行`mvn clean package`命令后在看一下打包后的jar包是否为我们配置中指定的名称。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/57AF4533-3183-46E7-A0DB-25849E7C20F7.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/57AF4533-3183-46E7-A0DB-25849E7C20F7.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025174639454.png)](Maven 实战.assets/image-20241025174639454.png)
 
 我们看上图中的结果，我们成功的指定了我们打包的名称了，这也就是`finalName`标签的作用。
 
@@ -938,7 +938,7 @@ mvn clean install
 
 当我们执行完上面的命令后，Maven依然会在项目的target中生成相应的jar包。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/BA8ED8F9-B760-4E5A-B4EF-5889052941A8.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/BA8ED8F9-B760-4E5A-B4EF-5889052941A8.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025174639455.png)](Maven 实战.assets/image-20241025174639455.png)
 
 除此之外Maven还会将这个jar包生成到本地的仓库中，也就是上图中`Installing`输出的目录信息。由于Maven中涉及仓库的内容，我们会在后续的内容中详细的介绍，所以我们暂时可以先理解当我们执行完上面的命令后，Maven就会将这个jar包安装到我们的Maven指定的目录中，并且这个目录可以允许其它项目通过依赖配置的方式引入我们这个依赖包。
 
@@ -982,7 +982,7 @@ java -jar mazhe-maven-1.0.jar
 
 当我们输入上述命令时，就会发现成功输出了我们Main方法的内容了。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/6A46D90F-D484-4F07-9ED3-D364E8089F54.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/6A46D90F-D484-4F07-9ED3-D364E8089F54.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025174639456.png)](Maven 实战.assets/image-20241025174639456.png)
 
 这时可能有人会怀疑，如果我们不配置上面的信息，直接打包，然后直接使用上面的命令运行我们Jar包，会显示什么结果呢？
 
@@ -1039,7 +1039,7 @@ java -jar mazhe-maven-1.0.jar
 
 下面我们执行打包命令，然后直接使用上面的命令运行我们新打包的Jar包。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/5E565436-0A82-4F82-97D8-F4674EC2DCF1.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/5E565436-0A82-4F82-97D8-F4674EC2DCF1.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025174639457.png)](Maven 实战.assets/image-20241025174639457.png)
 
 我们看上图所示，Jar在运行时抛出了异常，上面内容指的是没有指定Main方法的类，所以Java不知道要运行哪一个。这也就间接说明了，我们上面配置的信息是没有任何问题的。
 
@@ -1067,65 +1067,65 @@ mvn clean install # 安装项目到本地
 
 下面我们测试一下，使用`mvn archetype:generate`。生成Maven项目骨架时，都会自动给我们生成哪些内容。我们首先选择一个空项目，然后执行上面的命令。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/08D6DF07-BDD7-44A9-AC3E-B0D73B66479F.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/08D6DF07-BDD7-44A9-AC3E-B0D73B66479F.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025174639458.png)](Maven 实战.assets/image-20241025174639458.png)
 
 输入`mvn archetype:generate`命令。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/CCC03F5D-AB95-460C-BE1C-4A2D35F14071.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/CCC03F5D-AB95-460C-BE1C-4A2D35F14071.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025174639459.png)](Maven 实战.assets/image-20241025174639459.png)
 
 当我们输入完上面的命令后，Maven就会自动运行创建我们想要的项目骨架。但运行中时，需要我们做出人为的选择。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/D7B57C39-4868-4F4B-A6F4-1C04162A44E0.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/D7B57C39-4868-4F4B-A6F4-1C04162A44E0.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025174639460.png)](Maven 实战.assets/image-20241025174639460.png)
 
 上面提示的2065，指的就是Maven会安装下面的方式创建项目骨架。那为什么Maven提供的了这么多选项呢？这是因为不同的项目，需要生成的项目骨架是不一样的，例如Java Web的项目的和普通Java项目就是不一样的，所以Maven为了兼容这种情况，提供了很多的选择，我们在使用`mvn archetype:generate`创建项目时，通常按照默认的方式创建即可，除非你有特殊的创建需求，在选择指定的创建规则。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/1F3CCBEB-C453-46A9-AD91-5CCC3C12378C.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/1F3CCBEB-C453-46A9-AD91-5CCC3C12378C.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025174639461.png)](Maven 实战.assets/image-20241025174639461.png)
 
 我们回车后，让Maven继续创建，也就是默认选择了2065创建。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/2D5A3ED8-0B24-4F12-9F4D-F9A5166842DE.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/2D5A3ED8-0B24-4F12-9F4D-F9A5166842DE.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025174639462.png)](Maven 实战.assets/image-20241025174639462.png)
 
 当我们选择后，会提示让我们选择相应的版本，我们通常选择比较稳定的版本即可，也就是不待任何修饰的版本，我们选择最后一个，也就是默认的选项8。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/EB9A60D0-9300-4C52-B2EE-DE605C2F81A7.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/EB9A60D0-9300-4C52-B2EE-DE605C2F81A7.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025174639463.png)](Maven 实战.assets/image-20241025174639463.png)
 
 继续后，Maven又提示了，这回没有选择项了，需要我们手动的填入了，也就是`groupId`参数，这个参数上面的内容介绍过，项目的基本坐标，不要重复，我们随便写`cn-mazhe.maven`然后继续。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/FAC53E4D-26DC-4652-A2EC-ABC6FE41AF74.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/FAC53E4D-26DC-4652-A2EC-ABC6FE41AF74.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025174639464.png)](Maven 实战.assets/image-20241025174639464.png)
 
 Maven又让我们写`artifactId`参数，这个参数我们也介绍过，项目的唯一标识，我们写`mazhe-maven-quickstart`然后继续。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/7D2CEF14-2C89-4520-A5BD-00EB4AEE1093.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/7D2CEF14-2C89-4520-A5BD-00EB4AEE1093.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025174639465.png)](Maven 实战.assets/image-20241025174639465.png)
 
 这时又提示需要我们指定项目的版本了，并且通过上面的提示，我们可以看到，Maven在提示我们版本时，这个版本号的后面添加了SNAPSHOT修饰，这是什么意思呢？
 
 在Maven中后缀添加SNAPSHOT的为快照版本，它本普通的版本在使用上没有任何区别，但是在下载更新时还是有区别的，我们后续的内容中在详细的介绍有关Maven版本的内容，我们继续。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/B468B81E-41BA-4D41-86B6-8F52386D2F8C.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/B468B81E-41BA-4D41-86B6-8F52386D2F8C.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025174639466.png)](Maven 实战.assets/image-20241025174639466.png)
 
 Maven提示我们这个项目的包路径是不是我们上面指定的那个`groupId`参数路径。这个我们可以随便修改。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/3F4C6FFC-032A-4954-B3E2-347B29E77A04.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/3F4C6FFC-032A-4954-B3E2-347B29E77A04.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025174639467.png)](Maven 实战.assets/image-20241025174639467.png)
 
 当我们执行完成后，Maven提示了我们项目构建成功了。下面我们用IDEA打开这个项目看一样，Maven都会我们生成哪些内容了。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/19CD1C03-F556-4C49-AC6D-DD187F739681.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/19CD1C03-F556-4C49-AC6D-DD187F739681.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025174639468.png)](Maven 实战.assets/image-20241025174639468.png)
 
 如上图所示，使用Maven中的`mvn archetype:generate`创建项目骨架时，生成了我们使用Maven默认约定的配置。也就是我们上面内容中手动创建的内容。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/C6DAA9ED-1C93-4F23-819D-49A964CC83E2.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/C6DAA9ED-1C93-4F23-819D-49A964CC83E2.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025174639469.png)](Maven 实战.assets/image-20241025174639469.png)
 
 并且通过观察我们还发现了在pom.xml中还为我们生成了，很多我们没介绍过的标签内容。这里先不用担心，我们后续的内容中，都会详细的介绍。我们下面执行一下上面生成的代码，看一下项目是否能够运行。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/96C4DEFE-8125-49A3-9E3B-465B43EEDC71.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/96C4DEFE-8125-49A3-9E3B-465B43EEDC71.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025174639470.png)](Maven 实战.assets/image-20241025174639470.png)
 
 当我们执行时，我们发现，IDEA中并没有显示可以运行的按钮，这是什么原因呢。这是因为我们是在一个空的项目中创建了上面的另外的一个项目，所以IDEA并没有将这个项目识别出是一个Maven项目，已经这是我们创建空项目的一个目录。要想解决这个问题，有两种途径，一种是用IDEA,直接打开我们生成的这个项目。还有一个办法，就是如下图所示，我们设置一下。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/30351783-E23E-47B0-BDC3-72BAE6888E83.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/30351783-E23E-47B0-BDC3-72BAE6888E83.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025174639471.png)](Maven 实战.assets/image-20241025174639471.png)
 
 选中pom.xml文件，然后我们右键选择`Add as Maven Project`即可。
 
-[![Maven实战-第二篇（Maven的入门）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/4AC91109-E7C8-47B6-A615-E61BC1DD13D5.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E7%AF%87%EF%BC%88Maven%E7%9A%84%E5%85%A5%E9%97%A8%EF%BC%89.resources/4AC91109-E7C8-47B6-A615-E61BC1DD13D5.png)
+[![Maven实战-第二篇（Maven的入门）](Maven 实战.assets/image-20241025174639472.png)](Maven 实战.assets/image-20241025174639472.png)
 
 这样我们就可以执行上图中自动生成的代码了。
 
@@ -1247,7 +1247,7 @@ classifier元素定义Maven中的附属构建。我们知道在Maven中可以使
 
 首先我们先创建一个Maven的项目，因为之前的内容已经详细介绍过怎么创建了，所以我们这里就不做过多的介绍了。我们直接创建一个`midai-mazhe-maven`项目。
 
-[![Maven实战-第四篇（Maven的依赖配置）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/C670B226-14EF-4D5D-B015-AB75ACD30D93.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/C670B226-14EF-4D5D-B015-AB75ACD30D93.png)
+[![Maven实战-第四篇（Maven的依赖配置）](Maven 实战.assets/image-20241025174639473.png)](Maven 实战.assets/image-20241025174639473.png)
 
 然后我们写一个测试类测试一下项目。
 
@@ -1267,7 +1267,7 @@ public class MaZheMaven {
 Hello World MaZhe Maven
 ```
 
-[![Maven实战-第四篇（Maven的依赖配置）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/747B5844-BEF3-4BD4-952D-B3458A10E606.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/747B5844-BEF3-4BD4-952D-B3458A10E606.png)
+[![Maven实战-第四篇（Maven的依赖配置）](Maven 实战.assets/image-20241025174639474.png)](Maven 实战.assets/image-20241025174639474.png)
 
 通过上图证明了我们刚刚创建的项目是没有任何问题的。下面我们还是和之前一样创建一个对象然后使用fastjson工具类转成json。
 
@@ -1333,11 +1333,11 @@ mvn clean install
 
 上面实际上是两个命令，`install`命令我们介绍过，就是将依赖包安装到达本地仓库中。而`clean`命令的作用就是清理的意思。我们知道当执行Maven命令编译或者打包时，当执行完成后，会在项目的根目录中创建一个target目录，然后Maven将相应的jar包生成到这个目录中。而`clean`命令的作用就是删除这个目录。如果我们不执行`clean`命令，而直接执行`install`命令而Maven并不会自动删除之前target目录下生成的内容。所以为了方便，也为了我们不会使用错jar包。我们实际的工作中基本上会联合使用上面的命令。
 
-[![Maven实战-第四篇（Maven的依赖配置）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/36678299-745D-49D4-B0EB-8AF346CAD66B.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/36678299-745D-49D4-B0EB-8AF346CAD66B.png)
+[![Maven实战-第四篇（Maven的依赖配置）](Maven 实战.assets/image-20241025174639475.png)](Maven 实战.assets/image-20241025174639475.png)
 
 我们之前也介绍过，当使用`install`命令安装成功后，会将这个依赖包安装到本地的仓库中，这样的好处是其它项目也可以通过Maven依赖的配置引入到自己的项目中。下面我们在创建一个新的项目，来测试一下。
 
-[![Maven实战-第四篇（Maven的依赖配置）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/85654A5C-6146-44DD-8124-441F7667EDCE.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/85654A5C-6146-44DD-8124-441F7667EDCE.png)
+[![Maven实战-第四篇（Maven的依赖配置）](Maven 实战.assets/image-20241025174639476.png)](Maven 实战.assets/image-20241025174639476.png)
 
 这次我们添加一个测试类测试一下代码。为了我们可以使用测试用例，所以我们需要添加`junit`依赖包，具体配置如下：
 
@@ -1386,7 +1386,7 @@ public class MazheMavenTest {
 Hello World Mazhe Maven
 ```
 
-[![Maven实战-第四篇（Maven的依赖配置）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/1AE3A4B7-8F98-4689-B592-828967594B5D.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/1AE3A4B7-8F98-4689-B592-828967594B5D.png)
+[![Maven实战-第四篇（Maven的依赖配置）](Maven 实战.assets/image-20241025174639477.png)](Maven 实战.assets/image-20241025174639477.png)
 
 看上图所示，我们成功引入了junit依赖了。下面我们引入我们上一个项目的依赖，看一下能否直接使用。具体配置如下：
 
@@ -1440,7 +1440,7 @@ public class MazheMavenTest {
 {"password":"maven","username":"mazhe"}
 ```
 
-[![Maven实战-第四篇（Maven的依赖配置）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/A5B4F8F6-B61A-4DEB-9718-D605A8A21027.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/A5B4F8F6-B61A-4DEB-9718-D605A8A21027.png)
+[![Maven实战-第四篇（Maven的依赖配置）](Maven 实战.assets/image-20241025174639478.png)](Maven 实战.assets/image-20241025174639478.png)
 
 我们看上图所示，我们成功了引入了上个项目的依赖。因为默认`type`的参数的值为`jar`。所以我们上述的配置实际上就是验证了引入外部依赖包的功能。那么对于`war`的参数配置也是一样。下面我们验证一下如果将`type`的参数设置为`pom`，然后我们在从另外的项目中引入会有什么效果呢？下面我们尝试一下。首先在`midai-mazhe-maven`项目中将`packaging`参数设置为`pom`。配置如下：
 
@@ -1474,7 +1474,7 @@ public class MazheMavenTest {
 
 然后我们在观察一下测试类的代码，看看有啥不同。
 
-[![Maven实战-第四篇（Maven的依赖配置）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/60CAC658-D6FD-44EC-9DF0-06ADF37FA9F4.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/60CAC658-D6FD-44EC-9DF0-06ADF37FA9F4.png)
+[![Maven实战-第四篇（Maven的依赖配置）](Maven 实战.assets/image-20241025174639479.png)](Maven 实战.assets/image-20241025174639479.png)
 
 我们看midai-mazhe-maven项目中的MaZheMaven显示报错了，这就表明了，我们这个项目中并没有成功的引入这个类的依赖。这个就是`type`参数配置成`pom`的左右。当然这样配置时，Maven并不会引入这个项目本身的任何依赖类，所以我们这个项目中也就引入不到MaZheMaven类了。那这时可能有人想问了，那这样我还引入这个依赖包干什么呢？当这样配置时，虽然Maven不会引入这个依赖包项目本身的代码，但是它将这个项目的配置依赖引入到新项目中，可以简单的理解为将这个项目的pom.xml中的配置引入过来。因为midai-mazhe-maven项目的pom.xml中引入了fastjson依赖，下面我们看一下，我们直接在mazhe-maven项目中是否可以直接使用这个依赖呢？如果可以则说明了，当将`type`参数配置成`pom`时，确实会引入依赖配置。下面我们尝试一下。
 
@@ -1500,7 +1500,7 @@ public class MazheMavenTest {
 "Hello World Mazhe Maven"
 ```
 
-[![Maven实战-第四篇（Maven的依赖配置）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/09D38332-45B2-4889-8AF8-064A619D3B0B.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/09D38332-45B2-4889-8AF8-064A619D3B0B.png)
+[![Maven实战-第四篇（Maven的依赖配置）](Maven 实战.assets/image-20241025174639480.png)](Maven 实战.assets/image-20241025174639480.png)
 
 我们看上图所示，成功的使用了fastjson的工具类了，虽然我们项目本身没有引入fastjson的依赖，但是因为我们引入了midai-mazhe-maven项目，该项目配置了fastjson的依赖。所以本项目可以直接使用。这就是type参数的作用。
 
@@ -1562,7 +1562,7 @@ public class MaZheMaven {
 }
 ```
 
-[![Maven实战-第四篇（Maven的依赖配置）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/6EECB137-6B50-4CFF-9E88-65AE2835AD8B.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/6EECB137-6B50-4CFF-9E88-65AE2835AD8B.png)
+[![Maven实战-第四篇（Maven的依赖配置）](Maven 实战.assets/image-20241025174639481.png)](Maven 实战.assets/image-20241025174639481.png)
 
 *   MaZheMavenTest
 
@@ -1576,7 +1576,7 @@ public class MaZheMavenTest {
 }
 ```
 
-[![Maven实战-第四篇（Maven的依赖配置）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/C5C61E8F-7E2D-4B63-A329-6CC08A5479C6.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/C5C61E8F-7E2D-4B63-A329-6CC08A5479C6.png)
+[![Maven实战-第四篇（Maven的依赖配置）](Maven 实战.assets/image-20241025174639482.png)](Maven 实战.assets/image-20241025174639482.png)
 
 由于`compile`依赖范围的是针对编译、测试和运行都是有效的，所以上面的代码均可运行，都可以引入fastjson的依赖包。
 
@@ -1617,11 +1617,11 @@ public class MaZheMavenTest {
 
 *   MaZheMaven
 
-[![Maven实战-第四篇（Maven的依赖配置）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/B561BC5A-A555-46D2-9B3D-2E3B78D997CC.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/B561BC5A-A555-46D2-9B3D-2E3B78D997CC.png)
+[![Maven实战-第四篇（Maven的依赖配置）](Maven 实战.assets/image-20241025174639483.png)](Maven 实战.assets/image-20241025174639483.png)
 
 *   MaZheMavenTest
 
-[![Maven实战-第四篇（Maven的依赖配置）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/8ED3BBA3-83C5-465F-AE14-B5FE8ED96072.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/8ED3BBA3-83C5-465F-AE14-B5FE8ED96072.png)
+[![Maven实战-第四篇（Maven的依赖配置）](Maven 实战.assets/image-20241025174639484.png)](Maven 实战.assets/image-20241025174639484.png)
 
 如上图所示，我们看到MaZheMaven类报错了。这是因为上面所说的，test的依赖范围只对测试环境有效，其它环境均是无效的。因为MaZheMaven类在主代码目录中，所以报错了。下面我们打包一下这个项目，看一下test范围的依赖包会不会生成在打包文件中。在执行打包命令前，需要将MaZheMaven类的代码注释，否则会报编译失败错误。
 
@@ -1635,15 +1635,15 @@ public class MaZheMavenTest {
 
 1、pom.xml
 
-[![Maven实战-第四篇（Maven的依赖配置）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/D31597E5-650A-428F-A95A-13E281BF7A2A.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/D31597E5-650A-428F-A95A-13E281BF7A2A.png)
+[![Maven实战-第四篇（Maven的依赖配置）](Maven 实战.assets/image-20241025174639485.png)](Maven 实战.assets/image-20241025174639485.png)
 
 2、MaZheMaven
 
-[![Maven实战-第四篇（Maven的依赖配置）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/75115829-2C68-4101-BDBD-D88168FC0230.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/75115829-2C68-4101-BDBD-D88168FC0230.png)
+[![Maven实战-第四篇（Maven的依赖配置）](Maven 实战.assets/image-20241025174639486.png)](Maven 实战.assets/image-20241025174639486.png)
 
 3、MaZheMavenTest
 
-[![Maven实战-第四篇（Maven的依赖配置）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/31B0863E-9113-4231-8DE3-1A3913BDCE0D.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/31B0863E-9113-4231-8DE3-1A3913BDCE0D.png)
+[![Maven实战-第四篇（Maven的依赖配置）](Maven 实战.assets/image-20241025174639487.png)](Maven 实战.assets/image-20241025174639487.png)
 
 我们看上图所示，因为runntime依赖范围是对运行和测试有效的，所以主代码中的依赖依赖报错了，而测试目录中代码则没有任何问题。
 
@@ -1657,15 +1657,15 @@ public class MaZheMavenTest {
 
 1、pom.xml
 
-[![Maven实战-第四篇（Maven的依赖配置）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/5888D027-CBBA-4CB0-985A-5D9FF59C167B.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/5888D027-CBBA-4CB0-985A-5D9FF59C167B.png)
+[![Maven实战-第四篇（Maven的依赖配置）](Maven 实战.assets/image-20241025174639488.png)](Maven 实战.assets/image-20241025174639488.png)
 
 2、MaZheMaven
 
-[![Maven实战-第四篇（Maven的依赖配置）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/86F136A3-689B-48D1-8C7D-40C30DA27BC8.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/86F136A3-689B-48D1-8C7D-40C30DA27BC8.png)
+[![Maven实战-第四篇（Maven的依赖配置）](Maven 实战.assets/image-20241025174639489.png)](Maven 实战.assets/image-20241025174639489.png)
 
 3、MaZheMavenTest
 
-[![Maven实战-第四篇（Maven的依赖配置）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/D263B5DD-F6FD-4C0C-94B6-E0785B46A4B4.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/D263B5DD-F6FD-4C0C-94B6-E0785B46A4B4.png)
+[![Maven实战-第四篇（Maven的依赖配置）](Maven 实战.assets/image-20241025174639490.png)](Maven 实战.assets/image-20241025174639490.png)
 
 还是如图所示，我们看这次主代码的和测试代码都没有报错。这是因为provided参数的依赖范围是针对编译和测试环境的，所以主代码报错的问题也就不存在了。
 
@@ -1684,15 +1684,15 @@ public class MaZheMavenTest {
 
 1、pom.xml
 
-[![Maven实战-第四篇（Maven的依赖配置）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/E1A4EDED-53AE-4777-B3B2-26BF6CB53961.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/E1A4EDED-53AE-4777-B3B2-26BF6CB53961.png)
+[![Maven实战-第四篇（Maven的依赖配置）](Maven 实战.assets/image-20241025174639491.png)](Maven 实战.assets/image-20241025174639491.png)
 
 2、MaZheMaven
 
-[![Maven实战-第四篇（Maven的依赖配置）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/DA67FF71-999A-462A-B5AF-5AF7447C6301.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/DA67FF71-999A-462A-B5AF-5AF7447C6301.png)
+[![Maven实战-第四篇（Maven的依赖配置）](Maven 实战.assets/image-20241025174639492.png)](Maven 实战.assets/image-20241025174639492.png)
 
 3、MaZheMavenTest
 
-[![Maven实战-第四篇（Maven的依赖配置）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/5385D040-5A8F-4096-926B-7E4DC3F6704D.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE%EF%BC%89.resources/5385D040-5A8F-4096-926B-7E4DC3F6704D.png)
+[![Maven实战-第四篇（Maven的依赖配置）](Maven 实战.assets/image-20241025174639493.png)](Maven 实战.assets/image-20241025174639493.png)
 
 还是如图所示，我们看这次主代码的和测试代码都没有报错。这是因为provided参数的依赖范围是针对编译和测试环境的，所以主代码报错的问题也就不存在了。
 
@@ -1740,11 +1740,11 @@ exclusions参数的目的是排除传递性依赖。由于传递性依赖的内�
 
 我们创建一个新的项目，并在项目中添加上面的依赖。
 
-[![Maven实战-第五篇（Maven的传递性依赖）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%94%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BC%A0%E9%80%92%E6%80%A7%E4%BE%9D%E8%B5%96%EF%BC%89.resources/1D97A450-8E90-4231-ACFD-377454B3ADEC.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%94%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BC%A0%E9%80%92%E6%80%A7%E4%BE%9D%E8%B5%96%EF%BC%89.resources/1D97A450-8E90-4231-ACFD-377454B3ADEC.png)
+[![Maven实战-第五篇（Maven的传递性依赖）](Maven 实战.assets/image-20241025174639494.png)](Maven 实战.assets/image-20241025174639494.png)
 
 我们展开`External Libraries`目录，就可以现在项目中引入的所有外部的依赖包。
 
-[![Maven实战-第五篇（Maven的传递性依赖）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%94%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BC%A0%E9%80%92%E6%80%A7%E4%BE%9D%E8%B5%96%EF%BC%89.resources/615D1434-0572-4E52-B1B0-A47040A5A928.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%94%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BC%A0%E9%80%92%E6%80%A7%E4%BE%9D%E8%B5%96%EF%BC%89.resources/615D1434-0572-4E52-B1B0-A47040A5A928.png)
+[![Maven实战-第五篇（Maven的传递性依赖）](Maven 实战.assets/image-20241025174639495.png)](Maven 实战.assets/image-20241025174639495.png)
 
 我们看上图所示，项目引入了3个依赖包，但我们依赖的配置只配置了一个依赖，这就是Maven传递性依赖的作用，如果没有传递性依赖，则上面只有显示一个依赖包，并且需要我们手动的将其它的依赖包配置到项目中，才可以使用。
 
@@ -1754,11 +1754,11 @@ exclusions参数的目的是排除传递性依赖。由于传递性依赖的内�
 
 首先，我们选中项目中的pom.xml。然后右键选择`Maven`然后选择`Show Diagram ...`
 
-[![Maven实战-第五篇（Maven的传递性依赖）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%94%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BC%A0%E9%80%92%E6%80%A7%E4%BE%9D%E8%B5%96%EF%BC%89.resources/B0571435-751E-4946-B70C-0EE00760F108.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%94%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BC%A0%E9%80%92%E6%80%A7%E4%BE%9D%E8%B5%96%EF%BC%89.resources/B0571435-751E-4946-B70C-0EE00760F108.png)
+[![Maven实战-第五篇（Maven的传递性依赖）](Maven 实战.assets/image-20241025174639496.png)](Maven 实战.assets/image-20241025174639496.png)
 
 当我们点击后就会看到下图所示：
 
-[![Maven实战-第五篇（Maven的传递性依赖）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%94%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BC%A0%E9%80%92%E6%80%A7%E4%BE%9D%E8%B5%96%EF%BC%89.resources/2953FEEE-BED8-4A17-AB0B-9711712F4115.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%94%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BC%A0%E9%80%92%E6%80%A7%E4%BE%9D%E8%B5%96%EF%BC%89.resources/2953FEEE-BED8-4A17-AB0B-9711712F4115.png)
+[![Maven实战-第五篇（Maven的传递性依赖）](Maven 实战.assets/image-20241025174639497.png)](Maven 实战.assets/image-20241025174639497.png)
 
 它显示了我们项目所有的依赖包，并且会按照我们传递性依赖的顺序显示。按照上图显示，我们知道，虽然，我们只引入了`fastjson`依赖，但是因为它依赖了`fastjson-extension`。所以Maven会继续引入这个依赖包。又因为`fastjson-extension`依赖了`fastjson2`，所以Maven又会引入这个依赖。这也就是传递性依赖引入依赖包的顺序。
 
@@ -2041,7 +2041,7 @@ Hello World Mazhe Maven User!
 | ------- | ------- |
 | compile | compile |
 
-[![Maven实战-第六篇（Maven的依赖范围）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%85%AD%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E8%8C%83%E5%9B%B4%EF%BC%89.resources/196E9F69-E40C-4F0F-A801-855F4EA266B9.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%85%AD%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E8%8C%83%E5%9B%B4%EF%BC%89.resources/196E9F69-E40C-4F0F-A801-855F4EA266B9.png)
+[![Maven实战-第六篇（Maven的依赖范围）](Maven 实战.assets/image-20241025174639498.png)](Maven 实战.assets/image-20241025174639498.png)
 
 
 
@@ -2078,7 +2078,7 @@ Hello World Mazhe Maven User!
 
 我们再次看一下mazhe-maven-mall项目中，是否有问题。
 
-[![Maven实战-第六篇（Maven的依赖范围）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%85%AD%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E8%8C%83%E5%9B%B4%EF%BC%89.resources/F1164E1D-4F50-4504-B8C4-AD9EF7AADA8C.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%85%AD%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E8%8C%83%E5%9B%B4%EF%BC%89.resources/F1164E1D-4F50-4504-B8C4-AD9EF7AADA8C.png)
+[![Maven实战-第六篇（Maven的依赖范围）](Maven 实战.assets/image-20241025174639499.png)](Maven 实战.assets/image-20241025174639499.png)
 
 如上图所示，我们看到MazheMavenMall类中的调用MazheMavenUser代码报错，这是因为没有找到这个类的依赖所至。下面我们在mazhe-maven-mall项目中创建一个测试类，来验证一下测试代码是否能够成功的引用。
 
@@ -2094,7 +2094,7 @@ public class MazheMavenMallTest {
 }
 ```
 
-[![Maven实战-第六篇（Maven的依赖范围）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%85%AD%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E8%8C%83%E5%9B%B4%EF%BC%89.resources/7241C5B3-C6AB-4BE7-B4B6-38626551BCB0.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%85%AD%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E8%8C%83%E5%9B%B4%EF%BC%89.resources/7241C5B3-C6AB-4BE7-B4B6-38626551BCB0.png)
+[![Maven实战-第六篇（Maven的依赖范围）](Maven 实战.assets/image-20241025174639500.png)](Maven 实战.assets/image-20241025174639500.png)
 
 我们看测试的代码也显示出无法引用MazheMavenUser类，这也间接证明了，当第一依赖范围为`compile`，第二依赖范围为`test`时候，Maven不会进行传递性依赖。
 
@@ -2137,11 +2137,11 @@ public class MazheMavenMallTest {
 
 我们同样的在看一下MazheMavenMall类的代码是否能成功的引入MazheMavenUser类。
 
-[![Maven实战-第六篇（Maven的依赖范围）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%85%AD%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E8%8C%83%E5%9B%B4%EF%BC%89.resources/27644D9A-A1CC-47F6-8123-EC6110C8E9C3.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%85%AD%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E8%8C%83%E5%9B%B4%EF%BC%89.resources/27644D9A-A1CC-47F6-8123-EC6110C8E9C3.png)
+[![Maven实战-第六篇（Maven的依赖范围）](Maven 实战.assets/image-20241025174639501.png)](Maven 实战.assets/image-20241025174639501.png)
 
 我们在看一下MazheMavenMallTest类的代码是否能引入。
 
-[![Maven实战-第六篇（Maven的依赖范围）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%85%AD%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E8%8C%83%E5%9B%B4%EF%BC%89.resources/97400CB3-CE00-4BA8-BACF-47C22EF576CF.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%85%AD%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E8%8C%83%E5%9B%B4%EF%BC%89.resources/97400CB3-CE00-4BA8-BACF-47C22EF576CF.png)
+[![Maven实战-第六篇（Maven的依赖范围）](Maven 实战.assets/image-20241025174639502.png)](Maven 实战.assets/image-20241025174639502.png)
 
 我们看上图所示，不管是主代码中还是测试代码中，都无法引入MazheMavenUser类，这也就说明了，当第一依赖范围为`compile`，第二依赖范围为`provided`的时候，Maven不会进行传递性依赖。
 
@@ -2184,7 +2184,7 @@ public class MazheMavenMallTest {
 
 我们继续看MazheMavenMall类中的代码。
 
-[![Maven实战-第六篇（Maven的依赖范围）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%85%AD%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E8%8C%83%E5%9B%B4%EF%BC%89.resources/3CC1DF91-B8DE-4BC5-9BE1-1F0FCC046071.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%85%AD%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E8%8C%83%E5%9B%B4%EF%BC%89.resources/3CC1DF91-B8DE-4BC5-9BE1-1F0FCC046071.png)
+[![Maven实战-第六篇（Maven的依赖范围）](Maven 实战.assets/image-20241025174639503.png)](Maven 实战.assets/image-20241025174639503.png)
 
 我们看上图所示，因为我们第二依赖范围是runtime，所以直接调用MazheMavenUser报错了。下面我们验证一下，如果项目运行时，会不会可以直接调用MazheMavenUser类。为了验证项目运行，我们需要通过反射的主式，来调用MazheMavenUser类，下面为具体的代码：
 
@@ -2226,7 +2226,7 @@ public class MazheMavenMallTest {
 }
 ```
 
-[![Maven实战-第六篇（Maven的依赖范围）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%85%AD%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E8%8C%83%E5%9B%B4%EF%BC%89.resources/9BCCDD27-3D97-4BC0-9D38-AC0C9521E56A.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%85%AD%E7%AF%87%EF%BC%88Maven%E7%9A%84%E4%BE%9D%E8%B5%96%E8%8C%83%E5%9B%B4%EF%BC%89.resources/9BCCDD27-3D97-4BC0-9D38-AC0C9521E56A.png)
+[![Maven实战-第六篇（Maven的依赖范围）](Maven 实战.assets/image-20241025174639504.png)](Maven 实战.assets/image-20241025174639504.png)
 
 我们看上图所示，测试类中的代码可以直接调用MazheMavenUser类的方法。这是因为runtime依赖范围是对测试和运行同样有效的，所以不会报错，我们也修改一下测试类的代码，来验证一下，测试类中运行是否有问题。
 
@@ -2426,11 +2426,11 @@ Hello World Mazhe Maven User!
 
 通过上面的配置，我们分别在`mazhe-maven-payment`和`mazhe-maven-user`中引入了`fastjson`的依赖，并且为了模拟依赖冲突，我们将这两个项目所依赖的`fastjson`的版本设置成了不一样的版本，其中`mazhe-maven-payment`的版本为：`2.0.32`，而`mazhe-maven-user`的版本为：`2.0.35`。下面我们验证一下，当这样的依赖冲突后，我们`mazhe-maven-mall`项目依赖的版本到底是多少。我们还是通过`Show Deagram ...`的方式来查看`mazhe-maven-mall`项目的依赖情况。
 
-[![Maven实战-第七篇（Maven中的依赖冲突）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%83%E7%AF%87%EF%BC%88Maven%E4%B8%AD%E7%9A%84%E4%BE%9D%E8%B5%96%E5%86%B2%E7%AA%81%EF%BC%89.resources/A134F0CD-9BF5-4AA5-9043-1564191D8967.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%83%E7%AF%87%EF%BC%88Maven%E4%B8%AD%E7%9A%84%E4%BE%9D%E8%B5%96%E5%86%B2%E7%AA%81%EF%BC%89.resources/A134F0CD-9BF5-4AA5-9043-1564191D8967.png)
+[![Maven实战-第七篇（Maven中的依赖冲突）](Maven 实战.assets/image-20241025174639505.png)](Maven 实战.assets/image-20241025174639505.png)
 
 通过上图我们也发现IDEA中已经将这两个依赖冲突的版本显示出来了并且非常直观的标识出了`mazhe-maven-user`项目依赖的`fastjson`的依赖已经指向了`mazhe-maven-payment`的`fastjson`版本。所以此时`mazhe-maven-mall`项目通过传递性依赖所引入的`fastjson`版本就是`2.0.32`。如果我们将`mazhe-maven-payment`和`mazhe-maven-user`依赖的版本进行一下对换。在查看一下就会发现，`mazhe-maven-mall`项目所依赖的版本就会变成`2.0.35`了。
 
-[![Maven实战-第七篇（Maven中的依赖冲突）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%83%E7%AF%87%EF%BC%88Maven%E4%B8%AD%E7%9A%84%E4%BE%9D%E8%B5%96%E5%86%B2%E7%AA%81%EF%BC%89.resources/DBA38F89-79DE-4C42-AA6D-D343566C7011.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%83%E7%AF%87%EF%BC%88Maven%E4%B8%AD%E7%9A%84%E4%BE%9D%E8%B5%96%E5%86%B2%E7%AA%81%EF%BC%89.resources/DBA38F89-79DE-4C42-AA6D-D343566C7011.png)
+[![Maven实战-第七篇（Maven中的依赖冲突）](Maven 实战.assets/image-20241025174639506.png)](Maven 实战.assets/image-20241025174639506.png)
 
 这就是Maven中解决依赖冲突的第一个规则，最短路径原则，因为项目`mazhe-maven-payment`依赖的`fastjson`的路径最短，所以传递性依赖以`mazhe-maven-payment`项目配置的版本为准。
 
@@ -2542,7 +2542,7 @@ Hello World Mazhe Maven User!
 
 下面我们用同样的方式，看一下`mazhe-maven-mall`项目的依赖。
 
-[![Maven实战-第七篇（Maven中的依赖冲突）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%83%E7%AF%87%EF%BC%88Maven%E4%B8%AD%E7%9A%84%E4%BE%9D%E8%B5%96%E5%86%B2%E7%AA%81%EF%BC%89.resources/A16931EA-A4F9-411A-8975-3AB14EA0248E.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%83%E7%AF%87%EF%BC%88Maven%E4%B8%AD%E7%9A%84%E4%BE%9D%E8%B5%96%E5%86%B2%E7%AA%81%EF%BC%89.resources/A16931EA-A4F9-411A-8975-3AB14EA0248E.png)
+[![Maven实战-第七篇（Maven中的依赖冲突）](Maven 实战.assets/image-20241025174639507.png)](Maven 实战.assets/image-20241025174639507.png)
 
 如图所示,Maven引入的传递性依赖`fastjson`的版本为：`2.0.35`。下面我们将`mazhe-maven-mall`项目中依赖的顺序调换一下。
 
@@ -2580,7 +2580,7 @@ Hello World Mazhe Maven User!
 
 我们在查看一下`mazhe-maven-mall`项目的依赖情况。
 
-[![Maven实战-第七篇（Maven中的依赖冲突）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%83%E7%AF%87%EF%BC%88Maven%E4%B8%AD%E7%9A%84%E4%BE%9D%E8%B5%96%E5%86%B2%E7%AA%81%EF%BC%89.resources/A919345C-976A-4314-8C73-A95D7C13A509.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%83%E7%AF%87%EF%BC%88Maven%E4%B8%AD%E7%9A%84%E4%BE%9D%E8%B5%96%E5%86%B2%E7%AA%81%EF%BC%89.resources/A919345C-976A-4314-8C73-A95D7C13A509.png)
+[![Maven实战-第七篇（Maven中的依赖冲突）](Maven 实战.assets/image-20241025174639508.png)](Maven 实战.assets/image-20241025174639508.png)
 
 我们看这次`mazhe-maven-mall`项目的依赖版本就变成了：`2.0.32`了。这也就是Maven为了解决依赖冲突制定的第二个规则。按照配置依赖的顺序决定传递性依赖的版本。
 
@@ -2651,7 +2651,7 @@ Hello World Mazhe Maven User!
 
 我们在查看一下`mazhe-maven-mall`项目的依赖情况。
 
-[![Maven实战-第七篇（Maven中的依赖冲突）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%83%E7%AF%87%EF%BC%88Maven%E4%B8%AD%E7%9A%84%E4%BE%9D%E8%B5%96%E5%86%B2%E7%AA%81%EF%BC%89.resources/D3E69763-2463-4861-9748-86A4965EDD8C.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%B8%83%E7%AF%87%EF%BC%88Maven%E4%B8%AD%E7%9A%84%E4%BE%9D%E8%B5%96%E5%86%B2%E7%AA%81%EF%BC%89.resources/D3E69763-2463-4861-9748-86A4965EDD8C.png)
+[![Maven实战-第七篇（Maven中的依赖冲突）](Maven 实战.assets/image-20241025174639509.png)](Maven 实战.assets/image-20241025174639509.png)
 
 我们看上图所示，IDEA中已经不会提示依赖冲突了，因为当前传递性依赖中只有一个版本的`fastjson`依赖，所以也就不会提示依赖冲突了，这就是Maven中提供排除依赖的目的。
 
@@ -3227,7 +3227,7 @@ mirror是镜像地址，可以理解为Maven中为了解决访问远程仓库速
 
 当然它也有其它稳定版本，但不是数字命名的。
 
-[![Maven实战-第十二篇（Maven中的版本）](http://ma-zhe.cn/wp-content/uploads/2023/07/2023073011282137.png)](http://ma-zhe.cn/wp-content/uploads/2023/07/2023073011282137.png)
+[![Maven实战-第十二篇（Maven中的版本）](Maven 实战.assets/image-20241025174639510.png)](Maven 实战.assets/image-20241025174639510.png)
 
 稳定版本的特点就是，当我们引入依赖时，如果发现本地仓库中有则Maven不会去远程仓库中寻找，直接引用。当然这也有一个弊端，就是如果我们自己开发了一个依赖，并且命名了一个版本，当我们自己针对这个版本进行代码修改时后，在部署时如果我们自己不修改版本时，Maven不会进行覆盖的，也就是Maven中的本地仓库还是原来的版本，Maven这么做的目的就是保证稳定版本的稳定。
 
@@ -3542,13 +3542,13 @@ Hello World Mazhe Maven Mall Test!
 
 跳过测试用例的执行，不会生成测试类的class文件。
 
-[![Maven实战-第十四篇（Maven中的插件）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E4%B8%AD%E7%9A%84%E6%8F%92%E4%BB%B6%EF%BC%89.resources/93951B3A-5061-4ECA-8684-D3D9225C35BE.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E4%B8%AD%E7%9A%84%E6%8F%92%E4%BB%B6%EF%BC%89.resources/93951B3A-5061-4ECA-8684-D3D9225C35BE.png)
+[![Maven实战-第十四篇（Maven中的插件）](Maven 实战.assets/image-20241025174639511.png)](Maven 实战.assets/image-20241025174639511.png)
 
 *   `mvn install -DskipTests`
 
 跳过测试用例的执行，但是依然会生成测试类的class文件。
 
-[![Maven实战-第十四篇（Maven中的插件）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E4%B8%AD%E7%9A%84%E6%8F%92%E4%BB%B6%EF%BC%89.resources/BA047FF9-0BC3-41DC-9809-40F08D9549BD.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E4%B8%AD%E7%9A%84%E6%8F%92%E4%BB%B6%EF%BC%89.resources/BA047FF9-0BC3-41DC-9809-40F08D9549BD.png)
+[![Maven实战-第十四篇（Maven中的插件）](Maven 实战.assets/image-20241025174639512.png)](Maven 实战.assets/image-20241025174639512.png)
 
 
 
@@ -3592,7 +3592,7 @@ Hello World Mazhe Maven Mall Test!
 
 下面我们按照上面的步骤，来实际操作一下。首先我们创建一个项目。
 
-[![Maven实战-第十四篇（Maven中的插件）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E4%B8%AD%E7%9A%84%E6%8F%92%E4%BB%B6%EF%BC%89.resources/11C728E5-669D-45BB-A12F-3022FBF70ED1.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E4%B8%AD%E7%9A%84%E6%8F%92%E4%BB%B6%EF%BC%89.resources/11C728E5-669D-45BB-A12F-3022FBF70ED1.png)
+[![Maven实战-第十四篇（Maven中的插件）](Maven 实战.assets/image-20241025174639513.png)](Maven 实战.assets/image-20241025174639513.png)
 
 下面我们修改一下项目的`packaging`，配置`packaging`为`maven-plugin`。除此之外，我们还需要引入一个依赖，因为上面第二步介绍 ，我们需要继承AbstractMojo。所以这个依赖类就是这个依赖包中，并且初了这个依赖类外，这个依赖包还提供了所有Maven插件开发的所依赖的其它的类。具体的配置如下：
 
@@ -3914,7 +3914,7 @@ mvn clean
 
 我们看日志执行成功了，我们看一下项目目录是否成功的备份了之前的依赖包。
 
-[![Maven实战-第十四篇（Maven中的插件）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E4%B8%AD%E7%9A%84%E6%8F%92%E4%BB%B6%EF%BC%89.resources/7664AF61-40D1-4ED5-A457-F8747E00CFC5.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AF%87%EF%BC%88Maven%E4%B8%AD%E7%9A%84%E6%8F%92%E4%BB%B6%EF%BC%89.resources/7664AF61-40D1-4ED5-A457-F8747E00CFC5.png)
+[![Maven实战-第十四篇（Maven中的插件）](Maven 实战.assets/image-20241025174639514.png)](Maven 实战.assets/image-20241025174639514.png)
 
 我们看项目目录中成功的备份了我们的依赖包。以上内容就是我们Maven中插件开发的主要内容。下面我们在介绍一下，上面开发中涉及到的一此配置信息。
 
@@ -3997,7 +3997,7 @@ mvn clean
 
 上面的配置和正常的项目构建大体上没有任何区别，唯一的区别是`packaging`标签。我们知道该标签的作用是设置Maven打包的类型，并且默认为jar。但当我们需要通过此项目来管理其它项目时，需要将此参数设置为pom类型。现在我们已经介绍了三种`packaging`类型的标签了，也就是`jar、maven-plugin、pom`。除了上述的不同之外，还要需要设置`module`标签。`module`标签用来配置我们需要管理的其它模块的项目名称，也就是其它模块`artifactId`标签指定的模块名称。上面的配置是在`midai-mazhe-maven`项目目录中子目录创建的项目，所以我们不需要指定额外的项目路径。
 
-[![Maven实战-第十五篇（Maven中的聚合）](http://ma-zhe.cn/wp-content/uploads/2023/08/2023080622405384.png)](http://ma-zhe.cn/wp-content/uploads/2023/08/2023080622405384.png)
+[![Maven实战-第十五篇（Maven中的聚合）](Maven 实战.assets/image-20241025174639515.png)](Maven 实战.assets/image-20241025174639515.png)
 
 当然我们也可以配置`module`标签为相对路径以及绝对路径。这样不用必须在子目录中管理项目。下面我们执行一下清理命令，来验证一下，通过这样的配置，Maven会不会管理我们的子项目。
 
@@ -4347,7 +4347,7 @@ mvn clean
 
 我们看打包的日志，成功输出了我们父类项目的中指定的打包名称，下面我们看一下target目录中依赖包的名称。
 
-[![Maven实战-第十六篇（Maven中的继承）](http://ma-zhe.cn/wp-content/uploads/2023/08/202308072300556.png)](http://ma-zhe.cn/wp-content/uploads/2023/08/202308072300556.png)
+[![Maven实战-第十六篇（Maven中的继承）](Maven 实战.assets/image-20241025174639516.png)](Maven 实战.assets/image-20241025174639516.png)
 
 这就是Maven中的继承的功能，当然还有很多其它的属性标签，我们可以通过继承的方式，在父项目中配置，在下一篇中我们在详细的介绍。
 
@@ -4743,7 +4743,7 @@ Hello World Mazhe Maven Mall!
 
 *   项目目录
 
-[![Maven实战-第十八篇（Maven中的默认约定）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%8D%81%E5%85%AB%E7%AF%87%EF%BC%88Maven%E4%B8%AD%E7%9A%84%E9%BB%98%E8%AE%A4%E7%BA%A6%E5%AE%9A%EF%BC%89.resources/A39F9C8D-B7CD-4DCD-A9F5-9EF54FA13A58.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%8D%81%E5%85%AB%E7%AF%87%EF%BC%88Maven%E4%B8%AD%E7%9A%84%E9%BB%98%E8%AE%A4%E7%BA%A6%E5%AE%9A%EF%BC%89.resources/A39F9C8D-B7CD-4DCD-A9F5-9EF54FA13A58.png)
+[![Maven实战-第十八篇（Maven中的默认约定）](Maven 实战.assets/image-20241025174639517.png)](Maven 实战.assets/image-20241025174639517.png)
 
 下面我们通过下面的配置修改一下项目的源码目录，具体配置如下：
 
@@ -4772,11 +4772,11 @@ Hello World Mazhe Maven Mall!
 
 当我们配置上面的信息后，发现之前可以执行的`MazheMavenMall`类已经执行不了。
 
-[![Maven实战-第十八篇（Maven中的默认约定）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%8D%81%E5%85%AB%E7%AF%87%EF%BC%88Maven%E4%B8%AD%E7%9A%84%E9%BB%98%E8%AE%A4%E7%BA%A6%E5%AE%9A%EF%BC%89.resources/2092EEBB-59CC-4F6E-8B2B-39AF16C52BC1.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%8D%81%E5%85%AB%E7%AF%87%EF%BC%88Maven%E4%B8%AD%E7%9A%84%E9%BB%98%E8%AE%A4%E7%BA%A6%E5%AE%9A%EF%BC%89.resources/2092EEBB-59CC-4F6E-8B2B-39AF16C52BC1.png)
+[![Maven实战-第十八篇（Maven中的默认约定）](Maven 实战.assets/image-20241025174639518.png)](Maven 实战.assets/image-20241025174639518.png)
 
 因为现在这个类的目录已经不是源码目录了，下面我们将上面的类换一个路径，放到java目录中。
 
-[![Maven实战-第十八篇（Maven中的默认约定）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%8D%81%E5%85%AB%E7%AF%87%EF%BC%88Maven%E4%B8%AD%E7%9A%84%E9%BB%98%E8%AE%A4%E7%BA%A6%E5%AE%9A%EF%BC%89.resources/B99C9CE5-C42A-47A8-8D31-4440322339EB.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E5%8D%81%E5%85%AB%E7%AF%87%EF%BC%88Maven%E4%B8%AD%E7%9A%84%E9%BB%98%E8%AE%A4%E7%BA%A6%E5%AE%9A%EF%BC%89.resources/B99C9CE5-C42A-47A8-8D31-4440322339EB.png)
+[![Maven实战-第十八篇（Maven中的默认约定）](Maven 实战.assets/image-20241025174639519.png)](Maven 实战.assets/image-20241025174639519.png)
 
 看上图所示，上面的Java类以可以执行了，下面我们执行测试一下。
 
@@ -5088,29 +5088,29 @@ mvn clean install -rf mazhe-maven-mall
 
 - https://www.sonatype.com/products/sonatype-nexus-oss-download
 
-[![Maven实战-第二十篇（Nexus创建私服）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/D5D78EAF-29CB-41B5-BD49-02693BFC80DD.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/D5D78EAF-29CB-41B5-BD49-02693BFC80DD.png)
+[![Maven实战-第二十篇（Nexus创建私服）](Maven 实战.assets/image-20241025174639520.png)](Maven 实战.assets/image-20241025174639520.png)
 
 当我们访问完上面的地址后，需要我们填写相关的信息，才可以下载，这里就按照指定的要求填写即可。注意最后一个选项，我们要选择`Nexus Repo OSS`，因为这个版本是免费的。
 
-[![Maven实战-第二十篇（Nexus创建私服）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/D7FF7B51-B916-45BF-96D0-D8817A16F365.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/D7FF7B51-B916-45BF-96D0-D8817A16F365.png)
+[![Maven实战-第二十篇（Nexus创建私服）](Maven 实战.assets/image-20241025174639521.png)](Maven 实战.assets/image-20241025174639521.png)
 
 当我们提交完后，页面会跳转到下载的页面，我们按照上图所示下载对应的系统版本即可。
 
-[![Maven实战-第二十篇（Nexus创建私服）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/EDE3337A-B4A1-4139-9B31-6C539840AAD4.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/EDE3337A-B4A1-4139-9B31-6C539840AAD4.png)
+[![Maven实战-第二十篇（Nexus创建私服）](Maven 实战.assets/image-20241025174639522.png)](Maven 实战.assets/image-20241025174639522.png)
 
 当我们点击完后，正常情况下，浏览器就会下载我们选择的系统版本，如果浏览器没有自动下载的话，我们可以手动点击`click here`链接下载。
 
 下载完成后，我们直接解压下载的压缩包，就会得到以下目录的信息。
 
-[![Maven实战-第二十篇（Nexus创建私服）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/07D8652D-DB1A-47D9-9842-41109D27C31A.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/07D8652D-DB1A-47D9-9842-41109D27C31A.png)
+[![Maven实战-第二十篇（Nexus创建私服）](Maven 实战.assets/image-20241025174639523.png)](Maven 实战.assets/image-20241025174639523.png)
 
 再次进入`nexus-3.58.1-02`目录中即可。
 
-[![Maven实战-第二十篇（Nexus创建私服）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/123E6B79-3FAB-4052-98A5-040454438FF4.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/123E6B79-3FAB-4052-98A5-040454438FF4.png)
+[![Maven实战-第二十篇（Nexus创建私服）](Maven 实战.assets/image-20241025174639524.png)](Maven 实战.assets/image-20241025174639524.png)
 
 下面我们重点介绍一下`bin`目录。
 
-[![Maven实战-第二十篇（Nexus创建私服）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/61630273-269D-47DB-89E8-D493C5BA907E.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/61630273-269D-47DB-89E8-D493C5BA907E.png)
+[![Maven实战-第二十篇（Nexus创建私服）](Maven 实战.assets/image-20241025174639525.png)](Maven 实战.assets/image-20241025174639525.png)
 
 如上图所示，上面的目录中只有一个命令，但它却有很多启动的参数，下面我们详细分别介绍一下，具体的作用。
 
@@ -5126,7 +5126,7 @@ mvn clean install -rf mazhe-maven-mall
 > sh nexus start
 ```
 
-[![Maven实战-第二十篇（Nexus创建私服）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/DDA2F39D-A1E6-42DF-93D5-2576AE9E9285.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/DDA2F39D-A1E6-42DF-93D5-2576AE9E9285.png)
+[![Maven实战-第二十篇（Nexus创建私服）](Maven 实战.assets/image-20241025174639526.png)](Maven 实战.assets/image-20241025174639526.png)
 
 看日志提示我们启动成功了，下面我们访问一下Nexus管理界面，Nexus的默认访问地址如下：
 
@@ -5134,11 +5134,11 @@ mvn clean install -rf mazhe-maven-mall
 http://localhost:8081
 ```
 
-[![Maven实战-第二十篇（Nexus创建私服）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/DE688F50-B717-4632-9A8A-7FBB43431B49.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/DE688F50-B717-4632-9A8A-7FBB43431B49.png)
+[![Maven实战-第二十篇（Nexus创建私服）](Maven 实战.assets/image-20241025174639527.png)](Maven 实战.assets/image-20241025174639527.png)
 
 上图所示就是Nexus的管理界面，当我们成功的访问了此界面，也就说明了，我们Nexus启动成功了。但现在我们只能浏览，还不能执行具体的操作，因为我们还没有登陆，没有相应的权限。这也就是之前介绍的Nexus提供了细颗粒度的安全控制等功能。下面我们登陆一下，点击右上角的`Sign in`链接。
 
-[![Maven实战-第二十篇（Nexus创建私服）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/C7467C7B-33E6-4280-89F5-2FDEF53106C7.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/C7467C7B-33E6-4280-89F5-2FDEF53106C7.png)
+[![Maven实战-第二十篇（Nexus创建私服）](Maven 实战.assets/image-20241025174639528.png)](Maven 实战.assets/image-20241025174639528.png)
 
 当我们不知道管理密码是什么的时候，我们发现Nexus已经默认提示出了密码的默认位置。也就上图所示的路径。
 
@@ -5148,7 +5148,7 @@ Users/md/Downloads/latest-mac/sonatype-work/nexus3/admin.password
 
 实际上上面的路径，也就是我们在解压目录中和`nexus-3.58.1-02`同级的目录。
 
-[![Maven实战-第二十篇（Nexus创建私服）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/6EAFF02F-613F-4B5C-8F48-2ED129BC4318.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/6EAFF02F-613F-4B5C-8F48-2ED129BC4318.png)
+[![Maven实战-第二十篇（Nexus创建私服）](Maven 实战.assets/image-20241025174639529.png)](Maven 实战.assets/image-20241025174639529.png)
 
 下面我们查看一下`admin.password`文件中的内容。
 
@@ -5160,23 +5160,23 @@ Users/md/Downloads/latest-mac/sonatype-work/nexus3/admin.password
 
 上述的文件中只有一行内容，也就是管理员的密码，Nexus并不会生成管理账号，Nexus默认的管理员账号为：`admin`。下面我们使用上面的密码登陆一下`Nexus`。
 
-[![Maven实战-第二十篇（Nexus创建私服）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/DFA268DA-A764-4D69-AF8A-C71F6DE177E7.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/DFA268DA-A764-4D69-AF8A-C71F6DE177E7.png)
+[![Maven实战-第二十篇（Nexus创建私服）](Maven 实战.assets/image-20241025174639530.png)](Maven 实战.assets/image-20241025174639530.png)
 
-[![Maven实战-第二十篇（Nexus创建私服）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/3DE98BF1-1FC0-4A40-8F1F-A181FE4C6CF7.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/3DE98BF1-1FC0-4A40-8F1F-A181FE4C6CF7.png)
+[![Maven实战-第二十篇（Nexus创建私服）](Maven 实战.assets/image-20241025174639531.png)](Maven 实战.assets/image-20241025174639531.png)
 
 当我们输入完正确的账号和密码后Nexus会提示，我们修改管理员的密码，并且只会提示我们修改一次，具体步骤如上图所示。
 
-[![Maven实战-第二十篇（Nexus创建私服）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/D6021078-9037-4B9D-814C-8F735A2E73BD.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/D6021078-9037-4B9D-814C-8F735A2E73BD.png)
+[![Maven实战-第二十篇（Nexus创建私服）](Maven 实战.assets/image-20241025174639532.png)](Maven 实战.assets/image-20241025174639532.png)
 
 我们可以通过上图中的这个选项，来决定是否可以匿名访问，也就是在不需要登陆的时候，下载我们私服中的依赖组件。
 
-[![Maven实战-第二十篇（Nexus创建私服）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/C2FC2DE5-EBC9-4610-A4E4-4D508DCE6DCF.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/C2FC2DE5-EBC9-4610-A4E4-4D508DCE6DCF.png)
+[![Maven实战-第二十篇（Nexus创建私服）](Maven 实战.assets/image-20241025174639533.png)](Maven 实战.assets/image-20241025174639533.png)
 
 * * *
 
 当我们修改完密码后，可以点击左边`Browse`菜单，来查看Nexus中默认的仓库信息，也就是下图列表中显示的那些内容。在Nexus中不同的仓库，有着不的效果和特性，在后续的内容中我们在做详细的介绍，以上内容就是如何通过`Nexus`搭建一个Maven私服。
 
-[![Maven实战-第二十篇（Nexus创建私服）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/857A0592-E6E8-43DE-AB3F-042936BB8F60.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E7%AF%87%EF%BC%88Nexus%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%8D%EF%BC%89.resources/857A0592-E6E8-43DE-AB3F-042936BB8F60.png)
+[![Maven实战-第二十篇（Nexus创建私服）](Maven 实战.assets/image-20241025174639534.png)](Maven 实战.assets/image-20241025174639534.png)
 
   
 
@@ -5209,7 +5209,7 @@ Users/md/Downloads/latest-mac/sonatype-work/nexus3/admin.password
 
 上面的内容就是Nexus中内置仓库，通过下图，我们发现这些不同的内置仓库中有一些属性是不一样的。
 
-[![Maven实战-第二十一篇（Nexus中的仓库）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/C288C3F2-207E-4685-8B7D-C2AB573334D1.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/C288C3F2-207E-4685-8B7D-C2AB573334D1.png)
+[![Maven实战-第二十一篇（Nexus中的仓库）](Maven 实战.assets/image-20241025174639535.png)](Maven 实战.assets/image-20241025174639535.png)
 
 下面我们按照上图所示，介绍一下上面列表中的属性含义。
 
@@ -5232,31 +5232,31 @@ Users/md/Downloads/latest-mac/sonatype-work/nexus3/admin.password
 
 首先我们先看一下，如何创建宿主仓库。我们需要登陆管理员账号，否者将看不到配置的选项。
 
-[![Maven实战-第二十一篇（Nexus中的仓库）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/EA68CA0B-9727-45C8-BF70-0670A13B59ED.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/EA68CA0B-9727-45C8-BF70-0670A13B59ED.png)
+[![Maven实战-第二十一篇（Nexus中的仓库）](Maven 实战.assets/image-20241025174639536.png)](Maven 实战.assets/image-20241025174639536.png)
 
 我们使用管理员账号登陆之后，会发现最上面多了一个齿轮的小图标，我们点击一下这个齿轮图标的链接。
 
-[![Maven实战-第二十一篇（Nexus中的仓库）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/EFDFE9B1-3AB6-4362-99F2-878C006850AA.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/EFDFE9B1-3AB6-4362-99F2-878C006850AA.png)
+[![Maven实战-第二十一篇（Nexus中的仓库）](Maven 实战.assets/image-20241025174639537.png)](Maven 实战.assets/image-20241025174639537.png)
 
 点击完成后，我们选择`Repositories`链接，这里我们可以选择左边菜单的链接，也可以选择上面的快捷导航，这里我选择的是快捷导航。
 
-[![Maven实战-第二十一篇（Nexus中的仓库）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/CB3C0F0F-31D1-4BC3-85B3-1879E31117C6.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/CB3C0F0F-31D1-4BC3-85B3-1879E31117C6.png)
+[![Maven实战-第二十一篇（Nexus中的仓库）](Maven 实战.assets/image-20241025174639538.png)](Maven 实战.assets/image-20241025174639538.png)
 
 点击完成后，我们会看到我们之前看到的Nexus中内置的所有仓库的列表信息。
 
-[![Maven实战-第二十一篇（Nexus中的仓库）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/E802D337-070C-473E-B29F-ACD6F2BF2853.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/E802D337-070C-473E-B29F-ACD6F2BF2853.png)
+[![Maven实战-第二十一篇（Nexus中的仓库）](Maven 实战.assets/image-20241025174639539.png)](Maven 实战.assets/image-20241025174639539.png)
 
 然后我们点击左边的`Create Repositories` 按钮。
 
-[![Maven实战-第二十一篇（Nexus中的仓库）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/1AAF37E6-2BBD-4808-801F-65D6BE062266.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/1AAF37E6-2BBD-4808-801F-65D6BE062266.png)
+[![Maven实战-第二十一篇（Nexus中的仓库）](Maven 实战.assets/image-20241025174639540.png)](Maven 实战.assets/image-20241025174639540.png)
 
 当我点击完成后，会显示有很多仓库的类型，因为我们是要创建的是宿主仓库，所以我们选择`maven2(hosted)`。
 
-[![Maven实战-第二十一篇（Nexus中的仓库）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/386B0DB7-D746-43C3-9295-517F70819B19.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/386B0DB7-D746-43C3-9295-517F70819B19.png)
+[![Maven实战-第二十一篇（Nexus中的仓库）](Maven 实战.assets/image-20241025174639541.png)](Maven 实战.assets/image-20241025174639541.png)
 
 下面的内容就是创建宿主仓库的一些信息，下面我们详细介绍一下：
 
-[![Maven实战-第二十一篇（Nexus中的仓库）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/BFEB857D-C415-4C93-AD70-7A104C4605BD.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/BFEB857D-C415-4C93-AD70-7A104C4605BD.png)
+[![Maven实战-第二十一篇（Nexus中的仓库）](Maven 实战.assets/image-20241025174639542.png)](Maven 实战.assets/image-20241025174639542.png)
 
 有一些参数，我们默认就可以，不需要进行任何修改，后续的内容中，我们将详细介绍一下每一个参数具体的作用，这里我们先介绍只需要我们设置的参数。
 
@@ -5293,11 +5293,11 @@ Users/md/Downloads/latest-mac/sonatype-work/nexus3/admin.password
 
 * * *
 
-[![Maven实战-第二十一篇（Nexus中的仓库）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/D8E0616E-5CE3-475A-B94C-5D1EA9634D56.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/D8E0616E-5CE3-475A-B94C-5D1EA9634D56.png)
+[![Maven实战-第二十一篇（Nexus中的仓库）](Maven 实战.assets/image-20241025174639543.png)](Maven 实战.assets/image-20241025174639543.png)
 
 当我们完成上面的配置后，我们点击`Create repository`按钮。Nexus就会自动跳转到我们仓库的列表页，并且也会直接显示出我们刚刚创建的仓库的信息。
 
-[![Maven实战-第二十一篇（Nexus中的仓库）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/FFC671E8-A3AB-4A72-AA85-CCDD33D7D2DC.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/FFC671E8-A3AB-4A72-AA85-CCDD33D7D2DC.png)
+[![Maven实战-第二十一篇（Nexus中的仓库）](Maven 实战.assets/image-20241025174639544.png)](Maven 实战.assets/image-20241025174639544.png)
 
 
 
@@ -5305,14 +5305,14 @@ Users/md/Downloads/latest-mac/sonatype-work/nexus3/admin.password
 
 下面我们介绍一下，如何创建代理仓库，因为我们已经了解了宿主仓库的如何创建了，所以这次我们简单介绍一下。创建代理仓库和宿主仓库不同，这里我们需要选择`maven2(proxy)`参数，创建仓库。
 
-[![Maven实战-第二十一篇（Nexus中的仓库）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/FA260B26-DA36-4F61-A201-3AE2EF0CF129.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/FA260B26-DA36-4F61-A201-3AE2EF0CF129.png)
+[![Maven实战-第二十一篇（Nexus中的仓库）](Maven 实战.assets/image-20241025174639545.png)](Maven 实战.assets/image-20241025174639545.png)
 
 下面我们介绍一下和宿主仓库不同的地方，既然是代理仓库，所以需要我们配置想要代理的仓库的地址。也就是`Remote storage`参数。这里我们配置了，阿里云的仓库地址，这样当我们这个仓库配置成功后，就可以代理阿里云的仓库了。  
-[![Maven实战-第二十一篇（Nexus中的仓库）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/85F671C4-1796-4888-8B11-C5143D4CC8B9.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/85F671C4-1796-4888-8B11-C5143D4CC8B9.png)
+[![Maven实战-第二十一篇（Nexus中的仓库）](Maven 实战.assets/image-20241025174639546.png)](Maven 实战.assets/image-20241025174639546.png)
 
 同样的，我们创建完成后，点击创建按钮后，Nexus就会在列表中显示我们创建的代理仓库信息。
 
-[![Maven实战-第二十一篇（Nexus中的仓库）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/E1814536-9145-4FEE-9D25-030291D1477B.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/E1814536-9145-4FEE-9D25-030291D1477B.png)
+[![Maven实战-第二十一篇（Nexus中的仓库）](Maven 实战.assets/image-20241025174639547.png)](Maven 实战.assets/image-20241025174639547.png)
 
 
 
@@ -5320,15 +5320,15 @@ Users/md/Downloads/latest-mac/sonatype-work/nexus3/admin.password
 
 下面我们介绍一下如下创建仓库组。创建仓库组时需要我们选择`maven2(group)`参数。
 
-[![Maven实战-第二十一篇（Nexus中的仓库）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/CDD1CA09-A542-4872-A03B-244CD9F6FDD5.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/CDD1CA09-A542-4872-A03B-244CD9F6FDD5.png)
+[![Maven实战-第二十一篇（Nexus中的仓库）](Maven 实战.assets/image-20241025174639548.png)](Maven 实战.assets/image-20241025174639548.png)
 
 下面我们配置一下`Member repositories`参数，因为我们创建的是仓库组，所以我们这里需要选择，我们这个仓库组中都包括哪些仓库。这里我们选择了，我们刚刚创建成功的宿主仓库和代理仓库。也就是如下图所示：
 
-[![Maven实战-第二十一篇（Nexus中的仓库）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/FF709614-9198-418A-B2A5-E69AC2D68AC8.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/FF709614-9198-418A-B2A5-E69AC2D68AC8.png)
+[![Maven实战-第二十一篇（Nexus中的仓库）](Maven 实战.assets/image-20241025174639549.png)](Maven 实战.assets/image-20241025174639549.png)
 
 同样的当我们成功创建仓库组后，Nexus就会在仓库列表中显示。
 
-[![Maven实战-第二十一篇（Nexus中的仓库）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/11C80CCF-2CA9-4493-A218-E6F20DD4772F.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/11C80CCF-2CA9-4493-A218-E6F20DD4772F.png)
+[![Maven实战-第二十一篇（Nexus中的仓库）](Maven 实战.assets/image-20241025174639550.png)](Maven 实战.assets/image-20241025174639550.png)
 
 
 
@@ -5339,15 +5339,15 @@ Users/md/Downloads/latest-mac/sonatype-work/nexus3/admin.password
 
 我们点击左侧菜单中的`Search`菜单，然后我们选择`Maven`。Nexus就会显示出所有的依赖列表。
 
-[![Maven实战-第二十一篇（Nexus中的仓库）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/E51AA0F0-9F54-4D3E-BB7F-C9CF90103CF2.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/E51AA0F0-9F54-4D3E-BB7F-C9CF90103CF2.png)
+[![Maven实战-第二十一篇（Nexus中的仓库）](Maven 实战.assets/image-20241025174639551.png)](Maven 实战.assets/image-20241025174639551.png)
 
 然后我们可以通过`GroupId、ArtifactId、Version`等参数来快速的检索我们想要的组件。
 
-[![Maven实战-第二十一篇（Nexus中的仓库）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/5E852623-7515-461D-9D49-622BCB2AD084.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/5E852623-7515-461D-9D49-622BCB2AD084.png)
+[![Maven实战-第二十一篇（Nexus中的仓库）](Maven 实战.assets/image-20241025174639552.png)](Maven 实战.assets/image-20241025174639552.png)
 
 我们搜索一下，我们之前介绍过的组件`junit`组件，当我们输入完后，Nexus就会显示出所有`junit`组件的不同版本的信息。
 
-[![Maven实战-第二十一篇（Nexus中的仓库）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/222DEC67-F34B-4E8C-BA65-D448C2655BCD.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E7%AF%87%EF%BC%88Nexus%E4%B8%AD%E7%9A%84%E4%BB%93%E5%BA%93%EF%BC%89.resources/222DEC67-F34B-4E8C-BA65-D448C2655BCD.png)
+[![Maven实战-第二十一篇（Nexus中的仓库）](Maven 实战.assets/image-20241025174639553.png)](Maven 实战.assets/image-20241025174639553.png)
 
 * * *
 
@@ -5368,15 +5368,15 @@ Users/md/Downloads/latest-mac/sonatype-work/nexus3/admin.password
 
 通过Nexus界面部署组件很简单，我们首先需要登陆管理员账号，然后我们点击Upload按钮。具体操作如下图所示：
 
-[![Maven实战-第二十二篇（部署组件到Nexus）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E7%AF%87%EF%BC%88%E9%83%A8%E7%BD%B2%E6%9E%84%E4%BB%B6%E5%88%B0Nexus%EF%BC%89.resources/DC34D184-873B-4C8F-A230-D7CB6BBFC8A8.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E7%AF%87%EF%BC%88%E9%83%A8%E7%BD%B2%E6%9E%84%E4%BB%B6%E5%88%B0Nexus%EF%BC%89.resources/DC34D184-873B-4C8F-A230-D7CB6BBFC8A8.png)
+[![Maven实战-第二十二篇（部署组件到Nexus）](Maven 实战.assets/image-20241025174639554.png)](Maven 实战.assets/image-20241025174639554.png)
 
 然后我们选择`maven-releases`。
 
-[![Maven实战-第二十二篇（部署组件到Nexus）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E7%AF%87%EF%BC%88%E9%83%A8%E7%BD%B2%E6%9E%84%E4%BB%B6%E5%88%B0Nexus%EF%BC%89.resources/4B462B49-4FAA-446E-ACA3-E21CC8DA24E3.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E7%AF%87%EF%BC%88%E9%83%A8%E7%BD%B2%E6%9E%84%E4%BB%B6%E5%88%B0Nexus%EF%BC%89.resources/4B462B49-4FAA-446E-ACA3-E21CC8DA24E3.png)
+[![Maven实战-第二十二篇（部署组件到Nexus）](Maven 实战.assets/image-20241025174639555.png)](Maven 实战.assets/image-20241025174639555.png)
 
 点击完成后，需要我们填写这个组件的基本信息。
 
-[![Maven实战-第二十二篇（部署组件到Nexus）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E7%AF%87%EF%BC%88%E9%83%A8%E7%BD%B2%E6%9E%84%E4%BB%B6%E5%88%B0Nexus%EF%BC%89.resources/9D9E8610-4354-4D4C-82B4-822D61DA2F67.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E7%AF%87%EF%BC%88%E9%83%A8%E7%BD%B2%E6%9E%84%E4%BB%B6%E5%88%B0Nexus%EF%BC%89.resources/9D9E8610-4354-4D4C-82B4-822D61DA2F67.png)
+[![Maven实战-第二十二篇（部署组件到Nexus）](Maven 实战.assets/image-20241025174639556.png)](Maven 实战.assets/image-20241025174639556.png)
 
 由于需要我们上传一个真正的组件，所以我们还是以之前介绍的项目为例子，也就是`mazhe-maven-order`项目。我们首先打包一下这个项目。
 
@@ -5443,35 +5443,35 @@ md@ershisifenqibeigenhaoliudeMac-Studio mazhe-maven-order % mvn clean package
 
 然后我们我们点击`target`目录就可以查看到我们新打包的组件了。
 
-[![Maven实战-第二十二篇（部署组件到Nexus）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E7%AF%87%EF%BC%88%E9%83%A8%E7%BD%B2%E6%9E%84%E4%BB%B6%E5%88%B0Nexus%EF%BC%89.resources/8AAD0E68-E8CF-491F-8934-C2C218DA9C21.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E7%AF%87%EF%BC%88%E9%83%A8%E7%BD%B2%E6%9E%84%E4%BB%B6%E5%88%B0Nexus%EF%BC%89.resources/8AAD0E68-E8CF-491F-8934-C2C218DA9C21.png)
+[![Maven实战-第二十二篇（部署组件到Nexus）](Maven 实战.assets/image-20241025174639557.png)](Maven 实战.assets/image-20241025174639557.png)
 
 然后我们在Nexus中点击`Browse`按钮上传我们刚刚打包的组件。
 
-[![Maven实战-第二十二篇（部署组件到Nexus）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E7%AF%87%EF%BC%88%E9%83%A8%E7%BD%B2%E6%9E%84%E4%BB%B6%E5%88%B0Nexus%EF%BC%89.resources/373EEDA4-1B59-490A-B778-1A1AE1FFDF05.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E7%AF%87%EF%BC%88%E9%83%A8%E7%BD%B2%E6%9E%84%E4%BB%B6%E5%88%B0Nexus%EF%BC%89.resources/373EEDA4-1B59-490A-B778-1A1AE1FFDF05.png)
+[![Maven实战-第二十二篇（部署组件到Nexus）](Maven 实战.assets/image-20241025174639558.png)](Maven 实战.assets/image-20241025174639558.png)
 
 当我们填写完这些信息后，我们点击`Upload`按钮。
 
-[![Maven实战-第二十二篇（部署组件到Nexus）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E7%AF%87%EF%BC%88%E9%83%A8%E7%BD%B2%E6%9E%84%E4%BB%B6%E5%88%B0Nexus%EF%BC%89.resources/735EDD70-1324-43F8-8017-2A874434451F.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E7%AF%87%EF%BC%88%E9%83%A8%E7%BD%B2%E6%9E%84%E4%BB%B6%E5%88%B0Nexus%EF%BC%89.resources/735EDD70-1324-43F8-8017-2A874434451F.png)
+[![Maven实战-第二十二篇（部署组件到Nexus）](Maven 实战.assets/image-20241025174639559.png)](Maven 实战.assets/image-20241025174639559.png)
 
 我们点击按钮后，发现Nexus居然报错了。
 
-[![Maven实战-第二十二篇（部署组件到Nexus）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E7%AF%87%EF%BC%88%E9%83%A8%E7%BD%B2%E6%9E%84%E4%BB%B6%E5%88%B0Nexus%EF%BC%89.resources/735EDD70-1324-43F8-8017-2A874434451F.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E7%AF%87%EF%BC%88%E9%83%A8%E7%BD%B2%E6%9E%84%E4%BB%B6%E5%88%B0Nexus%EF%BC%89.resources/735EDD70-1324-43F8-8017-2A874434451F.png)
+[![Maven实战-第二十二篇（部署组件到Nexus）](Maven 实战.assets/image-20241025174639559.png)](Maven 实战.assets/image-20241025174639559.png)
 
 这是为什么呢？答案很简单，我们在上篇中介绍过，Nexus创建仓库的时候，是可以配置仓库的版本策略的。因为`maven-releases`仓库，只允许上传稳定版本的组件，但我们上面写的是快照版本，所以nexus拒绝了我们上传。下面我们把上面的版本信息修改为稳定版本。
 
-[![Maven实战-第二十二篇（部署组件到Nexus）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E7%AF%87%EF%BC%88%E9%83%A8%E7%BD%B2%E6%9E%84%E4%BB%B6%E5%88%B0Nexus%EF%BC%89.resources/B7245863-CFA3-47A3-9EB1-CA23CC1438E9.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E7%AF%87%EF%BC%88%E9%83%A8%E7%BD%B2%E6%9E%84%E4%BB%B6%E5%88%B0Nexus%EF%BC%89.resources/B7245863-CFA3-47A3-9EB1-CA23CC1438E9.png)
+[![Maven实战-第二十二篇（部署组件到Nexus）](Maven 实战.assets/image-20241025174639561.png)](Maven 实战.assets/image-20241025174639561.png)
 
 然后我们继续点击`Upload`上传来看一下Nexus是否还会报错。
 
-[![Maven实战-第二十二篇（部署组件到Nexus）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E7%AF%87%EF%BC%88%E9%83%A8%E7%BD%B2%E6%9E%84%E4%BB%B6%E5%88%B0Nexus%EF%BC%89.resources/EF34C7AF-18AA-41B5-AAC3-55C3155FAD2E.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E7%AF%87%EF%BC%88%E9%83%A8%E7%BD%B2%E6%9E%84%E4%BB%B6%E5%88%B0Nexus%EF%BC%89.resources/EF34C7AF-18AA-41B5-AAC3-55C3155FAD2E.png)
+[![Maven实战-第二十二篇（部署组件到Nexus）](Maven 实战.assets/image-20241025174639562.png)](Maven 实战.assets/image-20241025174639562.png)
 
 我们看这次我们上传成功了，我们点击一下上面的`view it now` 链接，来查看一下，我们刚刚上传的依赖。
 
-[![Maven实战-第二十二篇（部署组件到Nexus）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E7%AF%87%EF%BC%88%E9%83%A8%E7%BD%B2%E6%9E%84%E4%BB%B6%E5%88%B0Nexus%EF%BC%89.resources/FC0062A7-5FEB-4477-B1B0-F2982D0400F3.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E7%AF%87%EF%BC%88%E9%83%A8%E7%BD%B2%E6%9E%84%E4%BB%B6%E5%88%B0Nexus%EF%BC%89.resources/FC0062A7-5FEB-4477-B1B0-F2982D0400F3.png)
+[![Maven实战-第二十二篇（部署组件到Nexus）](Maven 实战.assets/image-20241025174639563.png)](Maven 实战.assets/image-20241025174639563.png)
 
 这样我们就能很方便的在Nexus中看到我们刚刚上传的依赖信息，以及上传时间了。同样的我们也可以通过我们上篇中介绍的，通过Nexus中的`search`搜索我们刚刚上传的依赖。
 
-[![Maven实战-第二十二篇（部署组件到Nexus）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E7%AF%87%EF%BC%88%E9%83%A8%E7%BD%B2%E6%9E%84%E4%BB%B6%E5%88%B0Nexus%EF%BC%89.resources/795AD667-C0D6-49D1-902C-5AE34243FDEA.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E7%AF%87%EF%BC%88%E9%83%A8%E7%BD%B2%E6%9E%84%E4%BB%B6%E5%88%B0Nexus%EF%BC%89.resources/795AD667-C0D6-49D1-902C-5AE34243FDEA.png)
+[![Maven实战-第二十二篇（部署组件到Nexus）](Maven 实战.assets/image-20241025174639564.png)](Maven 实战.assets/image-20241025174639564.png)
 
 同样的依然会显示我们刚刚上传的依赖信息。这就是使用Nexus上传我们的依赖组件。下面我们介绍一下，上面的具体参数。
 
@@ -5649,7 +5649,7 @@ mvn clean deploy
 
 下面我们修改一下这个仓库的配置。因为上一篇中我们已经介绍过了。所以这里就不在重复介绍了。
 
-[![Maven实战-第二十二篇（部署组件到Nexus）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E7%AF%87%EF%BC%88%E9%83%A8%E7%BD%B2%E6%9E%84%E4%BB%B6%E5%88%B0Nexus%EF%BC%89.resources/6CC90E5F-CAF7-4EC8-94C5-C61D926BD28A.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E7%AF%87%EF%BC%88%E9%83%A8%E7%BD%B2%E6%9E%84%E4%BB%B6%E5%88%B0Nexus%EF%BC%89.resources/6CC90E5F-CAF7-4EC8-94C5-C61D926BD28A.png)
+[![Maven实战-第二十二篇（部署组件到Nexus）](Maven 实战.assets/image-20241025174639565.png)](Maven 实战.assets/image-20241025174639565.png)
 
 修改完成后，我们在次执行上面的部署命令。
 
@@ -5682,7 +5682,7 @@ Uploaded to maven-releases: http://localhost:8081/repository/maven-releases/cn/m
 
 我们看上面的日志，这次我们部署成功了，下面我们通过Nexus中查看一下，我们使用命令部署的组件。
 
-[![Maven实战-第二十二篇（部署组件到Nexus）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E7%AF%87%EF%BC%88%E9%83%A8%E7%BD%B2%E6%9E%84%E4%BB%B6%E5%88%B0Nexus%EF%BC%89.resources/89E772CB-910E-40F9-A96A-5E570B14D93A.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%BA%8C%E7%AF%87%EF%BC%88%E9%83%A8%E7%BD%B2%E6%9E%84%E4%BB%B6%E5%88%B0Nexus%EF%BC%89.resources/89E772CB-910E-40F9-A96A-5E570B14D93A.png)
+[![Maven实战-第二十二篇（部署组件到Nexus）](Maven 实战.assets/image-20241025174639566.png)](Maven 实战.assets/image-20241025174639566.png)
 
 这样我们就完成了通过命令部署组件到Nexus了。
 
@@ -5983,7 +5983,7 @@ Hello World Mazhe Maven Mall Test!
 
 下面我们查看一下项目中的`target/surefire-reports`目录是否生成了测试报告。
 
-[![Maven实战-第二十三篇（用Maven进行代码测试）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%89%E7%AF%87%EF%BC%88%E7%94%A8Maven%E8%BF%9B%E8%A1%8C%E4%BB%A3%E7%A0%81%E6%B5%8B%E8%AF%95%EF%BC%89.resources/97015775-37B8-47C8-A97D-0AE154C2937A.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%89%E7%AF%87%EF%BC%88%E7%94%A8Maven%E8%BF%9B%E8%A1%8C%E4%BB%A3%E7%A0%81%E6%B5%8B%E8%AF%95%EF%BC%89.resources/97015775-37B8-47C8-A97D-0AE154C2937A.png)
+[![Maven实战-第二十三篇（用Maven进行代码测试）](Maven 实战.assets/image-20241025174639567.png)](Maven 实战.assets/image-20241025174639567.png)
 
 我们看上图显示，成功的生了项目的测试报告了，并且同时生成了两种格式。下面我们查看一下里面的内容。
 
@@ -6153,15 +6153,15 @@ Report time: 167ms
 
 然后我们查看一下项目的中`target/site`目录。因为`cobertura-maven-plugin`插件会将生成的测试报告文件存放到上述的目录中。
 
-[![Maven实战-第二十三篇（用Maven进行代码测试）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%89%E7%AF%87%EF%BC%88%E7%94%A8Maven%E8%BF%9B%E8%A1%8C%E4%BB%A3%E7%A0%81%E6%B5%8B%E8%AF%95%EF%BC%89.resources/213C7647-44CF-4BFC-AD3B-27D01C755101.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%89%E7%AF%87%EF%BC%88%E7%94%A8Maven%E8%BF%9B%E8%A1%8C%E4%BB%A3%E7%A0%81%E6%B5%8B%E8%AF%95%EF%BC%89.resources/213C7647-44CF-4BFC-AD3B-27D01C755101.png)
+[![Maven实战-第二十三篇（用Maven进行代码测试）](Maven 实战.assets/image-20241025174639568.png)](Maven 实战.assets/image-20241025174639568.png)
 
 然后我们打开项目中的`index.html`文件。因为是`html`文件，所以我们可以通过浏览器打开。
 
-[![Maven实战-第二十三篇（用Maven进行代码测试）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%89%E7%AF%87%EF%BC%88%E7%94%A8Maven%E8%BF%9B%E8%A1%8C%E4%BB%A3%E7%A0%81%E6%B5%8B%E8%AF%95%EF%BC%89.resources/AC96DE90-574E-4371-B46E-9AFFB6D22C27.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%89%E7%AF%87%EF%BC%88%E7%94%A8Maven%E8%BF%9B%E8%A1%8C%E4%BB%A3%E7%A0%81%E6%B5%8B%E8%AF%95%EF%BC%89.resources/AC96DE90-574E-4371-B46E-9AFFB6D22C27.png)
+[![Maven实战-第二十三篇（用Maven进行代码测试）](Maven 实战.assets/image-20241025174639569.png)](Maven 实战.assets/image-20241025174639569.png)
 
 通过浏览器查看我们就可以很直观的查看测试覆盖率的情况。并且还可以查看到具体的测试用例的代码。
 
-[![Maven实战-第二十三篇（用Maven进行代码测试）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%89%E7%AF%87%EF%BC%88%E7%94%A8Maven%E8%BF%9B%E8%A1%8C%E4%BB%A3%E7%A0%81%E6%B5%8B%E8%AF%95%EF%BC%89.resources/52D4D2CF-00BE-45F6-ABD3-A5B9CF753F4C.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%89%E7%AF%87%EF%BC%88%E7%94%A8Maven%E8%BF%9B%E8%A1%8C%E4%BB%A3%E7%A0%81%E6%B5%8B%E8%AF%95%EF%BC%89.resources/52D4D2CF-00BE-45F6-ABD3-A5B9CF753F4C.png)
+[![Maven实战-第二十三篇（用Maven进行代码测试）](Maven 实战.assets/image-20241025174639570.png)](Maven 实战.assets/image-20241025174639570.png)
 
 下面我们创建一个新类添加几个方法来更方便的我们观察上面的测试覆盖率。
 
@@ -6200,15 +6200,15 @@ public class MazheMavenMallTest {
 
 然后我们再次执行`mvn cobertura:cobertura`命令。来观察一下测试覆盖率。
 
-[![Maven实战-第二十三篇（用Maven进行代码测试）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%89%E7%AF%87%EF%BC%88%E7%94%A8Maven%E8%BF%9B%E8%A1%8C%E4%BB%A3%E7%A0%81%E6%B5%8B%E8%AF%95%EF%BC%89.resources/3847A71D-41F8-48DA-9875-871793B20635.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%89%E7%AF%87%EF%BC%88%E7%94%A8Maven%E8%BF%9B%E8%A1%8C%E4%BB%A3%E7%A0%81%E6%B5%8B%E8%AF%95%EF%BC%89.resources/3847A71D-41F8-48DA-9875-871793B20635.png)
+[![Maven实战-第二十三篇（用Maven进行代码测试）](Maven 实战.assets/image-20241025174639571.png)](Maven 实战.assets/image-20241025174639571.png)
 
 然后我们点击上面的类就可以查看里面测试的信息。
 
-[![Maven实战-第二十三篇（用Maven进行代码测试）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%89%E7%AF%87%EF%BC%88%E7%94%A8Maven%E8%BF%9B%E8%A1%8C%E4%BB%A3%E7%A0%81%E6%B5%8B%E8%AF%95%EF%BC%89.resources/7E6033E5-9ACA-4F57-B8A6-7A52AC6F35DF.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%89%E7%AF%87%EF%BC%88%E7%94%A8Maven%E8%BF%9B%E8%A1%8C%E4%BB%A3%E7%A0%81%E6%B5%8B%E8%AF%95%EF%BC%89.resources/7E6033E5-9ACA-4F57-B8A6-7A52AC6F35DF.png)
+[![Maven实战-第二十三篇（用Maven进行代码测试）](Maven 实战.assets/image-20241025174639572.png)](Maven 实战.assets/image-20241025174639572.png)
 
 上图中前面的数字则表示执行了几次测试。下面我们在次执行一下`mvn cobertura:cobertura`命令。来看一下类前面的数字会不会变。
 
-[![Maven实战-第二十三篇（用Maven进行代码测试）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%89%E7%AF%87%EF%BC%88%E7%94%A8Maven%E8%BF%9B%E8%A1%8C%E4%BB%A3%E7%A0%81%E6%B5%8B%E8%AF%95%EF%BC%89.resources/6834042E-A0A6-4937-9DFD-CBB777F551B3.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%89%E7%AF%87%EF%BC%88%E7%94%A8Maven%E8%BF%9B%E8%A1%8C%E4%BB%A3%E7%A0%81%E6%B5%8B%E8%AF%95%EF%BC%89.resources/6834042E-A0A6-4937-9DFD-CBB777F551B3.png)
+[![Maven实战-第二十三篇（用Maven进行代码测试）](Maven 实战.assets/image-20241025174639573.png)](Maven 实战.assets/image-20241025174639573.png)
 
 我们看上图所示，类前面数字已经变成2了。因为我们已经执行了2次了。下面我们在修改一下测试用例里的代码添加`order`方法。然后在测试一下。
 
@@ -6235,7 +6235,7 @@ public class MazheMavenMallTest {
 
 下面我们在执行一下`mvn cobertura:cobertura`命令来查看一下测试统计率。
 
-[![Maven实战-第二十三篇（用Maven进行代码测试）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%89%E7%AF%87%EF%BC%88%E7%94%A8Maven%E8%BF%9B%E8%A1%8C%E4%BB%A3%E7%A0%81%E6%B5%8B%E8%AF%95%EF%BC%89.resources/365BD0DC-98ED-49C4-BE95-A829181025FC.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%89%E7%AF%87%EF%BC%88%E7%94%A8Maven%E8%BF%9B%E8%A1%8C%E4%BB%A3%E7%A0%81%E6%B5%8B%E8%AF%95%EF%BC%89.resources/365BD0DC-98ED-49C4-BE95-A829181025FC.png)
+[![Maven实战-第二十三篇（用Maven进行代码测试）](Maven 实战.assets/image-20241025174639574.png)](Maven 实战.assets/image-20241025174639574.png)
 
 这次我们`order`方法前面的数字就变成1了。有一点这里要注意，这个测试的统计率，实际上是调用这个方法的次数。如果我们在上面`mall`方法中调用了其它的方法，例如`user`方法，那么在调用`mall`方法时`user`方法也会统计，例如下面的代码：
 
@@ -6260,7 +6260,7 @@ public class MazheMavenMall {
 
 下面我们再次调用`mvn cobertura:cobertura`命令，查看一下统计率。
 
-[![Maven实战-第二十三篇（用Maven进行代码测试）](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%89%E7%AF%87%EF%BC%88%E7%94%A8Maven%E8%BF%9B%E8%A1%8C%E4%BB%A3%E7%A0%81%E6%B5%8B%E8%AF%95%EF%BC%89.resources/5967CF53-A3B7-4220-9AD6-B99FE5B13B61.png)](http://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%89%E7%AF%87%EF%BC%88%E7%94%A8Maven%E8%BF%9B%E8%A1%8C%E4%BB%A3%E7%A0%81%E6%B5%8B%E8%AF%95%EF%BC%89.resources/5967CF53-A3B7-4220-9AD6-B99FE5B13B61.png)
+[![Maven实战-第二十三篇（用Maven进行代码测试）](Maven 实战.assets/image-20241025174639575.png)](Maven 实战.assets/image-20241025174639575.png)
 
 就是`cobertura-maven-plugin`插件的功能。
 
@@ -6326,11 +6326,11 @@ spring:
 
 *   dev
 
-[![# Maven实战-第二十四篇（最终篇）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E5%9B%9B%E7%AF%87%EF%BC%88%E7%94%A8Maven%E8%BF%9B%E8%A1%8C%E4%BB%A3%E7%A0%81%E6%B5%8B%E8%AF%95%EF%BC%89.resources/0F1B0B62-72B5-4EF4-9147-FF0F77726A3D.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E5%9B%9B%E7%AF%87%EF%BC%88%E7%94%A8Maven%E8%BF%9B%E8%A1%8C%E4%BB%A3%E7%A0%81%E6%B5%8B%E8%AF%95%EF%BC%89.resources/0F1B0B62-72B5-4EF4-9147-FF0F77726A3D.png)
+[![# Maven实战-第二十四篇（最终篇）](Maven 实战.assets/image-20241025174639576.png)](Maven 实战.assets/image-20241025174639576.png)
 
 *   test
 
-[![# Maven实战-第二十四篇（最终篇）](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E5%9B%9B%E7%AF%87%EF%BC%88%E7%94%A8Maven%E8%BF%9B%E8%A1%8C%E4%BB%A3%E7%A0%81%E6%B5%8B%E8%AF%95%EF%BC%89.resources/26AD112C-E992-45CB-AC8B-D0789ACAC175.png)](https://ma-zhe.cn/wp-content/uploads/maven/Maven%E5%AE%9E%E6%88%98-%E7%AC%AC%E4%BA%8C%E5%8D%81%E5%9B%9B%E7%AF%87%EF%BC%88%E7%94%A8Maven%E8%BF%9B%E8%A1%8C%E4%BB%A3%E7%A0%81%E6%B5%8B%E8%AF%95%EF%BC%89.resources/26AD112C-E992-45CB-AC8B-D0789ACAC175.png)
+[![# Maven实战-第二十四篇（最终篇）](Maven 实战.assets/image-20241025174639577.png)](Maven 实战.assets/image-20241025174639577.png)
 
 下面我们看一下测试用例的配置。
 

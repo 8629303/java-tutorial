@@ -356,7 +356,7 @@ docker-compose up
 rpm -qa | grep -i mysql
 ```
 
-[![1570605325400](https://images-1300356155.cos.ap-nanjing.myqcloud.com/img/1570605325400.png)](https://images-1300356155.cos.ap-nanjing.myqcloud.com/img/1570605325400.png)
+[![1570605325400](MySQL-初级.assets/image-20241025145539087.png)](MySQL-初级.assets/image-20241025145539087.png)
 
 2、删除上图安装的软件
 
@@ -370,7 +370,7 @@ rpm -ev mysql-community-libs-5.7.27-1.el6.x86_64 --nodeps
 find / -name mysql
 ```
 
-[![1570605553095](https://images-1300356155.cos.ap-nanjing.myqcloud.com/img/1570605553095.png)](https://images-1300356155.cos.ap-nanjing.myqcloud.com/img/1570605553095.png)
+[![1570605553095](MySQL-初级.assets/image-20241025145539088.png)](MySQL-初级.assets/image-20241025145539088.png)
 
 4、删除全部文件
 

@@ -127,11 +127,11 @@ Java开发，ElasticSearch 的版本和我们之后对应的 Java 的核心jar�
 
 ELK 三剑客，解压即用！（web项目！前端环境！）
 
-![ElasticSearch_1](ElasticSearch7.6.x实战/ElasticSearch_1.jpg)
+![ElasticSearch_1](ElasticSearch7.6.x实战.assets/image-20241025145538754.png)
 
-![ElasticSearch_2](ElasticSearch7.6.x实战/ElasticSearch_2.jpg)
+![ElasticSearch_2](ElasticSearch7.6.x实战.assets/image-20241025145538755.png)
 
-![ElasticSearch_3](ElasticSearch7.6.x实战/ElasticSearch_3.jpg)
+![ElasticSearch_3](ElasticSearch7.6.x实战.assets/image-20241025145538756.png)
 
 
 
@@ -139,7 +139,7 @@ ELK 三剑客，解压即用！（web项目！前端环境！）
 
 1、解压就可以使用了！
 
-![ElasticSearch_4](ElasticSearch7.6.x实战/ElasticSearch_4.jpg)
+![ElasticSearch_4](ElasticSearch7.6.x实战.assets/image-20241025145538757.png)
 
 2、熟悉目录！
 
@@ -157,11 +157,11 @@ plugins 插件
 
 3、启动，访问9200；
 
-![ElasticSearch_5](ElasticSearch7.6.x实战/ElasticSearch_5.jpg)
+![ElasticSearch_5](ElasticSearch7.6.x实战.assets/image-20241025145538758.png)
 
 4、访问测试！
 
-![ElasticSearch_6](ElasticSearch7.6.x实战/ElasticSearch_6.jpg)
+![ElasticSearch_6](ElasticSearch7.6.x实战.assets/image-20241025145538759.png)
 
 
 
@@ -187,7 +187,7 @@ http.cors.allow-origin: "*"
 
 4、重启es服务器，然后再次连接
 
-![ElasticSearch_7](ElasticSearch7.6.x实战/ElasticSearch_7.jpg)
+![ElasticSearch_7](ElasticSearch7.6.x实战.assets/image-20241025145538760.png)
 
 **初学：就把es当做一个数据库！ （可以建立索引（库），文档（库中的数据！）） 这个head我们就把它当做数据展示工具！我们后面所有的查询，Kibana！**
 
@@ -203,25 +203,25 @@ Kibana是一个针对Elasticsearch的开源分析及可视化平台，用来搜�
 
 Kibana 版本要和 Es 一致！
 
-![ElasticSearch_9](ElasticSearch7.6.x实战/ElasticSearch_9.jpg)
+![ElasticSearch_9](ElasticSearch7.6.x实战.assets/image-20241025145538761.png)
 
-![ElasticSearch_10](ElasticSearch7.6.x实战/ElasticSearch_10.jpg)
+![ElasticSearch_10](ElasticSearch7.6.x实战.assets/image-20241025145538762.png)
 
 1、解压后端的目录
 
-![ElasticSearch_11](ElasticSearch7.6.x实战/ElasticSearch_11.jpg)
+![ElasticSearch_11](ElasticSearch7.6.x实战.assets/image-20241025145538763.png)
 
 2、启动
 
-![ElasticSearch_12](ElasticSearch7.6.x实战/ElasticSearch_12.jpg)
+![ElasticSearch_12](ElasticSearch7.6.x实战.assets/image-20241025145538764.png)
 
 3、访问测试
 
-![ElasticSearch_13](ElasticSearch7.6.x实战/ElasticSearch_13.jpg)
+![ElasticSearch_13](ElasticSearch7.6.x实战.assets/image-20241025145538765.png)
 
 4、开发工具！ （Post、curl、head、谷歌浏览器插件测试！）
 
-![ElasticSearch_14](ElasticSearch7.6.x实战/ElasticSearch_14.jpg)
+![ElasticSearch_14](ElasticSearch7.6.x实战.assets/image-20241025145538766.png)
 
 我们之后的所有操作都在这里进行编写！很多学习大数据的人，Hadoop！ 
 
@@ -237,7 +237,7 @@ ELK是Elasticsearch、Logstash、Kibana三大开源框架首字母大写简称�
 
 市面上很多开发只要提到ELK能够一致说出它是一个日志分析架构技术栈总称，但实际上ELK不仅仅适用于日志分析，它还可以支持其它任何数据分析和收集的场景，日志分析和收集只是更具有代表性。并非唯一性。
 
-![ElasticSearch_8](ElasticSearch7.6.x实战/ElasticSearch_8.jpg)
+![ElasticSearch_8](ElasticSearch7.6.x实战.assets/image-20241025145538767.png)
 
 
 
@@ -300,7 +300,7 @@ user
 
 类型是文档的逻辑容器，就像关系型数据库一样，表格是行的容器。 类型中对于字段的定义称为映射，比如 name 映 射为字符串类型。 我们说文档是无模式的，它们不需要拥有映射中所定义的所有字段，比如新增一个字段，那么elasticsearch是怎么做的呢?elasticsearch会自动的将新字段加入映射，但是这个字段的不确定它是什么类型，elasticsearch就开始猜，如果这个值是18，那么elasticsearch会认为它是整形。 但是elasticsearch也可能猜不对， 所以最安全的方式就是提前定义好所需要的映射，这点跟关系型数据库殊途同归了，先定义好字段，然后再使用，别 整什么幺蛾子。
 
-![ElasticSearch_15](ElasticSearch7.6.x实战/ElasticSearch_15.jpg)
+![ElasticSearch_15](ElasticSearch7.6.x实战.assets/image-20241025145538768.png)
 
 
 
@@ -312,7 +312,7 @@ user
 
 个集群至少有一个节点，而一个节点就是一个elasricsearch进程，节点可以有多个索引默认的，如果你创建索引，那么索引将会有个5个分片 ( primary shard ,又称主分片 ) 构成的，每一个主分片会有一个 副本 ( replica shard ,又称复制分片 )
 
-![ElasticSearch_16](ElasticSearch7.6.x实战/ElasticSearch_16.jpg)
+![ElasticSearch_16](ElasticSearch7.6.x实战.assets/image-20241025145538769.png)
 
 上图是一个有3个节点的集群，可以看到主分片和对应的复制分片都不会在同一个节点内，这样有利于某个节点挂掉 了，数据也不至于丢失。 实际上，一个分片是一个Lucene索引，一个包含倒排索引的文件目录，倒排索引的结构使 得elasticsearch在不扫描全部文档的情况下，就能告诉你哪些文档包含特定的关键字。 不过，等等，倒排索引是什 么鬼?
 
@@ -356,7 +356,7 @@ To forever, study every day, good good up # 文档2包含的内容
 
 再来看一个示例，比如我们通过博客标签来搜索博客文章。那么倒排索引列表就是这样的一个结构 :
 
-![ElasticSearch_17](ElasticSearch7.6.x实战/ElasticSearch_17.jpg)
+![ElasticSearch_17](ElasticSearch7.6.x实战.assets/image-20241025145538770.png)
 
 
 
@@ -386,15 +386,15 @@ IK提供了两个分词算法：ik_smart 和 ik_max_word，其中 ik_smart 为�
 
 2、下载完毕之后，放入到我们的elasticsearch 插件即可！
 
-![ElasticSearch_18](ElasticSearch7.6.x实战/ElasticSearch_18.jpg)
+![ElasticSearch_18](ElasticSearch7.6.x实战.assets/image-20241025145538771.png)
 
 3、重启观察ES，可以看到ik分词器被加载了！
 
-![ElasticSearch_19](ElasticSearch7.6.x实战/ElasticSearch_19.jpg)
+![ElasticSearch_19](ElasticSearch7.6.x实战.assets/image-20241025145538772.png)
 
 4、elasticsearch-plugin list可以通过这个命令来查看加载进来的插件
 
-![ElasticSearch_20](ElasticSearch7.6.x实战/ElasticSearch_20.jpg)
+![ElasticSearch_20](ElasticSearch7.6.x实战.assets/image-20241025145538773.png)
 
 5、使用kibana测试！
 
@@ -404,11 +404,11 @@ IK提供了两个分词算法：ik_smart 和 ik_max_word，其中 ik_smart 为�
 
 - 其中 ik_smart 为最少切分：
 
-![ElasticSearch_21](ElasticSearch7.6.x实战/ElasticSearch_21.jpg)
+![ElasticSearch_21](ElasticSearch7.6.x实战.assets/image-20241025145538774.png)
 
 - ik_max_word为最细粒度划分！穷尽词库的可能！字典！
 
-![ElasticSearch_22](ElasticSearch7.6.x实战/ElasticSearch_22.jpg)
+![ElasticSearch_22](ElasticSearch7.6.x实战.assets/image-20241025145538775.png)
 
 ```json
 GET  _analyze
@@ -428,7 +428,7 @@ GET  _analyze
 
 > 我们输入 超级喜欢狂神说Java
 
-![ElasticSearch_23](ElasticSearch7.6.x实战/ElasticSearch_23.jpg)
+![ElasticSearch_23](ElasticSearch7.6.x实战.assets/image-20241025145538776.png)
 
 发现问题：狂神说被拆开了！
 
@@ -438,15 +438,15 @@ GET  _analyze
 
 > ik 分词器增加自己的配置！
 
-![ElasticSearch_24](ElasticSearch7.6.x实战/ElasticSearch_24.jpg)
+![ElasticSearch_24](ElasticSearch7.6.x实战.assets/image-20241025145538777.png)
 
 重启es，看细节！
 
-![ElasticSearch_25](ElasticSearch7.6.x实战/ElasticSearch_25.jpg)
+![ElasticSearch_25](ElasticSearch7.6.x实战.assets/image-20241025145538778.png)
 
 再次测试一下狂神说，看下效果！
 
-![ElasticSearch_26](ElasticSearch7.6.x实战/ElasticSearch_26.jpg)
+![ElasticSearch_26](ElasticSearch7.6.x实战.assets/image-20241025145538779.png)
 
 **以后的话，我们需要自己配置 分词就在自己定义的dic文件中进行配置即可！**
 
@@ -492,7 +492,7 @@ PUT /索引名/~类型名~/文档id
 {请求体}
 ```
 
-![ElasticSearch_27](ElasticSearch7.6.x实战/ElasticSearch_27.jpg)
+![ElasticSearch_27](ElasticSearch7.6.x实战.assets/image-20241025145538780.png)
 
 ```
 PUT /test1/type1/1
@@ -506,7 +506,7 @@ PUT /test1/type1/1
 
 2、完成了自动增加了索引！数据也成功的添加了，这就是我说大家在初期可以把它当做数据库学习的原因！
 
-![ElasticSearch_28](ElasticSearch7.6.x实战/ElasticSearch_28.jpg)
+![ElasticSearch_28](ElasticSearch7.6.x实战.assets/image-20241025145538781.png)
 
 
 
@@ -536,7 +536,7 @@ PUT /test1/type1/1
 
 4、指定字段的类型
 
-![ElasticSearch_29](ElasticSearch7.6.x实战/ElasticSearch_29.jpg)
+![ElasticSearch_29](ElasticSearch7.6.x实战.assets/image-20241025145538782.png)
 
 ```json
 PUT  /test2
@@ -561,7 +561,7 @@ PUT  /test2
 
 5、获得这个规则！ 可以通过 GET 请求获取具体的信息！
 
-![ElasticSearch_30](ElasticSearch7.6.x实战/ElasticSearch_30.jpg)
+![ElasticSearch_30](ElasticSearch7.6.x实战.assets/image-20241025145538783.png)
 
 ```
 GET  test2
@@ -571,9 +571,9 @@ GET  test2
 
 6、查看默认的信息
 
-![ElasticSearch_31](ElasticSearch7.6.x实战/ElasticSearch_31.jpg)
+![ElasticSearch_31](ElasticSearch7.6.x实战.assets/image-20241025145538784.png)
 
-![ElasticSearch_32](ElasticSearch7.6.x实战/ElasticSearch_32.jpg)
+![ElasticSearch_32](ElasticSearch7.6.x实战.assets/image-20241025145538785.png)
 
 **如果自己的文档字段没有指定，那么es 就会给我们默认配置字段类型！**
 
@@ -593,7 +593,7 @@ GET test3
 
 扩展： 通过命令 elasticsearch 索引情况！ 通过get _cat/ 可以获得es的当前的很多信息！
 
-![ElasticSearch_33](ElasticSearch7.6.x实战/ElasticSearch_33.jpg)
+![ElasticSearch_33](ElasticSearch7.6.x实战.assets/image-20241025145538786.png)
 
 ```
 GET  _cat/health
@@ -607,11 +607,11 @@ GET  _cat/indices?v
 
 - 曾经的方法：
 
-![ElasticSearch_34](ElasticSearch7.6.x实战/ElasticSearch_34.jpg)
+![ElasticSearch_34](ElasticSearch7.6.x实战.assets/image-20241025145538787.png)
 
 - 现在的方法：
 
-![ElasticSearch_35](ElasticSearch7.6.x实战/ElasticSearch_35.jpg)
+![ElasticSearch_35](ElasticSearch7.6.x实战.assets/image-20241025145538788.png)
 
 ```json
 PUT  /test3/_doc/1
@@ -662,13 +662,13 @@ PUT /kuangshen/user/1
 }
 ```
 
-![ElasticSearch_36](ElasticSearch7.6.x实战/ElasticSearch_36.jpg)
+![ElasticSearch_36](ElasticSearch7.6.x实战.assets/image-20241025145538789.png)
 
 
 
 2、获取数据 GET
 
-![ElasticSearch_37](ElasticSearch7.6.x实战/ElasticSearch_37.jpg)
+![ElasticSearch_37](ElasticSearch7.6.x实战.assets/image-20241025145538790.png)
 
 ```
 GET /kuangshen/user/1
@@ -678,7 +678,7 @@ GET /kuangshen/user/1
 
 3、更新数据 PUT
 
-![ElasticSearch_38](ElasticSearch7.6.x实战/ElasticSearch_38.jpg)
+![ElasticSearch_38](ElasticSearch7.6.x实战.assets/image-20241025145538791.png)
 
 ```json
 - 必须对应的值分别都需要传值，不然会被覆盖
@@ -695,7 +695,7 @@ PUT /kuangshen/user/3
 
 4、Post _update , 推荐使用这种更新方式！
 
-![ElasticSearch_39](ElasticSearch7.6.x实战/ElasticSearch_39.jpg)
+![ElasticSearch_39](ElasticSearch7.6.x实战.assets/image-20241025145538792.png)
 
 ```json
 POST  kuangshen/user/3/_update
@@ -718,9 +718,9 @@ GET kuangshen/user/1
 
 6、（**_search**）简单的条件查询，可以根据默认的映射规则，产生基本的查询
 
-![ElasticSearch_40](ElasticSearch7.6.x实战/ElasticSearch_40.jpg)
+![ElasticSearch_40](ElasticSearch7.6.x实战.assets/image-20241025145538793.png)
 
-![ElasticSearch_41](ElasticSearch7.6.x实战/ElasticSearch_41.jpg)
+![ElasticSearch_41](ElasticSearch7.6.x实战.assets/image-20241025145538794.png)
 
 ```json
 GET kuangshen/user/_search?q=name:狂神说java
@@ -730,13 +730,13 @@ GET kuangshen/user/_search?q=name:狂神说java
 
 > 复杂操作搜索 select ( 排序，分页，高亮，模糊查询，精准查询！)
 
-![ElasticSearch_42](ElasticSearch7.6.x实战/ElasticSearch_42.jpg)
+![ElasticSearch_42](ElasticSearch7.6.x实战.assets/image-20241025145538795.png)
 
-![ElasticSearch_43](ElasticSearch7.6.x实战/ElasticSearch_43.jpg)
+![ElasticSearch_43](ElasticSearch7.6.x实战.assets/image-20241025145538796.png)
 
 输出结果，不想要那么多！
 
-![ElasticSearch_44](ElasticSearch7.6.x实战/ElasticSearch_44.jpg)
+![ElasticSearch_44](ElasticSearch7.6.x实战.assets/image-20241025145538797.png)
 
 我们之后使用Java操作es ，所有的方法和对象就是这里面的 key！
 
@@ -766,7 +766,7 @@ GET kuangshen/user/_search
 
 > 排序！
 
-![ElasticSearch_45](ElasticSearch7.6.x实战/ElasticSearch_45.jpg)
+![ElasticSearch_45](ElasticSearch7.6.x实战.assets/image-20241025145538798.png)
 
 ```json
 GET kuangshen/user/_search
@@ -790,7 +790,7 @@ GET kuangshen/user/_search
 
 > 分页查询！
 
-![ElasticSearch_46](ElasticSearch7.6.x实战/ElasticSearch_46.jpg)
+![ElasticSearch_46](ElasticSearch7.6.x实战.assets/image-20241025145538799.png)
 
 数据下标还是从0开始的，和学的所有数据结构是一样的！——/search/{current}/{pagesize}
 
@@ -820,7 +820,7 @@ GET kuangshen/user/_search
 
 1、must （and），所有的条件都要符合 where id = 1 and name = xxx
 
-![ElasticSearch_47](ElasticSearch7.6.x实战/ElasticSearch_47.jpg)
+![ElasticSearch_47](ElasticSearch7.6.x实战.assets/image-20241025145538800.png)
 
 ```json
 GET kuangshen/user/_search
@@ -848,7 +848,7 @@ GET kuangshen/user/_search
 
 2、should（or），所有的条件都要符合 where id = 1 or name = xxx
 
-![ElasticSearch_48](ElasticSearch7.6.x实战/ElasticSearch_48.jpg)
+![ElasticSearch_48](ElasticSearch7.6.x实战.assets/image-20241025145538801.png)
 
 ```json
 GET kuangshen/user/_search
@@ -876,7 +876,7 @@ GET kuangshen/user/_search
 
 3、must_not（not）
 
-![ElasticSearch_49](ElasticSearch7.6.x实战/ElasticSearch_49.jpg)
+![ElasticSearch_49](ElasticSearch7.6.x实战.assets/image-20241025145538802.png)
 
 ```json
 GET kuangshen/user/_search
@@ -899,7 +899,7 @@ GET kuangshen/user/_search
 
 4、过滤器 fifilter
 
-![ElasticSearch_50](ElasticSearch7.6.x实战/ElasticSearch_50.jpg)
+![ElasticSearch_50](ElasticSearch7.6.x实战.assets/image-20241025145538803.png)
 
 - gt 大于
 
@@ -907,7 +907,7 @@ GET kuangshen/user/_search
 - lt 小于
 - lte 小于等于
 
-![ElasticSearch_51](ElasticSearch7.6.x实战/ElasticSearch_51.jpg)
+![ElasticSearch_51](ElasticSearch7.6.x实战.assets/image-20241025145538804.png)
 
 ```json
 GET kuangshen/user/_search
@@ -940,7 +940,7 @@ GET kuangshen/user/_search
 
 > 匹配多个条件！
 
-![ElasticSearch_52](ElasticSearch7.6.x实战/ElasticSearch_52.jpg)
+![ElasticSearch_52](ElasticSearch7.6.x实战.assets/image-20241025145538805.png)
 
 ```json
 GET kuangshen/user/_search
@@ -964,11 +964,11 @@ GET kuangshen/user/_search
 
 **两个类型** **text keyword**
 
-![ElasticSearch_53](ElasticSearch7.6.x实战/ElasticSearch_53.jpg)
+![ElasticSearch_53](ElasticSearch7.6.x实战.assets/image-20241025145538806.png)
 
-![ElasticSearch_54](ElasticSearch7.6.x实战/ElasticSearch_54.jpg)
+![ElasticSearch_54](ElasticSearch7.6.x实战.assets/image-20241025145538807.png)
 
-![ElasticSearch_55](ElasticSearch7.6.x实战/ElasticSearch_55.jpg)
+![ElasticSearch_55](ElasticSearch7.6.x实战.assets/image-20241025145538808.png)
 
 
 
@@ -976,7 +976,7 @@ GET kuangshen/user/_search
 
 > 多个值匹配精确查询
 
-![ElasticSearch_56](ElasticSearch7.6.x实战/ElasticSearch_56.jpg)
+![ElasticSearch_56](ElasticSearch7.6.x实战.assets/image-20241025145538809.png)
 
 
 
@@ -984,11 +984,11 @@ GET kuangshen/user/_search
 
 - 普通高亮：
 
-![ElasticSearch_57](ElasticSearch7.6.x实战/ElasticSearch_57.jpg)
+![ElasticSearch_57](ElasticSearch7.6.x实战.assets/image-20241025145538810.png)
 
 - 自定义高亮：
 
-![ElasticSearch_58](ElasticSearch7.6.x实战/ElasticSearch_58.jpg)
+![ElasticSearch_58](ElasticSearch7.6.x实战.assets/image-20241025145538811.png)
 
 ```json
 GET kuangshen/user/_search
@@ -1045,11 +1045,11 @@ GET kuangshen/user/_search
 
 [API地址](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html)
 
-![ElasticSearch_59](ElasticSearch7.6.x实战/ElasticSearch_59.jpg)
+![ElasticSearch_59](ElasticSearch7.6.x实战.assets/image-20241025145538812.png)
 
-![ElasticSearch_60](ElasticSearch7.6.x实战/ElasticSearch_60.jpg)
+![ElasticSearch_60](ElasticSearch7.6.x实战.assets/image-20241025145538813.png)
 
-![ElasticSearch_61](ElasticSearch7.6.x实战/ElasticSearch_61.jpg)
+![ElasticSearch_61](ElasticSearch7.6.x实战.assets/image-20241025145538814.png)
 
 
 
@@ -1168,13 +1168,13 @@ client.close();
 
 **问题：一定要保证 我们的导入的依赖和我们的es 版本一致**
 
-![ElasticSearch_63](ElasticSearch7.6.x实战/ElasticSearch_63.jpg)
+![ElasticSearch_63](ElasticSearch7.6.x实战.assets/image-20241025145538815.png)
 
-![ElasticSearch_64](ElasticSearch7.6.x实战/ElasticSearch_64.jpg)
+![ElasticSearch_64](ElasticSearch7.6.x实战.assets/image-20241025145538816.png)
 
 源码中提供对象！
 
-![ElasticSearch_65](ElasticSearch7.6.x实战/ElasticSearch_65.jpg)
+![ElasticSearch_65](ElasticSearch7.6.x实战.assets/image-20241025145538817.png)
 
 虽然这里导入3个类，静态内部类，核心类就一个！
 

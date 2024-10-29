@@ -110,7 +110,7 @@ for (String line : lines) {
 
 和路径操作类似，Java 7 也提供了文件属性的抽象，增加了一系列文件属性的操作工具类。这部分代码在 `java.nio.file.attribute` 包内。它抽象出了一个 AttributeView 作为所有属性视图的父接口，然后用它的子类 Fi leAttributeView 表示文件视图，用子类 FileOwnerAttributeView 表示文件所有者的属性视图。前者属性如文件的创建时间、修改时间、是否目录等信息，后者则包含文件的相关信息。为了兼容不同的操作系统，Java 7 还提供了不同实现，如 DosFileAttributeView 视图，很明显他是为 Windows 操作系统准备的。
 
-![Java7 文件属性](https://jsdelivr.codeqihan.com/gh/niumoo/wdbyte-img/git/2020/image-20200921115536094.png)
+![Java7 文件属性](Java NIO 流.assets/image-20241027001118249.png)
 
 ```java
 Path path = Paths.get("/Users/darcy/git/jdk-feature/README.md");

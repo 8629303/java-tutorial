@@ -127,7 +127,7 @@
 * **Cache Manager**
   * 缓存管理器，比如认证或授权信息，通过缓存进行管理，提高性能
 
-![img](http://shiro.apache.org/assets/images/ShiroArchitecture.png)
+
 
 - 官网资料导航：http://shiro.apache.org/reference.html
 

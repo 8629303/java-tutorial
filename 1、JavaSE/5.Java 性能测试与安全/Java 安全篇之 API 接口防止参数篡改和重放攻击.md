@@ -74,7 +74,7 @@ nonce参数作为数组签名的一部分，是无法篡改的，因为黑客不
 
 nonce的一次性可以解决timestamp参数60s的问题，timestamp可以解决nonce参数集合越来越大的问题。防止重放攻击一般和防止请求参数被篡改一起做。请求的Headers数据如下图所示。
 
-![图片](Java 安全篇之 API 接口防止参数篡改和重放攻击.assets/640.png)
+![图片](Java 安全篇之 API 接口防止参数篡改和重放攻击.assets/image-20241025145539361.png)
 
 我们在timestamp方案的基础上，加上nonce参数，因为timestamp参数对于超过60s的请求，都认为是非法请求，所以我们只需要存储60s的nonce参数集合即可。
 

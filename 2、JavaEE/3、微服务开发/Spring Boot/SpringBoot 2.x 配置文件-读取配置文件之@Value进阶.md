@@ -68,7 +68,7 @@ susan.test.user-name=\u5f20\u4e09
 
 答案：不能。如果不一样，启动项目时会直接报错。
 
-![图片](SpringBoot 2.x 配置文件-读取配置文件之@Value进阶.assets/640.png)此外，如果只在@Value注解中指定了系统属性名，但实际在配置文件中没有配置它，也会报跟上面一样的错。
+![图片](SpringBoot 2.x 配置文件-读取配置文件之@Value进阶.assets/image-20241025145538200.png)此外，如果只在@Value注解中指定了系统属性名，但实际在配置文件中没有配置它，也会报跟上面一样的错。
 
 所以，**@Value注解中指定的系统属性名，必须跟配置文件中的相同。**
 
@@ -96,7 +96,7 @@ what？为什么会出现乱码？
 
 答：在SpringBoot的**CharacterReader**类中，默认的编码格式是**ISO-8859-1**，该类负责`.properties`文件中系统属性的读取。如果系统属性包含中文字符，就会出现乱码。
 
-![图片](SpringBoot 2.x 配置文件-读取配置文件之@Value进阶.assets/640-166773974817826.png)
+![图片](SpringBoot 2.x 配置文件-读取配置文件之@Value进阶.assets/image-20241025145538201.png)
 
 那么，如何解决乱码问题呢？
 
@@ -145,7 +145,7 @@ susan.test.userName=\u5f20\u4e09
 
 因为`.yml`或`.yaml`格式的配置文件，最终会使用**UnicodeReader**类进行解析，它的init方法中，首先读取BOM文件头信息，如果头信息中有UTF8、UTF16BE、UTF16LE，就采用对应的编码，如果没有，则采用默认UTF8编码。
 
-![图片](SpringBoot 2.x 配置文件-读取配置文件之@Value进阶.assets/640-16677395420378.png)
+![图片](SpringBoot 2.x 配置文件-读取配置文件之@Value进阶.assets/image-20241025145538202.png)
 
 > 需要注意的是：乱码问题一般出现在本地环境，因为本地直接读取的.properties配置文件。在dev、test、生产等环境，如果从zookeeper、apollo、nacos等配置中心中获取系统参数值，走的是另外的逻辑，并不会出现乱码问题。
 
@@ -346,7 +346,7 @@ spring会自动把空格去掉，导致数据中只有一个值：12345，注意
 
 但如果把数组定义成：float、double类型，启动项目时就会直接报错。
 
-![图片](SpringBoot 2.x 配置文件-读取配置文件之@Value进阶.assets/640-166773955192811.png)
+![图片](SpringBoot 2.x 配置文件-读取配置文件之@Value进阶.assets/image-20241025145538203.png)
 
 小伙伴们，下巴惊掉了没？
 
@@ -398,7 +398,7 @@ susan.test.list[3]=13
 
 当你满怀希望的启动项目，准备使用这个功能的时候，却发现竟然报错了。
 
-![图片](SpringBoot 2.x 配置文件-读取配置文件之@Value进阶.assets/640-166773955665214.png)
+![图片](SpringBoot 2.x 配置文件-读取配置文件之@Value进阶.assets/image-20241025145538204.png)
 
 看来@Value不支持这种直接的List注入。那么，如何解决这个问题呢？
 
@@ -486,9 +486,9 @@ Set跟List的用法极为相似。但为了证明本节的独特之处，我打�
 private Set<String> set;
 ```
 
-结果却跟想象中不太一样：![图片](SpringBoot 2.x 配置文件-读取配置文件之@Value进阶.assets/640-166773956242617.png)Set集合怎么不是空的，而是包含了一个空字符串的集合？
+结果却跟想象中不太一样：![图片](SpringBoot 2.x 配置文件-读取配置文件之@Value进阶.assets/image-20241025145538205.png)Set集合怎么不是空的，而是包含了一个空字符串的集合？
 
-好吧，那我在:号后加null，总可以了吧？![图片](SpringBoot 2.x 配置文件-读取配置文件之@Value进阶.assets/640-166773956877720.png)Set集合也不是空的，而是包含了一个"null"字符串的集合。
+好吧，那我在:号后加null，总可以了吧？![图片](SpringBoot 2.x 配置文件-读取配置文件之@Value进阶.assets/image-20241025145538206.png)Set集合也不是空的，而是包含了一个"null"字符串的集合。
 
 这也不行，那也不行，该如何是好？
 
@@ -501,7 +501,7 @@ private Set<String> set;
 private Set<String> set;
 ```
 
-运行之后，结果对了：![图片](SpringBoot 2.x 配置文件-读取配置文件之@Value进阶.assets/640-166773958058523.png)
+运行之后，结果对了：![图片](SpringBoot 2.x 配置文件-读取配置文件之@Value进阶.assets/image-20241025145538207.png)
 
 其实List也有类似的问题，也能使用该方法解决问题。
 

@@ -2,7 +2,7 @@
 
 PostMan是一款支持http协议的接口调试与测试工具，其主要特点就是功能强大，使用简单且易用性好 。无论是开发人员进行接口调试，还是测试人员做接口测试，postman都是我们的首选工具之一 。那么接下来就介绍下PostMan到底有哪些功能，它们分别都能干些什么 。下面先通过一张图来直观地来看下postman中所包含的功能 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/92517937a6479977f6c39ff097b93813.png)
+![img](PostMan 工具的使用.assets/image-20241025145538867.png)
 
 当然，以上功能也只是展示了postman的一部分功能，为了能更加全面的体现这款工具的特点，我将从以下三个维度来加以说明。它们分别是：
 
@@ -49,14 +49,14 @@ PostMan 安装步骤：
 1. 访问PostMan官方网站，下载最新版本，访问地址：https://www.getpostman.com/
 2. 进入到下载页面，根据自己电脑下载对应的版本
 
-![img](https://img-blog.csdnimg.cn/img_convert/198357ec8439416d6c8c0f5e16e42611.png)
+![img](PostMan 工具的使用.assets/image-20241025145538868.png)
 
 双击下载的安装包，进入到安装界面，直到用户登录和注册界面。
 
 - 若个人使用，选择跳过即可，这时会进入到PostMan主界面，至此PostMan安装成功(下图)
 - 若团队使用，可以进行注册，注册后使用账号可以加入团队工作区
 
-![img](https://img-blog.csdnimg.cn/img_convert/b94711f39aadaa3ff354b7c902fddcc2.png)
+![img](PostMan 工具的使用.assets/image-20241025145538869.png)
 
 
 
@@ -64,7 +64,7 @@ PostMan 安装步骤：
 
 初次使用PostMan的朋友可能对界面上的一些元素不太熟悉，下面就通过一张图来说明这些元素的含义 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/836465b64ce5ea3292ede4188642c7d0.png)
+![img](PostMan 工具的使用.assets/image-20241025145538870.png)
 
 
 
@@ -76,7 +76,7 @@ PostMan 安装步骤：
 2. 在请求的URL中输入请求地址：http://www.weather.com.cn/data/sk/101010100.html
 3. 点击Send按钮，这时就可以在下部的窗格中看到来自服务器的json响应数据。
 
-![img](https://img-blog.csdnimg.cn/img_convert/cc9a880152cb161bd2eab6274bd85773.png)
+![img](PostMan 工具的使用.assets/image-20241025145538871.png)
 
 
 
@@ -106,7 +106,7 @@ PostMan 安装步骤：
 2. 在请求方法中选择请求方法：GET，因为在PostMan中默认的请求方法就是GET，所以这一步可以忽略
 3. 接口URL中输入地址，点击Send按钮就可以发送请求了 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/1bd398ae074ae8e3a0048f425f843893.png)
+![img](PostMan 工具的使用.assets/image-20241025145538872.png)
 
 说明：查询参数的URL一般直接拷贝到输入的URL地址栏中就可以了，当然也可以把查询参数在Params中输入，俩者的效果是一样的 。
 
@@ -120,7 +120,7 @@ PostMan 安装步骤：
 
 不同的接口，请求体的数据类型是不一样的，比较常见的一种就是表单类型，那么什么是表单类型呢 ？ 简单理解就是在请求头中查看**Content-Type，它的值如果是:application/x-www-form-urlencoded** .那么就说明客户端提交的数据是以表单形式提交的 。见下图
 
-![img](https://img-blog.csdnimg.cn/img_convert/e40ce557bc491b6bc45e819c2b98e913.png)
+![img](PostMan 工具的使用.assets/image-20241025145538873.png)
 
 **PostMan中如何请求？**
 
@@ -137,7 +137,7 @@ PostMan 安装步骤：
 2. 在请求中设置以上四个参数，点击Send按钮。在PostMan中设置请求体类型为，需要**选择body-> x-www-form-urlencoded**
 3. 查看响应数据。
 
-![img](https://img-blog.csdnimg.cn/img_convert/f469438683c95f84d786f0fdba452d4f.png)
+![img](PostMan 工具的使用.assets/image-20241025145538874.png)
 
 
 
@@ -165,7 +165,7 @@ file=a1.jpg
 2. 在请求中设置以上四个参数，点击Send按钮。注意：在PostMan中设置请求体类型，需要**选择body-> form-data** 。file中要选择File类型，然后上传本地的文件 。
 3. 查看响应数据。
 
-![img](https://img-blog.csdnimg.cn/img_convert/f1ac599a0f82269f0bd47d8d06e50ad3.png)
+![img](PostMan 工具的使用.assets/image-20241025145538875.png)
 
 
 
@@ -193,7 +193,7 @@ Content-Type: application/json;charset=UTF-8
 2. 在请求中设置以上四个参数，点击Send按钮。注意：在PostMan中设置请求体类型，需要**选择body-> raw ->JSON**
 3. 查看响应数据。
 
-![img](https://img-blog.csdnimg.cn/img_convert/8ed2998d4572a9712cefe070c25c48ec.png)
+![img](PostMan 工具的使用.assets/image-20241025145538876.png)
 
 
 
@@ -201,7 +201,7 @@ Content-Type: application/json;charset=UTF-8
 
 响应数据是发送请求后经过服务器处理后返回的结果，响应由三部分组成，分别是状态行、响应头、响应体。我们来看下PostMan的响应数据展示。
 
-![img](https://img-blog.csdnimg.cn/img_convert/b0860d0fc2e49e336a1836aadd8a85bc.png)
+![img](PostMan 工具的使用.assets/image-20241025145538877.png)
 
 在PostMan中的响应数据展示：
 
@@ -217,13 +217,13 @@ Content-Type: application/json;charset=UTF-8
 
 接下来我们再来关注下Body中的几个显示主题，分别是：Pretty，Raw，Preview。
 
-![img](https://img-blog.csdnimg.cn/img_convert/e1c70467afb55ab2b1cbc20a678ab375.png)
+![img](PostMan 工具的使用.assets/image-20241025145538878.png)
 
 - Pretty：翻译成中文就是漂亮 ， 也就是说返回的Body数据在这个标签中查看 ，都是经过格式化的，格式化后的数据看起来更加直观，所以postman默认展示的也是这个选项。比如返回html页面，它会经过格式化成HTML格式后展示，比如返回json，那么也会格式化成json格式展示 。
 - Raw：翻译成中文未经过加工的，也就是原始数据 ，原始数据一般都是本文格式的，未经过格式化处理的，一般在抓包工具中都有这个选项 。
 - Preview：翻译成中文就是预览，这个选项一般对返回HTML的页面效果特别明显，如请求百度后返回结果，点击这个选项后就直接能查看到的页面 ，如下图 。同时这个选项和浏览器抓包中的Preview也是一样的 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/9d6ca91aba2910a43eb0a3fe5e1bd439.png)
+![img](PostMan 工具的使用.assets/image-20241025145538879.png)
 
 
 
@@ -240,19 +240,19 @@ Content-Type: application/json;charset=UTF-8
 
 点击Collection，点击+New Collection，在弹出的输入框中输入Collection名称（这个就可以理解为所测试的系统）
 
-![img](https://img-blog.csdnimg.cn/img_convert/e73171f85a3448999fb09e2be87cb0f2.png)
+![img](PostMan 工具的使用.assets/image-20241025145538880.png)
 
 选中新建的Collection右键，点击Add Folder ，在弹出对话框中输入文件夹名称（这个就可以理解为系统中的模块）
 
-![img](https://img-blog.csdnimg.cn/img_convert/b5e16abf1e4250e15340aeb2c8831282.png)
+![img](PostMan 工具的使用.assets/image-20241025145538881.png)
 
 选中新建的Folder，点击Add Request ，在弹出的对话框中输入请求名称，这个就是我们所测试的接口，也可以理解为测试用例 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/ba65917dc4911699c7ddd6d49ea7f437.png)
+![img](PostMan 工具的使用.assets/image-20241025145538882.png)
 
 那么通过以上三个步骤，达到的效果就是如图所示：
 
-![img](https://img-blog.csdnimg.cn/img_convert/b146fedc1e7fa6ebde2030773e4d1bf3.png)
+![img](PostMan 工具的使用.assets/image-20241025145538883.png)
 
 总结，通过上面的操作，我们实现了一个最简单的demo模型。但实际上，有了这个功能才是PostMan学习的开始，因为很多功能都是基础这个功能的基础上进行的，比如用例的批量执行，Mock ，接口文档等功能 。
 
@@ -266,15 +266,15 @@ Content-Type: application/json;charset=UTF-8
 
 选中一个Collection，点击右三角，在弹出的界面点击RUN
 
-![img](https://img-blog.csdnimg.cn/img_convert/e63f7b6f896dcc90d2ff4cc120ffb569.png)
+![img](PostMan 工具的使用.assets/image-20241025145538884.png)
 
 这是会弹出一个叫Collection Runner的界面，默认会把Collection中的所有用例选中 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/37ef8f769b44d1c5899c9675bee81cb4.png)
+![img](PostMan 工具的使用.assets/image-20241025145538885.png)
 
 点击界面下方的RUN Collection，就会对Collection中选中的所有测试用例运行 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/fa0521a9ec21fb11c6a1bf7c155bf370.png)
+![img](PostMan 工具的使用.assets/image-20241025145538886.png)
 
 对上面的几个红框内的功能进行简单说明：
 
@@ -293,17 +293,17 @@ Content-Type: application/json;charset=UTF-8
 
 在PostMan中编写日志打印语句使用的是JavaScript，编写的位置可以是Pre-request Script 或Tests标签中。编写打印语句如：console.log("我是一条日志")
 
-![img](https://img-blog.csdnimg.cn/img_convert/171d25b26e8c4233e566b1683922b55b.png)
+![img](PostMan 工具的使用.assets/image-20241025145538887.png)
 
 那么打印的日如何看呢 ？ 在PostMan中有俩个入口，第一个入口就是：view-show postman console 。
 
 第二个入口就是左下角第三个图标 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/f51b858cb0d5c4b19072d7a9308f7537.png)
+![img](PostMan 工具的使用.assets/image-20241025145538888.png)
 
 打开的日志界面
 
-![img](https://img-blog.csdnimg.cn/img_convert/587090d874686d1419d6415690afb047.png)
+![img](PostMan 工具的使用.assets/image-20241025145538889.png)
 
 这里面有几个比较实用的功能：
 
@@ -329,7 +329,7 @@ Content-Type: application/json;charset=UTF-8
 
 在上面我们介绍到，编写的断言代码是JavaScript，那如果不会写怎么办 ？ 不用担心，因为postman已经给我们内置了一些常用的断言 。用的时候，只需从右侧点击其中一个断言，就会在文本框中自动生成对应断言代码块 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/2f233ffe90caf5145690897886d2613f.png)
+![img](PostMan 工具的使用.assets/image-20241025145538890.png)
 
 接下来就让我们了解一些常用断言，还是按响应的组成来划分，分别是状态行，响应头，响应体。
 
@@ -427,7 +427,7 @@ Content-Type: application/json;charset=UTF-8
 - 断言city等于济南
 - 断言update_time包含2020-04-17
 
-![img](https://img-blog.csdnimg.cn/img_convert/b7c15d1d88c04847847737b9bde080d5.png)
+![img](PostMan 工具的使用.assets/image-20241025145538891.png)
 
 总结，整体来说，如果用PostMan做接口测试，这个断言功能必不可少，其中我们常断言的响应体包含和JSON这俩个断言又是重重之重。
 
@@ -456,11 +456,11 @@ Content-Type: application/json;charset=UTF-8
 
 定义全局变量和环境变量，点击右上角的小齿轮，弹出如下界面，就可以根据需求定义全局变量或者环境变量了。
 
-![img](https://img-blog.csdnimg.cn/img_convert/1e1980f15c243452b359f997161105c4.png)
+![img](PostMan 工具的使用.assets/image-20241025145538892.png)
 
 已经定义的全局变量和环境变量，可以进行快速查看
 
-![img](https://img-blog.csdnimg.cn/img_convert/5da66ef021837fa52cb83d039d71c3fb.png)
+![img](PostMan 工具的使用.assets/image-20241025145538893.png)
 
 
 
@@ -468,7 +468,7 @@ Content-Type: application/json;charset=UTF-8
 
 选择一个集合，打开查看更多动作(**...**)菜单，然后点击编辑 。选择“变量”选项卡以编辑或添加到集合变量。
 
-![img](https://img-blog.csdnimg.cn/img_convert/80a89043803c4785af84f2fcc662e5ea.png)
+![img](PostMan 工具的使用.assets/image-20241025145538894.png)
 
 定义变量除了以上方式，还有另外一种方式 。但是这种方式在不同的位置定义，编写不一样。
 
@@ -476,7 +476,7 @@ Content-Type: application/json;charset=UTF-8
 - 手工方式创建一个空的变量名
 - 在以上的位置把想要的值选中右击，选中Set：环境|全局 ，选中一个变量名，点击后就会保存到这个变量中
 
-![img](https://img-blog.csdnimg.cn/img_convert/50221a35e9eabae7d607af1b5db5b766.png)
+![img](PostMan 工具的使用.assets/image-20241025145538895.png)
 
 在Tests，Pre-requests Script：
 
@@ -500,7 +500,7 @@ Content-Type: application/json;charset=UTF-8
 - 获取全局变量：pm.globals.get('变量名')
 - 获取集合变量：pm.pm.collectionVariables.get.get('变量名')
 
-![img](https://img-blog.csdnimg.cn/img_convert/45f60694204a6fb04d8badcc247e056c.png)
+![img](PostMan 工具的使用.assets/image-20241025145538896.png)
 
 变量的使用场景非常广泛，比如我们后面要提到的接口关联，请求前置脚本都会使用到变量 。
 
@@ -521,7 +521,7 @@ Content-Type: application/json;charset=UTF-8
 - 请求的登录接口URL，参数t的值要求的规则是每次请求都必须是一个随机数。
 - 接口地址：http://localhost/index.php?m=Home&c=User&a=do_login&t=0.7102045930338428
 
-![img](https://img-blog.csdnimg.cn/img_convert/b4b469501f8018ddb67b4ee3e3e7abac.png)
+![img](PostMan 工具的使用.assets/image-20241025145538897.png)
 
 实现步骤：
 
@@ -529,7 +529,7 @@ Content-Type: application/json;charset=UTF-8
 2. 将这个值保存成环境变量
 3. 将参数t的值替换成环境变量的值 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/5fd98ace0129a0eaeb34da2f4a417385.png)
+![img](PostMan 工具的使用.assets/image-20241025145538898.png)
 
 总之，这个前置脚本对我们做接口测试也非常有用，对一些复杂的场景，都可以使用前置脚本进行处理后再请求接口 。
 
@@ -568,7 +568,7 @@ Content-Type: application/json;charset=UTF-8
 2. 将这个值保存成全局变量(环境变量也可以)
 3. 在图像预览中使用全局变量
 
-![img](https://img-blog.csdnimg.cn/img_convert/575d45e0f53c34138ddd42fb6c8e356d.png)
+![img](PostMan 工具的使用.assets/image-20241025145538899.png)
 
 可以看出，接口的关联的解决方案都是用的是变量中的知识，也就是说只要你明确了要提取的值，后面就是保存该值，然后在其他接口使用该值就可以了。
 
@@ -685,7 +685,7 @@ var id = jsonData.data.rows.slice(-1)[0]
 
 查询参数在上面已经介绍过，在这里我们只说明PostMan填写查询参数的地方就是Params。
 
-![img](https://img-blog.csdnimg.cn/img_convert/8c13ae9655904cdc7833c1208e5d79b6.png)
+![img](PostMan 工具的使用.assets/image-20241025145538900.png)
 
 有时候我们要填写的参数比较多，且每个参数都是按照key-value形式填写完成，但是这样填写起来费时费力。那是否有更加省事的填写方式？ 答案肯定是有的 ，我们可以想象我们的这些请求都可以通过浏览器或抓包工具抓取到 。那么我们就可以直接将浏览器或抓包工具的请求参数直接拷贝进来 ，下面就介绍如何从浏览器和抓包工具中拷贝参数。
 
@@ -694,22 +694,22 @@ var id = jsonData.data.rows.slice(-1)[0]
 1. 首先在浏览器通过F12找到你要抓取的请求
 2. 在Headers的最下端找到Form Data .
 
-![img](https://img-blog.csdnimg.cn/img_convert/d2f6a4a69ca49913c5f78d40f79a2464.png)
+![img](PostMan 工具的使用.assets/image-20241025145538901.png)
 
 然后打开PostMan，在Params 中点击Bulk Edit
 
-![img](https://img-blog.csdnimg.cn/img_convert/2a82023e735c345d88c64ad230089ea8.png)
+![img](PostMan 工具的使用.assets/image-20241025145538902.png)
 
 直接将拷贝的内容粘贴进来即可
 
-![img](https://img-blog.csdnimg.cn/img_convert/df0065dfaba754946e4abb72e3185a13.png)
+![img](PostMan 工具的使用.assets/image-20241025145538903.png)
 
 - **从抓包工具中拷贝查询参数(以fiddler为例)**
 
 1. 打开Fiddler，找到你要抓取的数据包
 2. 选择Raw，直接拷贝请求URL或者拷贝查询参数
 
-![img](https://img-blog.csdnimg.cn/img_convert/2ddcc750651dc13d3f44b59a43e1cbbe.png)
+![img](PostMan 工具的使用.assets/image-20241025145538904.png)
 
 直接粘贴到地址栏或者查询参数中即可 。
 
@@ -726,7 +726,7 @@ var id = jsonData.data.rows.slice(-1)[0]
 1. 进入已设置过的请求headers中，鼠标长按选择一个或多个请求，当出现灰色的横条，按Ctrl+C。
 2. 回到当前要设置的请求中，点击Ctrl+v .这样就会把上一个请求中的headers拷贝到当前请求。
 
-![img](https://img-blog.csdnimg.cn/img_convert/f4a1b21b508ef52af330ef5874dff983.png)
+![img](PostMan 工具的使用.assets/image-20241025145538905.png)
 
 通过如上设置，是否可以更加快捷地设置我们请求头了 。当然，觉得上面这种方法使用起来不爽，接下来我们来看另外一种快捷设置方法 。
 
@@ -739,7 +739,7 @@ var id = jsonData.data.rows.slice(-1)[0]
 3. 在弹出的对话框中，把常用的key-value录入，并给它起个名字。点击add即可。
 4. 其他请求使用的时候，直接点击Presets ，选择刚才设置的名字，就会自动把对应的参数设置上 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/ba4c46858268ffced6485cde6aa84f4a.png)
+![img](PostMan 工具的使用.assets/image-20241025145538906.png)
 
 以上的这两种方法设置起来虽然便捷，但是只是对公共参数有效。针对每个请求的唯一参数是无效的 。下面的这种方法是可以针对任何参数的 。
 
@@ -756,20 +756,20 @@ var id = jsonData.data.rows.slice(-1)[0]
 - 从浏览器中导入请求 ；
 - 直接导入别人postman中写好的请求 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/837dec8b0e6bf2a2bc2c2da6a548eb87.png)
+![img](PostMan 工具的使用.assets/image-20241025145538907.png)
 
 **从抓包工具导入请求**
 
 1. 在浏览器中抓取到想要的包，然后右键copy出Curl的数据包
 2. 在postman的import中将数据粘贴进来，就会自动生成了对应的请求 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/84750496d197c7bc1466e9953c9d4610.png)
+![img](PostMan 工具的使用.assets/image-20241025145538908.png)
 
-![img](https://img-blog.csdnimg.cn/img_convert/6ae3dd6563e1c761935facf52222495f.png)
+![img](PostMan 工具的使用.assets/image-20241025145538909.png)
 
 下面的这个截图是从接口文档swagger，将这个数据包拷贝粘贴到上面的文本中(Paste Raw Text) 也可以自动生成请求 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/c3457da91067b7005905c89a14c28e7d.png)
+![img](PostMan 工具的使用.assets/image-20241025145538910.png)
 
 总之，这个功能非常实用，尤其是可以把浏览器或抓包工具中的数据包导入进来直接使用，大大地减少了我们的接口填写时间 。
 
@@ -779,11 +779,11 @@ var id = jsonData.data.rows.slice(-1)[0]
 
 1. 在浏览器中抓取到想要的包，然后右键copy出Curl的数据包
 
-   ![img](https://img-blog.csdnimg.cn/img_convert/9f64e6e4ee63e694f232ec75f416498f.png)
+   ![img](PostMan 工具的使用.assets/image-20241025145538911.png)
 
 在PostMan的import中将数据粘贴进来，就会自动生成了对应的请求 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/0d8f7459e5516ff5bba556febc8d3085.png)
+![img](PostMan 工具的使用.assets/image-20241025145538912.png)
 
 **直接导入别人PostMan中写好的请求 。**
 
@@ -791,19 +791,19 @@ var id = jsonData.data.rows.slice(-1)[0]
 
 1. 将已经写好请求所在的集合，点击分享
 
-   ![img](https://img-blog.csdnimg.cn/img_convert/436176cb31092a63de8b602002cdd597.png)
+   ![img](PostMan 工具的使用.assets/image-20241025145538913.png)
 
 在弹出的界面点击Get public link
 
-![img](https://img-blog.csdnimg.cn/img_convert/c81dd127df23bb3c9b8dffecf872a65b.png)
+![img](PostMan 工具的使用.assets/image-20241025145538914.png)
 
 复制生成的链接
 
-![img](https://img-blog.csdnimg.cn/img_convert/3f6b5276d61f85587a933c1a36849317.png)
+![img](PostMan 工具的使用.assets/image-20241025145538915.png)
 
 在新的PostMan账号中，选择Import-Import From Link 进行导入
 
-![img](https://img-blog.csdnimg.cn/img_convert/a09330c585a12fd1b912d3c76c34a27e.png)
+![img](PostMan 工具的使用.assets/image-20241025145538916.png)
 
 这样我们其它团队成员就可以通过这个功能共享写好的整个集合了 。
 
@@ -815,7 +815,7 @@ var id = jsonData.data.rows.slice(-1)[0]
 
 我们先来看下这个功能的具体位置及主要作用 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/10b462bbb89fe20c3fc6003aef45082c.png)
+![img](PostMan 工具的使用.assets/image-20241025145538917.png)
 
 Inherit auto from parent:从父级继承身份验证，是每个请求的默认选择 。这是一个很有用的功能，当我们对一个集合(collection)进行测试的时候，集合中的每个请求都需要获取token，那么如果我们在集合中把token处理好的话，那么该集合下的所有请求都会自动获取到这个token，也就省略了我们对每个token进行处理了。
 
@@ -825,20 +825,20 @@ Inherit auto from parent:从父级继承身份验证，是每个请求的默认�
 2. 切换到Authorization选项卡，在这里直接获取token 。这里的获取token需要根据具体的项目 。比如我们所测试的项目正好是Bearer token这种形式 。直接在列表中使用这种方式输入{{token}}即可。
 3. 向集合添加请求，无需进行token处理，所有接口都能请求成功 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/ef15df924d8f83d91af60663adcdd92b.png)
+![img](PostMan 工具的使用.assets/image-20241025145538918.png)
 
-![img](https://img-blog.csdnimg.cn/img_convert/69420029cd027eaaf347d48c5793b17a.png)
+![img](PostMan 工具的使用.assets/image-20241025145538919.png)
 
-![img](https://img-blog.csdnimg.cn/img_convert/5996a42b93e60feb26a981aa93211754.png)
+![img](PostMan 工具的使用.assets/image-20241025145538920.png)
 
 - No Auth: 无需身份认证的可以选择这个 。
 - API Key: 也有很多系统是通过这种认证方式，比如在请求头添加 model: data xxx-xxx-xxx-xxxx
 
-![img](https://img-blog.csdnimg.cn/img_convert/e974809c55a6721f00d44aee9eda2aba.png)
+![img](PostMan 工具的使用.assets/image-20241025145538921.png)
 
 - Bearer Token:很多系统都是以这种认证方式，就是在请求头中添加Authorization：Bearer Token 。那么使用这种认证就完全等同于在Headers中添加Authorization参数 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/348344038b0f53350dc2d61986c8e9e4.png)
+![img](PostMan 工具的使用.assets/image-20241025145538922.png)
 
 **通过在集合中完成登录认证**
 
@@ -910,7 +910,7 @@ pm.sendRequest(PostJsonRequest, function (err, res) {
 3. 然后在Authorization中设置获取token，使其token在集合中全局有效 。
 4. 运行该集合（集合下就不需要编写登录请求了），批量运行成功 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/8acec0a4f442b2b8619e2ab2a1607f3d.png)
+![img](PostMan 工具的使用.assets/image-20241025145538923.png)
 
 通过这种方式来设置，就不需要你在集合下面单独新建一个登录的文件夹了，也不需要你在每个请求中加入token参数了，非常的方便 。
 
@@ -922,7 +922,7 @@ pm.sendRequest(PostJsonRequest, function (err, res) {
 
 编写通用断言的位置是在集合或集合的文件夹中 。具体位置如下图：
 
-![img](https://img-blog.csdnimg.cn/img_convert/9bdcffc5bc348a0ba8473b90f44e37b7.png)
+![img](PostMan 工具的使用.assets/image-20241025145538924.png)
 
 案例说明：
 
@@ -934,11 +934,11 @@ pm.sendRequest(PostJsonRequest, function (err, res) {
 2. 选择用户管理文件夹，进行编辑，选择Tests标签，
 3. 批量运行该集合，就会查看到每个用例中都会
 
-![img](https://img-blog.csdnimg.cn/img_convert/5b276fbcdc97c20f1b68c6001e5f17c9.png)
+![img](PostMan 工具的使用.assets/image-20241025145538925.png)
 
-![img](https://img-blog.csdnimg.cn/img_convert/82bc263ad5c1bf1082ed6420d77636fd.png)
+![img](PostMan 工具的使用.assets/image-20241025145538926.png)
 
-![img](https://img-blog.csdnimg.cn/img_convert/cad13fc8b3935eff34dc09c59247cee7.png)
+![img](PostMan 工具的使用.assets/image-20241025145538927.png)
 
 可以看出，通过这个功能可以帮我们完成最少的代码，完成更多的测试。但是它的使用条件就是返回的参数名，参数值都是一样的才能使用这个批量断言功能 。
 
@@ -950,7 +950,7 @@ pm.sendRequest(PostJsonRequest, function (err, res) {
 
 接下来我们先来了解这个功能的入口和简单介绍。
 
-![img](https://img-blog.csdnimg.cn/img_convert/14e8640d756752bc0bdc2aa0422ea632.png)
+![img](PostMan 工具的使用.assets/image-20241025145538928.png)
 
 **功能介绍：**
 
@@ -965,7 +965,7 @@ pm.sendRequest(PostJsonRequest, function (err, res) {
 
 操作步骤：在搜索框中输入\d{11}，勾选Regex,点击Find，右侧就会展示出含有11位数字的所有信息。
 
-![img](https://img-blog.csdnimg.cn/img_convert/8b5be1ad59cc8090ff2228e169074837.png)
+![img](PostMan 工具的使用.assets/image-20241025145538929.png)
 
 - 案例2：从集合中搜索
 
@@ -973,7 +973,7 @@ pm.sendRequest(PostJsonRequest, function (err, res) {
 2. 在WHERE中选择Choose entities to find in，选中Collections 。
 3. 找到你想要的结果，点击Open in builder。就可以直接打开对应请求tab.
 
-![img](https://img-blog.csdnimg.cn/img_convert/704573046b2c3d01669153efbf5c8635.png)
+![img](PostMan 工具的使用.assets/image-20241025145538930.png)
 
 - 案例3：替换某个字符串
 
@@ -981,7 +981,7 @@ pm.sendRequest(PostJsonRequest, function (err, res) {
 2. 在REPLACE WITH框中输入想要替换的值，可以选择select All ,点击后面的按钮。
 3. 再次搜索替换后的结果，发现所有值都已被替换 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/a59844d75a925c9b6ff63a5179b61be8.png)
+![img](PostMan 工具的使用.assets/image-20241025145538931.png)
 
 总之，通过这个功能，我们可以快速找到我们想要的集合，环境变量，集合变量，请求或者代码块。
 
@@ -1020,21 +1020,21 @@ pm.sendRequest(PostJsonRequest, function (err, res) {
 
 1. 创建city.json 或 city.json ,格式如下
 
-![img](https://img-blog.csdnimg.cn/img_convert/b9fb926743ca5ef060fa551abd543a87.png)
+![img](PostMan 工具的使用.assets/image-20241025145538932.png)
 
 在请求中替换参数名：city_id,city,weather .
 
 > 其中city_id在URL中替换，故通过`{{}}`替换 。city和weather在Tests中替换，需要通过data.city , data.weather
 
-![img](https://img-blog.csdnimg.cn/img_convert/f230f7b49ee6aeafa9ecef269fcaf43c.png)
+![img](PostMan 工具的使用.assets/image-20241025145538933.png)
 
 选择数据文件导入
 
-![img](https://img-blog.csdnimg.cn/img_convert/1354345a338e10fbf511121bee7b75ff.png)
+![img](PostMan 工具的使用.assets/image-20241025145538934.png)
 
 查询运行结果
 
-![img](https://img-blog.csdnimg.cn/img_convert/2d81eafcfcba2eba1b8cf15c024d6c08.png)
+![img](PostMan 工具的使用.assets/image-20241025145538935.png)
 
 
 
@@ -1079,7 +1079,7 @@ newman run collect_a.json [-e environment_b.json] [-r html] [--reporter-html-exp
   newman run A.postman_collection.json  -r cli # 默认的展示结果如下图所示。
   ```
 
-  ![img](https://img-blog.csdnimg.cn/img_convert/a065d3a09badd250927a1d29a8f3da92.png)
+  ![img](PostMan 工具的使用.assets/image-20241025145538936.png)
 
 - 案例3：通过newman生成测试报告，需要添加环境变量文件，并且生成HTML报告 。
 
@@ -1104,7 +1104,7 @@ newman run collect_a.json [-e environment_b.json] [-r html] [--reporter-html-exp
 newman run APITest.postman_collection.json -r htmlextra --reporter-html-export htmlReport.html
 ```
 
-![img](https://img-blog.csdnimg.cn/img_convert/9f7281a7b91d492b3995b64573730520.gif)
+![img](PostMan 工具的使用.assets/image-20241025145538937.png)
 
 虽然newman提供了强大的生成测试报告功能，但是目前为止，生成的测试报告都是在我们本地，那如果想要把报告展示给团队成员查看呢 ？ 我们就可以通过jenkins进行持续集成，把生成的报告展示在Jenkins上，甚至可以将报告通过邮件发送给团队成员 。
 
@@ -1133,20 +1133,20 @@ newman run APITest.postman_collection.json -r htmlextra --reporter-html-export h
 
 点击postman导航栏中间的工作空间(下三角)，选择All workspaces .
 
-![img](https://img-blog.csdnimg.cn/img_convert/67b56036cf582c2d45e76fd596aaa1be.png)
+![img](PostMan 工具的使用.assets/image-20241025145538938.png)
 
 在弹出的页面中，选择一个工作空间，点击Add to workspace.（向这个工作空间共享数据）
 
-![img](https://img-blog.csdnimg.cn/img_convert/cd9df04fcfb18e491c69c8dfd78c9ad9.png)
+![img](PostMan 工具的使用.assets/image-20241025145538939.png)
 
 - 当然除了添加到工作空间数据外，你也可以进行重命名，进行查看详情，添加成员以及删除工作空间 。具体操作点击Add to workspace后的(...)
 - 你可以将添加后的元素从工作空间删除，就是右击集合，点击‘Remove to workspace’，点击后从工作区中删除
 
 1. 选择一个要共享的工作空间，选择集合或环境，点击Add to this workspace
 
-![img](https://img-blog.csdnimg.cn/img_convert/a7ae58d2b6e5f44771b15f66ce3bd7dd.png)
+![img](PostMan 工具的使用.assets/image-20241025145538940.png)
 
-![img](https://img-blog.csdnimg.cn/img_convert/cdcc47fe807c2db083c3e45dbbd36c67.png)
+![img](PostMan 工具的使用.assets/image-20241025145538941.png)
 
 **邀请成员加入工作空间**
 
@@ -1158,7 +1158,7 @@ newman run APITest.postman_collection.json -r htmlextra --reporter-html-export h
 2. 添加到文本域后，给账号设置角色，点击Send Invitarions 。
 3. 进入邮箱点击链接验证，验证成功后即可成员该空间的成员 。同时会自动将该空间的集合同步到本地 。备注：除了以上可添加成员后，也可以通过工作空间后的...，选择Add Members 也可以添加成员。
 
-![img](https://img-blog.csdnimg.cn/img_convert/4459b3078925252712380ac8406b5bbb.png)
+![img](PostMan 工具的使用.assets/image-20241025145538942.png)
 
 **将集合和环境共享到工作空间**
 
@@ -1170,7 +1170,7 @@ newman run APITest.postman_collection.json -r htmlextra --reporter-html-export h
 2. 在弹出的界面中，选择要共享的工作空间，点击Share and Continue .
 3. 这样该集合就会被该工作空间的所有成员看到并有权限操作，当然上面也可以选择共享给工作空间中部分成员。
 
-![img](https://img-blog.csdnimg.cn/img_convert/1a02fa364a7d63ccfe99fa2b1e92905e.png)
+![img](PostMan 工具的使用.assets/image-20241025145538943.png)
 
 
 
@@ -1192,7 +1192,7 @@ newman run APITest.postman_collection.json -r htmlextra --reporter-html-export h
 2. 在弹出的对话框中输入Fork Label ，选择团队的workspace ，点击“Fork collection” 。
 3. 进入到对应的workspace，就会查看到对应的collection ,这里的集合后都有一个fork的标志。
 
-![img](https://img-blog.csdnimg.cn/img_convert/14afa9824c0b0d674810d195f724182e.png)
+![img](PostMan 工具的使用.assets/image-20241025145538944.png)
 
 **合并变更**
 
@@ -1202,9 +1202,9 @@ newman run APITest.postman_collection.json -r htmlextra --reporter-html-export h
 2. 在弹出的页面中，点击右上角的Merge all changes .注意，这时merge时提示已经有最新更新了，postman会提示你pull Changes，这时你可以先拉取最新的变更 ，然后点击 Merge all changes。
 3. 在弹出的新对话框默认选择Merge changes，点击Merge 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/afa10c59858d5f960586f4d0cd3a962e.png)
+![img](PostMan 工具的使用.assets/image-20241025145538945.png)
 
-![img](https://img-blog.csdnimg.cn/img_convert/41444e99a625ffb9c081ea0b18372f05.png)
+![img](PostMan 工具的使用.assets/image-20241025145538946.png)
 
 **创建 Pull 请求**
 
@@ -1216,7 +1216,7 @@ newman run APITest.postman_collection.json -r htmlextra --reporter-html-export h
 2. 在弹出的页面中，输入title和描述，点击 Create pull Request .
 3. 查看PostMan请求，最新的更新就会拉取到本地的分支集合中 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/a3d896f0bac41b946ec31c23c9d4445f.png)
+![img](PostMan 工具的使用.assets/image-20241025145538947.png)
 
 在使用的过程中，postman中的Create a fork ,Create pull request, Merge change 就特别像git中的create branch ，pull ，push 。
 
@@ -1244,7 +1244,7 @@ newman run APITest.postman_collection.json -r htmlextra --reporter-html-export h
 3. 进入到第二个Tab页面，输入对集合的一些基本描述 ，比如基本介绍，认证方式，错误码等 。
 4. 进入到第三个Tab页面，这时会弹出一个链接，直接点击链接就会进入到接口文档页面 。如下图
 
-![img](https://img-blog.csdnimg.cn/img_convert/7d419ca78542b0458c86da03426a572f.png)
+![img](PostMan 工具的使用.assets/image-20241025145538948.png)
 
 以上两个都可以进入文档链接，主要区别在于第二种可以加入一些整体性的说明，如系统概况，认证方式，错误码等 。
 
@@ -1268,15 +1268,15 @@ newman run APITest.postman_collection.json -r htmlextra --reporter-html-export h
 
 以上两种方式都可以给接口添加文档描述，且都支持**markdown**语法，编写好的信息也能及时的文档中看到，如下图是给其中一个接口添加的文档信息 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/29c24196c827833036be286e40d6a774.png)
+![img](PostMan 工具的使用.assets/image-20241025145538949.png)
 
 同时点击Open in builder这个链接按钮，也能直接打开对应的请求 。
 
 以下是打开的web在线文档，在线文档还有个比较实用的功能，就是为每个请求自动生成不同语言的代码，如果你正好对如何用代码实现不太清楚，那么你就可以直接从这里拷贝。
 
-![img](https://img-blog.csdnimg.cn/img_convert/dd541772648e2fa667bfdc6c9eceeede.png)
+![img](PostMan 工具的使用.assets/image-20241025145538950.png)
 
-![img](https://img-blog.csdnimg.cn/img_convert/af8f0d0525e410612157e304d4169b7c.png)
+![img](PostMan 工具的使用.assets/image-20241025145538951.png)
 
 
 
@@ -1296,7 +1296,7 @@ newman run APITest.postman_collection.json -r htmlextra --reporter-html-export h
 2. 需要为即将要创建的Mock Server , 可以从已有的选择，也可以重新创建一个集合 。
 3. 选择对应的mock名称，版本标签，环境等，点击Create Mock Server 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/e1ae2deccc9da60a36f30001ab4b5d5e.gif)
+![img](PostMan 工具的使用.assets/image-20241025145538952.png)
 
 **面板中创建**
 
@@ -1305,7 +1305,7 @@ newman run APITest.postman_collection.json -r htmlextra --reporter-html-export h
 
 以上两种方式创建，最终结果都会在mock标签中生成一个mock服务器的链接，具体如下：
 
-![img](https://img-blog.csdnimg.cn/img_convert/fef72c7879eff1929b401b9a65fb881c.png)
+![img](PostMan 工具的使用.assets/image-20241025145538953.png)
 
 **创建mock请求**
 
@@ -1315,7 +1315,7 @@ newman run APITest.postman_collection.json -r htmlextra --reporter-html-export h
 
 **example功能入口**：
 
-![img](https://img-blog.csdnimg.cn/img_convert/7e2965f49d4a6d8b8880cfd1cde38c88.png)
+![img](PostMan 工具的使用.assets/image-20241025145538954.png)
 
 通过example实现模拟请求步骤：
 
@@ -1325,7 +1325,7 @@ newman run APITest.postman_collection.json -r htmlextra --reporter-html-export h
 4. 保存成功后，就会在右上角能看到我们要保存的example了 。
 5. 以上步骤相当于创建好了一个模拟请求了，接下来我们就可以通过工具请求这个example(模拟请求)了 。在postman打开一个新的tab页，请求方法填写保存好的example的方法，**请求地址要填写mock服务器地址+请求路径**，点击Send.就会将预期结果返回 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/5c2acebf1de465ec15f6990a93998813.png)
+![img](PostMan 工具的使用.assets/image-20241025145538955.png)
 
 
 
@@ -1342,15 +1342,15 @@ PostMan的监控，和Jenkins中设置的定时任务差不多，用于监控接
 1. 选择集合，点击右三角，弹出的面板中选择Monitors,点击Create a monitor
 2. 在Configuration中配置环境，定时任务，运行地区，以及设置其他偏好，点击Create后即创建了监控。
 
-![img](https://img-blog.csdnimg.cn/img_convert/67468be924186bab3cf4e296fc991247.png)
+![img](PostMan 工具的使用.assets/image-20241025145538956.png)
 
-![img](https://img-blog.csdnimg.cn/img_convert/36c4f77dff67f01ad3be6bad5afa64e1.png)
+![img](PostMan 工具的使用.assets/image-20241025145538957.png)
 
 **查看监视器**
 
 创建好的监视器，就是通过编辑查看监视器中运行的数据 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/878b266d3ac598846e4a667f576ea94c.png)
+![img](PostMan 工具的使用.assets/image-20241025145538958.png)
 
 
 
@@ -1386,13 +1386,13 @@ xmysql命令参数介绍：
 
 连接本地数据库的示例，注意输入这条命令后，xmysql会以服务的形式启动 。所以当xmysql被停止掉，那么连库操作也会失败 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/e5b09261d8e741f976d1efcd465b6f77.png)
+![img](PostMan 工具的使用.assets/image-20241025145538959.png)
 
 **数据库的基本操作**
 
 以下是我其中一张表t_book的数据，我们通过xmysql来对这张表分别进行增，删，改，查 。再次强调，无论何种操作，在postman中只是请求的是接口 。
 
-![img](https://img-blog.csdnimg.cn/img_convert/c69ebe9e20b7ae85b3486f1d395ebcd3.png)
+![img](PostMan 工具的使用.assets/image-20241025145538960.png)
 
 **需求1：查询t_book表的所有数据。**
 
@@ -1400,7 +1400,7 @@ xmysql命令参数介绍：
 GET http://localhost:3000/api/t_book
 ```
 
-![img](https://img-blog.csdnimg.cn/img_convert/9acd507c22ddbf822620d7529ffc85a8.png)
+![img](PostMan 工具的使用.assets/image-20241025145538961.png)
 
 **需求2：查询t_book表title为三国演义的数据。**
 
@@ -1412,11 +1412,11 @@ GET http://localhost:3000/api/t_book?_where=(title,eq,三国演义)
 
 插入数据需要先知道表结构，t_book的表结构如下图，那么向这张表插入数据，其实就是将这些字段作为参数输入即可 。它支持两种请求，表单和json都可以请求
 
-![img](https://img-blog.csdnimg.cn/img_convert/ba6498b8fa3386ec6012c982e1419418.png)
+![img](PostMan 工具的使用.assets/image-20241025145538962.png)
 
 postman中是这样请求的，如果是修改数据直接把POST修改成PUT就可以了。
 
-![img](https://img-blog.csdnimg.cn/img_convert/a80dbdeab09392e3f3cc822ee3451467.png)
+![img](PostMan 工具的使用.assets/image-20241025145538963.png)
 
 **需求4：删除其中一条数据。**
 

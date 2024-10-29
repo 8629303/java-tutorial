@@ -821,7 +821,7 @@ MyBatis 允许你在已映射语句执行过程中的某一点进行拦截调用
 
 我们可以先画一个流程图，分析一下`Mybatis`的执行过程！
 
-![20200710214728](Mybatis/20200710214728.png)
+![20200710214728](Mybatis.assets/image-20241025145538265.png)
 
 
 
@@ -834,7 +834,7 @@ MyBatis 允许你在已映射语句执行过程中的某一点进行拦截调用
 - 如果说 `SqlSessionFactory` 相当于数据库连接池，那么 `SqlSession` 就相当于一个数据库连接（Connection 对象），你可以在一个事务里面执行多条 SQL，然后通过它的 commit、rollback 等方法，提交或者回滚事务。所以它应该存活在一个业务请求中，处理完整个请求后，应该关闭这条连接，让它归还给 SqlSessionFactory，否则数据库资源就很快被耗费精光，系统就会瘫痪，所以用 try...catch...finally... 语句来保证其正确关闭。
 - **所以 SqlSession 的最佳的作用域是请求或方法作用域。**
 
-![20200710215201](Mybatis/20200710215201.png)
+![20200710215201](Mybatis.assets/image-20241025145538266.png)
 
 >  **sqlSessionFactoryBuilder ,sqlSessionFactory, sqlSession, mapper关系**
 
@@ -2961,11 +2961,11 @@ Teacher(id=0, name=码老师, students=[Student(id=1, name=小明, tid=1), Stude
 
 2、本质上利用了JVM的动态代理机制
 
-![20200710224201](Mybatis/20200710224201.png)
+![20200710224201](Mybatis.assets/image-20241025145538267.png)
 
 3、Mybatis 详细的执行流程
 
-![20200710225201](Mybatis/20200710225201.png)
+![20200710225201](Mybatis.assets/image-20241025145538268.png)
 
 
 
@@ -4711,7 +4711,7 @@ public void testQueryUserById(){
 
 ## 11.5、缓存原理
 
-![20200711115843](Mybatis/20200711115843.png)
+![20200711115843](Mybatis.assets/image-20241025145538269.png)
 
 
 

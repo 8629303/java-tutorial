@@ -10,7 +10,7 @@
 
 **1、安装Erlang**
 
-![20210314201339](https://gitee.com/liusuixing/blog_images/raw/master/20210314201339.png)
+![20210314201339](RabbitMQ-3.8.14-博客版.assets/image-20241025145538655.png)
 
 - 官网下载地址：https://www.erlang.org/downloads
 - **历史版本下载**：http://erlang.org/download/
@@ -141,9 +141,9 @@ Listing plugins with pattern ".*" ...
 
 **4、如上是通过*.exe方式安装的，所以自动帮我们安装好了服务启动和服务暂时删除等**
 
-![20210418110505](https://gitee.com/liusuixing/blog_images/raw/master/20210418110505.png)
+![20210418110505](RabbitMQ-3.8.14-博客版.assets/image-20241025145538656.png)
 
-![20210418110803](https://gitee.com/liusuixing/blog_images/raw/master/20210418110803.png)
+![20210418110803](RabbitMQ-3.8.14-博客版.assets/image-20241025145538657.png)
 
 
 
@@ -845,11 +845,11 @@ rabbitmq-management是RabbitMq web管理端，用的是erlang的cowboy框架进�
 
 **AMQP生产者流转过程：**
 
-![20210418110804](https://gitee.com/liusuixing/blog_images/raw/master/20210418110804.png)
+![20210418110804](RabbitMQ-3.8.14-博客版.assets/image-20241025145538658.png)
 
 **AMQP消费者流转过程：**
 
-![20210418110805](https://gitee.com/liusuixing/blog_images/raw/master/20210418110805.png)
+![20210418110805](RabbitMQ-3.8.14-博客版.assets/image-20241025145538659.png)
 
 
 
@@ -859,7 +859,7 @@ rabbitmq-management是RabbitMq web管理端，用的是erlang的cowboy框架进�
 
 > 1、RabbitMQ的核心组成部分
 
-![20210418110806](https://gitee.com/liusuixing/blog_images/raw/master/20210418110806.png)
+![20210418110806](RabbitMQ-3.8.14-博客版.assets/image-20241025145538660.png)
 
 核心概念：
 
@@ -877,13 +877,13 @@ rabbitmq-management是RabbitMq web管理端，用的是erlang的cowboy框架进�
 
 > 2、RabbitMQ整体架构模型
 
-![20210418110807](https://gitee.com/liusuixing/blog_images/raw/master/20210418110807.png)
+![20210418110807](RabbitMQ-3.8.14-博客版.assets/image-20241025145538661.png)
 
 
 
 > 3、RabbitMQ的运行流程
 
-![20210418110808](https://gitee.com/liusuixing/blog_images/raw/master/20210418110808.png)
+![20210418110808](RabbitMQ-3.8.14-博客版.assets/image-20241025145538662.png)
 
 
 
@@ -903,7 +903,7 @@ rabbitmq-management是RabbitMq web管理端，用的是erlang的cowboy框架进�
 
 ### 1、简单模式（Hello World）
 
-![20210418110809](https://gitee.com/liusuixing/blog_images/raw/master/20210418110809.png)
+![20210418110809](RabbitMQ-3.8.14-博客版.assets/image-20241025145538663.png)
 
 做最简单的事情，一个生产者对应一个消费者，RabbitMQ相当于一个消息代理，负责将A的消息转发给B
 
@@ -915,7 +915,7 @@ rabbitmq-management是RabbitMq web管理端，用的是erlang的cowboy框架进�
 
 ### 2、工作队列模式（Work queues）
 
-![20210418110810](https://gitee.com/liusuixing/blog_images/raw/master/20210418110810.png)
+![20210418110810](RabbitMQ-3.8.14-博客版.assets/image-20241025145538664.png)
 
 在多个消费者之间分配任务（竞争的消费者模式），一个生产者对应多个消费者，一般适用于执行资源密集型任务，单个消费者处理不过来，需要多个消费者进行处理
 
@@ -925,7 +925,7 @@ rabbitmq-management是RabbitMq web管理端，用的是erlang的cowboy框架进�
 
 ### 3、订阅模式-fanout（Pub/Sub）
 
-![20210418110811](https://gitee.com/liusuixing/blog_images/raw/master/20210418110811.png)
+![20210418110811](RabbitMQ-3.8.14-博客版.assets/image-20241025145538665.png)
 
 一次向许多消费者发送消息，一个生产者发送的消息会被多个消费者获取，也就是将消息将广播到所有的消费者中。
 
@@ -939,7 +939,7 @@ rabbitmq-management是RabbitMq web管理端，用的是erlang的cowboy框架进�
 
 ### 4、路由模式（Routing）
 
-![20210418110812](https://gitee.com/liusuixing/blog_images/raw/master/20210418110812.png)
+![20210418110812](RabbitMQ-3.8.14-博客版.assets/image-20241025145538666.png)
 
 有选择地（Routing key）接收消息，发送消息到交换机并且要指定路由key ，消费者将队列绑定到交换机时需要指定路由key，仅消费指定路由key的消息
 
@@ -949,7 +949,7 @@ rabbitmq-management是RabbitMq web管理端，用的是erlang的cowboy框架进�
 
 ### 5、主题模式（Topics）
 
-![20210418110813](https://gitee.com/liusuixing/blog_images/raw/master/20210418110813.png)
+![20210418110813](RabbitMQ-3.8.14-博客版.assets/image-20241025145538667.png)
 
 根据主题（Topics）来接收消息，将路由key和某模式进行匹配，此时队列需要绑定在一个模式上，`#`匹配一个词或多个词，`*`只匹配一个词。
 
@@ -959,7 +959,7 @@ rabbitmq-management是RabbitMq web管理端，用的是erlang的cowboy框架进�
 
 ### 6、远程过程调用（RPC）
 
-![20210418110814](https://gitee.com/liusuixing/blog_images/raw/master/20210418110814.png)
+![20210418110814](RabbitMQ-3.8.14-博客版.assets/image-20241025145538668.png)
 
 如果我们需要在远程计算机上运行功能并等待结果就可以使用RPC，具体流程可以看图。应用场景：需要等待接口返回数据，如订单支付
 
@@ -1038,7 +1038,7 @@ rabbitmq-management是RabbitMq web管理端，用的是erlang的cowboy框架进�
 
 ### 简单队列模型示意图
 
-![20210418110841](https://gitee.com/liusuixing/blog_images/raw/master/20210418110841.png)
+![20210418110841](RabbitMQ-3.8.14-博客版.assets/image-20241025145538669.png)
 
 ### 代码实战
 
@@ -1189,7 +1189,7 @@ public class Consumer {
 
 ### 工作队列模型示意图
 
-![20210418110842](https://gitee.com/liusuixing/blog_images/raw/master/20210418110842.png)
+![20210418110842](RabbitMQ-3.8.14-博客版.assets/image-20241025145538670.png)
 
 
 
@@ -1526,7 +1526,7 @@ Work2-收到消息是work-公平分发:20
 
 ### 发布订阅模型示例图
 
-![20210418110843](https://gitee.com/liusuixing/blog_images/raw/master/20210418110843.png)
+![20210418110843](RabbitMQ-3.8.14-博客版.assets/image-20241025145538671.png)
 
 ### 代码实战
 
@@ -1657,7 +1657,7 @@ Direct Exchange 消息模型 是交换机将消息投递到队列中的另一种
 
 ### 路由消息模型示意图
 
-![20210418110844](https://gitee.com/liusuixing/blog_images/raw/master/20210418110844.png)
+![20210418110844](RabbitMQ-3.8.14-博客版.assets/image-20241025145538672.png)
 
 ### Direct 消息流转过程
 
@@ -1796,7 +1796,7 @@ Topic Exchange 消息模型需要指定路由器类型设置为`Topic`，那么�
 
 ### 主题消息模型示意图
 
-![20210418110845](https://gitee.com/liusuixing/blog_images/raw/master/20210418110845.png)
+![20210418110845](RabbitMQ-3.8.14-博客版.assets/image-20241025145538673.png)
 
 ### Topic 中的路由键设置规则
 
@@ -1950,7 +1950,7 @@ Headers Exchange 模型需要指定路由器类型设置为`Headers`，那么什
 
 ### Headers 消息模型示意图
 
-![20210418110840](https://gitee.com/liusuixing/blog_images/raw/master/20210418110840.png)
+![20210418110840](RabbitMQ-3.8.14-博客版.assets/image-20241025145538674.png)
 
 ### Headers 中消息流转过程
 
@@ -2973,7 +2973,7 @@ header.queue.two 收到消息：Header模式—全部匹配
 
 ## 00、消息可靠性理论分析
 
-![20210418110834](https://gitee.com/liusuixing/blog_images/raw/master/20210418110834.png)
+![20210418110834](RabbitMQ-3.8.14-博客版.assets/image-20241025145538675.png)
 
 > **1、RabbitMQ 消息投递路径**
 
@@ -3315,7 +3315,7 @@ public void setConfirmCallback() {
 
 > Confirm只能保证消息到达 exchange，无法保证消息可以被 exchange分发到指定 queue。而且 exchange是不能持久化消息的，queue是可以持久化消息。采用 return 机制来监听消息是否从 exchange送到了指定的 queue中
 
-![20210418110849](https://gitee.com/liusuixing/blog_images/raw/master/20210418110849.png)
+![20210418110849](RabbitMQ-3.8.14-博客版.assets/image-20241025145538676.png)
 
 当把 mandotory 参数设置为 true 时，如果交换机无法将消息进行路由时，会将该消息返回给生产者，而如果该参数设置为false，如果发现消息无法进行路由，则直接丢弃。
 
@@ -3453,7 +3453,7 @@ public void setQueueCallback() {
 
 听的不太明白？没关系，看个图就知道是怎么回事了。
 
-![20210418110850](https://gitee.com/liusuixing/blog_images/raw/master/20210418110850.png)
+![20210418110850](RabbitMQ-3.8.14-博客版.assets/image-20241025145538677.png)
 
 接下来，我们就来设置一下备份交换机（建议生产者和消费者端同时定义）：
 
@@ -3831,7 +3831,7 @@ public class QosConsumer {
 
 **延迟队列+死信队列 大致流程图：**
 
-![20210418110848](https://gitee.com/liusuixing/blog_images/raw/master/20210418110848.png)
+![20210418110848](RabbitMQ-3.8.14-博客版.assets/image-20241025145538678.png)
 
 ## 01、延迟队列 TTL
 
@@ -3939,7 +3939,7 @@ public class Producer {
 
 然后可以从web页面查看该队列状况：1、可以发现队列有一个TTL的标签。2、三秒过后消息不管有没有被消费都会自动消失
 
-![20210418110836](https://gitee.com/liusuixing/blog_images/raw/master/20210418110836.png)
+![20210418110836](RabbitMQ-3.8.14-博客版.assets/image-20241025145538679.png)
 
 
 
@@ -4179,7 +4179,7 @@ public class DeadTTLMessagesConsumer {
 
 上文的问题确实是一个硬伤，如果不能实现在消息粒度上添加TTL，并使其在设置的TTL时间及时死亡，就无法设计成一个通用的延时队列。针对消息无序的不妨看下以下解决方案。
 
-![20210418110856](https://gitee.com/liusuixing/blog_images/raw/master/20210418110856.png)
+![20210418110856](RabbitMQ-3.8.14-博客版.assets/image-20241025145538680.png)
 
 上面使用 DLX + TTL 的模式，消息首先会路由到一个正常的队列，根据设置的 TTL 进入死信队列，与之不同的是**通过 x-delayed-message 声明的交换机，它的消息在发布之后不会立即进入队列，先将消息保存至 Mnesia**（一个分布式数据库管理系统，适合于电信和其它需要持续运行和具备软实时特性的 Erlang 应用。目前资料介绍的不是很多）
 
@@ -4339,7 +4339,7 @@ public class TTLDelayedPluginConsumer {
 
 **消息大致流转过程：**
 
-![20210418110839](https://gitee.com/liusuixing/blog_images/raw/master/20210418110839.png)
+![20210418110839](RabbitMQ-3.8.14-博客版.assets/image-20241025145538681.png)
 
 
 
@@ -4751,7 +4751,7 @@ spring.rabbitmq.template.retry.max-interval: 最大重试时间间隔
 
 ### 1、Web端查看
 
-![20210418110847](https://gitee.com/liusuixing/blog_images/raw/master/20210418110847.png)
+![20210418110847](RabbitMQ-3.8.14-博客版.assets/image-20241025145538682.png)
 
 
 
@@ -4853,7 +4853,7 @@ channel.queueDeclare("ttl-queue", false, false, false, arguments);
 
 ### 1、Web 端查看
 
-![20210418110846](https://gitee.com/liusuixing/blog_images/raw/master/20210418110846.png)
+![20210418110846](RabbitMQ-3.8.14-博客版.assets/image-20241025145538683.png)
 
 
 
@@ -5242,11 +5242,11 @@ public class AutoCreateQueueExchange {
 
 这些元数据，其实本质是一张查询表，里面包括了交换器名称和一个队列的绑定列表，当你将消息发布到交换器中，实际上是将你所在的信道将消息上的路由键与交换器的绑定列表进行匹配，然后将消息路由出去。
 
-![20210418110827](https://gitee.com/liusuixing/blog_images/raw/master/20210418110827.png)
+![20210418110827](RabbitMQ-3.8.14-博客版.assets/image-20241025145538684.png)
 
 有了这个机制，那么在所有节点上传递交换器消息将简单很多，而 RabbitMQ 所做的事情就是把交换器元数据拷贝到所有节点上，因此每个节点上的每条信道都可以访问完整的交换器。
 
-![20210418110828](https://gitee.com/liusuixing/blog_images/raw/master/20210418110828.png)
+![20210418110828](RabbitMQ-3.8.14-博客版.assets/image-20241025145538685.png)
 
 如果消息生产者所连接的是节点 2 或者节点 3，此时队列1的完整数据不在该两个节点上，那么在发送消息过程中这两个节点主要起了一个路由转发作用，根据这两个节点上的元数据转发至节点1上，最终发送的消息还是会存储至节点1的队列1上。
 
@@ -5307,7 +5307,7 @@ public class AutoCreateQueueExchange {
 - queue队列中的完整数据只存在于创建该队列的节点上
 - 其他节点只保存队列的元数据信息以及指向当前队列的owner node的指针
 
-![20210418110825](https://gitee.com/liusuixing/blog_images/raw/master/20210418110825.png)
+![20210418110825](RabbitMQ-3.8.14-博客版.assets/image-20241025145538686.png)
 
 2、数据消费
 
@@ -5333,7 +5333,7 @@ public class AutoCreateQueueExchange {
 - 创建的queue，不论是元数据还是完整数据都会在每一个节点上保存一份
 - 向queue中写消息时，都会自动同步到每一个节点上
 
-![20210418110826](https://gitee.com/liusuixing/blog_images/raw/master/20210418110826.png)
+![20210418110826](RabbitMQ-3.8.14-博客版.assets/image-20241025145538687.png)
 
 2、优点：
 
@@ -5530,13 +5530,13 @@ Flag: virtual_host_metadata, state: enabled
 
 ```
 
-![20210418110851](https://gitee.com/liusuixing/blog_images/raw/master/20210418110851.png)
+![20210418110851](RabbitMQ-3.8.14-博客版.assets/image-20241025145538688.png)
 
 
 
 web页面查看：
 
-![20210418110824](https://gitee.com/liusuixing/blog_images/raw/master/20210418110824.png)
+![20210418110824](RabbitMQ-3.8.14-博客版.assets/image-20241025145538689.png)
 
 
 
@@ -5983,11 +5983,11 @@ rabbitmqctl clear_policy -p / ha-policy
 
 全部节点镜像策略创建：
 
-![20210418110852](https://gitee.com/liusuixing/blog_images/raw/master/20210418110852.png)
+![20210418110852](RabbitMQ-3.8.14-博客版.assets/image-20241025145538690.png)
 
 指定节点数镜像策略创建：
 
-![20210418110853](https://gitee.com/liusuixing/blog_images/raw/master/20210418110853.png)
+![20210418110853](RabbitMQ-3.8.14-博客版.assets/image-20241025145538691.png)
 
 
 
@@ -6035,7 +6035,7 @@ channel.queueDeclare("ttl-queue", false, false, false, arguments);
 
 管理界面监控需要我们开启对应的插件（rabbitmq-plugins enable rabbitmq_management）访问：http://ip:15672
 
-![20210418110829](https://gitee.com/liusuixing/blog_images/raw/master/20210418110829.png)
+![20210418110829](RabbitMQ-3.8.14-博客版.assets/image-20241025145538692.png)
 
 在管理控制台我们就可以直观的看到集群中的每一个节点是否正常,如果为红色则表示节点挂掉了，同时可以很方便的查看到各个节点的内存、磁盘等相关的信息，使用起来也是非常方便的。但是遗憾的该功能做的比较简陋,没有告警等一些列的个性化设置，同时如果想把他接入到公司其他的监控系统统一管理也是很难做到的,所以扩展性不强，一般在小型企业的小集群中使用。
 
@@ -6061,7 +6061,7 @@ channel.queueDeclare("ttl-queue", false, false, false, arguments);
 
 安装插件并开启 trace_on 之后，会发现多个 exchange：amq.rabbitmq.trace ，类型为：topic。
 
-![20210418110830](https://gitee.com/liusuixing/blog_images/raw/master/20210418110830.png)
+![20210418110830](RabbitMQ-3.8.14-博客版.assets/image-20241025145538693.png)
 
 
 
@@ -6075,15 +6075,15 @@ rabbitTemplate.convertAndSend("spring_queue", "只发队列spring_queue的消息
 
 2、查看trace
 
-![20210418110831](https://gitee.com/liusuixing/blog_images/raw/master/20210418110831.png)
+![20210418110831](RabbitMQ-3.8.14-博客版.assets/image-20241025145538694.png)
 
 3、点击Tracing查看Trace log files
 
-![20210418110832](https://gitee.com/liusuixing/blog_images/raw/master/20210418110832.png)
+![20210418110832](RabbitMQ-3.8.14-博客版.assets/image-20241025145538695.png)
 
 4、点击xuexiangban-trace.log 确认消息轨迹正确性
 
-![20210418110833](https://gitee.com/liusuixing/blog_images/raw/master/20210418110833.png)
+![20210418110833](RabbitMQ-3.8.14-博客版.assets/image-20241025145538696.png)
 
 
 
@@ -6414,7 +6414,7 @@ guest : MonitorRabbitMQ.User(name=guest, tags=administrator)
 
 **在默认情况下主要的配置如下：**
 
-![20210418110854](https://gitee.com/liusuixing/blog_images/raw/master/20210418110854.png)
+![20210418110854](RabbitMQ-3.8.14-博客版.assets/image-20241025145538697.png)
 
 
 
@@ -6422,7 +6422,7 @@ guest : MonitorRabbitMQ.User(name=guest, tags=administrator)
 
 注：如果不了解AMQP请前往官网了解.
 
-![20210418110855](https://gitee.com/liusuixing/blog_images/raw/master/20210418110855.png)
+![20210418110855](RabbitMQ-3.8.14-博客版.assets/image-20241025145538698.png)
 
 
 
@@ -6609,7 +6609,7 @@ public class RabbitConfig {
 
 不论是持久化的消息还是非持久化的消息都可以写入到磁盘中，只不过非持久的是等内存不足的情况下才会被写入到磁盘中。
 
-![20210418110815](https://gitee.com/liusuixing/blog_images/raw/master/20210418110815.png)
+![20210418110815](RabbitMQ-3.8.14-博客版.assets/image-20241025145538699.png)
 
 
 
@@ -6628,9 +6628,9 @@ channel.queueDeclare(queueName,true,false,false,null);
 
 其中参数2：设置为true，就代表的是持久化的含义。即durable=true。持久化的队列在web控制台中有一个`D` 的标记
 
-![20210418110816](https://gitee.com/liusuixing/blog_images/raw/master/20210418110816.png)
+![20210418110816](RabbitMQ-3.8.14-博客版.assets/image-20241025145538700.png)
 
-![20210418110818](https://gitee.com/liusuixing/blog_images/raw/master/20210418110818.png)
+![20210418110818](RabbitMQ-3.8.14-博客版.assets/image-20241025145538701.png)
 
 
 
@@ -6661,9 +6661,9 @@ channel.basicPublish(exchangeName, routingKey, MessageProperties.PERSISTENT_TEXT
 channel.exchangeDeclare(exchangeName,exchangeType,true);
 ```
 
-![20210418110817](https://gitee.com/liusuixing/blog_images/raw/master/20210418110817.png)
+![20210418110817](RabbitMQ-3.8.14-博客版.assets/image-20241025145538702.png)
 
-![20210418110819](https://gitee.com/liusuixing/blog_images/raw/master/20210418110819.png)
+![20210418110819](RabbitMQ-3.8.14-博客版.assets/image-20241025145538703.png)
 
 
 
@@ -6676,7 +6676,7 @@ channel.exchangeDeclare(exchangeName,exchangeType,true);
 当内存使用超过配置的阈值或者磁盘空间剩余空间对于配置的阈值时，RabbitMQ会暂时阻塞客户端的连接，并且停止接收从客户端发来的消息，以此避免服务器的崩溃，客户端与服务端的心态检测机制也会失效。
 如下图：
 
-![20210418110823](https://gitee.com/liusuixing/blog_images/raw/master/20210418110823.png)
+![20210418110823](RabbitMQ-3.8.14-博客版.assets/image-20241025145538704.png)
 
 
 
@@ -6703,9 +6703,9 @@ fraction/value 为内存阈值。默认情况是：0.4/2GB，代表的含义是�
 rabbitmqctl set_vm_memory_high_watermark absolute 50MB
 ```
 
-![20210418110820](https://gitee.com/liusuixing/blog_images/raw/master/20210418110820.png)
+![20210418110820](RabbitMQ-3.8.14-博客版.assets/image-20241025145538705.png)
 
-![20210418110821](https://gitee.com/liusuixing/blog_images/raw/master/20210418110821.png)
+![20210418110821](RabbitMQ-3.8.14-博客版.assets/image-20241025145538706.png)
 
 > 还原可以重启服务或者重新修改成默认：`rabbitmqctl set_vm_memory_high_watermark 0.4`
 
@@ -6774,7 +6774,7 @@ rabbitmqctl set_disk_free_limit mem_relative <fraction>
 rabbitmqctl set_disk_free_limit 100GB
 ```
 
-![20210418110822](https://gitee.com/liusuixing/blog_images/raw/master/20210418110822.png)
+![20210418110822](RabbitMQ-3.8.14-博客版.assets/image-20241025145538707.png)
 
 > 还原可以重启服务或者重新修改成默认：`rabbitmqctl set_disk_free_limit 50MB`
 

@@ -8445,7 +8445,7 @@ public Boolean unLock(String key, String value,String unLuaPath) throws IOExcept
 
 当前开源框架Redisson解决了这个问题，只要线程一加锁成功，就会启动一个watch dog看门狗，它是一个后台线程，会每隔10秒检查一下，如果线程1还持有锁，那么就会不断的延长锁key的生存时间。因此，Redisson就是使用watch dog解决了**锁过期释放，业务没执行完问题**。
 
-![20210814153351955](Redis-最全实战.assets/20210814153351955.png)
+![20210814153351955](Redis-代码实战.assets/image-20241025145538573.png)
 
 **Redisson 分布式锁**：Redisson实现了Redis文档中提到像分布式锁Lock这样的更高阶应用场景。事实上Redisson并没有不止步于此，在分布式锁的基础上还提供了联锁（MultiLock），读写锁（ReadWriteLock），公平锁（Fair Lock），红锁（RedLock），信号量（Semaphore），可过期性信号量（PermitExpirableSemaphore）和闭锁（CountDownLatch）这些实际当中对多线程高并发应用至关重要的基本部件。正是通过实现基于Redis的高阶应用方案，使Redisson成为构建分布式系统的重要工具。
 

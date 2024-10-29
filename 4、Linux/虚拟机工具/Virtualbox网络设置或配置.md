@@ -12,7 +12,7 @@ Virtualbox 是我最常用的虚拟机管理软件，虽然自从 docker 出来�
 
 > 本文基于 Virtualbox 6.1.18。
 
-![图片](Virtualbox网络设置或配置.assets/640.png)
+![图片](Virtualbox网络设置或配置.assets/image-20241025145538531.png)
 
 
 
@@ -24,7 +24,7 @@ Virtualbox中提供的两个选项「网络地址转换（NAT）」和「NAT网�
 
 NAT网络是用户自己创建的网络，通过主机网络管理器可以创建自己的NAT网络，并指定地址范围。Virtualbox默认会将192.168.56.1设置为网关。
 
-![图片](Virtualbox网络设置或配置.assets/640-16677411867443.png)
+![图片](Virtualbox网络设置或配置.assets/image-20241025145538532.png)
 
 
 
@@ -75,19 +75,19 @@ VirtualBox的内部网络，本质上是提供一个构建网络所需要的基�
 
 其网络结构如下图所示：
 
-![图片](Virtualbox网络设置或配置.assets/640-16677413621326.png)
+![图片](Virtualbox网络设置或配置.assets/image-20241025145538533.png)
 
 VirtualBox虚拟机会默认安装Bridged网卡和Host-Only网卡：
 
-![图片](Virtualbox网络设置或配置.assets/640-16677413675689.png)
+![图片](Virtualbox网络设置或配置.assets/image-20241025145538534.png)
 
 在虚拟机里选择要桥接的物理网卡，这里选择的是Intel wi-fi这个物理网卡：
 
-![图片](Virtualbox网络设置或配置.assets/640-166774137067612.png)
+![图片](Virtualbox网络设置或配置.assets/image-20241025145538535.png)
 
 因为启用了【网卡1】，虚拟机会给Ubuntu系统配置一块虚拟网卡【enp03】，这里我们设置Ubuntu虚拟网卡和桥接的Windows物理网卡在同一个网段，这样就可以实现互通了；
 
-![图片](Virtualbox网络设置或配置.assets/640-166774137569615.png)
+![图片](Virtualbox网络设置或配置.assets/image-20241025145538536.png)
 
 因为windows的wifi网卡地址是：10.4.23.200，所以设置虚拟机的enp0s3网卡地址为：10.4.23.218；这样两个系统现在都在真实的网络上，且可以正常上网。
 
@@ -104,7 +104,7 @@ NAT模式下，虚拟机访问网络的所有数据都是由主机提供的，�
 
 其网络结构如下图所示：
 
-![图片](Virtualbox网络设置或配置.assets/640-166774234525136.png)
+![图片](Virtualbox网络设置或配置.assets/image-20241025145538537.png)
 
 NAT模式借助虚拟NAT设备和虚拟DHCP服务器，使得虚拟机可以联网。
 
@@ -116,7 +116,7 @@ NAT模式借助虚拟NAT设备和虚拟DHCP服务器，使得虚拟机可以联�
 - 虚拟机可以通过网络访问主机
 - 主机无法通过网络访问虚拟机，如：telnet 是连不到虚拟机中的。
 
-![图片](Virtualbox网络设置或配置.assets/640-166774234139933.png)
+![图片](Virtualbox网络设置或配置.assets/image-20241025145538538.png)
 
 **小结**：
 
@@ -132,23 +132,23 @@ Host-Only听名字就是只和主机建立关系。这种模式是将虚拟机�
 
 它的网络结构是在NAT网络的基础上，去除虚拟NAT设备让它不能上网，如下图所示：
 
-![图片](Virtualbox网络设置或配置.assets/640-166774233711530.png)
+![图片](Virtualbox网络设置或配置.assets/image-20241025145538539.png)
 
 在虚拟机安装完后，windows下就会多出来一个Host-Only网卡，这个虚拟网卡就是用来实现通信用的。
 
-![图片](Virtualbox网络设置或配置.assets/640-166774233488827.png)
+![图片](Virtualbox网络设置或配置.assets/image-20241025145538540.png)
 
 在选择Host-Only模式时，需要选择一块Host-Only网卡用于和虚拟机进行通信使用：
 
-![图片](Virtualbox网络设置或配置.assets/640-166774233283924.png)
+![图片](Virtualbox网络设置或配置.assets/image-20241025145538541.png)
 
 同时设置虚拟机的IP地址和Host-Only的网卡地址要在同一个网段：
 
-![图片](Virtualbox网络设置或配置.assets/640-166774233048021.png)
+![图片](Virtualbox网络设置或配置.assets/image-20241025145538542.png)
 
 相互ping都是通的，这也实现了物理机和虚拟机互通的功能。
 
-![图片](Virtualbox网络设置或配置.assets/640-166774232833518.png)
+![图片](Virtualbox网络设置或配置.assets/image-20241025145538543.png)
 
 
 

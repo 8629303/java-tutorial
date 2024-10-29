@@ -119,7 +119,7 @@ MongoDB 将文档存储在集合中，一个集合是一些文档构成的对象
 
 集合存在于数据库中，没有固定的结构，这意味着用户对集合可以插入不同格式和类型的数据。但通常情况下插入集合的数据都会有一定的关联性，即一个集合中的文档应该具有相关性。
 
-![20201212120354](MongoDB/20201212120354.png)
+![20201212120354](MongDB-4.4.2.assets/image-20241025145538718.png)
 
 
 
@@ -127,7 +127,7 @@ MongoDB 将文档存储在集合中，一个集合是一些文档构成的对象
 
 在 MongoDB 中，数据库由集合组成。一个 MongoDB 实例可承载多个数据库，互相之间彼此独立，在开发过程中，通常将一个应用的所有数据存储到同一个数据库中，MongoDB 将不同数据库存放在不同文件中。
 
-![20201212120355](MongoDB/20201212120355.png)
+![20201212120355](MongDB-4.4.2.assets/image-20241025145538719.png)
 
 
 
@@ -167,7 +167,7 @@ BSON 支持的数据类型
 
 ### 1、下载指定版本
 
-![20201210220729](MongoDB/20201210220729.png)
+![20201210220729](MongDB-4.4.2.assets/image-20241025145538720.png)
 
 - MongoDB Enterprise Server：企业版（收费版）、MongoDB Community Server：社区版（免费版）
 - 下载完成后，获得安装包：`mongodb-windows-x86_64-4.4.2-signed.msi`，双击即可安装。
@@ -178,19 +178,19 @@ BSON 支持的数据类型
 
 - 如果已经安装过该版本的MongoDB，会是这个界面（如果没有安装过忽略此步骤）
 
-![20201211231045](MongoDB/20201211231045.png)
+![20201211231045](MongDB-4.4.2.assets/image-20241025145538721.png)
 
 - 选择Complete，表示安装到默认路径（不推荐，C盘懂的都懂）
 
 - 选择Custom，表示自定义安装路径（推荐）
 
-![20201211231046](MongoDB/20201211231046.png)
+![20201211231046](MongDB-4.4.2.assets/image-20241025145538722.png)
 
 ### 3、选择安装路径
 
-![20201211231456](MongoDB/20201211231456.png)
+![20201211231456](MongDB-4.4.2.assets/image-20241025145538723.png)
 
-![20201211232513](MongoDB/20201211232513.png)
+![20201211232513](MongDB-4.4.2.assets/image-20241025145538724.png)
 
 
 
@@ -198,7 +198,7 @@ BSON 支持的数据类型
 >
 > 现在：MongoDB 4.x 系列版本的数据库，在安装时默认安装(选中了 Install MongoD as a Service)服务 ，就是在开机时自动启动 MongoDB 服务，然后就可以直接使用啦！
 
-![20201211233227](MongoDB/20201211233227.png)
+![20201211233227](MongDB-4.4.2.assets/image-20241025145538725.png)
 
 然后就一直下一步、Next 直到 Flnish 安装完毕，到此就MongoDB就安装结束啦！
 
@@ -251,13 +251,13 @@ Build Info: {
 
 如果.msi安装的话默认已经配置好环境变量了
 
-![20201212110639](MongoDB/20201212110639.png)
+![20201212110639](MongDB-4.4.2.assets/image-20241025145538726.png)
 
 
 
 ### 6、目录与配置文件说明
 
-![20201212120352](MongoDB/20201212120352.png)
+![20201212120352](MongDB-4.4.2.assets/image-20241025145538727.png)
 
 安装成功后默认生成配置文件：bin/mongod.cfg
 
@@ -2611,7 +2611,7 @@ MongoDB聚合框架(Aggregation Framework)是一个计算框架，它可以：
 
 通过这张图，可以了解**Aggregate**处理的过程：
 
-![20201212120353](MongoDB/20201212120353.png)
+![20201212120353](MongDB-4.4.2.assets/image-20241025145538728.png)
 
 ```javascript
 db.user.aggregate([
@@ -3076,7 +3076,7 @@ db.userinfos.createIndex({age:1})
 
 其中 {age:1} 中的1表示升序，如果想设置倒序索引的话使用：`db.userinfos.createIndex({age:-1})` 即可。我们通过explain()方法查看查询计划，如下图，看到查询：age=23的document时使用了索引，如果没有使用索引的话stage=COLLSCAN。
 
-![20201212120356](MongoDB/20201212120356.png)
+![20201212120356](MongDB-4.4.2.assets/image-20241025145538729.png)
 
 因为document的存储是bson格式的，我们也可以给内置对象的字段添加索引，或者将整个内置对象作为一个索引，语法如下：
 
@@ -3117,7 +3117,7 @@ db.userinfos.find({age:23}).explain()
 
 执行查询时查询计划如下：
 
-![20201212120357](MongoDB/20201212120357.png)
+![20201212120357](MongDB-4.4.2.assets/image-20241025145538730.png)
 
 
 
@@ -3151,7 +3151,7 @@ db.classes.createIndex({'students.age':1})
 db.classes.find({'students.age':20}).explain()
 ```
 
-![20201212120358](MongoDB/20201212120358.png)
+![20201212120358](MongDB-4.4.2.assets/image-20241025145538731.png)
 
 
 
@@ -3168,7 +3168,7 @@ db.collection.createlndex( { _id : "hashed" })
 db.userinfos.find({'name':'张三'}).explain()
 ```
 
-![20201212120359](MongoDB/20201212120359.png)
+![20201212120359](MongDB-4.4.2.assets/image-20241025145538732.png)
 
 
 
@@ -3210,7 +3210,7 @@ db.userinfos.createIndex({name:1},{unique:true})
 
 看一个使用唯一索引的栗子：
 
-![20201212120360](MongoDB/20201212120360.png)
+![20201212120360](MongDB-4.4.2.assets/image-20241025145538733.png)
 
 
 
@@ -3234,7 +3234,7 @@ db.userinfos.find({age:26})
 
 当查询 age=23 的记录时，stage=COLLSCAN，当查询age=26的记录时，使用了索引，如下：
 
-![20201212120361](MongoDB/20201212120361.png)
+![20201212120361](MongDB-4.4.2.assets/image-20241025145538734.png)
 
 
 
@@ -3251,7 +3251,7 @@ db.userinfos.createIndex({address:1},{sparse:true})
 
 看一个使用稀疏索引的栗子：
 
-![20201212120362](MongoDB/20201212120362.png)
+![20201212120362](MongDB-4.4.2.assets/image-20241025145538735.png)
 
 
 

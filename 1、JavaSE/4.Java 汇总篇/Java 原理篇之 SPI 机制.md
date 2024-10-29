@@ -8,7 +8,7 @@
 
 `Java SPI`（Service Provider Interface）是Java官方提供的一种**服务发现机制**，它允许在`运行时动态地加载实现`特定接口的类，而不需要在代码中显式地指定该类，从而实现**解耦和灵活性**。
 
-![20240416173701001](./Java 原理篇之 SPI 机制.assets/20240416173701001.png)
+![20240416173701001](Java 原理篇之 SPI 机制.assets/image-20241025145539129.png)
 
 
 
@@ -189,7 +189,7 @@ com.example.demo.service.impl.JavaServiceImpl
 com.example.demo.service.impl.PythonServiceImpl
 ```
 
-![2024041617370100220240416173701002](./Java 原理篇之 SPI 机制.assets/20240416173701002.png)
+![2024041617370100220240416173701002](Java 原理篇之 SPI 机制.assets/image-20241025145539130.png)
 
 
 

@@ -1,10 +1,10 @@
 # MySQL读写分离
 
-[![1570776205802](https://images-1300356155.cos.ap-nanjing.myqcloud.com/img/mysql-proxy.jpg)](https://images-1300356155.cos.ap-nanjing.myqcloud.com/img/mysql-proxy.jpg)
+[![1570776205802](MySQL-高级.assets/image-20241025145539089.png)](MySQL-高级.assets/image-20241025145539089.png)
 
 ## 1、读写分离的介绍
 
-[![img](https://images-1300356155.cos.ap-nanjing.myqcloud.com/img/%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB.jpg)](https://images-1300356155.cos.ap-nanjing.myqcloud.com/img/读写分离.jpg)
+[![img](MySQL-高级.assets/image-20241025145539090.png)](https://images-1300356155.cos.ap-nanjing.myqcloud.com/img/读写分离.jpg)
 
  MySQL读写分离基本原理是让master数据库处理写操作，slave数据库处理读操作。master将写操作的变更同步到各个slave节点。
 

@@ -1300,14 +1300,14 @@ PS：GET方式请求可以直接使用浏览器访问。
         "id": 5000,
         "title": "error quasi sunt cupiditate voluptate ea odit beatae",
         "url": "https://via.placeholder.com/600/6dd9cb",
-        "thumbnailUrl": "https://via.placeholder.com/150/6dd9cb"
+        "thumbnailUrl": "Java 工具篇之 API 接口免费 JSONPlaceholder.assets/image-20241027002859189.png"
     }
 ]
 ```
 
 PS注意：数据里面的两个 url 也是可以访问的，比如缩略图地址访问结果如下。
 
-![img](https://via.placeholder.com/150/6dd9cb)
+![img](Java 工具篇之 API 接口免费 JSONPlaceholder.assets/image-20241027002859189.png)
 
 （2）根据 ID 获取指定照片数据。http://jsonplaceholder.typicode.com/photos/8
 

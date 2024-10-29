@@ -20,7 +20,7 @@ J.U.C 属于一个重度多线程的编程的开发框架，在 J.U.C 里面提�
 - 锁机制：java.util.concurrent.locks，多线程的开发之中牵扯到资源的部分都是存在于锁的概念，而对于锁 J.U.C 给出了完整的新机制
 - 原子操作类：java.util.concurrent.atomic，直接提供了指定数据类型上的同步机制，避免了在进行数据操作时通过方法实现同步的处理了
 
-![image-20220319125129944](./Java 多线程进阶.assets/image-20220319125129944.png)
+![image-20220319125129944](Java 多线程进阶.assets/image-20241025145539211.png)
 
 J.U.C 是在 JDK1.5 的时候提出的开发框架，后来每一个版本的 JDK 都对 J.U.C 有过更新，那么本次学习将为大家完整的展示整个 J.U.C 开发包之中的全部类和接口的使用，包括源码的实现分析（主要是应对面试去使用的）。
 
@@ -411,7 +411,7 @@ public class JavaAPIDemo {
 
 传统的多线程创建过程中，开发者需要通过 Runnable 或 Callable 接口的子类来创建线程主体，而后再利用 Thread 类对线程主体包装后来进行多线程的执行，但是考虑到代码设计结构的问题，一般都建议通过工厂类进行线程的创建，所以在 J.U.C 开发包中提供了一个 ThreadFactory 工厂接口，利用该接口的子类就可以创建一个线程工厂类。
 
-![image-20240214231845497](./Java 多线程进阶.assets/image-20240214231845497.png)
+![image-20240214231845497](Java 多线程进阶.assets/image-20241025145539212.png)
 
 在 J.U.C 里面提供了一个工厂类的标准接口。工厂类的源码如下：
 
@@ -935,11 +935,11 @@ public class JavaAPIDemo {
 
 1、正确的数据修改操作：
 
-![image-20231223154730420](./Java 多线程进阶.assets/image-20231223154730420.png)
+![image-20231223154730420](Java 多线程进阶.assets/image-20241025145539213.png)
 
 2、错误的数据修改操作：
 
-![image-20231223155215531](./Java 多线程进阶.assets/image-20231223155215531.png)
+![image-20231223155215531](Java 多线程进阶.assets/image-20241025145539214.png)
 
 既然清楚了乐观锁实现同步的处理原则之后，那么下面可以继续观察CAS的实现源代码的调用哦结构的分析：
 
@@ -1185,7 +1185,7 @@ public final boolean compareAndSet(int i, E expectedValue, E newValue) {
 
 > **对于程序开发人员来讲在多线程下进行数组操作时只需要掌握AtomicReferenceArray相关的原子类实现即可，但是这个类的操作实现本质上依靠的是java.lang.invoke开发包中的VarHandle类完成处理的，如图所示。**
 >
-> ![image-20231223234657177](./Java 多线程进阶.assets/image-20231223234657177.png)
+> ![image-20231223234657177](Java 多线程进阶.assets/image-20241025145539215.png)
 >
 > **该类主要用于动态操作数组元素或对象的成员属性。VarHandle类提供了一系列的标准内存屏蔽操作，用于更细粒度的控制指令排序，在安全性、可用性以及性能方面都要优于已有的程序类库，同时可以和任何类型的变量进行关联操作。**
 >
@@ -1734,7 +1734,7 @@ public class JavaAPIDemo {
 
 实际上不管是版本戳还是标记的原子引用类型最终都是为了去解决项目之中可能出现的 ABA 数据错乱问题，就相当于是两个线程，彼此同时对一个资源进行操作，但是 A 的操作有可能会被 B 的操作覆盖。
 
-![image-20231225111335651](./Java 多线程进阶.assets/image-20231225111335651.png)
+![image-20231225111335651](Java 多线程进阶.assets/image-20241025145539216.png)
 
 对于 ABA 问题最简单的理解就是：现在 A 和 B 两位开发工程师同时打开了一个相同的程序文件，但是 A 在打开之后由于有其他的事情要忙，所以暂时没有做任何的代码编写，而 B 却一直在进行代码编写，当 B 把代码写完并保存后关上电脑离开后，而 A 处理完其他事情后发现没有什么可写的，于是就直接保存退出，这样B的修改就消失不见了。
 
@@ -1775,7 +1775,7 @@ public class JavaAPIDemo {
 
 AtomicIntegerFieldUpdater 是一个抽象类，而后在其内部定义了两个内部实现子类，分别是：CASUpdater 子类（CAS 更新处理) 与 LockedUpdater 子类（同步锁定更新处理)，所以在使用前必须通过 newUpdater() 方法根据当前的虚拟机环境获取指定的对象实例。
 
-![image-20231225170302653](./Java 多线程进阶.assets/image-20231225170302653.png)
+![image-20231225170302653](Java 多线程进阶.assets/image-20241025145539217.png)
 
 源码分析 1：AtomicLongFieldUpdater.newUpdater() 方法
 
@@ -2291,7 +2291,7 @@ la.add(10);
 
 整个LongAdder.add()方法的逻辑如下图： 
 
-![image-20231225170302654](./Java 多线程进阶.assets/image-20231225170302654.png)
+![image-20231225170302654](Java 多线程进阶.assets/image-20241025145539218.png)
 
 > 可以看到，只有从未出现过并发冲突的时候，base基数才会使用到，一旦出现了并发冲突，之后所有的操作都只针对Cell[]数组中的单元Cell。如果Cell[]数组未初始化，会调用父类的longAccumelate去初始化Cell[]，如果Cell[]已经初始化但是冲突发生在Cell单元内，则也调用父类的longAccumelate，此时可能就需要对Cell[]扩容了。
 
@@ -2437,7 +2437,7 @@ if ((cs = cells) != null && (n = cs.length) > 0) {
 
 整个Striped64.longAccumulate()方法的流程图如下：
 
-![image-20231225170402656](./Java 多线程进阶.assets/image-20231225170402656.png)
+![image-20231225170402656](Java 多线程进阶.assets/image-20241025145539219.png)
 
 
 
@@ -2479,7 +2479,7 @@ value = base + \sum_{i=0}^nCell[i]
 
 JDK1.8时，java.util.concurrent.atomic包中，除了新引入LongAdder外，还有它的三个兄弟类：LongAccumulator、DoubleAdder、DoubleAccumulator
 
-![image-20231225170402656](./Java 多线程进阶.assets/image-20231225170502657.png)
+![image-20231225170402656](Java 多线程进阶.assets/image-20241025145539220.png)
 
 #### 1、LongAccumulator
 
@@ -2710,7 +2710,7 @@ Result: 26.0
 
 对于以上的两个锁处理接口，在 J.U.C 中分别提供了 ReentrantLock 子类（实现Lock接口）与 ReentrantReadWriteLock 子类（实现ReadWriteLock接口）
 
-![image-20240503140045875](./Java 多线程进阶.assets/image-20240503140045875.png)
+![image-20240503140045875](Java 多线程进阶.assets/image-20241025145539221.png)
 
 
 
@@ -2777,7 +2777,7 @@ ReentrantLock 子类与 ReentrantReadWriteLock 子类的内部都会提供有一
 
 AbstractQueuedSynchronizer：实现了一个FIFO的线程等待队列，而后其会根据不同的应用场景来实现具体的独占锁模式（多线程更新数据时需要单个线程运行）或者是共享锁模式（多线程数据读取时读线程不需要同步，只需要和写线程做同步处理即可)，如图所示。为了便于这两种锁机制的处理，在AbstractQueuedSynchronizer也提供了相应的锁获取与锁释放的处理方法，这些方法全部都要根据实际的环境由不同的子类来实现。【**AQS 的本质就是一个执行队列，所有的待执行的线程全部都保存在一个队列之中，实际上这样做的目的是为了考虑到解决死锁的问题，在J.U.C的AQS里面提供有一个CLH队列。**】
 
-![image-20231227210441547](./Java 多线程进阶.assets/image-20231227210441547.png)
+![image-20231227210441547](Java 多线程进阶.assets/image-20241025145539222.png)
 
 
 
@@ -2795,11 +2795,11 @@ java.util.concurrent.locks.ReentrantLock 是 Lock 接口的直接子类，提供
 
 1、多个线程抢占互斥锁资源
 
-![image-20231228141510999](./Java 多线程进阶.assets/image-20231228141510999.png)
+![image-20231228141510999](Java 多线程进阶.assets/image-20241025145539223.png)
 
 2、互斥锁抢夺与等待
 
-![image-20231228141624548](./Java 多线程进阶.assets/image-20231228141624548.png)
+![image-20231228141624548](Java 多线程进阶.assets/image-20241025145539224.png)
 
 使用 ReentrantLock 最大的特点是可以避免传统的线程与唤醒机制的繁琐处理，开发者只需要通过 lock() 方法即可实现资源锁定，而在资源锁定过程中其他未竞争到的资源则自动进入等待状态，等到当前的线程调用 unlock() 方法后，才会让出当前的互斥锁资源，并根据默认的竞争策略（公平机制与非公平机制）唤醒其他等待线程，所以 ReentrantLock 属于一个可重用锁，这就意味着该锁可以被线程重复获取。
 
@@ -2900,11 +2900,11 @@ ReetrantLock 是一种完全独占的操作锁，这种锁不管是面对读或�
 
 图一：ReentrantLock 在操作的时候，不管是读还是写都要进行操作的锁定，这样就产生了读取的性能问题。
 
-![image-20231228170442363](./Java 多线程进阶.assets/image-20231228170442363.png)
+![image-20231228170442363](Java 多线程进阶.assets/image-20241025145539225.png)
 
 图二：读写锁将读操作和写操作分开了，读操作使用共享锁，写操作使用互斥的写锁（毕竟只有一个线程可以修改，但是却可以有多个线程可以去读取）。
 
-![image-20231228171113422](./Java 多线程进阶.assets/image-20231228171113422.png)
+![image-20231228171113422](Java 多线程进阶.assets/image-20241025145539226.png)
 
 首先可以打开 ReentrantReadWriteLock 锁的内部源代码，观察类中的属性定义以及构造方法的定义。
 
@@ -3606,7 +3606,7 @@ public native void park(boolean isAbsolute, long time);
 
 这种挂起与恢复执行的操作，本质上都是通过底层的操作系统来完成的，避免了Java层次上的控制，从而就解决了传统的Thread类之中那些会产生死锁方法的问题了。
 
-![image-20231229180302083](./Java 多线程进阶.assets/image-20231229180302083.png)
+![image-20231229180302083](Java 多线程进阶.assets/image-20241025145539227.png)
 
 
 
@@ -3915,7 +3915,7 @@ CountDownLatch 是一种基于倒计数同步的线程管理机制，例如：�
 
 线程同步处理过程中经常会出现某一个线程去等待其他若千个子线程执行完毕的情况出现，现在在主线程里面创建了三个子线程，而后主线程必须在这三个子线程全部执行完成之后再继续向下执行，所以此时就可以基于一个 CountDownLatch 设置等待的线程数量为 3，每当一个子线程执行完毕后就进行一个计数的减 1 操作。
 
-![image-20231230001757876](./Java 多线程进阶.assets/image-20231230001757876.png)
+![image-20231230001757876](Java 多线程进阶.assets/image-20241025145539228.png)
 
 **CountDownLatch 常用方法如下**：
 
@@ -4234,7 +4234,7 @@ Exchanger 交换器，是 JDK1.5 时引入的一个同步器，从字面上就�
 
 在整个多线程之中最重要的几个核心的案例：生产者与消费者、多线程的同步资源访问，而 Exchanger 就是一个交换空间，它主要的功能就是完成生产者和消费者之间数据传输处理。
 
-![image-20231231115528689](./Java 多线程进阶.assets/image-20231231115528689.png)
+![image-20231231115528689](Java 多线程进阶.assets/image-20241025145539229.png)
 
 **Exchanger 常用操作方法如下**：
 
@@ -4366,7 +4366,7 @@ CyclicBarrier 中的参与者在初始构造指定后就不能变更，而 Phase
 
 Phaser 注册完 parties（参与者） 之后，参与者的初始状态是 unarrived 的，当参与者 到达（arrive） 当前阶段（phase）后，状态就会变成 arrived 。当阶段的到达参与者数满足条件后（注册的数量等于到达的数量），阶段就会发生 进阶（advance）：也就是 phase 值 + 1。
 
-![image-20240122232907994](./Java 多线程进阶.assets/image-20240122232907994.png)
+![image-20240122232907994](Java 多线程进阶.assets/image-20241025145539230.png)
 
 
 
@@ -4424,7 +4424,7 @@ Phaser 支持 分层（Tiering）： 一种树形结构，通过构造函数可�
 
 在 Phaser 中是根据**阶段（phase）**的概念来进行处理的，所有的阶段需要达到指定的参与者线程之后才可以进行阶段的进阶处理，现在假设定义了两个参与者，则其进阶过程是在两个参与者线程全部达到之后进行的。
 
-![image-20240118224342411](./Java 多线程进阶.assets/image-20240118224342411.png)
+![image-20240118224342411](Java 多线程进阶.assets/image-20241025145539231.png)
 
 操作示例 1：所有的执行阶段的控制，全部都是由 Phaser 类来完成处理的，每当触发了任务的执行，就表示阶段的增加（+1 功能）
 
@@ -4996,7 +4996,7 @@ Thread-3 doing 阶段：3
 
 Phaser 支持分层功能，我们先来考虑下如何用利用 Phaser的分层来实现高并发时的优化，如果任务数持续增大，那么同步产生的开销会非常大，利用 Phaser 分层的功能，我们可以限定每个 Phaser 对象的最大使用线程（任务数），如下图：
 
-![image-20240119103949009](./Java 多线程进阶.assets/image-20240119103949009.png)
+![image-20240119103949009](Java 多线程进阶.assets/image-20241025145539232.png)
 
 可以看到，上述 Phasers 其实构成了一颗多叉树，如果任务数继续增多，还可以将 Phaser 的叶子结点继续分裂，然后将分裂出的子结点供工作线程使用。
 
@@ -5494,7 +5494,7 @@ arriveAndAwaitAdvance 的大致逻辑为：
 
 并发容器关系图如下：
 
-![image-20191228212702166](./Java 多线程进阶.assets/image-20191228212702166.png)
+![image-20191228212702166](Java 多线程进阶.assets/image-20241025145539233.png)
 
 
 
@@ -5590,7 +5590,7 @@ private class Itr implements Iterator<E> {
 
 最终造成此类异常出现的关键在于，由"checkForComodification()"方法进行了输出前的检查，而这个检查主要是判断当前的输出时的数据的修改次数是否与其内部修改的次数相统一，那么如果不统一的时候就认为已经产生了多线程的修改异常。
 
-![image-20240104204420709](./Java 多线程进阶.assets/image-20240104204420709.png)
+![image-20240104204420709](Java 多线程进阶.assets/image-20241025145539234.png)
 
 为了解决集合操作中存在的并发处理问题，在JDK1.2提供了Collections工具类，并且在该类中提供了大量的同步处理方法，即：可以将非线程安全的集合转为线程安全的集合。
 
@@ -5633,7 +5633,7 @@ public class JavaAPIDemo {
 
 虽然 Java 追加了 Collections 工具类以实现集合的同步处理操作，但是其是对整个的集合进行同步锁处理，所以并发处理性能不高。所以为了更好的支持高并发任务处理，在J.U.C中提供了支持高并发的处理类，同时为了保证集合操作的一致性，这些高并发的集合类依然实现了集合标准接口，例如：List、Set、Map、Queue 等。
 
-![image-20240503135028120](./Java 多线程进阶.assets/image-20240503135028120.png)
+![image-20240503135028120](Java 多线程进阶.assets/image-20241025145539235.png)
 
 
 
@@ -5641,7 +5641,7 @@ public class JavaAPIDemo {
 
 在类集之中单值集合一般只有两种：List、Set（Collection子接口）。在J.U.C里面针对于这两个子接口也提供有对应的集合处理类，CopyOnWriteArrayList 与 CopyOnWriteArraySet 两个实现子类。
 
-![image-20240104234448413](./Java 多线程进阶.assets/image-20240104234448413.png)
+![image-20240104234448413](Java 多线程进阶.assets/image-20241025145539236.png)
 
 操作示例 1：CopyOnWriteArrayList 子类多并发下的同步操作
 
@@ -5783,7 +5783,7 @@ static final class COWIterator<E> implements ListIterator<E> {
 CopyOnWriteArrayList 虽然可以保证线程的处理安全性，但是其内部是依据数组拷贝的处理形式完成的，即：在每一次进行数据添加时都会将原始的数组拷贝为一个新数组进行修改，随后再将新数组的引用交给原有的数组，而为了保证该操作的同步性，在 add() 方法中会采用同步锁的方式进行处理，如图所示。由于数据修改与输出时使用了不同的数组，这样就可以解決
  ArrayList 集合同步的设计问题， 但是这样的设计操作由于每次数据存储时都需要进行新数组的拷贝， 所以必然带来大量的内存垃圾，所以并不适合于高并发修改的处理场景，但是在一定数据量的情況下可以保证较高的数据读取性能。
 
-![image-20240105222956320](./Java 多线程进阶.assets/image-20240105222956320.png)
+![image-20240105222956320](Java 多线程进阶.assets/image-20241025145539237.png)
 
 
 
@@ -6015,7 +6015,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V> implements Concurre
 - Map可以实现二元偶对象的存储，而在实际的开发中Map集合最重要的一点就是根据KEY获取对应的VALVE数据，即：查询操作要比写入的操作使用更多，考虑到性能问题，较为常用的是HashMap子类，但是如果在多线程并发环境下，HashMap是无法实现安全的线程操作，并自会出现ConcurrentModificationException异常。
 - 为了进一步提高Map集合在并发处理下的性能操作，在J.U.C中提供了ConcurrentHashMap子类，该类的实现模式与HashMap相同，存储的形式采用了“数组 +链表（红黑树）”的结构。在进行数据写入时采用了"CAS〞与 "synchronized〞的方式实现了并发安全性，而在数据读取时，则会根据哈希值获取哈希捅并结合链表或红黑树的方式实现。
 
-![image-20240105232906738](./Java 多线程进阶.assets/image-20240105232906738.png)
+![image-20240105232906738](Java 多线程进阶.assets/image-20241025145539238.png)
 
 
 
@@ -6023,7 +6023,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V> implements Concurre
 
 如果说现在给你一个数组，请问最快的数组元素存在与否的判断操作方法使用的一定是二分查找法，如果说现在是一个完整的节点数据结构，最快的数据的查找方法一定是红黑树（因为红黑树按照平衡二叉树的设置保持节点的均衡，可以保证查询性能），但是如果说现在是—个普通的链表，请问如何可以保证查询性能呢？这个时候的性能保证可以通过跳表结构来完成。
 
-![image-20240105233410617](./Java 多线程进阶.assets/image-20240105233410617.png)
+![image-20240105233410617](Java 多线程进阶.assets/image-20241025145539239.png)
 
 对于当前查找性能的优化可以想到最佳的处理方案，将原始 ”O(n)” 时间复杂度降低为 “log2(n)”，而这种操作的实现过程之中就需要对数据进行一系列的抽样操作，对于跳表的实现机制，是基于—个完整的有序列表链表结构，那么在里面可以考虑通过数据的抽样操作来选择一个数据的操作基点，在每一次进行数据查询的时候是依据这个基点来进行判断，而这种跳表的集合实现类在J.U.C里面是有提供的，提供了 ConcurrentSkipListMap、 ConcurrentSkipListSet。
 
@@ -6114,7 +6114,7 @@ true
 
 整个J.U.C集合队列框架的结构如下图：
 
-![image-20191228212702167](./Java 多线程进阶.assets/image-20191228212702167.png)
+![image-20191228212702167](Java 多线程进阶.assets/image-20241025145539240.png)
 
 其中阻塞队列的分类及特性如下表：
 
@@ -6139,11 +6139,11 @@ true
 
 **消费轮询概念**：以生产者和消费者的操作为例，现在假设生产者线程过多，而消费者线程较少，就会出现生产者大量停滞的问题，而在未增加消费者线程的环境下，就可以通过一个队列进行生产数据的存储，但是这时的消费者就需要不断的进行队列的轮询，以便及时的获取数据。
 
-![image-20240106142616576](./Java 多线程进阶.assets/image-20240106142616576.png)
+![image-20240106142616576](Java 多线程进阶.assets/image-20241025145539241.png)
 
 **J.U.C 阻塞队列接口**：在 Java 类集框架中提供了 Queue 队列操作接口以及 LinkedList 实现子类，但是传统队列需要开发者不断的来用轮询的形式才可以实现数据的及时获取，在队列没有数据或者队列数据已经满员的情完下还需要进行同步等待与唤醒处理，实现的难度较高。所以在 J.U.C 中为了便于多线程应用，提供了两个新的阻塞队列接又：BlockingQueue（单端队列)、BlockingDeque（双端队列）。BlockingQueue 接口属于 Queue 子接口，按照 Java 类集的继承结构（Deque 是 Queue 子接口），所以 BlockingDeque 属于 BlockingQueue 子接口。
 
-![image-20240503135133309](./Java 多线程进阶.assets/image-20240503135133309.png)
+![image-20240503135133309](Java 多线程进阶.assets/image-20241025145539242.png)
 
 
 
@@ -6171,7 +6171,7 @@ ArrayBlockingQueue, DelayQueue, LinkedBlockingDeque, LinkedBlockingQueue, Linked
 
 BlockingQueue 属于单端阻塞队列，所有的数据将按照 FIFO 算法进行保存与获取，BlockingQueue 提供有如下几个子类：ArrayBlockingQueue（数组结构）、LinkedBlockingQueue（链表单端阻塞队列）、PriorityBlockingQueue（优先级阻塞队列）、SynchronousQueue（同步队列）
 
-![image-20240106145732244](./Java 多线程进阶.assets/image-20240106145732244.png)
+![image-20240106145732244](Java 多线程进阶.assets/image-20241025145539243.png)
 
 
 
@@ -6179,7 +6179,7 @@ BlockingQueue 属于单端阻塞队列，所有的数据将按照 FIFO 算法进
 
 ArrayBlockingQueue 是基于数组实现的阻塞队列，在该类中主要通过了 Condition 来实现了空队列与满队列的同步处理，如果发现队列已空在获取数据时就会进入到阻塞状态，反之，如果队列数据已满，在保存数据时也会进入到阻塞状态。
 
-![image-20240503135248818](./Java 多线程进阶.assets/image-20240503135248818.png)
+![image-20240503135248818](Java 多线程进阶.assets/image-20241025145539244.png)
 
 操作示例 1：使用 ArrayBlockingQueue 子类，使用链表单端阻塞队列
 
@@ -6276,7 +6276,7 @@ public ArrayBlockingQueue(int capacity, boolean fair) {
 
 除了可以通过数组的方式实现阻塞队列之外，也可以通过 LinkedBlockingQueue 基于链表形式实现阻塞队列的开发，在该类的内部提供有 Node 节点类，同时为了可以在多线程下明确的进行数据个数的统计，在该类中提供给了一个 count 属性，该属性为 AtomicInteger 原子类型，如果在链表结构存储中也会基于一个 count 统计变量的形式判断当前的队列中的数据存储状态，如果计数为零或保存的数据量超过了预计的容量则需要进行等待。
 
-![image-20240503135331392](./Java 多线程进阶.assets/image-20240503135331392.png)
+![image-20240503135331392](Java 多线程进阶.assets/image-20241025145539245.png)
 
 操作示例 1：使用 LinkedBlockingQueue 子类，其实就是把上面示例中的 ArrayBlockingQueue 子类更换成 LinkedBlockingQueue 子类
 
@@ -6462,7 +6462,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
 
 使用 ArrayBlockingQueue 或 LinkedBlockingQueue 子类实现的阻塞队列，都是基于 数据保存顺序的结构存储的，而在 BlockingQueue 接口设计时，还考虑到了数据排序的需要，即：可以通过比较器的形式实现队列数据的排序，并根据排序的结果实现优先级调用，而这就可以通过 PriorityBlockingQueue 子类实现操作。
 
-![image-20240503135409734](./Java 多线程进阶.assets/image-20240503135409734.png)
+![image-20240503135409734](Java 多线程进阶.assets/image-20241025145539246.png)
 
 操作示例 1：使用 PriorityBlockingQueue 子类，使用优先级阻塞队列
 
@@ -6661,7 +6661,7 @@ public class JavaAPIDemo {
 
 SynchronousQueue 类实现结构：SynchronousQueue 类内部依靠的是一个 Transferer 抽象类完成的，该类提供有队列存储实现子类与栈存储实现子类，并且数据的存储与获取都是通过—个 transfer() 方法来完成的。
 
-![image-20240107150136442](./Java 多线程进阶.assets/image-20240107150136442.png)
+![image-20240107150136442](Java 多线程进阶.assets/image-20241025145539247.png)
 
 在 SynchronouseBlockingQueue 之中是基于 Transferer 接口来完成的，而后对于公平与非公平的机制是利用其不同的实现子类来定义的，这一点可以通过类的构造方法观察到：
 
@@ -6756,7 +6756,7 @@ TransferQueue 接口的实现类为 LinkedTransferQueue。TransferQueue 接口�
 
 在 TransferQueue 接口中提供了一个最重要的 **transfer()** 方法，该方法可以直接实现 put 生产线程与 take 消费线程之间的转换处理，提供更高效的数据处理。同时在 J.U.C 中又提供了一个 **LinkedTransferQueue** 实现子类，该类基于链表的方式实现，同时基于 CAS 操作形式实现了无阻塞的数据处理，可以将其理解为阻塞队列中的 "LinkedBlockingQueue 多数据存储 + SynchronousQueue 无锁转换" 的结合体，在其内部维护了一个完整的数据链表，同时每当用户进行数据生产（put() 操作）或数据消费（take() 操作）时都会进行 HEAD 节点的判断，如果发现当前的队列中存在有消费线程，则会将数据之问交给消费线程取走，如果没有则会将其保存在链表的尾部，这样可以实现更高效的处理，如图所示。特别是在消费者数量较多时，利用这样的机制可以提高消费处理的性能，即：消费者的消费能力决定了生产者的生产性能。
 
-![image-20240107160017939](./Java 多线程进阶.assets/image-20240107160017939.png)
+![image-20240107160017939](Java 多线程进阶.assets/image-20241025145539248.png)
 
 传统的链表形式实现的队列采用的机制是统一向队列尾部进行数据的存储，而如果使用了 TransferQueue 接口实现，那么是直接会在当前的首部判断，是否要通过首部获取数据，如果要获取数据，那么这些数据就不再存储在队列节点之中了，而直接把数据拿走了。
 
@@ -6834,7 +6834,7 @@ public class JavaAPIDemo {
 
 需要注意的是：LinkedTransferQueue 类实现了 TransferQueue 该接口提供的处理方法，那么随后观察此类之中方法操作。可以发现 LinkedTransferQueue 在使用时需要在内部实现数据的 put()、take() 的处理操作，而如果开发者打开该类实现的源代码可以发现，如图所示，这些相关的队列操作方法全部都是由一个 xfer() 方法实现的，而该方法的实现原理就如图所示的方式相同，每次都要进行头节点状态判断。
 
-![image-20240107161755698](./Java 多线程进阶.assets/image-20240107161755698.png)
+![image-20240107161755698](Java 多线程进阶.assets/image-20241025145539249.png)
 
 - put(): 
 
@@ -6896,7 +6896,7 @@ public class JavaAPIDemo {
 
 BlockingQueue 提供了 FIFO 的单端队列，而在 BlockingQueue 接口的基础上又扩充了 BlockingDeque 子接口，该接又可以实现 FIFO、FILO 双端队列的处理操作，在 J.U.C 中提供了一个 LinkedBlockingDeque 实现子类，继承结构如图所示，该类通过ReentrantLock 独占锁的形式实现同步管理。
 
-![image-20240107163706999](./Java 多线程进阶.assets/image-20240107163706999.png)
+![image-20240107163706999](Java 多线程进阶.assets/image-20241025145539250.png)
 
 BlockingDeque 属于一个双端队列，而后其实现的子类：LinkedBlockingDeque，只要是在类中看见了是以 Linked 开头的程序类，那么其内部都是通过链表的结构来完成的定义。LinkedBlockinDeque 实现子类之中，可以发现是存在有一个 ReentrantLock 互斥锁的类型存在，在整个的双端队列里面依然是基于锁机制的形式实现了数据的存取操作。
 
@@ -7059,7 +7059,7 @@ World-Last
 
 在阻塞队列之中提供有一个 DelayQueue 队列类型，而这个队列就称为延迟队列，延迟队列最大的特点在于，如果到时间了，则会自动的弹出数据。阻塞队列是需要开发者通过线程的操作获取队列内容的【也就是手工的调用 put() 或 take() 方法来完成】，但是延迟队列是可以自己进行数据弹出的，延迟队列使用的时候我们开发者只能够接收弹出的数据项。
 
-![image-20240107234648173](./Java 多线程进阶.assets/image-20240107234648173.png)
+![image-20240107234648173](Java 多线程进阶.assets/image-20241025145539251.png)
 
 在每一个延迟队列之中所保存的数据项的內部会有两个组成部分：具体的数据内容、操作的时间（最大的操作的范围），这个操作时间就是最终完成工作预计所花费的时间，而延迟队列会根据这个时间来进行内容的弹出，延迟队列的实现有专属的实现子类，那么下面打开这个类的定义来做一个观察：
 
@@ -7083,7 +7083,7 @@ public interface Delayed extends Comparable<Delayed> {
 
 为便于延迟队列的实现，在 J.U.C 中提供了一个 DelayQueue 实现类，该类为 BlockingQueue 接口子类，而在该队列中所保存的具体数据内容必须为 Delayed 接口实例。根据以上的结构分析之后，就可以得到如下的实现类的关联形式。
 
-![image-20240108201611744](./Java 多线程进阶.assets/image-20240108201611744.png)
+![image-20240108201611744](Java 多线程进阶.assets/image-20241025145539252.png)
 
 DelayQueue 内部实现源代码：
 
@@ -7109,7 +7109,7 @@ DelayQueue 的特点简要概括如下：
 
 延迟队列的实现需要通过 Delay 接口定义具体的队列存储项，为了便于理解，本次将直接创建—个 Employee 雇员处理类，同时在延迟队列保存时设置每个雇员完成工作所需要的时间（以及对应的时间单元），如图所示，这样在进行队列数据获取时，会自动进行延迟时间的判断，以达到弹出的目的。
 
-![image-20240108202717349](./Java 多线程进阶.assets/image-20240108202717349.png)
+![image-20240108202717349](Java 多线程进阶.assets/image-20241025145539253.png)
 
 操作示例 1：实现延迟队列自动弹出
 
@@ -7397,11 +7397,11 @@ DelayQueue 是阻塞队列中非常有用的一种队列，经常被用于缓存
 
 **操作系统执行流程**：程序的执行离不开操作系统的支持，而所有的程序在运算前一定要进行 CPU 资源的抢占，为了便于 CPU 运算时的数据读取，在运算前需要将所有的数据由存储介质（磁盘、网络）加载到内存之中，如图所示，所以此时 IO的性能就决定了整个应用程序的处理性能。
 
-![image-20240110155532173](./Java 多线程进阶.assets/image-20240110155532173.png)
+![image-20240110155532173](Java 多线程进阶.assets/image-20241025145539254.png)
 
 **数据缓存操作**：要想提高程序的并发处理，那么最佳的做法就是减少操作系统中的IO操作，而将所需要的核心数据保存在内存之中，即：部分数据的缓存。但是这样一来也会出现一个新的问题：内存保存的数据量会造成内存的溢出，所以应该做一个缓存的定期清理工作，此时就可以基于延迟队列的操作实现。
 
-![image-20240110161300752](./Java 多线程进阶.assets/image-20240110161300752.png)
+![image-20240110161300752](Java 多线程进阶.assets/image-20241025145539255.png)
 
 操作示例 1：通过延迟队列手工实现数据缓存操作
 
@@ -7522,14 +7522,14 @@ null
 
 **子线程调度**：多线程是 Java 语言中最为核心的部分，并且也提供了合理的多线程应用开发模型，开发者可以很方便的通过主线程创建自己所需要的子线程。每一个子线程都需要等待操作系统的执行调度，如图所示。如果一个应用中的子线程数量过多，那么最终的结果就是调度时间加长，线程竞争激励，最终导致整个系统的性能出现严重的下降。
 
-![image-20240110164627568](./Java 多线程进阶.assets/image-20240110164627568.png)
+![image-20240110164627568](Java 多线程进阶.assets/image-20241025145539256.png)
 
 > 一台电脑之中可以使用的线程数量毕竟是有限的（如果现在每一个多线程仅仅是完成了一个所谓的 "+1" 操作，那么自然可以创建较多的线程)，但是如果说没一个线程完成一套各自的完整的业务处理逻辑，那么这个操作一般的电脑上的线程数量就不可能特别的多，如果多了则直接造成电脑的崩溃（假死状态)。如果要想维护一个应用程序的稳定，那么首先一定要考虑到线程数量的控制，而线程数量的控制在 J.U.C 里面提供了线程池的支持，利用线程池可以有效的分配物理线程（也被称为内核线程）和用户线程之间的资源。
 >
 
 **线程池处理架构**：为了解决应用中子线程过多所造成的资源损耗问题，在JDK1.5之后提供了线程池的概念，即：在系统内部会根据需要创建若干个核心线程数量（CorePool），而后每一个要操作的任务子线程去竞争这若干个核心线程的数量，而当核心线程已经被占满时，将通过阻塞队列来保存等待执行的子线程，如图所示，这样就可以保证系统内部不会无序的进行子线程的创建，从而提高应用程序的处理性能。
 
-![image-20240110182047467](./Java 多线程进阶.assets/image-20240110182047467.png)
+![image-20240110182047467](Java 多线程进阶.assets/image-20241025145539257.png)
 
 > 所有的 CPU 之中一般都会存在有一个指标，多少核，多少线程，一般来说一核 CPU 只拥有一个线程，如果现在要是一核 CPU拥有两个线程，就被称为超线程技术。如果此时用户创建了200 个线程（可以理解为任务线程)，最终也是在针对于这 6个物理线程的资源抢占。这些任务线程彼此之间要进行资源抢占，会通过各种机制去抢占6个物理的线程资源。如果说此时的任务线程过多，如果全部都参与到了抢占的操作，那么整个的系统资源分配就会出现问题了，最佳的做法是采用一个延迟队列的结构，利用延迟队列进行所有新任务线程的存储。
 >
@@ -7669,7 +7669,7 @@ null
 
 通过 Executors 类所提供的方法可以分别创建 ExecutorService 接口实例以及 ScheduleExecutorsServices 接口实例，而后可以利用获取接口实例中所提供的方法，用 Runnable 或 Callable 实现线程任务的封装，而所有线程任务的返回结果可以通过 Future 或其子接口（ScheduleFuture）异步返回。
 
-![image-20240503135715984](./Java 多线程进阶.assets/image-20240503135715984.png)
+![image-20240503135715984](Java 多线程进阶.assets/image-20241025145539258.png)
 
 Java 里面线程池的顶级接口是 Executor，但是严格意义上讲 Executor 并不是一个线程池，而只是一个执行线程的工具。真正的线程池接口是 ExecutorService 或者 ScheduleExecutorsServices。
 
@@ -8128,7 +8128,7 @@ public ThreadPoolExecutor(int corePoolSize,                   // 内核线程数
 }
 ```
 
-![image-20240503135824275](./Java 多线程进阶.assets/image-20240503135824275.png)
+![image-20240503135824275](Java 多线程进阶.assets/image-20241025145539259.png)
 
 
 
@@ -8415,11 +8415,11 @@ public class JavaAPIDemo {
 
 前面提到过一种可对任务进行延迟/周期性调度的执行器，这类 Executor 一般实现了 ScheduledExecutorService 这个接口。ScheduledExecutorService 在普通执行器接口（ExecutorService）的基础上引入了Future模式，使得可以限时或周期性地调度任务。类继承关系如下图：
 
-![img](./Java 多线程进阶.assets/image-20240216162046983.png)
+![img](Java 多线程进阶.assets/image-20241025145539260.png)
 
 从上图中可以看到，ScheduledThreadPoolExecutor 其实是继承了 ThreadPoolExecutor 这个普通线程池，我们知道 ThreadPoolExecutor 中提交的任务都是实现了  Runnable 接口，但是 ScheduledThreadPoolExecutor比较特殊，由于要满足任务的延迟/周期调度功能，它会对所有的 Runnable 任务都进行包装，包装成一个 RunnableScheduledFuture 任务。
 
-![img](./Java 多线程进阶.assets/image-20240216162046984.png)
+![img](Java 多线程进阶.assets/image-20241025145539261.png)
 
 > RunnableScheduledFuture 是 Future 模式中的一个接口，RunnableScheduledFuture 的作用就是可以异步地执行【延时/周期任务】。
 
@@ -8552,7 +8552,7 @@ private void delayedExecute(RunnableScheduledFuture<?> task) {
 
 通过 delayedExecute 可以看出，ScheduledThreadPoolExecutor 的整个任务调度流程大致如下图：
 
-![img](./Java 多线程进阶.assets/image-20240216162046985.png)
+![img](Java 多线程进阶.assets/image-20241025145539262.png)
 
 我们来分析这个过程：
 
@@ -9062,13 +9062,13 @@ Fork/Join 框架的实现非常复杂，内部大量运用了位操作和无锁�
 - 分解（Fork）操作：将一个大型业务拆分为若干个小任务在框架中执行；
 - 合并（Join）操作：主任务将等待多个子任务执行完毕后进行结果合并；
 
-![image-20240113140046069](./Java 多线程进阶.assets/image-20240113140046069.png)
+![image-20240113140046069](Java 多线程进阶.assets/image-20241025145539263.png)
 
 > 从理论的提出来讲此类的操作没有任何问题，但是如果要是在实际的开发之中，那么就有可能会出现问题。
 
 **分支任务分配与工作窃取**：从 JDK1.7 开始为了进一步提高并行计算的处理能力，提供了 **ForkJoinPool** 的任务框架，并且其在已有的线程池概念的基础上进行了扩展。同时考虑到服务的处理性能，引入了"**工作窃取（Work Stealing）机制**"，这样可以在进行线程分配的同时自动分配与之数量相等的任务队列，所有新加入的任务会被平均的分配到对应的任务队列之中，不同的线程处理各自的任务队列，当某一个线程的任务队列已经提前完成时，会从其他线程的队列尾部”窃取”未执行完的任务，如图所示。这样在任务量较大时，可以更好的发挥出多核主机的处理性能。
 
-![image-20240113141401910](./Java 多线程进阶.assets/image-20240113141401910.png)
+![image-20240113141401910](Java 多线程进阶.assets/image-20241025145539264.png)
 
 ForkJoinPool 是一个开发框架，而且这个开发框架是在 J.U.C 之中所提供的，那么下面直接打开相应的 JavaDoc 文档：https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/ForkJoinPool.html，通过 JavaDoc 文档的结构可以清楚的发现，ForkJoinPool 属于一个线程池的应用，需要基于线程池提供所有的分支处理的操作环境。
 
@@ -9088,7 +9088,7 @@ public class ForkJoinPool extends AbstractExecutorService
 
 **ForkJoinPool 类实现结构**：为了实现分支任务线程池的功能，在 J.U.C 中提供了一个 ForkJoinPool 工具类，该类为 ExecutorService 线程池操作类的子类，并在 ForkJoinPool 类中自动提供有一个 WorkQueue 内部类以实现所有工作队列的维护，如图所示。在分支任务处理中会存在有多个工作线程，而每一个工作线程全部由 ForkJoinPool.ForkJoinWorkerThreadFactory 接口进行创建规范化管理（ForkJoinPool 内部提供了 DefaultForkJoinWorkerThreadFactory 内部实现子类），程序可以通过该接口所提供的 newThread() 方法创建 ForkJoinWorkerThread 线程对象，同时在每一个工作线程对象中都会保存有一个 WorkQueue 对象引用，即：不同的工作线程维护各自的任务队列。
 
-![image-20240113142608892](./Java 多线程进阶.assets/image-20240113142608892.png)
+![image-20240113142608892](Java 多线程进阶.assets/image-20241025145539265.png)
 
 在使用 ForkJoin 处理的时候，一定要记住，所有的具体的任务的配置是由 ForkJoinTask 抽象类来定义的，同时其内部会直接提供有完整的 ForkJoinWorkerThreadFactory 工厂接口实例。
 
@@ -9102,7 +9102,7 @@ public class ForkJoinPool extends AbstractExecutorService
 - **RecursiveAction**：无返回值任务
 - **CountedCompleter**：数量计算有关的任务，在子任务停顿或阻塞的情况下使用
 
-![image-20240113143751379](./Java 多线程进阶.assets/image-20240113143751379.png)
+![image-20240113143751379](Java 多线程进阶.assets/image-20241025145539266.png)
 
 | 方法名称                                                     | 描述                                 |
 | ------------------------------------------------------------ | ------------------------------------ |
@@ -9219,7 +9219,7 @@ public class JavaAPIDemo {
 
 通过执行可以发现，所有的分支任务的内部本质上包裹的还是线程池，因为如果要进行分支过多的创建，最终导致的结果就是线程资源的耗尽，所以为了保护电脑硬件资源不透支，使用的是内置的CPU内核数量进行的线程池配置。
 
-![image-20240116234623004](./Java 多线程进阶.assets/image-20240116234623004.png)
+![image-20240116234623004](Java 多线程进阶.assets/image-20241025145539267.png)
 
 
 
@@ -9243,7 +9243,7 @@ public abstract class RecursiveAction extends ForkJoinTask<Void> {
 
 本次的开发不再使用新的案例，而是继续使用之前的数字累加的操作，但是这个时候的计算需要在外部额外提供有一个计算结果的保存空间。
 
-![image-20240116235900053](./Java 多线程进阶.assets/image-20240116235900053.png)
+![image-20240116235900053](Java 多线程进阶.assets/image-20241025145539268.png)
 
 操作示例 1：使用 RecursiveAction 实现分支任务
 
@@ -9552,13 +9552,13 @@ private static final class Sorter extends CountedCompleter<Void> {
 
 【**分支线程任务阻塞**】使用分支业务可以充分的发挥出电脑的硬件处理性能，然而在进行分支处理时，有可能所处理的业务会造成阻塞的情况出现。假设现在只设置有2个核心线程，但是却产生了6个分支，如图所示，这样一来只能有2个线程任务执行，而其它的任务则必须进行工作线程资源的等待，从而出现严重的性能问题。
 
-![image-20240117232221071](./Java 多线程进阶.assets/image-20240117232221071.png)
+![image-20240117232221071](Java 多线程进阶.assets/image-20241025145539269.png)
 
 内核线程是有限的，但是你突然创建了太多的分支，导致所有的分支彼此之间出现资源等待的情况，那么最终的结果是有可能分支反而会造成处理性能的下降。
 
 【**线程池资源补偿**】为了解决这种情况下的分支性能处理问题，在 ForkJoinPool 中提供了 **ManagedBlockerl 阻塞管理接口**，开发者可以利用此接口明确的告诉 ForkJoinPool 可能产生阻塞的操作，而后会依据 ManagedBlocker 接口所提供的方法来判断当前线程池的运行情况，如果发现此时线程池资源已经耗尽，但是还有未执行的任务时，就会自动的在线程池中进行**核心线程的补偿**，从而实现分支快速处理的需要。
 
-![image-20240117232907993](./Java 多线程进阶.assets/image-20240117232907993.png)
+![image-20240117232907993](Java 多线程进阶.assets/image-20241025145539270.png)
 
 操作示例 1：观察分支线程任务阻塞的情况，这里 ForkJoinPool 只设置莫2个线程，分支阀值也改成了5，所以会产生20个分支。由于线程池大小设置为 2，所以多余的分支线程会出现等待。
 
@@ -11338,7 +11338,7 @@ CompletionService 内部通过 "阻塞队列 + FutureTask" 或 "阻塞队列 + �
 
 > **如果现在去考虑到线程池的开发，永远都有一个核心的话题—“阻塞队列”，如果你现在对于阻塞队列的基本特点都无法整明白，强烈建议回顾之前的的阻塞队列，因为阻塞队列可以自动实现操作线程的等待与唤醒，在进行线程池分析的时候也要通过阻塞队列进行使用。**
 
-![image-20240112002307245](./Java 多线程进阶.assets/image-20240112002307245.png)
+![image-20240112002307245](Java 多线程进阶.assets/image-20241025145539271.png)
 
 CompletionService 接口是将 Executor（线程池）和 BlockingQueue（阻塞队列）整合在一起，利用阻塞队列实现所有异步任务结果的保存，而后开发者只需要通过 CompletionService 接口提供的方法即可实现异步任务结果的取出。
 
@@ -15618,11 +15618,11 @@ private StringBuffer format(Date date, StringBuffer toAppendTo, FieldDelegate de
 
 正常的情况下，程序的执行是这样的：
 
-![image-20240201001702056](./Java 多线程进阶.assets/image-20240201001702056.png)
+![image-20240201001702056](Java 多线程进阶.assets/image-20241025145539272.png)
 
 非线程安全的执行流程是这样的：
 
-![image-20240201001702057](./Java 多线程进阶.assets/image-20240201001702057.png)
+![image-20240201001702057](Java 多线程进阶.assets/image-20241025145539273.png)
 
 
 
@@ -15997,11 +15997,11 @@ private T setInitialValue() {
 注意在使用 initialValue 时，返回值的类型要和 ThreadLoca 定义的数据类型保持一致，如下图所示：
 
 
-![image-20240201001702058](./Java 多线程进阶.assets/image-20240201001702058.png)
+![image-20240201001702058](Java 多线程进阶.assets/image-20241025145539274.png)
 
 如果数据不一致就会造成 ClassCaseException 类型转换异常，如下图所示：
 
-![image-20240201001702059](./Java 多线程进阶.assets/image-20240201001702059.png)
+![image-20240201001702059](Java 多线程进阶.assets/image-20241025145539275.png)
 
 
 
@@ -16428,7 +16428,7 @@ public class JavaAPIDemo {
 
 > 基于事件的操作模型：每当产生了某些操作之后，采用事件的模式向事件监听者发布一个消息，而后监听者接收到这个消息之后再进行处理，而此时的监听者和消息源之间没有直接的联系，所以这本身就属于一种解耦合的设计。Java之中的事件处理模型，在Spring开发框架里面都是有更好的新支持结构。
 
-![image-20240201001702055](./Java 多线程进阶.assets/image-20240201001702055.png)
+![image-20240201001702055](Java 多线程进阶.assets/image-20241025145539276.png)
 
 
 
@@ -16436,8 +16436,8 @@ public class JavaAPIDemo {
 
 在传统的命令式编程的开发模型中，如果要实现两个变量内容的计算，常用的命令格式为："sum = a + b"，这样就会根据变量a和变量b的内容一次性得到sum的结果，如图1所示，而在计算完成后如果变量a的内容进行了修改则也不会影响到最终的sum计算结果。而在响应式编程环境下，即便已经得到了sum的计算结果，而在变量a发生改变后，也会影响到sum的内容，如图2所示，而这一点就称为变化传递（Propagation Of Change）。
 
-- 命令式编程：![image-20240201001221517](./Java 多线程进阶.assets/image-20240201001221517.png)
-- 响应式编程：![image-20240201001307113](./Java 多线程进阶.assets/image-20240201001307113.png)
+- 命令式编程：![image-20240201001221517](Java 多线程进阶.assets/image-20241025145539277.png)
+- 响应式编程：![image-20240201001307113](Java 多线程进阶.assets/image-20241025145539278.png)
 
 
 
@@ -16447,7 +16447,7 @@ public class JavaAPIDemo {
 
 如何实现响应式的编程呢？响应式的编程并不是JDK生来就有的，在JDK1.9之后为了便于响应流的开发，在J.U.C中扩充了一个Flow工具类，同时在该类中利用了一系列的内部接口用于实现订阅者、发布者的相关操作标准。
 
-![image-20240201002415140](./Java 多线程进阶.assets/image-20240201002415140.png)
+![image-20240201002415140](Java 多线程进阶.assets/image-20241025145539279.png)
 
 
 
@@ -16462,7 +16462,7 @@ public class JavaAPIDemo {
 public static interface Publisher<T> {}
 ```
 
-![image-20240201111838986](./Java 多线程进阶.assets/image-20240201111838986.png)
+![image-20240201111838986](Java 多线程进阶.assets/image-20241025145539280.png)
 
 每一个响应流发布者的内部都会维护有一个缓冲区，通过该区域可以实现数据流的传输，而具体的发送处理操作则是由 SubmissionPublisher 子类实现的，下面首先打开该类的定义：
 
@@ -16572,7 +16572,7 @@ public class JavaAPIDemo {
 
 在响应式数据流的开发模型之中，订阅者与发布者之间可以直接进行数据通讯，为便于理解，在本节中将依据图所示的结构，实现自定义Book类对象数据的发送以及接收处理，由于此部分的代码开发较为繁琐，将采用分步的形式进行讲解。
 
-![image-20240201142903930](./Java 多线程进阶.assets/image-20240201142903930.png)
+![image-20240201142903930](Java 多线程进阶.assets/image-20241025145539281.png)
 
 在实际的开发之中如果要进行发布和订阅，Java 是以对象的形式实现的，为了突出这一特点，本次采用自定义的 Book 类对象实现整体的操作模型。
 
@@ -16825,7 +16825,7 @@ class BookSubscriber implements Flow.Subscriber<Book> {
 
 除了使用发布者与订阅者的直连模式之外，还可以在两者之间引入一个 Flow.Processor 转换处理器，利用转换处理器可以接收发布者发送的数据，随后将该数据进行转换处理后再发送给订阅者，即：转换器同时实现了发布者与订阅者的操作。
 
-![image-20240201154223382](./Java 多线程进阶.assets/image-20240201154223382.png)
+![image-20240201154223382](Java 多线程进阶.assets/image-20241025145539282.png)
 
 此时发布者发布的是一个 Book 数据流，而订阅者接收的是一个 Message 数据流，那么自然就需要做出一种转换处理，提供有一个专门的处理类，来讲 Book 的数据变为 Message 数据，首先打开该接口观察一下：
 
@@ -16836,7 +16836,7 @@ public static interface Processor<T,R> extends Subscriber<T>, Publisher<R> {}
 
 Flow.Processor 接口并没有定义任何的抽象方法，该接口同时继承了 Flow.Publisher 与 Flow.Subscriber 两个父接口，所以该接口中同时拥有发布者与订阅者的方法标准，而为了简化发布者的定义，可以创建一个 MessageProcessor 处理类，该类除了实现 Flow.Processor 父接口之外，还可以继承 SubmissionPublisher 父类（Publisher 接口子类）这样就可以直接利用已有类的方法实现发布者的功能。
 
-![image-20240201154757398](./Java 多线程进阶.assets/image-20240201154757398.png)
+![image-20240201154757398](Java 多线程进阶.assets/image-20241025145539283.png)
 
 1、既然要进行数据类型的转换，创建一个目标的类型结构：
 
@@ -17250,7 +17250,7 @@ class Book {
 
 除此之外，我们还可以利用 `ThreadPoolExecutor` 的相关 API 做一个简陋的监控。从下图可以看出， `ThreadPoolExecutor`提供了获取线程池当前的线程数和活跃线程数、已经执行完成的任务数、正在排队中的任务数等等。
 
-![threadpool-methods-information](./Java 多线程进阶.assets/image-20240429162046123.png)
+![threadpool-methods-information](Java 多线程进阶.assets/image-20241025145539284.png)
 
 下面是一个简单的 Demo。`printThreadPoolStatus()`会每隔一秒打印出线程池的线程数、活跃线程数、完成的任务数、以及队列中的任务数。
 
@@ -17283,13 +17283,13 @@ public static void printThreadPoolStatus(ThreadPoolExecutor threadPool) {
 
 **我们再来看一个真实的事故案例！** (本案例来源自：[《线程池运用不当的一次线上事故》](https://heapdump.cn/article/646639) ，很精彩的一个案例)
 
-![案例代码概览](./Java 多线程进阶.assets/image-20240429162046124.png)
+![案例代码概览](Java 多线程进阶.assets/image-20241025145539285.png)
 
 上面的代码可能会存在死锁的情况，为什么呢？画个图给大家捋一捋。
 
 试想这样一种极端情况：假如我们线程池的核心线程数为 **n**，父任务（扣费任务）数量为 **n**，父任务下面有两个子任务（扣费任务下的子任务），其中一个已经执行完成，另外一个被放在了任务队列中。由于父任务把线程池核心线程资源用完，所以子任务因为无法获取到线程资源无法正常执行，一直被阻塞在队列中。父任务等待子任务执行完成，而子任务等待父任务释放线程池资源，这也就造成了 **"死锁"** 。
 
-![线程池使用不当导致死锁](./Java 多线程进阶.assets/image-20240429162046125.png)
+![线程池使用不当导致死锁](Java 多线程进阶.assets/image-20241025145539286.png)
 
 解决方法也很简单，就是新增加一个用于执行子任务的线程池专门为其服务。
 
@@ -17408,7 +17408,7 @@ IO 密集型任务下，几乎全是线程等待时间，从理论上来说，�
 
 **如何支持参数动态配置？** 且看 `ThreadPoolExecutor` 提供的下面这些方法。
 
-![threadpoolexecutor-methods](./Java 多线程进阶.assets/image-20240429162046126.png)
+![threadpoolexecutor-methods](Java 多线程进阶.assets/image-20241025145539287.png)
 
 格外需要注意的是`corePoolSize`， 程序运行期间的时候，我们调用 `setCorePoolSize（）`这个方法的话，线程池会首先判断当前工作线程数是否大于`corePoolSize`，如果大于的话就会回收工作线程。
 
@@ -17416,7 +17416,7 @@ IO 密集型任务下，几乎全是线程等待时间，从理论上来说，�
 
 最终实现的可动态修改线程池参数效果如下。👏👏👏
 
-![动态配置线程池参数最终效果](./Java 多线程进阶.assets/image-20240429162046127.png)
+![动态配置线程池参数最终效果](Java 多线程进阶.assets/image-20241025145539288.png)
 
 如果我们的项目也想要实现这种效果的话，可以借助现成的开源项目：
 
@@ -17548,7 +17548,7 @@ server.tomcat.max-threads=1
 
 下图是JVM在Linux上简单的线程模型。
 
-![image-20240429162046128](./Java 多线程进阶.assets/image-20240429162046128.png)
+![image-20240429162046128](Java 多线程进阶.assets/image-20241025145539289.png)
 
 可以看到，不同的线程在进行切换的时候，会频繁在用户态和内核态进行状态转换。这种切换的代价是比较大的，也就是我们平常所说的上下文切换（Context Switch）。
 
@@ -17571,7 +17571,7 @@ putfield      // Field value:I
 
 这还只是代码层面的。如果再加上CPU每核的各级缓存，这个执行过程会变得更加细腻。如果我们希望执行完`i++`之后，再执行`i--`，仅靠初级的字节码指令，是无法完成的。我们需要一些同步手段。
 
-![image-20240429162046129](./Java 多线程进阶.assets/image-20240429162046129.png)
+![image-20240429162046129](Java 多线程进阶.assets/image-20241025145539290.png)
 
 上图就是JMM的内存模型，它分为主存储器（Main Memory）和工作存储器（Working Memory）两种。我们平常在Thread中操作这些变量，其实是操作的主存储器的一个副本。当修改完之后，还需要重新刷到主存储器上，其他的线程才能够知道这些变化。
 
@@ -17600,7 +17600,7 @@ putfield      // Field value:I
 
 ## 2、避坑指南
 
-![image-20240429162046130](./Java 多线程进阶.assets/image-20240429162046130.png)
+![image-20240429162046130](Java 多线程进阶.assets/image-20241025145539291.png)
 
 ### 1、线程池打爆机器
 

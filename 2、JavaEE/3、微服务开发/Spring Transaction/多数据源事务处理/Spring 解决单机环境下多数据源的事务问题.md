@@ -9,7 +9,7 @@ SpringBoot 单机环境下的 @Transictional 可以保证事务，但多数据�
 
 1、利用 ThreadLocal 将事务方法 内用到的 connection 缓存起来，当业务执行完毕，再统一 commit 或者 rollback；
 
-![img](Spring 解决单机环境下多数据源的事务问题.assets/20221107194031224.png)
+![img](Spring 解决单机环境下多数据源的事务问题.assets/image-20241025145538215.png)
 
 2、pom.xml 文件如下
 
