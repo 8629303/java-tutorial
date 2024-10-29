@@ -1,4 +1,4 @@
-# ·一、什么是 NamedParameterJdbcTemplate
+# 一、什么是 NamedParameterJdbcTemplate
 
 > NamedParameterJdbcTemplate 类拓展了 JdbcTemplate 类，对 JdbcTemplate 类进行了封装从而支持**具名参数特性**。
 >

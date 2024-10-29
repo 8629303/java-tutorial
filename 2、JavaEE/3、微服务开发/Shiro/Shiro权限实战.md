@@ -98,8 +98,6 @@
 * 什么是加密
   * Cryptography, 数据加解密，比如密码加解密等
 
-![img](http://shiro.apache.org/assets/images/ShiroFeatures.png)
-
 
 
 

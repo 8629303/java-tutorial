@@ -84,7 +84,7 @@ vm.title="vuex"
 
 # VueJS 模板语法
 
-## 插值表达式 {{}}
+## 插值表达式
 
 > 官网参考：https://cn.vuejs.org/v2/guide/syntax.html
 
@@ -92,7 +92,7 @@ vm.title="vuex"
 
 插入值的方式：
 
-- {{ Vue.data中的key }}
+- `{{ Vue.data中的key }}`
 - v-bind:属性=”data中的key”
 
 ```html
@@ -220,7 +220,7 @@ vm.title="vuex"
 
 总结：
 
-1. v-html/v-text 它也可以达到也{{}}插值表达式类同的效果
+1. v-html/v-text 它也可以达到也`{{}}`插值表达式类同的效果
 2. v-text、v-html 和 插值表达式都具有计算能力、三目、调用JS内置方法的能力
 3. 插值表达式只能用在文本块中，指令中允许存在插值表达式
 
@@ -638,7 +638,7 @@ v-on:keyup.page-down="onPageDown"
 
 非上面的键码参考ascii码表：
 
-![20220226145130001](C:\Users\lsx\Desktop\Typora\Java学习之路\10、前端框架\Vue2&Vue3.images\20220226145130001.png)
+![20220226145130001](../7、前端框架/Vue2&Vue3.images/20220226145130001.png)
 
 示例代码：
 
@@ -697,7 +697,7 @@ v-on:keyup.page-down="onPageDown"
 
 > 官网参考：https://cn.vuejs.org/v2/api/#v-bind
 
-提示：{{}} 是不能直接使用在属性上，需要借助v-bind指令来解决此问题！
+提示：`{{}}` 是不能直接使用在属性上，需要借助v-bind指令来解决此问题！
 
 示例代码：
 
@@ -1178,7 +1178,7 @@ v-if 与 v-show 的区别：
 
 掌握常用vue指令：
 
-1. 获取值得方式是：{{}} 插值表达式，支持四则运算。
+1. 获取值得方式是：`{{}}` 插值表达式，支持四则运算。
 2. 文本指令：v-html / v-text 和插值表达式，名字也必须定义在data中。
 3. 事件指令：v-on:click=”事件名”，缩写：[@click](https://github.com/click)=”事件名”，注：事件名定义在：methods中
 4. 属性指令：v-bind:属性名=”data的key” 缩写 : 属性名=”data的key” .注意动静拼接的问题

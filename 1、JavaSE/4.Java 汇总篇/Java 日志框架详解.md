@@ -5375,13 +5375,11 @@ public class Log4j2Test {
 
 Log4j2在目前JAVA中的日志框架里，异步日志的性能是最高的，没有之一。先来看一下，几种日志框架benchmark对比结果（官方测试结果）
 
-![Peak throughput comparison](https://logging.apache.org/log4j/2.x/images/async-throughput-comparison.png)
+![Peak throughput comparison](https://ask.qcloudimg.com/http-save/yehe-4464177/k286bbw776.png)
 
 从图上可以看出，Log4j2的异步（全异步，非混合模式）下的性能，远超Log4j1和Logback，简直吊打。压力越大的情况下，吞吐上的差距就越大。在64线程测试下，Log4j2的吞吐达到了180w+/s，Llogback/Log4j1只有不到20w，相差近十倍。
 
-![img](https://logging.apache.org/log4j/2.x/images/SyncThroughputLoggerComparisonLinux.png)
-
-上图是同步测试报告，明显可以看出，与各个日志框架对比而言，无论在同步或者异步情况下，log4j2表现更加优异，而其他日志就显得差强人意了。
+其实与各个日志框架对比而言，无论在同步或者异步情况下，log4j2表现更加优异，而其他日志就显得差强人意了。
 
 
 

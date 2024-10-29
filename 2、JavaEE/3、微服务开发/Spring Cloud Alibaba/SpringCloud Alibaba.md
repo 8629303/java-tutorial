@@ -2685,7 +2685,7 @@ spring.profiles.active 为空时，对应的连接符 - 也将不存在，dataId
 file-exetension 为配置内容的数据格式，可以通过配置项 spring.cloud.nacos.config.file-extension 来配置。目前只支持 properties 和 yaml 类型。
 ```
 
-![202011102305031](SpringCloud Alibaba/202011102305031.png)
+![202011102305032](SpringCloud Alibaba/202011102305032.png)
 
 
 

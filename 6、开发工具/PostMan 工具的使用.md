@@ -1024,7 +1024,7 @@ pm.sendRequest(PostJsonRequest, function (err, res) {
 
 在请求中替换参数名：city_id,city,weather .
 
-> 其中city_id在URL中替换，故通过{{}}替换 。city和weather在Tests中替换，需要通过data.city , data.weather
+> 其中city_id在URL中替换，故通过`{{}}`替换 。city和weather在Tests中替换，需要通过data.city , data.weather
 
 ![img](https://img-blog.csdnimg.cn/img_convert/f230f7b49ee6aeafa9ecef269fcaf43c.png)
 

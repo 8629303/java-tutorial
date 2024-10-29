@@ -48,11 +48,11 @@
 
 容器技术已经发展了很长一段时间了，例如：LXC，BSD Jails，Solaris Zones…
 
-[![/resources/articles/docker/7868545-5c9e6c9bd22071d7.jpg](https://www.mrhelloworld.com/resources/articles/docker/7868545-5c9e6c9bd22071d7.jpg)](https://www.mrhelloworld.com/resources/articles/docker/7868545-5c9e6c9bd22071d7.jpg)
+![/resources/articles/docker/7868545-5c9e6c9bd22071d7.jpg](https://www.mrhelloworld.com/resources/articles/docker/7868545-5c9e6c9bd22071d7.jpg)
 
 容器化就是应用程序级别的虚拟化技术。容器提供了将应用程序的代码、运行时、系统工具、系统库和配置打包到一个实例中的标准方法。容器共享一个内核（操作系统），它安装在硬件上。
 
-[![/resources/articles/docker/docker-containerized-appliction-blue-border_2.png](https://www.mrhelloworld.com/resources/articles/docker/docker-containerized-appliction-blue-border_2.png)](https://www.mrhelloworld.com/resources/articles/docker/docker-containerized-appliction-blue-border_2.png)
+![/resources/articles/docker/docker-containerized-appliction-blue-border_2.png](https://www.mrhelloworld.com/resources/articles/docker/docker-containerized-appliction-blue-border_2.png)
 
 容器和虚拟机相比，容器有以下优点：
 
@@ -75,7 +75,7 @@
 >
 > 在 Docker 1.8 中 LXC 被 deprecated，在 Docker 1.10，LXC 彻底出局。Docker 推出 Libcontainer 自己集成了 Linux 内核中的很多特性，作为一个独特、稳定且不受制于 Linux 的 Library，独立的时代终于到来了。
 
-[![/resources/articles/docker/timg.jpg](https://www.mrhelloworld.com/resources/articles/docker/timg.jpg)](https://www.mrhelloworld.com/resources/articles/docker/timg.jpg)
+![/resources/articles/docker/timg.jpg](https://www.mrhelloworld.com/resources/articles/docker/timg.jpg)
 
 如同 Docker 的 Logo 一样，Docker 的思想来源于集装箱。集装箱解决了什么问题？在一艘大船上，可以把货物规整的摆放起来，并且各种各样的货物被集装箱标准化，集装箱与集装箱之间互不影响。那么就不需要专门运送水果的船和专门运送化学用品的船了。只要这些货物封装在不同的集装箱里，就可以用一艘大船把它们都运走。
 
@@ -133,11 +133,11 @@ Docker 使用的分层存储以及镜像的技术，使得应用重复部分的�
 
 下面的图片比较了 Docker 和传统虚拟化方式的不同之处，可见容器是在操作系统层面上实现虚拟化，直接复用本地主机的操作系统，而传统方式则是在硬件层面实现。
 
-[![img](https://mrhelloworld.com/resources/articles/docker/docker-containerized-and-vm-transparent-bg.png)](https://mrhelloworld.com/resources/articles/docker/docker-containerized-and-vm-transparent-bg.png)
+![img](https://www.mrhelloworld.com/resources/articles/docker/docker-containerized-and-vm-transparent-bg.png)
 
 与传统的虚拟机相比，Docker 优势体现为启动速度快、占用体积小。
 
-[![img](https://mrhelloworld.com/resources/articles/docker/add19471351ab02a597dea48a976213b.png)](https://mrhelloworld.com/resources/articles/docker/add19471351ab02a597dea48a976213b.png)
+![img](https://www.mrhelloworld.com/resources/articles/docker/add19471351ab02a597dea48a976213b.png)
 
 > 至此 Docker 概念性相关内容就介绍到这里，下文我们聊聊 Docker 架构及其工作原理。
 
@@ -147,7 +147,7 @@ Docker 使用的分层存储以及镜像的技术，使得应用重复部分的�
 
 通过下图可以得知，`Docker` 在运行时分为 `Docker 引擎（服务端守护进程）` 和 `客户端工具`，我们日常使用各种 `docker 命令`，其实就是在使用 `客户端工具` 与 `Docker 引擎` 进行交互。
 
-[![/resources/articles/docker/7868545-060cc40d94102469.jpg](https://www.mrhelloworld.com/resources/articles/docker/7868545-060cc40d94102469.jpg)](https://www.mrhelloworld.com/resources/articles/docker/7868545-060cc40d94102469.jpg)
+![/resources/articles/docker/7868545-060cc40d94102469.jpg](https://www.mrhelloworld.com/resources/articles/docker/7868545-060cc40d94102469.jpg)
 
 
 
@@ -192,7 +192,7 @@ Docker 把 App 文件打包成为一个镜像，并且采用类似多次快照�
 
 Docker 支持通过扩展现有镜像，创建新的镜像。实际上，Docker Hub 中 99% 的镜像都是通过在 base 镜像中安装和配置需要的软件构建出来的。
 
-[![/resources/articles/docker/12180844322018196a29c55c8de4a2.png](https://www.mrhelloworld.com/resources/articles/docker/12180844322018196a29c55c8de4a2.png)](https://www.mrhelloworld.com/resources/articles/docker/12180844322018196a29c55c8de4a2.png)
+![/resources/articles/docker/12180844322018196a29c55c8de4a2.png](https://www.mrhelloworld.com/resources/articles/docker/12180844322018196a29c55c8de4a2.png)
 
 从上图可以看到，新镜像是从 base 镜像一层一层叠加生成的。每安装一个软件，就在现有镜像的基础上增加一层。
 
@@ -206,7 +206,7 @@ Docker 支持通过扩展现有镜像，创建新的镜像。实际上，Docker 
 
 当容器启动时，一个新的可写层被加载到镜像的顶部。这一层通常被称作“容器层”，“容器层”之下的都叫“镜像层”。
 
-[![/resources/articles/docker/121808444920186f41cc40362cc7ef.png](https://www.mrhelloworld.com/resources/articles/docker/121808444920186f41cc40362cc7ef.png)](https://www.mrhelloworld.com/resources/articles/docker/121808444920186f41cc40362cc7ef.png)
+![/resources/articles/docker/121808444920186f41cc40362cc7ef.png](https://www.mrhelloworld.com/resources/articles/docker/121808444920186f41cc40362cc7ef.png)
 
 所有对容器的改动 - 无论添加、删除、还是修改文件都只会发生在容器层中。只有**「容器层是可写的，容器层下面的所有镜像层都是只读的」**。
 
@@ -247,7 +247,7 @@ Docker 公司提供了公共的镜像仓库 [https://hub.docker.com](https://hub
 
 ## 8、总结
 
-[![/resources/articles/docker/p.jpg](https://www.mrhelloworld.com/resources/articles/docker/p.jpg)](https://www.mrhelloworld.com/resources/articles/docker/p.jpg)
+![/resources/articles/docker/p.jpg](https://www.mrhelloworld.com/resources/articles/docker/p.jpg)
 
 Docker 官网写着这样一句话：**「Build and Ship any Application Anywhere」**，再结合刚才我们所理解的内容，总结下来就是：**「一次构建，到处运行。」**
 
@@ -272,13 +272,13 @@ Docker 企业版（EE）专为企业开发和 IT 团队设计，可在大规模�
 
 我们学习 Docker 使用 CE 社区版即可。
 
-[![/resources/articles/docker/image-20200812120322558.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200812120322558.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200812120322558.png)
+![/resources/articles/docker/image-20200812120322558.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200812120322558.png)
 
 
 
 ## 2、基于 CentOS 安装 Docker 引擎
 
-[![/resources/articles/docker/image-20200818150924974.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818150924974.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818150924974.png)
+![/resources/articles/docker/image-20200818150924974.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818150924974.png)
 
 Docker 支持 Mac Windows Linux，本文使用 Linux 环境教大家如何基于 CentOS 安装 Docker 及配置镜像加速。
 
@@ -332,7 +332,7 @@ sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/cen
 sudo yum install docker-ce docker-ce-cli containerd.io
 ```
 
-[![/resources/articles/docker/image-20200812123550828.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200812123550828.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200812123550828.png)
+![/resources/articles/docker/image-20200812123550828.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200812123550828.png)
 
 > 安装过程中如果提示您接受 GPG 密钥，请验证指纹是否与 060A 61C5 1B55 8A7F 742B 77AA C52F EB6B 621E 9F35 匹配，如果是，请接受。
 
@@ -413,7 +413,7 @@ See 'docker run --help'.
 
 USTC 是老牌的 Linux 镜像服务提供者了，USTC 的 Docker 镜像加速服务速度很快。USTC 和网易的优势之一就是不需要注册，属于真正的公共服务。（也可以使用阿里等其他服务商的镜像加速服务）
 
-[![/resources/articles/docker/image-20200812130946587.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200812130946587.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200812130946587.png)
+![/resources/articles/docker/image-20200812130946587.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200812130946587.png)
 
 编辑文件 `daemon.json`
 
@@ -477,7 +477,7 @@ For more examples and ideas, visit:
 
 `docker run hello-world` 命令执行流程图如下。
 
-[![/resources/articles/docker/image-20200812140803688.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200812140803688.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200812140803688.png)
+![/resources/articles/docker/image-20200812140803688.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200812140803688.png)
 
 > 通过以上步骤大家已完成 Docker 安装的所有工作，接下来通过学习镜像命令和容器命令更加熟悉 Docker 的使用。
 
@@ -519,7 +519,7 @@ hello-world         latest              bf756fb1ae65        7 months ago        
 docker search 镜像名称
 ```
 
-[![/resources/articles/docker/image-20200812143211793.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200812143211793.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200812143211793.png)
+![img](https://www.mrhelloworld.com/resources/articles/docker/image-20200812143211793.png)
 
 - `NAME`：镜像名称
 - `DESCRIPTION`：镜像描述
@@ -539,7 +539,7 @@ docker pull 镜像名称
 
 假如我要拉取 centos 镜像到本地，如果不声明 tag 镜像标签信息则默认拉取 latest 版本，也可以通过：https://hub.docker.com/ 搜索该镜像，查看支持的 tag 信息。
 
-[![/resources/articles/docker/image-20200812153124156.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200812153124156.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200812153124156.png)
+![/resources/articles/docker/image-20200812153124156.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200812153124156.png)
 
 通过查看 tag 信息，如果我们要下载 centos7 的镜像。
 
@@ -721,7 +721,7 @@ docker run -di -v /usr/local/data --name centos7-02 centos:7
 docker volume ls
 ```
 
-[![/resources/articles/docker/image-20200813201808718.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200813201808718.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200813201808718.png)
+![/resources/articles/docker/image-20200813201808718.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200813201808718.png)
 
 
 
@@ -736,7 +736,7 @@ docker run -di -v docker_centos_data:/usr/local/data --name centos7-03 centos:7
 docker volume ls
 ```
 
-[![/resources/articles/docker/image-20200813202118346.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200813202118346.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200813202118346.png)
+![/resources/articles/docker/image-20200813202118346.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200813202118346.png)
 
 
 
@@ -773,7 +773,7 @@ docker run -di -v /宿主机目录:/容器目录 -v /宿主机目录2:/容器目
 
 通过 `docker inspect 容器ID或名称` ，在返回的 JSON 节点中找到 `Mounts`，可以查看详细的数据挂载信息。
 
-[![/resources/articles/docker/image-20200813203856160.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200813203856160.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200813203856160.png)
+![img](https://www.mrhelloworld.com/resources/articles/docker/image-20200813203856160.png)
 
 
 
@@ -846,15 +846,15 @@ docker exec -it tomcat /bin/bash
 
 查看 `webapps` 目录下是否有 `ROOT` 项目，我们熟悉的 Tomcat 猫页面一般就在这个项目中。
 
-[![ ](https://mrhelloworld.com/resources/articles/docker/image-20200812190025868.png)](https://mrhelloworld.com/resources/articles/docker/image-20200812190025868.png)
+![ ](https://www.mrhelloworld.com/resources/articles/docker/image-20200812190025868.png)
 
 如上图所示，该目录下空空如也，其实 Tomcat 在比较新的版本中将默认的 `ROOT` 项目放在了 `webapps.dist` 中，如果你真想访问 http://192.168.10.10:8080/ 看到 Tomcat 猫，将其复制至 `webapps` 即可。
 
-[![ ](https://mrhelloworld.com/resources/articles/docker/image-20200812190507577.png)](https://mrhelloworld.com/resources/articles/docker/image-20200812190507577.png)
+![ ](https://www.mrhelloworld.com/resources/articles/docker/image-20200812190507577.png)
 
 访问：http://192.168.10.10:8080/ 即可看到熟悉的面孔。
 
-[![ ](https://mrhelloworld.com/resources/articles/docker/image-20200812190553942.png)](https://mrhelloworld.com/resources/articles/docker/image-20200812190553942.png)
+![img](https://www.mrhelloworld.com/resources/articles/docker/image-20200812190553942.png)
 
 
 
@@ -897,7 +897,7 @@ docker run -di --name nginx -p 80:80 -v /mydata/docker_nginx/conf:/etc/nginx ngi
 
 访问宿主机：[http://192.168.10.10:80/](http://192.168.10.10/) 结果如下：
 
-[![ ](https://mrhelloworld.com/resources/articles/docker/image-20200812183235528.png)](https://mrhelloworld.com/resources/articles/docker/image-20200812183235528.png)
+![ ](https://www.mrhelloworld.com/resources/articles/docker/image-20200812183235528.png)
 
 
 
@@ -915,7 +915,7 @@ docker run -di --name mysql8 -p 3306:3306 -v /mydata/docker_mysql/conf:/etc/mysq
 
 连接容器中的 MySQL 时，只需要连接宿主机的 IP + 指定的映射端口即可。
 
-[![ ](https://mrhelloworld.com/resources/articles/docker/image-20200812183927191.png)](https://mrhelloworld.com/resources/articles/docker/image-20200812183927191.png)
+![](https://www.mrhelloworld.com/resources/articles/docker/image-20200812183927191.png)
 
 也可以进入容器并使用 MySQL 命令打开客户端。
 
@@ -939,7 +939,7 @@ docker run -di --name redis -p 6379:6379 redis
 
 连接容器中的 Redis 时，只需要连接宿主机的 IP + 指定的映射端口即可。
 
-[![ ](https://mrhelloworld.com/resources/articles/docker/image-20200812191215218.png)](https://mrhelloworld.com/resources/articles/docker/image-20200812191215218.png)
+![ ](https://www.mrhelloworld.com/resources/articles/docker/image-20200812191215218.png)
 
 
 
@@ -954,7 +954,7 @@ docker run -di --name mongo -p 27017:27017 mongo
 
 连接容器中的 MongoDB 时，只需要连接宿主机的 IP + 指定的映射端口即可。
 
-[![ ](https://mrhelloworld.com/resources/articles/docker/image-20200812205454858.png)](https://mrhelloworld.com/resources/articles/docker/image-20200812205454858.png)
+![ ](https://www.mrhelloworld.com/resources/articles/docker/image-20200812205454858.png)
 
 
 
@@ -980,7 +980,7 @@ docker restart es
 
 访问：http://192.168.10.10:9200/ 结果如下：
 
-[![ ](https://mrhelloworld.com/resources/articles/docker/image-20200812221830337.png)](https://mrhelloworld.com/resources/articles/docker/image-20200812221830337.png)
+![ ](https://www.mrhelloworld.com/resources/articles/docker/image-20200812221830337.png)
 
 
 
@@ -995,7 +995,7 @@ docker run -di --name es-head -p 9100:9100 mobz/elasticsearch-head:5
 
 在浏览器中打开 elasticsearch-head 页面，填入 Elasticsearch 地址。
 
-[![ ](https://mrhelloworld.com/resources/articles/docker/image-20200814201247072.png)](https://mrhelloworld.com/resources/articles/docker/image-20200814201247072.png)
+![ ](https://www.mrhelloworld.com/resources/articles/docker/image-20200814201247072.png)
 
 这里会出现跨域拒绝访问的问题，进入 elasticsearch 容器内部，修改配置文件 `elasticsearch.yml`。
 
@@ -1020,7 +1020,7 @@ http.cors.allow-origin: "*"
 docker restart es
 ```
 
-[![ ](https://mrhelloworld.com/resources/articles/docker/image-20200814201950953.png)](https://mrhelloworld.com/resources/articles/docker/image-20200814201950953.png)
+![ ](https://www.mrhelloworld.com/resources/articles/docker/image-20200814201950953.png)
 
 
 
@@ -1035,7 +1035,7 @@ docker run -di --name=solr -p 8983:8983 solr
 
 访问：http://192.168.10.10:8983/solr/#/ 结果如下：
 
-[![ ](https://mrhelloworld.com/resources/articles/docker/image-20200812222857902.png)](https://mrhelloworld.com/resources/articles/docker/image-20200812222857902.png)
+![ ](https://www.mrhelloworld.com/resources/articles/docker/image-20200812222857902.png)
 
 
 
@@ -1059,7 +1059,7 @@ rabbitmq-plugins enable rabbitmq_management
 
 访问：http://192.168.10.10:15672/ 使用 `guest` 登录账号密码，结果如下：
 
-[![ ](https://mrhelloworld.com/resources/articles/docker/image-20200812200109882.png)](https://mrhelloworld.com/resources/articles/docker/image-20200812200109882.png)
+![ ](https://www.mrhelloworld.com/resources/articles/docker/image-20200812200109882.png)
 
 > 应用部署的练习就到这里，接下来该学习学习如何构建属于我们自己的 Docker 镜像啦。
 
@@ -1146,7 +1146,7 @@ docker commit -a="mrhelloworld" -m="jdk11 and tomcat9" centos7 mycentos:7
 - `-m`：提交时的说明文字；
 - `-p`：在 commit 时，将容器暂停。
 
-[![/resources/articles/docker/image-20200815173404244.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200815173404244.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200815173404244.png)
+![/resources/articles/docker/image-20200815173404244.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200815173404244.png)
 
 
 
@@ -1169,7 +1169,7 @@ Java HotSpot(TM) 64-Bit Server VM 18.9 (build 11.0.6+8-LTS, mixed mode)
 # 访问 http://192.168.10.10:8080/ 看到页面说明环境 OK!
 ```
 
-[![/resources/articles/docker/image-20200812190553942.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200812190553942.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200812190553942.png)
+![image-20200812190553942.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200812190553942.png)
 
 > 基于 `docker commit` 的方式构建镜像大家已经学会了，接下来该学习如何使用 `docker build` 并配合 `Dockerfile` 文件构建镜像。再学习一下 Docker 镜像的备份恢复迁移就更好了。
 
@@ -1488,7 +1488,7 @@ docker history 镜像名称:标签|ID
 docker history mycentos:7
 ```
 
-[![/resources/articles/docker/image-20200817200725799.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200817200725799.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200817200725799.png)
+![/resources/articles/docker/image-20200817200725799.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200817200725799.png)
 
 
 
@@ -1507,7 +1507,7 @@ Java HotSpot(TM) 64-Bit Server VM 18.9 (build 11.0.6+8-LTS, mixed mode)
 # 访问 http://192.168.10.10:8080/ 看到页面说明环境 OK!
 ```
 
-[![/resources/articles/docker/image-20200812190553942.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200812190553942.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200812190553942.png)
+![img](https://www.mrhelloworld.com/resources/articles/docker/image-20200812190553942.png)
 
 > 太棒了，Dockerfile 构建镜像的方式你也学会了，再接再厉学习一下 Docker 镜像的备份恢复迁移，go ~
 
@@ -1572,7 +1572,7 @@ docker load -i mycentos7.tar
 
 官网：https://hub.docker.com/
 
-[![/resources/articles/docker/image-20200816174620320.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200816174620320.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200816174620320.png)
+![/resources/articles/docker/image-20200816174620320.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200816174620320.png)
 
 
 
@@ -1580,7 +1580,7 @@ docker load -i mycentos7.tar
 
 通过 `docker login` 命令输入账号密码登录 DockerHub
 
-[![/resources/articles/docker/image-20200816180550521.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200816180550521.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200816180550521.png)
+![/resources/articles/docker/image-20200816180550521.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200816180550521.png)
 
 
 
@@ -1597,13 +1597,13 @@ docker tag hello-world:latest mrhelloworld/test-hello-world:1.0.0
 docker push mrhelloworld/test-hello-world:1.0.0
 ```
 
-[![/resources/articles/docker/image-20200816181546609.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200816181546609.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200816181546609.png)
+![/resources/articles/docker/image-20200816181546609.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200816181546609.png)
 
 
 
 ## 4、查看仓库
 
-[![/resources/articles/docker/image-20200816182150904.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200816182150904.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200816182150904.png)
+![/resources/articles/docker/image-20200816182150904.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200816182150904.png)
 
 
 
@@ -1611,7 +1611,7 @@ docker push mrhelloworld/test-hello-world:1.0.0
 
 通过 `docker pull mrhelloworld/test-hello-world:1.0.0` 测试镜像是否可以拉取。
 
-[![/resources/articles/docker/image-20200816182023452.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200816182023452.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200816182023452.png)
+![/resources/articles/docker/image-20200816182023452.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200816182023452.png)
 
 
 
@@ -1667,7 +1667,7 @@ vi /etc/docker/daemon.json
 }
 ```
 
-[![/resources/articles/docker/image-20200816185344508.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200816185344508.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200816185344508.png)
+![/resources/articles/docker/image-20200816185344508.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200816185344508.png)
 
 重新加载配置信息及重启 Docker 服务。
 
@@ -1708,15 +1708,15 @@ docker tag hello-world:latest 192.168.10.10:5000/test-hello-world:1.0.0
 docker push 192.168.10.10:5000/test-hello-world:1.0.0
 ```
 
-[![/resources/articles/docker/image-20200816190722073.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200816190722073.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200816190722073.png)
+![/resources/articles/docker/image-20200816190722073.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200816190722073.png)
 
 打开浏览器输入：http://192.168.10.10:5000/v2/_catalog 可以看到私有仓库中已上传的镜像。
 
-[![/resources/articles/docker/image-20200816190911534.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200816190911534.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200816190911534.png)
+![/resources/articles/docker/image-20200816190911534.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200816190911534.png)
 
 由于我们做了目录挂载，因此可以在宿主机 `/mydata/docker_registry/docker/registry/v2/repositories` 目录下查看。
 
-[![/resources/articles/docker/image-20200816191255364.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200816191255364.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200816191255364.png)
+![/resources/articles/docker/image-20200816191255364.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200816191255364.png)
 
 
 
@@ -1831,7 +1831,7 @@ docker push 192.168.10.10:5000/test-hello-world:1.0.0
 
 通过 `docker login` 命令输入账号密码登录私有仓库。
 
-[![/resources/articles/docker/image-20200816205613162.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200816205613162.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200816205613162.png)
+![/resources/articles/docker/image-20200816205613162.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200816205613162.png)
 
 
 
@@ -1839,7 +1839,7 @@ docker push 192.168.10.10:5000/test-hello-world:1.0.0
 
 再次 push 镜像，发现已经可以推送成功了。
 
-[![/resources/articles/docker/image-20200816210002524.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200816210002524.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200816210002524.png)
+![/resources/articles/docker/image-20200816210002524.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200816210002524.png)
 
 
 
@@ -1897,21 +1897,21 @@ f4f1b3cf1b7f        none                null                local
 
 > busybox 被称为嵌入式 Linux 的瑞士军刀，整合了很多小的 unix 下的通用功能到一个小的可执行文件中。
 
-[![/resources/articles/docker/image-20200818122042425.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818122042425.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818122042425.png)
+![/resources/articles/docker/image-20200818122042425.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818122042425.png)
 
 然后宿主机通过 `ip addr` 查看信息如下：
 
-[![/resources/articles/docker/image-20200818122141161.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818122141161.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818122141161.png)
+![/resources/articles/docker/image-20200818122141161.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818122141161.png)
 
 通过以上的比较可以发现，证实了之前所说的：守护进程会创建一对对等虚拟设备接口 `veth pair`，将其中一个接口设置为容器的 `eth0` 接口（容器的网卡），另一个接口放置在宿主机的命名空间中，以类似 `vethxxx` 这样的名字命名。
 
 同时，守护进程还会从网桥 `docker0` 的私有地址空间中分配一个 IP 地址和子网给该容器，并设置 docker0 的 IP 地址为容器的默认网关。也可以安装 `yum install -y bridge-utils` 以后，通过 `brctl show` 命令查看网桥信息。
 
-[![/resources/articles/docker/image-20200818122713310.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818122713310.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818122713310.png)
+![/resources/articles/docker/image-20200818122713310.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818122713310.png)
 
 对于每个容器的 IP 地址和 Gateway 信息，我们可以通过 `docker inspect 容器名称|ID` 进行查看，在 `NetworkSettings` 节点中可以看到详细信息。
 
-[![/resources/articles/docker/image-20200818123000389.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818123000389.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818123000389.png)
+![/resources/articles/docker/image-20200818123000389.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818123000389.png)
 
 我们可以通过 `docker network inspect bridge` 查看所有 `bridge` 网络模式下的容器，在 `Containers` 节点中可以看到容器名称。
 
@@ -1919,7 +1919,7 @@ f4f1b3cf1b7f        none                null                local
 
 > 关于 `bridge` 网络模式的使用，只需要在创建容器时通过参数 `--net bridge` 或者 `--network bridge` 指定即可，当然这也是创建容器默认使用的网络模式，也就是说这个参数是可以省略的。
 
-[![/resources/articles/docker/20190820223934743.png](https://www.mrhelloworld.com/resources/articles/docker/20190820223934743.png)](https://www.mrhelloworld.com/resources/articles/docker/20190820223934743.png)
+![/resources/articles/docker/20190820223934743.png](https://www.mrhelloworld.com/resources/articles/docker/20190820223934743.png)
 
 Bridge 桥接模式的实现步骤主要如下：
 
@@ -1935,19 +1935,19 @@ Bridge 桥接模式的实现步骤主要如下：
 - 采用 host 网络模式的 Docker Container，可以直接使用宿主机的 IP 地址与外界进行通信，若宿主机的 eth0 是一个公有 IP，那么容器也拥有这个公有 IP。同时容器内服务的端口也可以使用宿主机的端口，无需额外进行 NAT 转换；
 - host 网络模式可以让容器共享宿主机网络栈，这样的好处是外部主机与容器直接通信，但是容器的网络缺少隔离性。
 
-[![/resources/articles/docker/20190820224201244.png](https://www.mrhelloworld.com/resources/articles/docker/20190820224201244.png)](https://www.mrhelloworld.com/resources/articles/docker/20190820224201244.png)
+![/resources/articles/docker/20190820224201244.png](https://www.mrhelloworld.com/resources/articles/docker/20190820224201244.png)
 
 比如我基于 `host` 网络模式创建了一个基于 `busybox` 镜像构建的容器 `bbox02`，查看 `ip addr`：
 
-[![/resources/articles/docker/image-20200818123709917.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818123709917.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818123709917.png)
+![/resources/articles/docker/image-20200818123709917.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818123709917.png)
 
 然后宿主机通过 `ip addr` 查看信息如下：
 
-[![/resources/articles/docker/image-20200818123810059.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818123810059.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818123810059.png)
+![/resources/articles/docker/image-20200818123810059.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818123810059.png)
 
 对，你没有看错，返回信息一模一样，我也可以肯定我没有截错图，不信接着往下看。我们可以通过 `docker network inspect host` 查看所有 `host` 网络模式下的容器，在 `Containers` 节点中可以看到容器名称。
 
-[![/resources/articles/docker/image-20200818124047216.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818124047216.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818124047216.png)
+![/resources/articles/docker/image-20200818124047216.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818124047216.png)
 
 
 
@@ -1958,11 +1958,11 @@ Bridge 桥接模式的实现步骤主要如下：
 
 比如我基于 `none` 网络模式创建了一个基于 `busybox` 镜像构建的容器 `bbox03`，查看 `ip addr`：
 
-[![/resources/articles/docker/image-20200818124256210.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818124256210.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818124256210.png)
+![/resources/articles/docker/image-20200818124256210.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818124256210.png)
 
 我们可以通过 `docker network inspect none` 查看所有 `none` 网络模式下的容器，在 `Containers` 节点中可以看到容器名称。
 
-[![/resources/articles/docker/image-20200818124507831.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818124507831.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818124507831.png)
+![/resources/articles/docker/image-20200818124507831.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818124507831.png)
 
 
 
@@ -1971,31 +1971,31 @@ Bridge 桥接模式的实现步骤主要如下：
 - Container 网络模式是 Docker 中一种较为特别的网络的模式。在创建容器时通过参数 `--net container:已运行的容器名称|ID` 或者 `--network container:已运行的容器名称|ID` 指定；
 - 处于这个模式下的 Docker 容器会共享一个网络栈，这样两个容器之间可以使用 localhost 高效快速通信。
 
-[![/resources/articles/docker/20190820224440729.png](https://www.mrhelloworld.com/resources/articles/docker/20190820224440729.png)](https://www.mrhelloworld.com/resources/articles/docker/20190820224440729.png)
+![/resources/articles/docker/20190820224440729.png](https://www.mrhelloworld.com/resources/articles/docker/20190820224440729.png)
 
 **Container 网络模式即新创建的容器不会创建自己的网卡，配置自己的 IP，而是和一个指定的容器共享 IP、端口范围等**。同样两个容器除了网络方面相同之外，其他的如文件系统、进程列表等还是隔离的。
 
 比如我基于容器 `bbox01` 创建了 `container` 网络模式的容器 `bbox04`，查看 `ip addr`：
 
-[![/resources/articles/docker/image-20200818124856181.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818124856181.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818124856181.png)
+![/resources/articles/docker/image-20200818124856181.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818124856181.png)
 
 容器 `bbox01` 的 `ip addr` 信息如下：
 
-[![/resources/articles/docker/image-20200818125125681.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818125125681.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818125125681.png)
+![/resources/articles/docker/image-20200818125125681.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818125125681.png)
 
 宿主机的 `ip addr` 信息如下：
 
-[![/resources/articles/docker/image-20200818125238464.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818125238464.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818125238464.png)
+![/resources/articles/docker/image-20200818125238464.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818125238464.png)
 
 通过以上测试可以发现，Docker 守护进程只创建了一对对等虚拟设备接口用于连接 bbox01 容器和宿主机，而 bbox04 容器则直接使用了 bbox01 容器的网卡信息。
 
 这个时候如果将 bbox01 容器停止，会发现 bbox04 容器就只剩下 lo 接口了。
 
-[![/resources/articles/docker/image-20200818125518505.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818125518505.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818125518505.png)
+![/resources/articles/docker/image-20200818125518505.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818125518505.png)
 
 然后 bbox01 容器重启以后，bbox04 容器也重启一下，就又可以获取到网卡信息了。
 
-[![/resources/articles/docker/image-20200818125705385.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818125705385.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818125705385.png)
+![/resources/articles/docker/image-20200818125705385.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818125705385.png)
 
 
 
@@ -2007,7 +2007,7 @@ Bridge 桥接模式的实现步骤主要如下：
 
 官网警告信息：https://docs.docker.com/network/links/
 
-[![/resources/articles/docker/image-20200818005002335.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818005002335.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818005002335.png)
+![/resources/articles/docker/image-20200818005002335.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818005002335.png)
 
 
 
@@ -2023,11 +2023,11 @@ Bridge 桥接模式的实现步骤主要如下：
 
 通过 `docker network create` 命令可以创建自定义网络模式，命令提示如下：
 
-[![/resources/articles/docker/image-20200818005608418.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818005608418.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818005608418.png)
+![/resources/articles/docker/image-20200818005608418.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818005608418.png)
 
 进一步查看 `docker network create` 命令使用详情，发现可以通过 `--driver` 指定网络模式且默认是 `bridge` 网络模式，提示如下：
 
-[![/resources/articles/docker/image-20200818005637256.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818005637256.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818005637256.png)
+![/resources/articles/docker/image-20200818005637256.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818005637256.png)
 
 创建一个基于 `bridge` 网络模式的自定义网络模式 `custom_network`，完整命令如下：
 
@@ -2054,7 +2054,7 @@ docker run -di --name bbox05 --net custom_network busybox
 
 通过 `docker inspect 容器名称|ID` 查看容器的网络信息，在 `NetworkSettings` 节点中可以看到详细信息。
 
-[![/resources/articles/docker/image-20200818130051029.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818130051029.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818130051029.png)
+![/resources/articles/docker/image-20200818130051029.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818130051029.png)
 
 
 
@@ -2062,7 +2062,7 @@ docker run -di --name bbox05 --net custom_network busybox
 
 通过 `docker network connect 网络名称 容器名称` 为容器连接新的网络模式。
 
-[![/resources/articles/docker/image-20200818014054038.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818014054038.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818014054038.png)
+![/resources/articles/docker/image-20200818014054038.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818014054038.png)
 
 ```bash
 docker network connect bridge bbox05
@@ -2070,7 +2070,7 @@ docker network connect bridge bbox05
 
 通过 `docker inspect 容器名称|ID` 再次查看容器的网络信息，多增加了默认的 `bridge`。
 
-[![/resources/articles/docker/image-20200818130321068.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818130321068.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818130321068.png)
+![/resources/articles/docker/image-20200818130321068.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818130321068.png)
 
 
 
@@ -2084,7 +2084,7 @@ docker network disconnect custom_network bbox05
 
 通过 `docker inspect 容器名称|ID` 再次查看容器的网络信息，发现只剩下默认的 `bridge`。
 
-[![/resources/articles/docker/image-20200818130628056.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818130628056.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818130628056.png)
+![/resources/articles/docker/image-20200818130628056.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818130628056.png)
 
 
 
@@ -2113,15 +2113,15 @@ docker run -di --name default_bbox02 busybox　　
 
 通过 `docker network inspect bridge` 查看两容器的具体 IP 信息。
 
-[![/resources/articles/docker/image-20200818142235666.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818142235666.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818142235666.png)
+![/resources/articles/docker/image-20200818142235666.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818142235666.png)
 
 然后测试两容器间是否可以进行网络通信。
 
-[![/resources/articles/docker/image-20200818142541982.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818142541982.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818142541982.png)
+![/resources/articles/docker/image-20200818142541982.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818142541982.png)
 
 经过测试，从结果得知两个属于同一个网络的容器是可以进行网络通信的，但是 IP 地址可能是不固定的，有被更改的情况发生，那容器内所有通信的 IP 地址也需要进行更改，能否使用容器名称进行网络通信？继续测试。
 
-[![/resources/articles/docker/image-20200818142849899.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818142849899.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818142849899.png)
+![/resources/articles/docker/image-20200818142849899.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818142849899.png)
 
 经过测试，从结果得知使用容器进行网络通信是不行的，那怎么实现这个功能呢？
 
@@ -2138,11 +2138,11 @@ docker run -di --name custom_bbox02 --net custom_network busybox
 
 通过 `docker network inspect custom_network` 查看两容器的具体 IP 信息。
 
-[![/resources/articles/docker/image-20200818143417653.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818143417653.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818143417653.png)
+![/resources/articles/docker/image-20200818143417653.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818143417653.png)
 
 然后测试两容器间是否可以进行网络通信，分别使用具体 IP 和容器名称进行网络通信。
 
-[![/resources/articles/docker/image-20200818143734045.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818143734045.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818143734045.png)
+![/resources/articles/docker/image-20200818143734045.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818143734045.png)
 
 经过测试，从结果得知两个属于同一个自定义网络的容器是可以进行网络通信的，并且可以使用容器名称进行网络通信。
 
@@ -2152,7 +2152,7 @@ docker run -di --name custom_bbox02 --net custom_network busybox
 docker network connect custom_network default_bbox01
 ```
 
-[![/resources/articles/docker/image-20200818145017099.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818145017099.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200818145017099.png)
+![/resources/articles/docker/image-20200818145017099.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200818145017099.png)
 
 > 学完容器网络通信，大家就可以练习使用多个容器完成常见应用集群的部署了。后面就该学习 Docker 进阶部分的内容 Docker Compose 和 Docker Swarm。
 
@@ -2168,7 +2168,7 @@ docker network connect custom_network default_bbox01
 
 `host` 网络模式需要在创建容器时通过参数 `--net host` 或者 `--network host` 指定，`host` 网络模式可以让**容器共享宿主机网络栈**，容器将不会虚拟出自己的网卡，配置自己的 IP 等，而是使用宿主机的 IP 和端口。
 
-[![/resources/articles/docker/image-20200909123114605.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909123114605.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200909123114605.png)
+![/resources/articles/docker/image-20200909123114605.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909123114605.png)
 
 
 
@@ -2186,7 +2186,7 @@ docker network connect custom_network default_bbox01
 - `CentOS 7.8.2003`
 - `Docker version 19.03.12`
 
-[![/resources/articles/docker/image-20200903151202394.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200903151202394.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200903151202394.png)
+![/resources/articles/docker/image-20200903151202394.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200903151202394.png)
 
 
 
@@ -2295,11 +2295,11 @@ done
 
 在 `192.168.10.10` 机器执行查看命令结果如下，如果没有 `tree` 命令先安装 `yum install -y tree`。
 
-[![/resources/articles/docker/image-20200909154742348.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909154742348.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200909154742348.png)
+![/resources/articles/docker/image-20200909154742348.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909154742348.png)
 
 在 `192.168.10.11` 机器执行查看命令结果如下。
 
-[![/resources/articles/docker/image-20200909154838961.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909154838961.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200909154838961.png)
+![/resources/articles/docker/image-20200909154838961.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909154838961.png)
 
 以下内容为每个节点的配置文件详细信息。
 
@@ -2333,11 +2333,11 @@ done
 
 在 `192.168.10.10` 机器执行 `docker ps -n 3` 查看容器是否创建成功。
 
-[![/resources/articles/docker/image-20200909155456853.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909155456853.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200909155456853.png)
+![/resources/articles/docker/image-20200909155456853.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909155456853.png)
 
 在 `192.168.10.11` 机器执行 `docker ps -n 3` 查看容器是否创建成功。
 
-[![/resources/articles/docker/image-20200909155515835.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909155515835.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200909155515835.png)
+![/resources/articles/docker/image-20200909155515835.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909155515835.png)
 
 
 
@@ -2360,11 +2360,11 @@ redis-cli -a 1234 --cluster create 192.168.10.10:6371 192.168.10.10:6372 192.168
 
 出现选择提示信息，输入 **yes**，结果如下所示：
 
-[![/resources/articles/docker/image-20200909160215260.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909160215260.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200909160215260.png)
+![/resources/articles/docker/image-20200909160215260.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909160215260.png)
 
 集群创建成功如下：
 
-[![/resources/articles/docker/image-20200909160445644.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909160445644.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200909160445644.png)
+![/resources/articles/docker/image-20200909160445644.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909160445644.png)
 
 以下内容是创建集群时返回的详细信息，也就是上两幅图中的所有内容。
 
@@ -2423,7 +2423,7 @@ M: ac805b90b6e20e26dc4268454bb2855beea6cc19 192.168.10.10:6372
 
 至此一个高可用的 Redis Cluster 集群搭建完成，如下图所示，该集群中包含 6 个 Redis 节点，3 主 3 从。三个主节点会分配槽，处理客户端的命令请求，而从节点可用在主节点故障后，顶替主节点。
 
-[![/resources/articles/docker/20041523528353133303113714.png](https://www.mrhelloworld.com/resources/articles/docker/20041523528353133303113714.png)](https://www.mrhelloworld.com/resources/articles/docker/20041523528353133303113714.png)
+![/resources/articles/docker/20041523528353133303113714.png](https://www.mrhelloworld.com/resources/articles/docker/20041523528353133303113714.png)
 
 
 
@@ -2446,7 +2446,7 @@ cd /usr/local/bin/
 redis-cli -a 1234 --cluster check 192.168.10.11:6375
 ```
 
-[![/resources/articles/docker/image-20200909144120928.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909144120928.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200909144120928.png)
+![/resources/articles/docker/image-20200909144120928.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909144120928.png)
 
 
 
@@ -2461,7 +2461,7 @@ cluster info
 cluster nodes
 ```
 
-[![/resources/articles/docker/image-20200909144354723.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909144354723.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200909144354723.png)
+![/resources/articles/docker/image-20200909144354723.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909144354723.png)
 
 
 
@@ -2482,7 +2482,7 @@ get aaa
 get bbb
 ```
 
-[![/resources/articles/docker/image-20200909145054279.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909145054279.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200909145054279.png)
+![/resources/articles/docker/image-20200909145054279.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909145054279.png)
 
 别着急，让我来解释一下上图中的操作过程：
 
@@ -2496,7 +2496,7 @@ get bbb
 
 通过以上操作我们得知 `name` 键的存储被分配到了 6374 节点，如果直接连接 6374 节点并获取该值会怎么样？没错，不需要重定向节点，因为数据就在该节点，所以直接读取返回。
 
-[![/resources/articles/docker/image-20200909145613003.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909145613003.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200909145613003.png)
+![/resources/articles/docker/image-20200909145613003.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909145613003.png)
 
 
 
@@ -2506,9 +2506,9 @@ get bbb
 
 最后来一波客户端连接操作，随便哪个节点，看看可否通过外部访问 Redis Cluster 集群。
 
-[![/resources/articles/docker/image-20200909145719830.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909145719830.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200909145719830.png)
+![/resources/articles/docker/image-20200909145719830.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909145719830.png)
 
-[![/resources/articles/docker/image-20200909145756223.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909145756223.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200909145756223.png)
+![/resources/articles/docker/image-20200909145756223.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909145756223.png)
 
 至此使用多机环境多个容器搭建 Redis Cluster 集群环境就到这里，其实整体搭建过程不算特别麻烦，因为：
 
@@ -2567,14 +2567,14 @@ sudo curl -L https://get.daocloud.io/docker/compose/releases/download/1.26.2/doc
 
 安装完成以后，查看指定目录，发现该文件没有可执行权限，进行授权操作。
 
-[![/resources/articles/docker/image-20200901112824972.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200901112824972.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200901112824972.png)
+![/resources/articles/docker/image-20200901112824972.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200901112824972.png)
 
 ```bash
 # 将可执行权限应用于该二进制文件
 sudo chmod +x /usr/local/bin/docker-compose
 ```
 
-[![/resources/articles/docker/image-20200901113655491.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200901113655491.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200901113655491.png)
+![/resources/articles/docker/image-20200901113655491.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200901113655491.png)
 
 
 
@@ -2584,7 +2584,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 docker-compose --version
 ```
 
-[![/resources/articles/docker/image-20200901115641336.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200901115641336.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200901115641336.png)
+![/resources/articles/docker/image-20200901115641336.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200901115641336.png)
 
 
 
@@ -2664,15 +2664,15 @@ docker-compose up
 docker-compose up -d
 ```
 
-[![/resources/articles/docker/image-20200904182158307.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200904182158307.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200904182158307.png)
+![/resources/articles/docker/image-20200904182158307.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200904182158307.png)
 
 浏览器访问：http://192.168.10.10/ 结果如下：
 
-[![/resources/articles/docker/image-20200904182520177.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200904182520177.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200904182520177.png)
+![/resources/articles/docker/image-20200904182520177.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200904182520177.png)
 
 使用 `docker-compose down` 可以停止并删除容器、网络。
 
-[![/resources/articles/docker/image-20200905151142759.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200905151142759.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200905151142759.png)
+![/resources/articles/docker/image-20200905151142759.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200905151142759.png)
 
 
 
@@ -3134,7 +3134,7 @@ volumes:
   mysql-data-volume: # 一个具体数据卷的条目名称
 ```
 
-[![/resources/articles/docker/image-20200907162324553.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200907162324553.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200907162324553.png)
+![/resources/articles/docker/image-20200907162324553.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200907162324553.png)
 
 以下方式的数据卷声明创建卷时会使用自定义的名称。
 
@@ -3161,7 +3161,7 @@ volumes:
     name: mysql-data-volume # 数据卷名称，默认为"工程名称_数据卷条目名称"
 ```
 
-[![/resources/articles/docker/image-20200907162419037.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200907162419037.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200907162419037.png)
+![/resources/articles/docker/image-20200907162419037.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200907162419037.png)
 
 
 
@@ -3187,7 +3187,7 @@ services:
 #networks:
 ```
 
-[![/resources/articles/docker/image-20200907170121843.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200907170121843.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200907170121843.png)
+![/resources/articles/docker/image-20200907170121843.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200907170121843.png)
 
 以下方式的网络声明创建网络时会使用默认的名称：`"工程名称_网络条目名称"`，网络模式默认为 `bridge`。
 
@@ -3235,7 +3235,7 @@ networks:
     driver: bridge # 网络模式，默认为 bridge
 ```
 
-[![/resources/articles/docker/image-20200907163402097.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200907163402097.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200907163402097.png)
+![/resources/articles/docker/image-20200907163402097.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200907163402097.png)
 
 
 
@@ -3531,9 +3531,9 @@ docker-compose down -v
 
 `docker-compose create` 为服务创建容器，已不推荐使用。推荐使用 `docker-compose up` 来实现该功能。
 
-[![/resources/articles/docker/image-20200907195127285.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200907195127285.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200907195127285.png)
+![/resources/articles/docker/image-20200907195127285.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200907195127285.png)
 
-[![/resources/articles/docker/image-20200907192043698.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200907192043698.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200907192043698.png)
+![/resources/articles/docker/image-20200907192043698.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200907192043698.png)
 
 
 
@@ -3541,9 +3541,9 @@ docker-compose down -v
 
 `docker-compose scale` 设置指定服务运行的容器个数，已不推荐使用。
 
-[![/resources/articles/docker/image-20200907195213539.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200907195213539.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200907195213539.png)
+![/resources/articles/docker/image-20200907195213539.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200907195213539.png)
 
-[![/resources/articles/docker/image-20200907194339859.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200907194339859.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200907194339859.png)
+![/resources/articles/docker/image-20200907194339859.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200907194339859.png)
 
 推荐使用 `--scale service=num` 的参数来设置数量。
 
@@ -3565,7 +3565,7 @@ docker-compose images
 docker-compose images nginx
 ```
 
-[![/resources/articles/docker/image-20200907200909079.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200907200909079.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200907200909079.png)
+![/resources/articles/docker/image-20200907200909079.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200907200909079.png)
 
 
 
@@ -3591,7 +3591,7 @@ docker-compose top
 docker-compose top nginx
 ```
 
-[![/resources/articles/docker/image-20200907195549857.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200907195549857.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200907195549857.png)
+![/resources/articles/docker/image-20200907195549857.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200907195549857.png)
 
 
 
@@ -3629,7 +3629,7 @@ Docker Compose 的整体使用步骤还是比较简单的，三个步骤为：
 
 关于 Docker 网络模式更多的内容请阅读《[Docker 网络模式详解及容器间网络通信](https://mrhelloworld.com/docker11/)》。
 
-[![/resources/articles/docker/image-20200909123114605.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909123114605.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200909123114605.png)
+![/resources/articles/docker/image-20200909123114605.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909123114605.png)
 
 
 
@@ -3647,7 +3647,7 @@ Docker Compose 的整体使用步骤还是比较简单的，三个步骤为：
 - `CentOS 7.8.2003`
 - `Docker version 19.03.12`
 
-[![/resources/articles/docker/image-20200903151202394.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200903151202394.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200903151202394.png)
+![/resources/articles/docker/image-20200903151202394.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200903151202394.png)
 
 　　
 
@@ -3757,11 +3757,11 @@ done
 
 在 `192.168.10.10` 机器执行查看命令结果如下，如果没有 `tree` 命令先安装 `yum install -y tree`。
 
-[![/resources/articles/docker/image-20200909131602123.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909131602123.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200909131602123.png)
+![/resources/articles/docker/image-20200909131602123.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909131602123.png)
 
 在 `192.168.10.11` 机器执行查看命令结果如下。
 
-[![/resources/articles/docker/image-20200909132230772.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909132230772.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200909132230772.png)
+![/resources/articles/docker/image-20200909132230772.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909132230772.png)
 
 以下内容为每个节点的配置文件详细信息。
 
@@ -3941,9 +3941,9 @@ services:
 docker-compose up -d
 ```
 
-[![/resources/articles/docker/image-20200909141924605.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909141924605.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200909141924605.png)
+![/resources/articles/docker/image-20200909141924605.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909141924605.png)
 
-[![/resources/articles/docker/image-20200909141955328.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909141955328.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200909141955328.png)
+![/resources/articles/docker/image-20200909141955328.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909141955328.png)
 
 
 
@@ -3966,11 +3966,11 @@ redis-cli -a 1234 --cluster create 192.168.10.10:6371 192.168.10.10:6372 192.168
 
 出现选择提示信息，输入 **yes**，结果如下所示：
 
-[![/resources/articles/docker/image-20200909143404010.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909143404010.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200909143404010.png)
+![/resources/articles/docker/image-20200909143404010.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909143404010.png)
 
 集群创建成功如下：
 
-[![/resources/articles/docker/image-20200909143620414.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909143620414.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200909143620414.png)
+![/resources/articles/docker/image-20200909143620414.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909143620414.png)
 
 以下内容是创建集群时返回的详细信息，也就是上两幅图中的所有内容。
 
@@ -4029,7 +4029,7 @@ S: e08b8f629e2dfa474a836910634052d83c77d06a 192.168.10.11:6376
 
 至此一个高可用的 Redis Cluster 集群搭建完成，如下图所示，该集群中包含 6 个 Redis 节点，3 主 3 从。三个主节点会分配槽，处理客户端的命令请求，而从节点可用在主节点故障后，顶替主节点。
 
-[![/resources/articles/docker/20041523528353133303113714.png](https://www.mrhelloworld.com/resources/articles/docker/20041523528353133303113714.png)](https://www.mrhelloworld.com/resources/articles/docker/20041523528353133303113714.png)
+![/resources/articles/docker/20041523528353133303113714.png](https://www.mrhelloworld.com/resources/articles/docker/20041523528353133303113714.png)
 
 
 
@@ -4052,7 +4052,7 @@ cd /usr/local/bin/
 redis-cli -a 1234 --cluster check 192.168.10.11:6375
 ```
 
-[![/resources/articles/docker/image-20200909144120928.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909144120928.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200909144120928.png)
+![/resources/articles/docker/image-20200909144120928.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909144120928.png)
 
 
 
@@ -4067,7 +4067,7 @@ cluster info
 cluster nodes
 ```
 
-[![/resources/articles/docker/image-20200909144354723.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909144354723.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200909144354723.png)
+![/resources/articles/docker/image-20200909144354723.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909144354723.png)
 
 
 
@@ -4088,7 +4088,7 @@ get aaa
 get bbb
 ```
 
-[![/resources/articles/docker/image-20200909145054279.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909145054279.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200909145054279.png)
+![/resources/articles/docker/image-20200909145054279.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909145054279.png)
 
 别着急，让我来解释一下上图中的操作过程：
 
@@ -4102,7 +4102,7 @@ get bbb
 
 通过以上操作我们得知 `name` 键的存储被分配到了 6374 节点，如果直接连接 6374 节点并获取该值会怎么样？没错，不需要重定向节点，因为数据就在该节点，所以直接读取返回。
 
-[![/resources/articles/docker/image-20200909145613003.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909145613003.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200909145613003.png)
+![/resources/articles/docker/image-20200909145613003.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909145613003.png)
 
 
 
@@ -4110,9 +4110,9 @@ get bbb
 
 最后来一波客户端连接操作，随便哪个节点，看看可否通过外部访问 Redis Cluster 集群。
 
-[![/resources/articles/docker/image-20200909145719830.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909145719830.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200909145719830.png)
+![/resources/articles/docker/image-20200909145719830.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909145719830.png)
 
-[![/resources/articles/docker/image-20200909145756223.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909145756223.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200909145756223.png)
+![/resources/articles/docker/image-20200909145756223.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200909145756223.png)
 
 至此使用多机环境基于 Docker Compose 搭建 Redis Cluster 就到这里。虽然整体搭建过程感觉比起之前并没有简化太多。但是，如果我们想要停止并删除 Redis Cluster 集群环境，之前的方式就需要一个个去操作，而 Docker Compose 只需要一个 `docker-compose down` 命令的操作即可。Docker Compose 的学习及使用就到这里，下文开始我们学习 Docker Swarm 的相关内容。
 
@@ -4120,7 +4120,7 @@ get bbb
 
 # Docker Swarm 集群管理利器核心概念扫盲
 
-[![/resources/articles/docker/docker_swarm.png](https://www.mrhelloworld.com/resources/articles/docker/docker_swarm.png)](https://www.mrhelloworld.com/resources/articles/docker/docker_swarm.png)
+![/resources/articles/docker/docker_swarm.png](https://www.mrhelloworld.com/resources/articles/docker/docker_swarm.png)
 
 ## 1、Swarm 简介
 
@@ -4136,7 +4136,7 @@ Docker Swarm 和 Docker Compose 一样，都是 Docker 官方容器编排工具�
 
 ### 2.1、Swarm
 
-[![/resources/articles/docker/logo-title-final-swarm-2d-copy.png](https://www.mrhelloworld.com/resources/articles/docker/logo-title-final-swarm-2d-copy.png)](https://www.mrhelloworld.com/resources/articles/docker/logo-title-final-swarm-2d-copy.png)
+![/resources/articles/docker/logo-title-final-swarm-2d-copy.png](https://www.mrhelloworld.com/resources/articles/docker/logo-title-final-swarm-2d-copy.png)
 
 Docker Engine 1.12 引入了 Swarm 模式，一个 Swarm 由多个 Docker 主机组成，它们以 Swarm 集群模式运行。Swarm 集群由 **Manager 节点**（管理者角色，管理成员和委托任务）和 **Worker 节点**（工作者角色，运行 Swarm 服务）组成。这些 Docker 主机有些是 Manager 节点，有些是 Worker 节点，或者同时扮演这两种角色。
 
@@ -4151,7 +4151,7 @@ Swarm 集群由 **Manager 节点**（管理者角色，管理成员和委托任�
 - **Manager**：负责整个集群的管理工作包括集群配置、服务管理、容器编排等所有跟集群有关的工作，它会选举出一个 leader 来指挥编排任务；
 - **Worker**：工作节点接收和执行从管理节点分派的任务（Tasks）运行在相应的服务（Services）上。
 
-[![/resources/articles/docker/swarm-diagram.png](https://www.mrhelloworld.com/resources/articles/docker/swarm-diagram.png)](https://www.mrhelloworld.com/resources/articles/docker/swarm-diagram.png)
+![/resources/articles/docker/swarm-diagram.png](https://www.mrhelloworld.com/resources/articles/docker/swarm-diagram.png)
 
 
 
@@ -4165,7 +4165,7 @@ Swarm 集群由 **Manager 节点**（管理者角色，管理成员和委托任�
 - 服务的容器要连接到哪个网络上；
 - 要映射哪些端口。
 
-[![/resources/articles/docker/services-diagram.png](https://www.mrhelloworld.com/resources/articles/docker/services-diagram.png)](https://www.mrhelloworld.com/resources/articles/docker/services-diagram.png)
+![/resources/articles/docker/services-diagram.png](https://www.mrhelloworld.com/resources/articles/docker/services-diagram.png)
 
 **任务**（Task）包括**一个 Docker 容器**和**在容器中运行的命令**。任务是一个集群的最小单元，任务与容器是一对一的关系。管理节点根据服务规模中设置的副本数量将任务分配给工作节点。一旦任务被分配到一个节点，便无法移动到另一个节点。它只能在分配的节点上运行或失败。
 
@@ -4180,13 +4180,13 @@ Swarm 不只是提供了优秀的高可用性，同时也提供了节点的**弹
 
 下图用黄色表示拥有三个副本服务 Replicated Service，用灰色表示拥有一个全局服务 Global Service。
 
-[![/resources/articles/docker/replicated-vs-global.png](https://www.mrhelloworld.com/resources/articles/docker/replicated-vs-global.png)](https://www.mrhelloworld.com/resources/articles/docker/replicated-vs-global.png)
+![/resources/articles/docker/replicated-vs-global.png](https://www.mrhelloworld.com/resources/articles/docker/replicated-vs-global.png)
 
 
 
 ## 3、Swarm 工作流程
 
-[![/resources/articles/docker/service-lifecycle.png](https://www.mrhelloworld.com/resources/articles/docker/service-lifecycle.png)](https://www.mrhelloworld.com/resources/articles/docker/service-lifecycle.png)
+![/resources/articles/docker/service-lifecycle.png](https://www.mrhelloworld.com/resources/articles/docker/service-lifecycle.png)
 
 Swarm Manager：
 
@@ -4211,7 +4211,7 @@ Overlay 网络其实并不是一门新技术，它是指构建在另一个网络
 
 Underlay 网络是专门用来承载用户 IP 流量的基础架构层，它与 Overlay 网络之间的关系有点类似物理机和虚拟机。Underlay 网络和物理机都是真正存在的实体，它们分别对应着真实存在的网络设备和计算设备，而 Overlay 网络和虚拟机都是依托在下层实体的基础之上，使用软件虚拟出来的层级。
 
-[![/resources/articles/docker/350c0c464af591b8a01655ca5bf233a4.png](https://www.mrhelloworld.com/resources/articles/docker/350c0c464af591b8a01655ca5bf233a4.png)](https://www.mrhelloworld.com/resources/articles/docker/350c0c464af591b8a01655ca5bf233a4.png)
+![/resources/articles/docker/350c0c464af591b8a01655ca5bf233a4.png](https://www.mrhelloworld.com/resources/articles/docker/350c0c464af591b8a01655ca5bf233a4.png)
 
 在 Docker 版本 1.12 以后 **Swarm 模式原生已支持覆盖网络**（Overlay Network），只要是这个覆盖网络内的容器，不管在不在同一个宿主机上都能相互通信，即跨主机通信。不同覆盖网络内的容器之间是相互隔离的（相互 ping 不通）。
 
@@ -4241,7 +4241,7 @@ Overlay 网络是目前主流的容器跨节点数据传输和路由方案。当
 
 ### 1.1、环境准备
 
-[![/resources/articles/docker/image-20200903151202394.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200903151202394.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200903151202394.png)
+![/resources/articles/docker/image-20200903151202394.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200903151202394.png)
 
 - 五台安装了 Docker 的 CentOS 机器，版本为：`CentOS 7.8.2003`
 - Docker Engine 1.12+（最低要求 1.12，本文使用 19.03.12）
@@ -4290,7 +4290,7 @@ To add a worker to this swarm, run the following command:
 To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
 ```
 
-[![/resources/articles/docker/image-20200916164242024.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916164242024.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200916164242024.png)
+![/resources/articles/docker/image-20200916164242024.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916164242024.png)
 
 
 
@@ -4302,7 +4302,7 @@ Docker 中内置的集群模式自带了公钥基础设施(PKI)系统，使得�
 
 Manager 节点会生成两个令牌，供其他节点加入集群时使用：一个 Worker 令牌，一个 Manager 令牌。每个令牌都包括根 CA 证书的摘要和随机生成的密钥。当节点加入群集时，加入的节点使用摘要来验证来自远程管理节点的根 CA 证书。远程管理节点使用密钥来确保加入的节点是批准的节点。
 
-[![/resources/articles/docker/tls.png](https://www.mrhelloworld.com/resources/articles/docker/tls.png)](https://www.mrhelloworld.com/resources/articles/docker/tls.png)
+![/resources/articles/docker/tls.png](https://www.mrhelloworld.com/resources/articles/docker/tls.png)
 
 
 
@@ -4314,15 +4314,15 @@ Manager 节点会生成两个令牌，供其他节点加入集群时使用：一
 docker swarm join-token manager
 ```
 
-[![/resources/articles/docker/image-20200916164356976.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916164356976.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200916164356976.png)
+![/resources/articles/docker/image-20200916164356976.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916164356976.png)
 
-[![/resources/articles/docker/image-20200916164507009.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916164507009.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200916164507009.png)
+![/resources/articles/docker/image-20200916164507009.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916164507009.png)
 
 然后在其他节点上运行 `docker swarm join` 并携带令牌参数加入 Swarm 集群，该节点角色为 Manager。
 
-[![/resources/articles/docker/image-20200916164647239.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916164647239.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200916164647239.png)
+![/resources/articles/docker/image-20200916164647239.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916164647239.png)
 
-[![/resources/articles/docker/image-20200916165123101.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916165123101.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200916165123101.png)
+![/resources/articles/docker/image-20200916165123101.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916165123101.png)
 
 
 
@@ -4330,13 +4330,13 @@ docker swarm join-token manager
 
 通过创建集群时返回的结果可以得知，要向这个集群添加一个 Worker 节点，运行下图中的命令即可。或者管理节点先运行 `docker swarm join-token worker` 命令查看工作节点的令牌信息。
 
-[![/resources/articles/docker/image-20200916164746665.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916164746665.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200916164746665.png)
+![/resources/articles/docker/image-20200916164746665.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916164746665.png)
 
 然后在其他节点上运行 `docker swarm join` 并携带令牌参数加入 Swarm 集群，该节点角色为 Worker。
 
-[![/resources/articles/docker/image-20200916164902177.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916164902177.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200916164902177.png)
+![/resources/articles/docker/image-20200916164902177.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916164902177.png)
 
-[![/resources/articles/docker/image-20200916165235304.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916165235304.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200916165235304.png)
+![/resources/articles/docker/image-20200916165235304.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916165235304.png)
 
 
 
@@ -4344,7 +4344,7 @@ docker swarm join-token manager
 
 在任意 Manager 节点中运行 `docker info` 可以查看当前集群的信息。
 
-[![/resources/articles/docker/image-20200916170832333.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916170832333.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200916170832333.png)
+![/resources/articles/docker/image-20200916170832333.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916170832333.png)
 
 
 
@@ -4438,7 +4438,7 @@ docker node rm 节点名称|节点ID
 docker service create --replicas 1 --name mynginx -p 80:80 nginx
 ```
 
-[![/resources/articles/docker/image-20200916174617388.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916174617388.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200916174617388.png)
+![/resources/articles/docker/image-20200916174617388.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916174617388.png)
 
 - `docker service create`：创建服务；
 - `--replicas`：指定一个服务有几个实例运行；
@@ -4589,11 +4589,11 @@ hepx06k5ik5n      mynginx        replicated        1/1             nginx:latest 
 
 可以通过 `docker service ps 服务名称|服务ID` 查看服务运行在哪些节点上。
 
-[![/resources/articles/docker/image-20200916180732731.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916180732731.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200916180732731.png)
+![/resources/articles/docker/image-20200916180732731.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916180732731.png)
 
 在对应的任务节点上运行 `docker ps` 可以查看该服务对应容器的相关信息。
 
-[![/resources/articles/docker/image-20200916181108430.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916181108430.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200916181108430.png)
+![/resources/articles/docker/image-20200916181108430.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916181108430.png)
 
 
 
@@ -4603,7 +4603,7 @@ hepx06k5ik5n      mynginx        replicated        1/1             nginx:latest 
 
 测试结果：5 台机器均可正常访问到该服务。
 
-[![/resources/articles/docker/image-20200916182117529.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916182117529.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200916182117529.png)
+![/resources/articles/docker/image-20200916182117529.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916182117529.png)
 
 
 
@@ -4631,7 +4631,7 @@ verify: Service converged
 
 通过 `docker service ps 服务名称|服务ID` 查看服务运行在哪些节点上。
 
-[![/resources/articles/docker/image-20200916184241258.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916184241258.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200916184241258.png)
+![/resources/articles/docker/image-20200916184241258.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916184241258.png)
 
 我们再来一波缩容的操作，命令如下：
 
@@ -4647,7 +4647,7 @@ verify: Service converged
 
 通过 `docker service ps 服务名称|服务ID` 查看服务运行在哪些节点上。
 
-[![/resources/articles/docker/image-20200916184353904.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916184353904.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200916184353904.png)
+![/resources/articles/docker/image-20200916184353904.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916184353904.png)
 
 在 Swarm 集群模式下真正意义实现了所谓的**弹性服务**，动态扩缩容一行命令搞定，简单、便捷、强大。
 
@@ -4697,7 +4697,7 @@ redis:5
 docker service update --image redis:6 redis
 ```
 
-[![/resources/articles/docker/image-20200916231330724.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916231330724.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200916231330724.png)
+![/resources/articles/docker/image-20200916231330724.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916231330724.png)
 
 回滚服务，只能回滚到上一次操作的状态，并不能连续回滚到指定操作。
 
@@ -4705,7 +4705,7 @@ docker service update --image redis:6 redis
 docker service update --rollback redis
 ```
 
-[![/resources/articles/docker/image-20200916231710227.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916231710227.png)](https://www.mrhelloworld.com/resources/articles/docker/image-20200916231710227.png)
+![/resources/articles/docker/image-20200916231710227.png](https://www.mrhelloworld.com/resources/articles/docker/image-20200916231710227.png)
 
 
 
@@ -4764,7 +4764,7 @@ docker service update --rollback redis
 
 # Spring Boot 多样化构建 Docker 镜像
 
-[![/resources/articles/spring/spring-boot/docker/springboot_docker.jpg](https://www.mrhelloworld.com/resources/articles/spring/spring-boot/docker/springboot_docker.jpg)](https://www.mrhelloworld.com/resources/articles/spring/spring-boot/docker/springboot_docker.jpg)
+![/resources/articles/spring/spring-boot/docker/springboot_docker.jpg](https://www.mrhelloworld.com/resources/articles/spring/spring-boot/docker/springboot_docker.jpg)
 
 ## 1、前言
 
@@ -4858,7 +4858,7 @@ public class DockerController {
 
 而从 Spring Boot 2.3 版本开始，借助 [Buildpacks](https://buildpacks.io/) 的支持，无需 Dockerfile 即可将任何 Spring Boot 2.3 及更高版本的应用程序进行容器化。Spring Boot 2.4 版本开始又进行了进一步优化：[官网文档](https://docs.spring.io/spring-boot/docs/2.4.0/maven-plugin/reference/htmlsingle/#build-image)。
 
-[![/resources/articles/spring/spring-boot/docker/aHR0cHM6Ly93d3cuamF2YWNvZGVnZWVrcy5jb20vd3AtY29udGVudC91cGxvYWRzLzIwMjAvMDYvc3ByaW5nYm9vdC1idWlsZHBhY2tzLTEtMTAyNHg0MTMuanBn.jpg](https://www.mrhelloworld.com/resources/articles/spring/spring-boot/docker/aHR0cHM6Ly93d3cuamF2YWNvZGVnZWVrcy5jb20vd3AtY29udGVudC91cGxvYWRzLzIwMjAvMDYvc3ByaW5nYm9vdC1idWlsZHBhY2tzLTEtMTAyNHg0MTMuanBn.jpg)](https://www.mrhelloworld.com/resources/articles/spring/spring-boot/docker/aHR0cHM6Ly93d3cuamF2YWNvZGVnZWVrcy5jb20vd3AtY29udGVudC91cGxvYWRzLzIwMjAvMDYvc3ByaW5nYm9vdC1idWlsZHBhY2tzLTEtMTAyNHg0MTMuanBn.jpg)
+![/resources/articles/spring/spring-boot/docker/aHR0cHM6Ly93d3cuamF2YWNvZGVnZWVrcy5jb20vd3AtY29udGVudC91cGxvYWRzLzIwMjAvMDYvc3ByaW5nYm9vdC1idWlsZHBhY2tzLTEtMTAyNHg0MTMuanBn.jpg](https://www.mrhelloworld.com/resources/articles/spring/spring-boot/docker/aHR0cHM6Ly93d3cuamF2YWNvZGVnZWVrcy5jb20vd3AtY29udGVudC91cGxvYWRzLzIwMjAvMDYvc3ByaW5nYm9vdC1idWlsZHBhY2tzLTEtMTAyNHg0MTMuanBn.jpg)
 
 
 
@@ -5266,9 +5266,9 @@ mvn clean package docker:build docker:push -Dmaven.test.skip=true
 
 推送至私有镜像仓库如下：
 
-[![/resources/articles/spring/spring-boot/docker/image-20210225181054588.png](https://www.mrhelloworld.com/resources/articles/spring/spring-boot/docker/image-20210225181054588.png)](https://www.mrhelloworld.com/resources/articles/spring/spring-boot/docker/image-20210225181054588.png)
+![/resources/articles/spring/spring-boot/docker/image-20210225181054588.png](https://www.mrhelloworld.com/resources/articles/spring/spring-boot/docker/image-20210225181054588.png)
 
-[![/resources/articles/spring/spring-boot/docker/image-20210225194516188.png](https://www.mrhelloworld.com/resources/articles/spring/spring-boot/docker/image-20210225194516188.png)](https://www.mrhelloworld.com/resources/articles/spring/spring-boot/docker/image-20210225194516188.png)
+![/resources/articles/spring/spring-boot/docker/image-20210225194516188.png](https://www.mrhelloworld.com/resources/articles/spring/spring-boot/docker/image-20210225194516188.png)
 
 运行命令启动容器：
 
@@ -5408,13 +5408,13 @@ mvn clean package docker:build docker:push -Dmaven.test.skip=true
 
 推送至 Docker 服务如下：
 
-[![/resources/articles/spring/spring-boot/docker/image-20210225191503989.png](https://www.mrhelloworld.com/resources/articles/spring/spring-boot/docker/image-20210225191503989.png)](https://www.mrhelloworld.com/resources/articles/spring/spring-boot/docker/image-20210225191503989.png)
+![/resources/articles/spring/spring-boot/docker/image-20210225191503989.png](https://www.mrhelloworld.com/resources/articles/spring/spring-boot/docker/image-20210225191503989.png)
 
 推送至私有镜像仓库如下：
 
-[![/resources/articles/spring/spring-boot/docker/image-20210225181054588.png](https://www.mrhelloworld.com/resources/articles/spring/spring-boot/docker/image-20210225181054588.png)](https://www.mrhelloworld.com/resources/articles/spring/spring-boot/docker/image-20210225181054588.png)
+![/resources/articles/spring/spring-boot/docker/image-20210225181054588.png](https://www.mrhelloworld.com/resources/articles/spring/spring-boot/docker/image-20210225181054588.png)
 
-[![/resources/articles/spring/spring-boot/docker/image-20210225194516188.png](https://www.mrhelloworld.com/resources/articles/spring/spring-boot/docker/image-20210225194516188.png)](https://www.mrhelloworld.com/resources/articles/spring/spring-boot/docker/image-20210225194516188.png)
+![/resources/articles/spring/spring-boot/docker/image-20210225194516188.png](https://www.mrhelloworld.com/resources/articles/spring/spring-boot/docker/image-20210225194516188.png)
 
 运行命令启动容器：
 
