@@ -705,7 +705,7 @@ mysql> select * from t2;
 
 ```sql
 -- 直接创建新表
-CREATE TABLE 表名 (
+CREATE TABLE [IF NOT EXISTS] 表名 (
     字段名1 字段类型1 约束条件1 说明1,
     字段名2 字段类型2 约束条件2 说明2,
     ....
@@ -1053,12 +1053,12 @@ insert into 表名 set 列名 = 值，列名 = 值
 insert into 表名 (列名1,列名2) values (值1,值2),(值3.值4),(值5,值6);
 insert into 表名 values (所有列对应值),(所有列对应值),(所有列对应值);
 
--- 蠕虫复制（将一张表的数据复制到另一张表中，简称：表数据复制）PS：两个表的字段需要一直，并尽量保证要新增的表中没有数据
+-- 蠕虫复制（将一张表的数据复制到另一张表中，简称：表数据复制）PS：两个表的字段需要一致，并尽量保证要新增的表中没有数据
 
 insert into 表名1 select * from 表名2;
 insert into 表名1 (列名1,列名2) select 列名1,列名2 from 表名2;
 
--- 建表复制（新建表的时候直接复制另一张表的结构和数据，可以说处理表明不一样，其他都一样）
+-- 建表复制（新建表的时候直接复制另一张表的结构和数据，可以说处理表名不一样，其他都一样）
 create table 表名1 as select 字段名1，字段名2 from 表名2;
 ```
 
@@ -3451,9 +3451,38 @@ create table test (
     servnumber varchar(30),
     password varchar(20),
     createtime datetime,
-    index (id)
-)default charset=utf8;
+    index (username)                   -- 未显式指定，数据库自动生成默认名称（如 username）
+    -- index username_index (username) -- 显式指定为 contract_id_index
+    -- key (username)                  -- 未显式指定，数据库会自动生成默认名称（通常为字段名，如 username）
+    -- key username_index              -- 显式指定为 contract_id_index
+) default charset=utf8;
 ```
+
+> 普通所以几种创建方式：
+>
+> `KEY username_index (username) USING BTREE`
+>
+> - **关键字**：`KEY`（等同于 `INDEX`，用于定义普通索引）
+> - **索引名称**：显式指定为 `username_index`（自定义名称，清晰易懂）
+> - **索引类型**：`USING BTREE`（指定 B 树索引，可省略，默认即为 B 树）
+>
+> `KEY (username) USING BTREE`
+>
+> - **关键字**：`KEY`
+> - **索引名称**：未显式指定，数据库会**自动生成默认名称**（通常为字段名，如 `username`）
+> - **索引类型**：`USING BTREE`（同上，可省略）
+>
+> `INDEX username_index (username) USING BTREE`
+>
+> - **关键字**：`INDEX`（与 `KEY` 功能完全一致，语义更直白，明确表示 “索引”）
+> - **索引名称**：显式指定为 `username_index`
+> - **索引类型**：`USING BTREE`（同上）
+>
+>  `INDEX (username) USING BTREE`
+>
+> - **关键字**：`INDEX`
+> - **索引名称**：未显式指定，数据库自动生成默认名称（如 `username`）
+> - **索引类型**：`USING BTREE`（同上）
 
 2、直接为表添加索引
 
